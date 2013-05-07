@@ -94,13 +94,14 @@ $snapshot_view = Vim::get_view (mo_ref =>$snapshot_view->[0]->{'snapshot'});
 my $devices = $snapshot_view->{'config'}->{'hardware'}->{'device'};
 my $disk;
 foreach my $device (@$devices) {
+	#print Dumper($device);
 	if ( defined($device->{'backing'}->{'fileName'})) {
 		$disk = $device->{'backing'}->{'fileName'};
 		last;
 	}
 }
 ## This is the disk attached to the last snapshot
-#print "my disk is $disk\n";
+print "my disk is $disk\n";
 ## https://vcenter.ittest.balabit/mob/?moid=vm-883&doPath=config.hardware.device[2000].backing
 my $machine_views = Vim::find_entity_views(view_type => 'VirtualMachine', properties => ['layout.disk', 'name']);
 foreach (@$machine_views) {
