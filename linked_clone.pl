@@ -229,9 +229,10 @@ if ( @$dest_rp_view) {
 #print Dumper($dest_folder_view->[0]);
 #$dest_folder_view = Vim::get_view( mo_ref => $dest_folder_view->[0]->{'mo_ref'});
 ## Find template to use
-my $source_temp = Opts::get_option('os_temp');
-if ( defined($Support::template_hash{$source_temp})) {
-	$source_temp = $Support::template_hash{$source_temp};
+my $os = Opts::get_option('os_temp');
+my $source_temp;
+if ( defined($Support::template_hash{$os})) {
+	$source_temp = $Support::template_hash{$os};
 } else {
 	die "No template to $source_temp.";
 }
@@ -248,8 +249,8 @@ if (defined($snapshot_view->[0]->{'childSnapshotList'})) {
 }
 $snapshot_view = Vim::get_view (mo_ref =>$snapshot_view->[0]->{'snapshot'});
 
-my $path = Util::get_inventory_path($template_mo_ref, $vim);
-$path = $path . "/" . "$source_temp";
+my $path = Util::get_inventory_path( Vim::get_view( mo_ref => $template_mo_ref->parent), $vim);
+$path = $path . "/" . "$os";
 my $temp_folder = $searchindex->FindByInventoryPath( _this => $searchindex, inventoryPath => $path);
 ## Lets see if we can find inventory folder for us
 my $dest_folder_view;
@@ -281,6 +282,7 @@ if (defined($temp_folder)) {
 	if ( @$dest_folder_view) {
 		# We have found a folder in parent
 		print "Folder already exists.\n";
+		$dest_folder_view = $_;
 	} else {
 		print "We need to create folder for ticket.\n";
 		## Test if creation was succesful
@@ -359,7 +361,7 @@ if ((Opts::get_option('customize_vm') eq "yes") && (Opts::get_option('customize_
 }
 
 eval {
-	$template_mo_ref->CloneVM(  folder => $dest_folder_view->[0]->{'mo_ref'}, name=> $vmname, spec=> $clone_spec);
+	$template_mo_ref->CloneVM(  folder => $dest_folder_view->{'mo_ref'}, name=> $vmname, spec=> $clone_spec);
 };
 
 if ($@) {
