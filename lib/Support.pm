@@ -10,10 +10,11 @@ BEGIN {
 	our @EXPORT_OK = qw( &test %template_hash );
 }
 
+### Tempalte name cannot contain '-' since regexes will fail matching to the name. '_' should be used instead
 our %template_hash = (
-#	'scb-330' => 'Support/vm/templates/SCB/3.3/3.3.0',
-	'scb-330' => 'Support/vm/templates/SCB/3.3/3.3.0.a',
-	'scb-341' => 'Support/vm/templates/SCB/3.4/3.4.1',
+	'scb_330' => { path => 'Support/vm/templates/SCB/3.3/3.3.0',  username => 'root', password => 'titkos'},
+	'scb_341' => { path => 'Support/vm/templates/SCB/3.4/3.4.1', username => 'root', password => 'titkos'},
+	'win7' => {path => 'Support/vm/templates/Windows/7/T_win_7_en_x64',username => 'admin', password => 'titkos'},
 );
 sub test() {
 	print "test\n";

@@ -9,10 +9,7 @@ use lib '/usr/lib/vmware-vcli/apps';
 use Support;
 use VMware::VICommon;
 use VMware::VIRuntime;
-#use VMware::VILib;
-#use AppUtil::VMUtil;
 use Data::Dumper;
-#use Switch;
 
 sub random {
 	my $random;
@@ -129,12 +126,6 @@ my %opts = (
 		required => 0,
 		default => "../sampledata/vmclone.xml",
 	},
-	customize_guest => {
-		type => "=s",
-		help => "Flag to specify whether or not to customize guest: yes,no,camel",
-		required => 0,
-		default => 'no',
-	},
 	customize_vm => {
 		type => "=s",
 		help => "Flag to specify whether or not to customize virtual machine: " . "yes,no,camel",
@@ -225,14 +216,11 @@ if ( @$dest_rp_view) {
 		die "We could not create the resource pool for the machines.";
 	}
 }
-
-#print Dumper($dest_folder_view->[0]);
-#$dest_folder_view = Vim::get_view( mo_ref => $dest_folder_view->[0]->{'mo_ref'});
 ## Find template to use
 my $os = Opts::get_option('os_temp');
 my $source_temp;
 if ( defined($Support::template_hash{$os})) {
-	$source_temp = $Support::template_hash{$os};
+	$source_temp = $Support::template_hash{$os}{'path'};
 } else {
 	die "No template to $source_temp.";
 }
@@ -241,7 +229,6 @@ my $searchindex = Vim::get_view( mo_ref => $sc->searchIndex);
 my $virtualDiskManager = Vim::get_view( mo_ref => $sc->virtualDiskManager);
 my $template_mo_ref = $searchindex->FindByInventoryPath( _this => $searchindex, inventoryPath => $source_temp);
 $template_mo_ref = Vim::get_view( mo_ref => $template_mo_ref);
-#my $template_view = Vim::find_entity_view(view_type=>'VirtualMachine', begin_entity=>$template_mo_ref->parent, filter => { name => $template_mo_ref->name} );
 ### We need to find our last snapshot to link to
 my $snapshot_view = $template_mo_ref->snapshot->rootSnapshotList;
 if (defined($snapshot_view->[0]->{'childSnapshotList'})) {
@@ -264,7 +251,6 @@ if (defined($temp_folder)) {
 	foreach (@$parent_folder_views) {
 		my $parent_folder_view = $_;
 		my $parent_folder_path = Util::get_inventory_path($parent_folder_view, $vim );
-		#print "$parent_folder_path\n";
 		if ( $parent_folder_path =~ m/^\s*Support\/vm\/[^\/]*\s*$/) {
 			$parent_folder = $parent_folder_view;
 			last;
@@ -301,29 +287,8 @@ if (defined($temp_folder)) {
 
 	}
 }
-
-#print Dumper($snapshot_view);
-## Create Datastore folder for machine
-#my $datastore = Vim::get_view( mo_ref => $template_mo_ref->{'datastore'}->[0]);
-#my $filemanager = Vim::get_view( mo_ref => $sc->fileManager );
-#my $datastorebrowser = Vim::get_view( mo_ref => $datastore->browser);
-## Also create parent folders
-#my $datastore_path = "[" . $datastore->{'name'} . "]" . $parent_pool->name . "/" . $ticket;
 my $datacenter_view = Vim::find_entity_view(view_type=>'Datacenter', filter => { name => 'Support'});
-## Check if directory exists
-#my $folder = FileQueryFlags->new(fileSize => 0, fileType => 1, modification => 0, fileOwner => 0);
-#my $hostdb_search_spec = HostDatastoreBrowserSearchSpec->new( details => $folder);
-#eval {
-#	my $browse_task = $datastorebrowser->SearchDatastoreSubFolders(datastorePath=>$datastore_path, searchSpec=>$hostdb_search_spec);
-#};
-#if ( ref($@) eq 'SoapFault' ) {
-#	print "Folder on datastore doesn't exist. Creating.\n";
-#	$filemanager->MakeDirectory( _this=> $filemanager, name=> $datastore_path , createParentDirectories=> 'true', datacenter=>$datacenter_view );
-#} else {
-#	print "Folder already exists on datastore\n";
-#};
 ### Lets generate the name of the new vm
-## Fixme need to see if name is unique
 my $exit = 1;
 my $vmname;
 do {
@@ -338,25 +303,16 @@ do {
 	}
 } while ($exit);
 ### Let the cloneing begin
-#$datastore_path = $datastore_path . "/" .  $vmname;
 my $host_view = Vim::find_entity_view(view_type => 'HostSystem', filter => { name => 'vmware-it1.balabit'});
 my $relocate_spec = VirtualMachineRelocateSpec->new( host => $host_view, diskMoveType => "createNewChildDiskBacking", pool => $dest_rp_view);
 my $fileinfo = VirtualMachineFileInfo->new();
 my $config_spec = VirtualMachineConfigSpec->new( files => $fileinfo);
 my $clone_spec ;
 my $customization_spec;
-if ((Opts::get_option('customize_vm') eq "yes") && (Opts::get_option('customize_guest') ne "yes")) {
+if (Opts::get_option('customize_vm') eq "yes") {
 	$config_spec = get_config_spec();
 	$clone_spec = VirtualMachineCloneSpec->new(powerOn => 0,template => 0, snapshot => $snapshot_view, location => $relocate_spec, config => $config_spec,);
-} elsif ((Opts::get_option('customize_guest') eq "yes") && (Opts::get_option('customize_vm') ne "yes")) {
-	$customization_spec = VMUtils::get_customization_spec (Opts::get_option('filename'));
-	$clone_spec = VirtualMachineCloneSpec->new( powerOn => 0, template => 0, snapshot => $snapshot_view, location => $relocate_spec, customization => $customization_spec,);
-} elsif ((Opts::get_option('customize_guest') eq "yes") && (Opts::get_option('customize_vm') eq "yes")) {
-	$customization_spec = VMUtils::get_customization_spec (Opts::get_option('filename'));
-	$config_spec = get_config_spec();
-	$clone_spec = VirtualMachineCloneSpec->new( powerOn => 0, template => 0, snapshot => $snapshot_view, location => $relocate_spec, customization => $customization_spec, config => $config_spec,);
 } else {
-#	$clone_spec = VirtualMachineCloneSpec->new( powerOn => 0, template => 0, snapshot => $snapshot_view, location => $relocate_spec, config => $config_spec);
 	$clone_spec = VirtualMachineCloneSpec->new( powerOn => 0, template => 0, snapshot => $snapshot_view, location => $relocate_spec);
 }
 
@@ -393,36 +349,6 @@ if ($@) {
 		exit 1;
 	}
 }
-
-#my $clone = Vim::find_entity_view(view_type => 'VirtualMachine', properties => ['layout.disk'] , filter => { name => $vmname});
-#my $disk = $clone->get_property('layout.disk');
-#outer: foreach my $vdisk (@$disk) {
-#	foreach my $diskfile ( @{$vdisk->{'diskFile'}}) {
-#		if ( $diskfile =~ /$vmname/ ) {
-#			$disk = $diskfile;
-#			last outer;
-#		}
-#	}
-#}
-#print "My disk is: '$disk'\n";
-#$datastore_path = $datastore_path . "/" .  $vmname;
-### Since the Datastore path cannot be changed during clone, we need to move the disk now
-#eval {
-#	$virtualDiskManager->MoveVirtualDisk_Task( sourceName => $disk , sourceDatacenter => $datacenter_view , destDatacenter => $datacenter_view, destName => $datastore_path, force => 1);
-#};
-#
-#if ($@) {
-#	if ( ref($@) eq 'SoapFault') {
-#		if (ref($@->detail) eq 'FileFault') {
-#			Util::trace(0, "\nFailed to access the virtual " ." machine files\n");
-#		} elsif (ref($@->detail) eq 'RuntimeFault') {
-#			Util::trace(0, "\nRuntime Fault " ." ohhh no...\n");
-#		} else {
-#			Util::trace (0, "Fault" . $@ . ""   );
-#		}
-#	}
-#}
-
 # Disconnect from the server
 Util::disconnect();
 # To mitigate SSL warnings by default
