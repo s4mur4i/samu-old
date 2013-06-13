@@ -26,39 +26,105 @@ sub find_root_snapshot {
 	}
 }
 
-#Gets the config_spec for customizing the memory, number of cpu's
-# and returns the spec
-###Fix me... need to parse better and more controlled.
-sub get_config_spec() {
+sub compare_mac {
+	my ($mac) = @_;
+	### FIXME only use the required objects, no need to query all
+	my $vm_view = Vim::find_entity_views(view_type => 'VirtualMachine');
 
-   my $parser = XML::LibXML->new();
-   my $tree = $parser->parse_file(Opts::get_option('filename'));
-   my $root = $tree->getDocumentElement;
-   my @cspec = $root->findnodes('Virtual-Machine-Spec');
-   my $vmhost  ;
-   my $guestid;
-   my $datastore;
-   my $disksize = 4096;  # in KB;
-   my $memory = 256;  # in MB;
-   my $num_cpus = 1;
-   my $nic_network;
-   my $nic_poweron = 1;
-
-   foreach (@cspec) {
-
-      if ($_->findvalue('Memory')) {
-         $memory = $_->findvalue('Memory');
-      }
-      if ($_->findvalue('Number-of-CPUS')) {
-         $num_cpus = $_->findvalue('Number-of-CPUS');
-      }
-   }
-
-   my $vm_config_spec = VirtualMachineConfigSpec->new(
-                                                  memoryMB => $memory,
-                                                  numCPUs => $num_cpus );
-   return $vm_config_spec;
+	foreach(@$vm_view) {
+		my $vm_name = $_->summary->config->name;
+		my $devices =$_->config->hardware->device;
+		my $mac_string;
+		foreach(@$devices) {
+			if($_->isa("VirtualEthernetCard")) {
+				$mac_string = $_->macAddress;
+				if ( $mac eq $mac_string ) {
+					return 1;
+				}
+				#print "$vm_name has mac address of $mac_string, but is not matching the generated one\n";
+			}
+		}
+        }
+	return 0;
 }
+
+sub generate_mac {
+	my $username = Opts::get_option('username');
+	print "Username is :$username\n";
+	my $mac_base;
+	if ( !defined($Support::agents_hash{$username})) {
+		$mac_base = "02:01:00:";
+	} else {
+		$mac_base = $Support::agents_hash{$username}{'mac'};
+	}
+	my @chars = ( "a" .. "f", "0" .. "9");
+	my $mac = join("", @chars[ map { rand @chars } ( 1 .. 6 ) ]);
+	$mac =~ s/(..)/$1:/g;
+	chop $mac;
+	return "$mac_base$mac";
+}
+
+sub get_new_mac {
+        my $mac = &generate_mac;
+        print "Testing mac address: $mac\n";
+        while ( &compare_mac($mac) ) {
+                print "Found duplicate mac, need to regenerate\n";
+                $mac = &generate_mac;
+                print "Testing mac address: $mac\n";
+        }
+	return $mac;
+}
+
+sub get_config_spec() {
+   if (Opts::get_option('customize_vm') eq "yes") {
+	   my $parser = XML::LibXML->new();
+	   my $tree = $parser->parse_file(Opts::get_option('filename'));
+	   my $root = $tree->getDocumentElement;
+	   my @cspec = $root->findnodes('Virtual-Machine-Spec');
+	   my $memory = 256;  # in MB;
+	   my $num_cpus = 1;
+
+	   foreach (@cspec) {
+
+	      if ($_->findvalue('Memory')) {
+		 $memory = $_->findvalue('Memory');
+	      }
+	      if ($_->findvalue('Number-of-CPUS')) {
+		 $num_cpus = $_->findvalue('Number-of-CPUS');
+	      }
+	   }
+
+	   my $vm_config_spec = VirtualMachineConfigSpec->new( memoryMB => $memory, numCPUs => $num_cpus,deviceChange=>&generate_network );
+	   return $vm_config_spec;
+   } else {
+	my @interface = &generate_network;
+	my $vm_config_spec = VirtualMachineConfigSpec->new(deviceChange=>@interface);
+	return $vm_config_spec;
+   }
+}
+
+sub generate_network {
+	my $os = Opts::get_option('os_temp');
+	my @return;
+	if ( defined($Support::template_hash{$os})) {
+		my $source_temp = $Support::template_hash{$os}{'path'};
+		my $sc = Vim::get_service_content();
+		my $searchindex = Vim::get_view( mo_ref => $sc->searchIndex);
+		my $template_mo_ref = $searchindex->FindByInventoryPath( _this => $searchindex, inventoryPath => $source_temp);
+		$template_mo_ref = Vim::get_view( mo_ref => $template_mo_ref);
+		foreach ( @{$template_mo_ref->guest->net}) {
+			my $interface = $_;
+			my $key = $interface->deviceConfigId;
+			## Need to see if I can generate vmxnet3...
+			my $ethernetcard=VirtualE1000->new(addressType=>'Manual',macAddress=>&get_new_mac,wakeOnLanEnabled=>1,key=>$key);
+			my $operation = VirtualDeviceConfigSpecOperation->new('edit');
+			my $deviceconfigspec= VirtualDeviceConfigSpec->new(device=>$ethernetcard,operation=>$operation);
+			push(@return,$deviceconfigspec);
+		}
+	}
+	return \@return;
+}
+
 my %opts = (
 	username => {
 		type => "=s",
@@ -303,17 +369,50 @@ do {
 	}
 } while ($exit);
 ### Let the cloneing begin
+##
+## CustomizationWinOptions for optimising
 my $host_view = Vim::find_entity_view(view_type => 'HostSystem', filter => { name => 'vmware-it1.balabit'});
 my $relocate_spec = VirtualMachineRelocateSpec->new( host => $host_view, diskMoveType => "createNewChildDiskBacking", pool => $dest_rp_view);
 my $fileinfo = VirtualMachineFileInfo->new();
 my $config_spec = VirtualMachineConfigSpec->new( files => $fileinfo);
 my $clone_spec ;
+### Create default customization spec
 my $customization_spec;
-if (Opts::get_option('customize_vm') eq "yes") {
+if ( $Support::template_hash{$os}{'os'} =~ /win/) {
+	print "Running Windows Sysprep\n";
+	my $globalipsettings = CustomizationGlobalIPSettings->new(dnsServerList=>['10.21.0.23'] , dnsSuffixList=>['support.balabit']);
+	my $customoptions = CustomizationWinOptions->new(changeSID=>1, deleteAccounts=>0);
+	my $custpass = CustomizationPassword->new(plainText=>1, value=>'titkos');
+	my $guiunattend = CustomizationGuiUnattended->new(autoLogon=>1, autoLogonCount=>1,password=>$custpass, timeZone=>'095');
+	my $customname = CustomizationPrefixName->new(base=>'winguest');
+	my $key=$Support::template_hash{$os}{'key'} ;
+	my $userdata = CustomizationUserData->new(productId=>$key ,orgName=>'support' ,fullName=>'admin' ,computerName=>$customname );
+	my $identification = CustomizationIdentification->new(domainAdmin=>'Administrator', domainAdminPassword=>$custpass,joinDomain=>'support.balabit');
+	### FIXME Possibility to add further commands for logon
+	my $runonce = CustomizationGuiRunOnce->new(commandList=>["w32tm /resync", "cscript c:\\windows\\system32\\slmgr.vbs /skms prod-dev-winsrv.balabit", "cscript c:\\windows\\system32\\slmgr.vbs /ato"]);
+	my $identity = CustomizationSysprep->new(guiRunOnce=> $runonce,guiUnattended=>$guiunattend,identification=>$identification , userData=>$userdata );
+	### CustomizationAdapterMapping needs interface list
+	## FIXME: dynamicly generate nic list
+	my $ip = CustomizationDhcpIpGenerator->new();
+	my $adapter = CustomizationIPSettings->new(dnsDomain=>'support.balabit',dnsServerList=>['10.21.0.23'],gateway=>['10.21.255.254'],subnetMask=>'255.255.0.0', ip=>$ip);
+	my $nicsetting = CustomizationAdapterMapping->new(adapter=>$adapter);
+	$customization_spec = CustomizationSpec->new(globalIPSettings=>$globalipsettings, identity=> $identity, options=> $customoptions, nicSettingMap=>[$nicsetting]);
 	$config_spec = get_config_spec();
-	$clone_spec = VirtualMachineCloneSpec->new(powerOn => 0,template => 0, snapshot => $snapshot_view, location => $relocate_spec, config => $config_spec,);
+	$clone_spec = VirtualMachineCloneSpec->new(powerOn => 1,template => 0, snapshot => $snapshot_view, location => $relocate_spec, config => $config_spec, customization => $customization_spec);
+} elsif ($Support::template_hash{$os}{'os'} =~ /lin/) {
+	print "Running Linux Sysprep\n";
+        my $ip = CustomizationDhcpIpGenerator->new();
+        my $adapter = CustomizationIPSettings->new(dnsDomain=>'support.balabit',dnsServerList=>['10.21.0.23'],gateway=>['10.21.255.254'],subnetMask=>'255.255.0.0', ip=>$ip);
+        my $nicsetting = CustomizationAdapterMapping->new(adapter=>$adapter);
+	my $hostname = CustomizationPrefixName->new(base=>'linuxguest');
+	my $globalipsettings = CustomizationGlobalIPSettings->new(dnsServerList=>['10.21.0.23'] , dnsSuffixList=>['support.balabit']);
+	my $linuxprep = CustomizationLinuxPrep->new(domain=>'support.balabit',hostName=>$hostname,timeZone=>'Europe/Budapest',hwClockUTC=>1);
+	$customization_spec = CustomizationSpec->new(identity=>$linuxprep, globalIPSettings=> $globalipsettings, nicSettingMap=>[$nicsetting]);
+	$config_spec = get_config_spec();
+	$clone_spec = VirtualMachineCloneSpec->new(powerOn => 1,template => 0, snapshot => $snapshot_view, location => $relocate_spec, config => $config_spec, customization => $customization_spec);
 } else {
-	$clone_spec = VirtualMachineCloneSpec->new( powerOn => 0, template => 0, snapshot => $snapshot_view, location => $relocate_spec);
+	$config_spec = get_config_spec();
+	$clone_spec = VirtualMachineCloneSpec->new(powerOn => 1,template => 0, snapshot => $snapshot_view, location => $relocate_spec,config => $config_spec);
 }
 
 eval {
@@ -341,11 +440,13 @@ if ($@) {
 		} elsif (ref($@->detail) eq 'UncustomizableGuest') {
 			Util::trace(0, "\nCustomization is not supported " ."for the guest operating system" . "\n");
 		} else {
-			Util::trace (0, "Fault" . $@ . ""   );
+			Util::trace (0, "Fault" . $@ . "\n"   );
+			print Dumper($@);
 		}
 		exit 1;
 	} else {
-		Util::trace (0, "Fault" . $@ . ""   );
+		Util::trace (0, "Fault" . $@ . "\n"   );
+			print Dumper($@);
 		exit 1;
 	}
 }
