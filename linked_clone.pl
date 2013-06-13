@@ -75,6 +75,27 @@ sub get_new_mac {
 	return $mac;
 }
 
+### FIXME Need to make an external sub to get count of network interfaces. faster run.
+sub nicsetting {
+	my $os = Opts::get_option('os_temp');
+        my @return;
+        if ( defined($Support::template_hash{$os})) {
+                my $source_temp = $Support::template_hash{$os}{'path'};
+                my $sc = Vim::get_service_content();
+                my $searchindex = Vim::get_view( mo_ref => $sc->searchIndex);
+                my $template_mo_ref = $searchindex->FindByInventoryPath( _this => $searchindex, inventoryPath => $source_temp);
+                $template_mo_ref = Vim::get_view( mo_ref => $template_mo_ref);
+                foreach ( @{$template_mo_ref->guest->net}) {
+			my $ip = CustomizationDhcpIpGenerator->new();
+			my $adapter = CustomizationIPSettings->new(dnsDomain=>'support.balabit',dnsServerList=>['10.21.0.23'],gateway=>['10.21.255.254'],subnetMask=>'255.255.0.0', ip=>$ip);
+			my $nicsetting = CustomizationAdapterMapping->new(adapter=>$adapter);
+			push(@return,$nicsetting);
+                }
+        }
+        return \@return;
+
+}
+
 sub get_config_spec() {
    if (Opts::get_option('customize_vm') eq "yes") {
 	   my $parser = XML::LibXML->new();
@@ -393,21 +414,17 @@ if ( $Support::template_hash{$os}{'os'} =~ /win/) {
 	my $identity = CustomizationSysprep->new(guiRunOnce=> $runonce,guiUnattended=>$guiunattend,identification=>$identification , userData=>$userdata );
 	### CustomizationAdapterMapping needs interface list
 	## FIXME: dynamicly generate nic list
-	my $ip = CustomizationDhcpIpGenerator->new();
-	my $adapter = CustomizationIPSettings->new(dnsDomain=>'support.balabit',dnsServerList=>['10.21.0.23'],gateway=>['10.21.255.254'],subnetMask=>'255.255.0.0', ip=>$ip);
-	my $nicsetting = CustomizationAdapterMapping->new(adapter=>$adapter);
-	$customization_spec = CustomizationSpec->new(globalIPSettings=>$globalipsettings, identity=> $identity, options=> $customoptions, nicSettingMap=>[$nicsetting]);
+	my @nicsetting = &nicsetting;
+	$customization_spec = CustomizationSpec->new(globalIPSettings=>$globalipsettings, identity=> $identity, options=> $customoptions, nicSettingMap=>@nicsetting);
 	$config_spec = get_config_spec();
 	$clone_spec = VirtualMachineCloneSpec->new(powerOn => 1,template => 0, snapshot => $snapshot_view, location => $relocate_spec, config => $config_spec, customization => $customization_spec);
 } elsif ($Support::template_hash{$os}{'os'} =~ /lin/) {
 	print "Running Linux Sysprep\n";
-        my $ip = CustomizationDhcpIpGenerator->new();
-        my $adapter = CustomizationIPSettings->new(dnsDomain=>'support.balabit',dnsServerList=>['10.21.0.23'],gateway=>['10.21.255.254'],subnetMask=>'255.255.0.0', ip=>$ip);
-        my $nicsetting = CustomizationAdapterMapping->new(adapter=>$adapter);
+	my @nicsetting = &nicsetting;
 	my $hostname = CustomizationPrefixName->new(base=>'linuxguest');
 	my $globalipsettings = CustomizationGlobalIPSettings->new(dnsServerList=>['10.21.0.23'] , dnsSuffixList=>['support.balabit']);
 	my $linuxprep = CustomizationLinuxPrep->new(domain=>'support.balabit',hostName=>$hostname,timeZone=>'Europe/Budapest',hwClockUTC=>1);
-	$customization_spec = CustomizationSpec->new(identity=>$linuxprep, globalIPSettings=> $globalipsettings, nicSettingMap=>[$nicsetting]);
+	$customization_spec = CustomizationSpec->new(identity=>$linuxprep, globalIPSettings=> $globalipsettings, nicSettingMap=>@nicsetting);
 	$config_spec = get_config_spec();
 	$clone_spec = VirtualMachineCloneSpec->new(powerOn => 1,template => 0, snapshot => $snapshot_view, location => $relocate_spec, config => $config_spec, customization => $customization_spec);
 } else {
@@ -450,6 +467,10 @@ if ($@) {
 		exit 1;
 	}
 }
+print "===================================================================\n";
+print "Machine is provisioned.\n";
+print "Login: '" . $Support::template_hash{$os}{'username'} . "' / '" . $Support::template_hash{$os}{'password'} ."'\n";
+print "Unique name of vm: " . $vmname . "\n";
 # Disconnect from the server
 Util::disconnect();
 # To mitigate SSL warnings by default
