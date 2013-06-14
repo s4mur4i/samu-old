@@ -16,7 +16,12 @@ use Data::Dumper;
 
 sub single($) {
         my ($vmname) = @_;
-        $vmname = Vim::find_entity_view( view_type => 'VirtualMachine', filter => { name => $vmname});
+        $vmname = Vim::find_entity_view( view_type => 'VirtualMachine',filter => { name => $vmname});
+	my $powerstate = $vmname->runtime->powerState->val;
+	if ( $powerstate eq 'poweredOn') {
+		print "Powering off VM.\n";
+		$vmname->PowerOffVM;
+	}
 	eval {
 		$vmname->Destroy_Task;
 	};
