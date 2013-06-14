@@ -71,18 +71,18 @@ my $url = Opts::get_option('url');
 Util::connect( $url, $username, $password );
 
 my $rp_pools = Vim::find_entity_views( view_type => 'ResourcePool');
-my $parent_rp = Vim::find_entity_view( view_type => 'ResourcePool', filter => { name => 's4mur4i' });
+#my $parent_rp = Vim::find_entity_view( view_type => 'ResourcePool', filter => { name => 's4mur4i' });
 
 foreach my $pool (@$rp_pools) {
 	if ( ! defined($pool->resourcePool)) {
-		print "No Child resource pools in Resource pool: " . $pool->name . "\n";
+		#print "No Child resource pools in Resource pool: " . $pool->name . "\n";
 		if ( ! defined($pool->vm) ) {
-			print "There are no child vm-s: " . $pool->name . "\n";
+		#	print "There are no child vm-s: " . $pool->name . "\n";
 			my $vim=Vim::get_vim;
 			my $path = Util::get_inventory_path( $pool, $vim );
-			print "$path\n";
+			#print "$path\n";
 			if ( $path =~ m/^\s*Support\/host\/[^\/]*\/Resources\/[^\/]*\s*$/)  {
-				print "Top level Resource pool.. just empty\n";
+				print "Top level Resource pool.. just empty: " . $pool->name . "\n";
 			} else {
 				print "\tSafe to delete Resource pool: " . $pool->name . "\n";
 				eval {
@@ -112,6 +112,37 @@ foreach my $pool (@$rp_pools) {
 		print "Resource pool has child resource pools: ". $pool->name . "\n";
 	}
 }
+
+my $folders = Vim::find_entity_views( view_type => 'Folder');
+foreach my $folder (@$folders) {
+	if (!defined($folder->parent) || $folder->parent->type eq 'Datacenter') {
+		print "Top level object. No touchy toucy:'" . $folder->name . "'\n";
+		next;
+	}
+	if (!defined($folder->childEntity)) {
+		print "No child entities. Deleting folder:'" .$folder->name . "'\n";
+		eval {
+				$folder->Destroy_Task;
+                };
+		if ($@) {
+			if (ref($@) eq 'SoapFault') {
+				if (ref($@->detail) eq 'RuntimeFault') {
+					Util::trace(0, "There was a runtimefault.\n");
+				} elsif (ref($@->detail) eq 'VimFault') {
+					Util::trace(0,"There was a fault on the Vsphere\n");
+				} else {
+					Util::trace (0, "Fault" . $@ . ""   );
+				}
+				exit 1;
+			} else {
+				Util::trace (0, "Fault" . $@ . ""   );
+				exit 1;
+			};
+
+		}
+	}
+}
+
 # Disconnect from the server
 Util::disconnect();
 # To mitigate SSL warnings by default
