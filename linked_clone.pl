@@ -26,6 +26,7 @@ sub find_root_snapshot {
 	}
 }
 
+## Very costly need to optimise.
 sub compare_mac {
 	my ($mac) = @_;
 	### FIXME only use the required objects, no need to query all
@@ -76,14 +77,13 @@ sub check_template_folder {
 
 sub generate_mac {
 	my $username = Opts::get_option('username');
-	print "Username is :$username\n";
 	my $mac_base;
 	if ( !defined($Support::agents_hash{$username})) {
 		$mac_base = "02:01:00:";
 	} else {
 		$mac_base = $Support::agents_hash{$username}{'mac'};
 	}
-	my @chars = ( "a" .. "f", "0" .. "9");
+	my @chars = ( "A" .. "F", "0" .. "9");
 	my $mac = join("", @chars[ map { rand @chars } ( 1 .. 6 ) ]);
 	$mac =~ s/(..)/$1:/g;
 	chop $mac;
@@ -92,11 +92,11 @@ sub generate_mac {
 
 sub get_new_mac {
         my $mac = &generate_mac;
-        print "Testing mac address: $mac\n";
+        print "First mac address: $mac\n";
         while ( &compare_mac($mac) ) {
                 print "Found duplicate mac, need to regenerate\n";
                 $mac = &generate_mac;
-                print "Testing mac address: $mac\n";
+                print "First mac address: $mac\n";
         }
 	return $mac;
 }
@@ -111,7 +111,10 @@ sub nicsetting {
                 my $searchindex = Vim::get_view( mo_ref => $sc->searchIndex);
                 my $template_mo_ref = $searchindex->FindByInventoryPath( _this => $searchindex, inventoryPath => $source_temp);
                 $template_mo_ref = Vim::get_view( mo_ref => $template_mo_ref);
-                foreach ( @{$template_mo_ref->guest->net}) {
+                foreach ( @{$template_mo_ref->config->hardware->device}) {
+                        if ( !$_->isa('VirtualE1000')) {
+                                next;
+                        }
 			my $ip = CustomizationDhcpIpGenerator->new();
 			my $adapter = CustomizationIPSettings->new(dnsDomain=>'support.balabit',dnsServerList=>['10.21.0.23'],gateway=>['10.21.255.254'],subnetMask=>'255.255.0.0', ip=>$ip);
 			my $nicsetting = CustomizationAdapterMapping->new(adapter=>$adapter);
@@ -123,29 +126,14 @@ sub nicsetting {
 }
 
 sub get_config_spec() {
+	## FIXME through stupid xml out and make it parameter driven
    if (Opts::get_option('customize_vm') eq "yes") {
-	   my $parser = XML::LibXML->new();
-	   my $tree = $parser->parse_file(Opts::get_option('filename'));
-	   my $root = $tree->getDocumentElement;
-	   my @cspec = $root->findnodes('Virtual-Machine-Spec');
-	   my $memory = 256;  # in MB;
-	   my $num_cpus = 1;
-
-	   foreach (@cspec) {
-
-	      if ($_->findvalue('Memory')) {
-		 $memory = $_->findvalue('Memory');
-	      }
-	      if ($_->findvalue('Number-of-CPUS')) {
-		 $num_cpus = $_->findvalue('Number-of-CPUS');
-	      }
-	   }
-
+	   my $memory = Opts::get_option('memory');  # in MB;
+	   my $num_cpus = Opts::get_option('cpu');
 	   my $vm_config_spec = VirtualMachineConfigSpec->new( memoryMB => $memory, numCPUs => $num_cpus,deviceChange=>&generate_network );
 	   return $vm_config_spec;
    } else {
-	my @interface = &generate_network;
-	my $vm_config_spec = VirtualMachineConfigSpec->new(deviceChange=>@interface);
+	my $vm_config_spec = VirtualMachineConfigSpec->new(deviceChange=>&generate_network);
 	return $vm_config_spec;
    }
 }
@@ -159,11 +147,42 @@ sub generate_network {
 		my $searchindex = Vim::get_view( mo_ref => $sc->searchIndex);
 		my $template_mo_ref = $searchindex->FindByInventoryPath( _this => $searchindex, inventoryPath => $source_temp);
 		$template_mo_ref = Vim::get_view( mo_ref => $template_mo_ref);
-		foreach ( @{$template_mo_ref->guest->net}) {
+		my @keys;
+		foreach ( @{$template_mo_ref->config->hardware->device}) {
 			my $interface = $_;
-			my $key = $interface->deviceConfigId;
-			## Need to see if I can generate vmxnet3...
-			my $ethernetcard=VirtualE1000->new(addressType=>'Manual',macAddress=>&get_new_mac,wakeOnLanEnabled=>1,key=>$key);
+			if ( !$interface->isa('VirtualE1000')) {
+				next;
+			}
+			push(@keys,$interface->key)
+		}
+		my @mac;
+		while ( @mac != @keys ) {
+			push(@mac, &get_new_mac);
+			## inceremntalas
+			for (my $i=1;$i<@keys;$i++) {
+				my $last=$mac[-1];
+				(my  $mac_hex= $last ) =~ s/://g;
+				my ($mac_hi, $mac_lo) = unpack("nN", pack('H*', $mac_hex));
+				if ($mac_lo == 0xFFFFFFFF) {
+				    $mac_hi = ($mac_hi + 1) & 0xFFFF;
+				    $mac_lo = 0;
+				} else {
+				    ++$mac_lo;
+				}
+				$mac_hex = sprintf("%04X%08X", $mac_hi, $mac_lo);
+				push( @mac, join(':', $mac_hex =~ /../sg));
+				print "Next interface mac address is $mac[-1]\n";
+				if (&compare_mac($mac[$i])) {
+					@mac=();
+					$i=@keys;
+					print "Used mac address regenerating all interfaces\n";
+				}
+			}
+		}
+
+## Need to see if I can generate vmxnet3...
+		for (my $i=0;$i<@keys;$i++) {
+			my $ethernetcard=VirtualE1000->new(addressType=>'Manual',macAddress=>$mac[$i],wakeOnLanEnabled=>1,key=>$keys[$i]);
 			my $operation = VirtualDeviceConfigSpecOperation->new('edit');
 			my $deviceconfigspec= VirtualDeviceConfigSpec->new(device=>$ethernetcard,operation=>$operation);
 			push(@return,$deviceconfigspec);
@@ -261,6 +280,16 @@ my %opts = (
 		help => "Parent resource pool. Defaults to users pool.",
 		required => 0,
 	},
+	memory => {
+                type => "=s",
+                help => "Requested memory in MB",
+                required => 0,
+        },
+	cpu => {
+                type => "=s",
+                help => "Requested Core count for machine",
+                required => 0,
+        },
 );
 Opts::add_options(%opts);
 Opts::parse();
@@ -438,10 +467,19 @@ if ( $Support::template_hash{$os}{'os'} =~ /win/) {
 	my $identification = CustomizationIdentification->new(domainAdmin=>'Administrator', domainAdminPassword=>$custpass,joinDomain=>'support.balabit');
 	### FIXME Possibility to add further commands for logon
 	my $runonce = CustomizationGuiRunOnce->new(commandList=>["w32tm /resync", "cscript c:\\windows\\system32\\slmgr.vbs /skms prod-dev-winsrv.balabit", "cscript c:\\windows\\system32\\slmgr.vbs /ato"]);
-	my $identity = CustomizationSysprep->new(guiRunOnce=> $runonce,guiUnattended=>$guiunattend,identification=>$identification , userData=>$userdata );
 	### CustomizationAdapterMapping needs interface list
 	## FIXME: dynamicly generate nic list
 	my @nicsetting = &nicsetting;
+	## Workaround for Win 2000 and 2003 licensing
+	my $identity;
+	if ( ($os =~ /^win_2003/) || ($os =~ /^win_2000/) ) {
+		print "Win 2k/2k3 licensing workaround.\n";
+		my $automode = CustomizationLicenseDataMode->new('perSeat');
+		my $licenseprintdata = 	CustomizationLicenseFilePrintData->new(autoMode=>$automode);
+		$identity = CustomizationSysprep->new(guiRunOnce=> $runonce,guiUnattended=>$guiunattend,identification=>$identification , userData=>$userdata, licenseFilePrintData=>$licenseprintdata );
+	} else {
+		$identity = CustomizationSysprep->new(guiRunOnce=> $runonce,guiUnattended=>$guiunattend,identification=>$identification , userData=>$userdata );
+	}
 	$customization_spec = CustomizationSpec->new(globalIPSettings=>$globalipsettings, identity=> $identity, options=> $customoptions, nicSettingMap=>@nicsetting);
 	$config_spec = get_config_spec();
 	$clone_spec = VirtualMachineCloneSpec->new(powerOn => 1,template => 0, snapshot => $snapshot_view, location => $relocate_spec, config => $config_spec, customization => $customization_spec);
