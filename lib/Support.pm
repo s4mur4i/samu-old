@@ -12,10 +12,12 @@ BEGIN {
 
 ### Tempalte name cannot contain '-' since regexes will fail matching to the name. '_' should be used instead
 our %template_hash = (
+	'scb_300' => { path => 'Support/vm/templates/SCB/3.0/3.0.0',  username => 'root', password => 'titkos', os=>'scb' },
 	'scb_330' => { path => 'Support/vm/templates/SCB/3.3/3.3.0',  username => 'root', password => 'titkos', os=>'scb' },
 	'scb_341' => { path => 'Support/vm/templates/SCB/3.4/3.4.1', username => 'root', password => 'titkos', os=>'scb' },
-	'win7' => { path => 'Support/vm/templates/Windows/7/T_win_7_en_x64',username => 'admin', password => 'titkos', key=>'FJ82H-XT6CR-J8D7P-XQJJ2-GPDD4', os=>'win' },
-	'deb_7.0.0_en_amd64' => {path => 'Support/vm/templates/Linux/deb/T_deb_7.0.0_en_amd64', username => 'root', password => 'titkos', os => 'other' },
+	'win_7_en_x64_pro' => { path => 'Support/vm/templates/Windows/7/T_win_7_en_x64_pro',username => 'admin', password => 'titkos', key=>'FJ82H-XT6CR-J8D7P-XQJJ2-GPDD4', os=>'win' },
+	'win_7_en_x86_ent' => { path => 'Support/vm/templates/Windows/7/T_win_7_en_x86_ent',username => 'admin', password => 'titkos', key=>'33PXH-7Y6KF-2VJC9-XBBR8-HVTHH', os=>'win' },
+	'deb_7.0.0_en_amd64_wheezy' => {path => 'Support/vm/templates/Linux/deb/T_deb_7.0.0_en_amd64_wheezy', username => 'root', password => 'titkos', os => 'other' },
 );
 
 our %agents_hash = (

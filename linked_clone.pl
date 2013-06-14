@@ -48,6 +48,32 @@ sub compare_mac {
 	return 0;
 }
 
+## Precheck to see if template has linked folder, if not we need to create it.
+sub check_template_folder {
+	my $os = Opts::get_option('os_temp');
+	my $path = $Support::template_hash{$os}{'path'};
+	$path =~ s/\/T_([^\/]*)$/\/$1/;
+	my $sc = Vim::get_service_content();
+        my $searchindex = Vim::get_view( mo_ref => $sc->searchIndex);
+	my $temp_folder = $searchindex->FindByInventoryPath( _this => $searchindex, inventoryPath => $path);
+	if (defined($temp_folder)) {
+		print "Linked folder exists.\n";
+	} else {
+		print "Need to create the linked folder.\n";
+		$path =~ s/\/[^\/]*$//;
+		my $parent_folder = $searchindex->FindByInventoryPath( _this => $searchindex, inventoryPath => $path);
+		$parent_folder = Vim::get_view( mo_ref => $parent_folder);
+                eval {
+                        my $dest_folder_view = $parent_folder->CreateFolder(name => $os);
+                };
+                if($@) {
+                        print "Error: " . $@ . "\n";
+                        die "We could not create the folder for the machines.";
+                }
+
+	}
+}
+
 sub generate_mac {
 	my $username = Opts::get_option('username');
 	print "Username is :$username\n";
@@ -311,6 +337,7 @@ if ( defined($Support::template_hash{$os})) {
 } else {
 	die "No template to $source_temp.";
 }
+&check_template_folder;
 my $sc = Vim::get_service_content();
 my $searchindex = Vim::get_view( mo_ref => $sc->searchIndex);
 my $virtualDiskManager = Vim::get_view( mo_ref => $sc->virtualDiskManager);
