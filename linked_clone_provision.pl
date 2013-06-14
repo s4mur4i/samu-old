@@ -30,11 +30,11 @@ sub find_root_snapshot {
 sub compare_mac {
 	my ($mac) = @_;
 	### FIXME only use the required objects, no need to query all
-	my $vm_view = Vim::find_entity_views(view_type => 'VirtualMachine');
+	my $vm_view = Vim::find_entity_views(view_type => 'VirtualMachine',properties =>['config.hardware.device','summary.config.name']);
 
 	foreach(@$vm_view) {
-		my $vm_name = $_->summary->config->name;
-		my $devices =$_->config->hardware->device;
+		my $vm_name = $_->get_property('summary.config.name');
+		my $devices =$_->get_property('config.hardware.device');
 		my $mac_string;
 		foreach(@$devices) {
 			if($_->isa("VirtualEthernetCard")) {
