@@ -117,8 +117,8 @@ Util::connect( $url, $username, $password );
 my $vm_view = Vim::find_entity_view(view_type=>'VirtualMachine',filter=>{name=>$vmname});
 my $guestusername;
 my $guestpassword;
-if ( $vmname =~ /^[^-]*-[^-*]-[^-]*-\d{3}$/ ) {
-  my ($os) = $vmname =~ m/^[^-]*-[^-*]-([^-]*)-\d{3}$/ ;
+if ( $vmname =~ /^[^-]*-[^-]*-[^-]*-\d{3}$/ ) {
+  my ($os) = $vmname =~ m/^[^-]*-[^-]*-([^-]*)-\d{3}$/ ;
   if ( defined($Support::template_hash{$os})) {
         #$source_temp = $Support::template_hash{$os}{'path'};
         $guestusername=$Support::template_hash{$os}{'username'};
