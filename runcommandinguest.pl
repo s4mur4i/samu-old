@@ -101,7 +101,6 @@ my $username = Opts::get_option('username');
 my $password = Opts::get_option('password');
 my $datacenter = Opts::get_option('datacenter');
 my $vmname = Opts::get_option('vmname');
-#$vmname='dummy-s4mur4i-win7-552';
 my $url = Opts::get_option('url');
 Util::connect( $url, $username, $password );
 my $vm_view = Vim::find_entity_view(view_type=>'VirtualMachine',filter=>{name=>$vmname});
@@ -110,7 +109,6 @@ my $guestpassword;
 if ( $vmname =~ /^[^-]*-[^-]*-[^-]*-\d{3}$/ ) {
   my ($os) = $vmname =~ m/^[^-]*-[^-]*-([^-]*)-\d{3}$/ ;
   if ( defined($Support::template_hash{$os})) {
-        #$source_temp = $Support::template_hash{$os}{'path'};
 	$guestusername=$Support::template_hash{$os}{'username'};
 	$guestpassword=$Support::template_hash{$os}{'password'};
   } else {
@@ -128,12 +126,8 @@ if ( (!defined($guestusername)) || (!defined($guestpassword)) || (!defined($vm_v
 my $guestOpMgr = Vim::get_view(mo_ref => Vim::get_service_content()->guestOperationsManager);
 my $guestCreds = &acquireGuestAuth($guestOpMgr,$vm_view,$guestusername,$guestpassword);
 my $guestProcMan = Vim::get_view(mo_ref => $guestOpMgr->processManager);
-#my $guestProgSpec = GuestProgramSpec->new(workingDirectory=>'c:\\', programPath=> 'msiexec.exe', arguments => '/qn /l*v c:\install.txt /i \\share.balabit\install\Windows\MS Server Applications\puppet\puppet-enterprise-2.8.1.msi PUPPET_MASTER_SERVER=puppet.ittest.balabit', envVariables => ['PATH=c:\Windows\System32']);
-## We need to have the msi locally. Share install fails because of windows UAC even when turned off
-#my $guestProgSpec = GuestProgramSpec->new( programPath=> 'c:\Windows\System32\msiexec.exe', arguments => '/qb /l*v c:\Users\admin\install.txt /a "C:\puppet\puppet-enterprise-2.8.1.msi"');
-## SCB 3.5 test
 my $guestProgSpec = GuestProgramSpec->new(workingDirectory=> Opts::get_option('workdir'), programPath=> Opts::get_option('prog'), arguments => Opts::get_option('prog_arg'), envVariables =>[Opts::get_option('env')]);
-#my $guestProgSpec = GuestProgramSpec->new( programPath=> 'dir', arguments => '\\share.balabit\install\Windows\MS_Server_Applications\puppet >C:\list ' , envVariables => ['PATH=c:\Windows\System32']);
+print Dumper($guestProgSpec);
 my $pid;
 eval {
 	$pid = $guestProcMan->StartProgramInGuest(vm=>$vm_view, auth=>$guestCreds, spec=>$guestProgSpec);
