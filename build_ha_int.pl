@@ -15,6 +15,7 @@ sub get_ha_interface {
 	my @keys;
 	my @unitnumber;
 	my @controllerkey;
+	my @mac;
 	foreach ( @{$machine_ref->config->hardware->device}) {
 		my $interface = $_;
 		if ( !$interface->isa('VirtualE1000')) {
@@ -23,12 +24,13 @@ sub get_ha_interface {
 		push(@keys,$interface->key);
 		push(@unitnumber,$interface->unitNumber);
 		push(@controllerkey,$interface->controllerKey);
+		push(@mac,$interface->macAddress);
 	}
-	if ( (@keys lt 2) && (@unitnumber lt 2) && (@controllerkey lt 2) ) {
+	if ( (@keys lt 4) && (@unitnumber lt 4) && (@controllerkey lt 4) ) {
 		print "Not enough interfaces.\n";
 		exit 1;
 	}
-	return ($keys[1],$unitnumber[1],$controllerkey[1]);
+	return ($keys[3],$unitnumber[3],$controllerkey[3],$mac[3]);
 }
 
 my %opts = (
@@ -105,8 +107,8 @@ $ha2 = Vim::find_entity_view(view_type=>'VirtualMachine', filter=> {name => $ha2
 if (!defined($ha1) and !defined($ha2) ) {
 	die "ha1 and ha2 cannot be found.";
 }
-my ($ha1_int_key, $ha1_int_unitnumber, $ha1_int_controllerkey) = &get_ha_interface($ha1);
-my ($ha2_int_key, $ha2_int_unitnumber, $ha2_int_controllerkey ) = &get_ha_interface($ha2);
+my ($ha1_int_key, $ha1_int_unitnumber, $ha1_int_controllerkey, $ha1_int_mac ) = &get_ha_interface($ha1);
+my ($ha2_int_key, $ha2_int_unitnumber, $ha2_int_controllerkey, $ha2_int_mac ) = &get_ha_interface($ha2);
 my $dvs_view = Vim::find_entity_view( view_type => 'DistributedVirtualSwitch', filter => { 'name' => $ticket });
 if ( !defined($dvs_view) ) {
 	print "Creating Virtual switch\n";
@@ -128,12 +130,11 @@ if ( !defined($dvs_view) ) {
 	}
 }
 #my $dvs_views = Vim::find_entity_view( view_type => 'DistributedVirtualSwitch', filter => { 'name' => "dvSwitch4MVH" });
-#print Dumper($dvs_view);
-my $uuid = $dvs_view->uuid;
 my @portgroups = @{$dvs_view->summary->portgroupName};
 my $present=1;
+my $portgroupname="$ticket-ha-int-$uniq1-$uniq2";
 foreach (@portgroups) {
-	if ( $_ =~ /^$ticket-ha-int-$uniq1-$uniq2/ ) {
+	if ( $_ =~ /^$portgroupname/ ) {
 		print "There is already a HA interface for these machines.\n";
 		$present=0;
 		last;
@@ -141,7 +142,7 @@ foreach (@portgroups) {
 }
 if ( $present ) {
 	## Create DV port group
-	my $spec = DVPortgroupConfigSpec->new(name=>"$ticket-ha-int-$uniq1-$uniq2", type=>'earlyBinding',numPorts=>2,description=>"HA interface");
+	my $spec = DVPortgroupConfigSpec->new(name=>$portgroupname, type=>'earlyBinding',numPorts=>2,description=>"HA interface");
 	eval { $dvs_view->AddDVPortgroup_Task(spec=>$spec); };
 	if ($@) {
 	      if (ref($@) eq 'SoapFault') {
@@ -167,23 +168,34 @@ if ( $present ) {
 	      exit(1);
 	}
 }
-$dvs_view = Vim::find_entity_view( view_type => 'DistributedVirtualPortgroup', filter => { 'name' => "$ticket-ha-int-$uniq1-$uniq2" });
-my $portgroup_key = $dvs_view->key;
-my $configspec = VirtualDeviceConfigSpecOperation->new('edit');
+my $pg_view = Vim::find_entity_view( view_type => 'DistributedVirtualPortgroup', filter => { 'name' => $portgroupname });
+while (!defined($pg_view)) {
+	print "Waiting for port group to be available.\n";
+	sleep 5;
+	$pg_view = Vim::find_entity_view( view_type => 'DistributedVirtualPortgroup', filter => { 'name' => $portgroupname });
+}
+my $dvs_entity_key = $pg_view->config->distributedVirtualSwitch;
+my $dvs_entity = Vim::get_view(mo_ref => $dvs_entity_key);
+my $dvs_uuid = $dvs_entity->uuid;
+my $portgroup_key = $pg_view->key;
 #my $backing1 = VirtualEthernetCardDistributedVirtualPortBackingInfo->new(portgroupKey=>$portgroup_key, switchUuid=>$uuid);
-my $port = DistributedVirtualSwitchPortConnection->new(portgroupKey=>$portgroup_key, switchUuid=>$uuid);
-my $backing1 = VirtualEthernetCardDistributedVirtualPortBackingInfo->new(port=>$port);
-my $device1 =  VirtualDevice->new(key=>$ha1_int_key,backing=>$backing1,controllerKey=>$ha1_int_controllerkey,unitNumber=>$ha1_int_unitnumber);
-my $configspec1 = VirtualDeviceConfigSpec->new(operation=>$configspec, device=>$device1);
+my $port = DistributedVirtualSwitchPortConnection->new(portgroupKey=>$portgroup_key, switchUuid=>$dvs_uuid);
+my $backing = VirtualEthernetCardDistributedVirtualPortBackingInfo->new(port=>$port);
+my $vdev_connect_info = VirtualDeviceConnectInfo->new( startConnected =>'1', allowGuestControl =>'1', connected => '1');
+my $device1 =  VirtualE1000->new(key=>$ha1_int_key,backing=>$backing,controllerKey=>$ha1_int_controllerkey,unitNumber=>$ha1_int_unitnumber,connectable=>$vdev_connect_info,macAddress=>$ha1_int_mac,wakeOnLanEnabled=>1,addressType=>'Manual');
+my $configspec1 = VirtualDeviceConfigSpec->new(operation=>VirtualDeviceConfigSpecOperation->new('edit'),device=>$device1);
 my $spec1 = VirtualMachineConfigSpec->new(deviceChange=>[$configspec1]);
-#print Dumper($spec1);
 eval { $ha1->ReconfigVM_Task(spec=>$spec1); };
 if ($@) {
 	print Dumper($@);
 }
-
-
-#$ha2
+my $device2 =  VirtualE1000->new(key=>$ha2_int_key,backing=>$backing,controllerKey=>$ha2_int_controllerkey,unitNumber=>$ha2_int_unitnumber,connectable=>$vdev_connect_info,,macAddress=>$ha2_int_mac,wakeOnLanEnabled=>1,addressType=>'Manual');
+my $configspec2 = VirtualDeviceConfigSpec->new(operation=>VirtualDeviceConfigSpecOperation->new('edit'),device=>$device2);
+my $spec2 = VirtualMachineConfigSpec->new(deviceChange=>[$configspec2]);
+eval { $ha2->ReconfigVM_Task(spec=>$spec2); };
+if ($@) {
+        print Dumper($@);
+}
 # Disconnect from the server
 Util::disconnect();
 # To mitigate SSL warnings by default
