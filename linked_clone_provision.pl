@@ -192,51 +192,6 @@ sub generate_network {
 }
 
 my %opts = (
-	username => {
-		type => "=s",
-		variable => "VI_USERNAME",
-		help => "Username to ESX",
-		required => 0,
-	},
-	password => {
-		type => "=s",
-		variable => "VI_PASSWORD",
-		help => "Password to ESX",
-		required => 0,
-	},
-	server => {
-		type => "=s",
-		variable => "VI_SERVER",
-		help => "ESX hostname or IP address",
-		default => "vcenter.ittest.balabit",
-		required => 0,
-	},
-	protocol => {
-		type => "=s",
-		variable => "VI_PROTOCOL",
-		help => "http or https, that is the question",
-		default => "https",
-		required => 0,
-	},
-	portnumber => {
-		type => "=i",
-		variable => "VI_PROTOCOL",
-		help => "ESX port for connection",
-		default => "443",
-		required => 0,
-	},
-	url => {
-		type => "=s",
-		variable => "VI_URL",
-		help => "URL for ESX",
-		required => 0,
-	},
-	datacenter => {
-		type => "=s",
-		help => "Datacenter",
-		default => "support",
-		required => 0,
-	},
 	ticket => {
 		type => "=s",
 		help => "The ticket id the machine is going to be created for",
@@ -247,33 +202,11 @@ my %opts = (
 		help => "The machine tempalte we want to use",
 		required => 1,
 	},
-	vmname_destination => {
-		type => "=s",
-		help => "The name of the target virtual machine",
-		required => 0,
-	},
-	filename => {
-		type => "=s",
-		help => "The name of the configuration specification file",
-		required => 0,
-		default => "../sampledata/vmclone.xml",
-	},
 	customize_vm => {
 		type => "=s",
 		help => "Flag to specify whether or not to customize virtual machine: " . "yes,no,camel",
 		required => 0,
 		default => 'no',
-	},
-	schema => {
-		type => "=s",
-		help => "The name of the schema file",
-		required => 0,
-		default => "../schema/vmclone.xsd",
-	},
-	snapname => {
-		type => "=s",
-		help => "Name of Snapshot from pristine base image",
-		required => 0,
 	},
 	parent_pool => {
 		type => "=s",
@@ -378,7 +311,6 @@ if (defined($snapshot_view->[0]->{'childSnapshotList'})) {
 	$snapshot_view = find_root_snapshot( $snapshot_view->[0]->{'childSnapshotList'} );
 }
 $snapshot_view = Vim::get_view (mo_ref =>$snapshot_view->[0]->{'snapshot'});
-
 my $path = Util::get_inventory_path( Vim::get_view( mo_ref => $template_mo_ref->parent), $vim);
 $path = $path . "/" . "$os";
 my $temp_folder = $searchindex->FindByInventoryPath( _this => $searchindex, inventoryPath => $path);
@@ -464,9 +396,9 @@ if ( $Support::template_hash{$os}{'os'} =~ /win/) {
 	my $customname = CustomizationPrefixName->new(base=>'winguest');
 	my $key=$Support::template_hash{$os}{'key'} ;
 	my $userdata = CustomizationUserData->new(productId=>$key ,orgName=>'support' ,fullName=>'admin' ,computerName=>$customname );
-	my $identification = CustomizationIdentification->new(domainAdmin=>'Administrator', domainAdminPassword=>$custpass,joinDomain=>'support.balabit');
+	my $identification = CustomizationIdentification->new(domainAdmin=>'Administrator@support.balabit', domainAdminPassword=>$custpass,joinDomain=>'support.balabit.');
 	### FIXME Possibility to add further commands for logon
-	my $runonce = CustomizationGuiRunOnce->new(commandList=>["w32tm /resync", "cscript c:\\windows\\system32\\slmgr.vbs /skms prod-dev-winsrv.balabit", "cscript c:\\windows\\system32\\slmgr.vbs /ato"]);
+	my $runonce = CustomizationGuiRunOnce->new(commandList=>["w32tm /resync", "cscript c:/windows/system32/slmgr.vbs /skms prod-dev-winsrv.balabit", "cscript c:/windows/system32/slmgr.vbs /ato"]);
 	### CustomizationAdapterMapping needs interface list
 	## FIXME: dynamicly generate nic list
 	my @nicsetting = &nicsetting;
