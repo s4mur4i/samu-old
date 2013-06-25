@@ -10,6 +10,7 @@ use VMware::VICommon;
 use VMware::VIRuntime;
 use Data::Dumper;
 
+### FIXME add reboot to node, or make it possible to stop it
 sub get_ha_interface {
 	my ($machine_ref) = @_;
 	my @keys;
@@ -189,6 +190,8 @@ eval { $ha1->ReconfigVM_Task(spec=>$spec1); };
 if ($@) {
 	print Dumper($@);
 }
+#FIXME I am really dirty please fix me..
+$ha1->ResetVM_Task;
 my $device2 =  VirtualE1000->new(key=>$ha2_int_key,backing=>$backing,controllerKey=>$ha2_int_controllerkey,unitNumber=>$ha2_int_unitnumber,connectable=>$vdev_connect_info,,macAddress=>$ha2_int_mac,wakeOnLanEnabled=>1,addressType=>'Manual');
 my $configspec2 = VirtualDeviceConfigSpec->new(operation=>VirtualDeviceConfigSpecOperation->new('edit'),device=>$device2);
 my $spec2 = VirtualMachineConfigSpec->new(deviceChange=>[$configspec2]);
@@ -196,6 +199,8 @@ eval { $ha2->ReconfigVM_Task(spec=>$spec2); };
 if ($@) {
         print Dumper($@);
 }
+#FIXME I am really dirty please fix me..
+$ha2->ResetVM_Task;
 # Disconnect from the server
 Util::disconnect();
 # To mitigate SSL warnings by default
