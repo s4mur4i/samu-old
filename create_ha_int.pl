@@ -4,13 +4,11 @@ use strict;
 use warnings;
 use FindBin;
 use lib "$FindBin::Bin/lib";
-use lib '/usr/lib/vmware-vcli/apps';
-use Support;
+use SDK::Support;
 use VMware::VICommon;
 use VMware::VIRuntime;
 use Data::Dumper;
 
-### FIXME add reboot to node, or make it possible to stop it
 sub get_ha_interface {
 	my ($machine_ref) = @_;
 	my @keys;
@@ -35,51 +33,6 @@ sub get_ha_interface {
 }
 
 my %opts = (
-	username => {
-		type => "=s",
-		variable => "VI_USERNAME",
-		help => "Username to ESX",
-		required => 0,
-	},
-	password => {
-		type => "=s",
-		variable => "VI_PASSWORD",
-		help => "Password to ESX",
-		required => 0,
-	},
-	server => {
-		type => "=s",
-		variable => "VI_SERVER",
-		help => "ESX hostname or IP address",
-		default => "vcenter.ittest.balabit",
-		required => 0,
-	},
-	protocol => {
-		type => "=s",
-		variable => "VI_PROTOCOL",
-		help => "http or https, that is the question",
-		default => "https",
-		required => 0,
-	},
-	portnumber => {
-		type => "=i",
-		variable => "VI_PROTOCOL",
-		help => "ESX port for connection",
-		default => "443",
-		required => 0,
-	},
-	url => {
-		type => "=s",
-		variable => "VI_URL",
-		help => "URL for ESX",
-		required => 0,
-	},
-	datacenter => {
-		type => "=s",
-		help => "Datacenter",
-		default => "support",
-		required => 0,
-	},
 	ha1 => {
 		type => "=s",
 		help => "Ha node 1",
@@ -96,7 +49,6 @@ Opts::parse();
 Opts::validate();
 my $username = Opts::get_option('username');
 my $password = Opts::get_option('password');
-my $datacenter = Opts::get_option('datacenter');
 my $url = Opts::get_option('url');
 Util::connect( $url, $username, $password );
 my $ha1 = Opts::get_option('ha1');
@@ -114,11 +66,6 @@ my $dvs_view = Vim::find_entity_view( view_type => 'DistributedVirtualSwitch', f
 if ( !defined($dvs_view) ) {
 	print "Creating Virtual switch\n";
 	my $root_folder = Vim::find_entity_view( view_type => 'Folder', filter => {name => 'network'});
-	## Configuring the DVS
-#	my $dvs_views = Vim::find_entity_view( view_type => 'DistributedVirtualSwitch', filter => { 'name' => "dvSwitch4MVH" });
-#	print Dumper($dvs_views);
-#	my $view = Vim::get_view(mo_ref=> $dvs_views->parent);
-#	print Dumper($view);
 	my $host_view = Vim::find_entity_view(view_type => 'HostSystem', filter => { name => 'vmware-it1.balabit'});
 	my $hostspec = DistributedVirtualSwitchHostMemberConfigSpec->new(operation=>'add', maxProxySwitchPorts=>99,host=>$host_view);
 	my $dvsconfigspec = DVSConfigSpec->new(name=>$ticket, maxPorts=>99,description=>"DVS for ticket $ticket",host=>[$hostspec]);
@@ -130,7 +77,6 @@ if ( !defined($dvs_view) ) {
 		$dvs_view = Vim::find_entity_view( view_type => 'DistributedVirtualSwitch', filter => { 'name' => $ticket });
 	}
 }
-#my $dvs_views = Vim::find_entity_view( view_type => 'DistributedVirtualSwitch', filter => { 'name' => "dvSwitch4MVH" });
 my @portgroups = @{$dvs_view->summary->portgroupName};
 my $present=1;
 my $portgroupname="$ticket-ha-int-$uniq1-$uniq2";
@@ -179,7 +125,6 @@ my $dvs_entity_key = $pg_view->config->distributedVirtualSwitch;
 my $dvs_entity = Vim::get_view(mo_ref => $dvs_entity_key);
 my $dvs_uuid = $dvs_entity->uuid;
 my $portgroup_key = $pg_view->key;
-#my $backing1 = VirtualEthernetCardDistributedVirtualPortBackingInfo->new(portgroupKey=>$portgroup_key, switchUuid=>$uuid);
 my $port = DistributedVirtualSwitchPortConnection->new(portgroupKey=>$portgroup_key, switchUuid=>$dvs_uuid);
 my $backing = VirtualEthernetCardDistributedVirtualPortBackingInfo->new(port=>$port);
 my $vdev_connect_info = VirtualDeviceConnectInfo->new( startConnected =>'1', allowGuestControl =>'1', connected => '1');
