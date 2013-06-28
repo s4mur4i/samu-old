@@ -7,8 +7,8 @@ use Data::Dumper;
 BEGIN {
         use Exporter;
         our @ISA = qw(Exporter);
-        our @EXPORT = qw( &test &acquireGuestAuth);
-        our @EXPORT_OK = qw( &test &acquireGuestAuth);
+        our @EXPORT = qw( &test &acquireGuestAuth &get_xcb_ha_interface &get_interface_info );
+        our @EXPORT_OK = qw( &test &acquireGuestAuth &get_xcb_ha_interface &get_interface_info );
 }
 
 ## Acquire Guest authentication information to authenticate through vmware tools
@@ -19,6 +19,7 @@ BEGIN {
 ##  gp: guest password
 ## Returns:
 ##  NamePasswordAuthentication Object for authentication
+
 sub acquireGuestAuth {
         my ($gOpMgr,$vmview,$gu,$gp) = @_;
 
@@ -50,6 +51,7 @@ sub acquireGuestAuth {
 ##  guestpassword: guest password to authenticate with
 ## Returns:
 ##  pid: pid of task started
+
 sub runCommandInGuest {
         my ($vmname, $prog, $prog_arg, $env, $workdir, $guestusername, $guestpassword) = @_;
         print "Variables: prog => " .$prog. " and arg => ".$prog_arg. "\n";
@@ -84,6 +86,73 @@ sub runCommandInGuest {
                         die( "Error: " . $@);
         }
         return $pid;
+}
+
+## Returns HA interface information for XCB products
+## Parameters:
+##  machine_ref: object reference to machine
+## Returns:
+##  key: device hardware key for identifying in hardware list
+##  unitnumber: unitnumber on controller
+##  controllerkey: device controller key
+##  mac: mac address used reconfigure would override it
+
+sub get_xcb_ha_interface {
+        my ($machine_ref) = @_;
+        my @keys;
+        my @unitnumber;
+        my @controllerkey;
+        my @mac;
+        foreach ( @{$machine_ref->config->hardware->device}) {
+                my $interface = $_;
+                if ( !$interface->isa('VirtualE1000')) {
+                        next;
+                }
+                push(@keys,$interface->key);
+                push(@unitnumber,$interface->unitNumber);
+                push(@controllerkey,$interface->controllerKey);
+                push(@mac,$interface->macAddress);
+        }
+        if ( (@keys lt 4) && (@unitnumber lt 4) && (@controllerkey lt 4) ) {
+                print "Not enough interfaces.\n";
+                exit 1;
+        }
+        return ($keys[3],$unitnumber[3],$controllerkey[3],$mac[3]);
+}
+
+## Returns interface information of requested machine interface
+## Parameters:
+##  machine_ref: object reference to machine
+##  interface: number of interface to return(vcenter side)
+## Returns:
+##  key: device hardware key for identifying in hardware list
+##  unitnumber: unitnumber on controller
+##  controllerkey: device controller key
+##  mac: mac address used reconfigure would override it
+
+sub get_interface_info {
+        my ($machine_ref, $interface) = @_;
+        my @keys;
+        my @unitnumber;
+        my @controllerkey;
+        my @mac;
+        foreach ( @{$machine_ref->config->hardware->device}) {
+                my $interface = $_;
+                if ( !$interface->isa('VirtualE1000')) {
+                        next;
+                }
+                push(@keys,$interface->key);
+                push(@unitnumber,$interface->unitNumber);
+                push(@controllerkey,$interface->controllerKey);
+                push(@mac,$interface->macAddress);
+        }
+	## We need to increment interface count because of perl indexing
+	my $increment + $interface +1;
+        if ( (@keys lt $increment) && (@unitnumber lt $increment) && (@controllerkey lt $increment) ) {
+                print "Not enough interfaces. Interface $interface was requested but only @keys interfaces\n";
+                exit 1;
+        }
+        return ($keys[$interface],$unitnumber[$interface],$controllerkey[$interface],$mac[$interface]);
 }
 
 
