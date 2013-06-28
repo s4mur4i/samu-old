@@ -5,11 +5,12 @@ use warnings;
 use FindBin;
 use lib "$FindBin::Bin/lib";
 use lib '/usr/lib/vmware-vcli/apps';
-use Support;
+use SDK::Support;
 use VMware::VICommon;
 use VMware::VIRuntime;
 use Data::Dumper;
 
+## Add new modul structure
 sub get_interface {
         my ($machine_ref) = @_;
         my @keys;
@@ -27,7 +28,6 @@ sub get_interface {
                 push(@controllerkey,$interface->controllerKey);
                 push(@mac,$interface->macAddress);
         }
-	# test-s4mur4i-win_7_en_x64_pro-16
 	my ($type) = $machine_ref->name =~ m/^[^-]*-[^-]*-([^_]*)_[^-]*-\d{1,3}$/ ;
 	if ($type eq 'scb' ) {
 		if ( (@keys lt 4) && (@unitnumber lt 4) && (@controllerkey lt 4) ) {
