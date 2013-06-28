@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use FindBin;
 use lib "$FindBin::Bin/lib";
-use Support;
+use SDK::Support;
 use Data::Dumper;
 
 sub longest {
