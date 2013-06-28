@@ -2,6 +2,7 @@
 
 use strict;
 use warnings;
+use lib '/usr/lib/vmware-vcli/apps';
 use VMware::VIRuntime;
 use AppUtil::VMUtil;
 use VMware::VILib;
