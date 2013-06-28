@@ -27,9 +27,9 @@ our %template_hash = (
 ## Agent information for scripts
 our %agents_hash = (
         's4mur4i' => { mac=>'02:01:20:' },
-        'balage' => { mac=>'02:01:19:' },
-        'adrienn' => { mac=>'02:01:12:' },
-        'varnyu' => { mac=>'02:01:40:' },
+        'balage' => { mac=>'02:01:12:' },
+        'adrienn' => { mac=>'02:01:19:' },
+        'varnyu' => { mac=>'02:01:19:' },
 );
 
 ## Functionality test sub
