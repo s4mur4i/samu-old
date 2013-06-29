@@ -4,13 +4,13 @@ use strict;
 use warnings;
 use FindBin;
 use lib "$FindBin::Bin/lib";
-use Support;
+use SDK::Support;
 use VMware::VICommon;
 use VMware::VIRuntime;
 use Data::Dumper;
 
 my %opts = (
-	vm => {
+	vmname => {
 		type => "=s",
 		help => "Vm info",
 		required => 1,
@@ -22,7 +22,7 @@ Opts::validate();
 my $username = Opts::get_option('username');
 my $password = Opts::get_option('password');
 my $datacenter = Opts::get_option('datacenter');
-my $vm = Opts::get_option('vm');
+my $vm = Opts::get_option('vmname');
 my $url = Opts::get_option('url');
 Util::connect( $url, $username, $password );
 my $vminfo = Vim::find_entity_view(view_type=>'VirtualMachine', filter=> {name => $vm});
