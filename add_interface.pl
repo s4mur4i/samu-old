@@ -38,8 +38,10 @@ if (!defined($vmname) ) {
         print "Cannot find VM\n";
 	exit 1;
 }
-
-&Management::add_network_interface;
+while ($count > 0) {
+	&GuestManagement::add_network_interface($vmname->name);
+	$count--;
+}
 # Disconnect from the server
 Util::disconnect();
 # To mitigate SSL warnings by default
