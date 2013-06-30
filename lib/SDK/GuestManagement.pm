@@ -128,6 +128,14 @@ sub get_ext_network_interface {
 	return ($network[$num],$label[$num]);
 }
 
+## Changes the attached network to a network interface
+## Parameters:
+##  vmname: name of vm
+##  num: number of interface to do changes
+##  network: name of network to change the interface to
+## Returns:
+##
+
 sub change_network_interface {
 	my ($vmname,$num,$network) = @_;
 	my ($key, $unitnumber, $controllerkey, $mac) = &get_network_interface($vmname,$num);
@@ -142,7 +150,6 @@ sub change_network_interface {
         my $deviceconfig = VirtualDeviceConfigSpec->new(operation=> VirtualDeviceConfigSpecOperation->new('edit'), device=> $device);
         my $spec = VirtualMachineConfigSpec->new( deviceChange=>[$deviceconfig]);
         $vmname->ReconfigVM_Task(spec=>$spec);
-
 }
 
 ## Create switch to hold port groups
@@ -161,6 +168,12 @@ sub create_switch {
         my $task = $root_folder->CreateDVS_Task(spec=>$spec);
 	&Vcenter::Task_getStatus($task);
 }
+
+## Deletes switch from esx
+## Parameters:
+##  name: name of switch
+## Returns:
+##
 
 sub remove_switch {
 	my ($name) = @_;
@@ -188,26 +201,11 @@ sub create_dvportgroup {
 	&Vcenter::Task_getStatus($task);
 }
 
-sub remove_dvportgroup {
-	my ($name) = @_;
-	my $portgroup = Vim::find_entity_view( view_type => 'DistributedVirtualPortgroup', filter=>{ name=>$name});
-	my $parent_switch = $portgroup->config->distributedVirtualSwitch;
-	$parent_switch = Vim::get_view( mo_ref => $parent_switch);
-	my $count = $parent_switch->summary->portgroupName;
-	if ( @$count < 3 ) {
-		print "Last portgroup, need to remove DV switch\n";
-		&remove_switch($parent_switch->name);
-	} else {
-		my $task = $portgroup->Destroy_Task;
-		&Vcenter::Task_getStatus($task);
-	}
-}
-
-## Check if dv port group exists
+## Removes dvportgroup , if last, then the switch aswell
 ## Parameters:
 ##  name: name of port group to check
 ## Returns:
-##  boolean: True if exists false if not
+##
 
 sub dvportgroup_status {
 	my ($name) = @_;
@@ -219,6 +217,12 @@ sub dvportgroup_status {
 	}
 }
 
+## List all networks on esx..
+## Parameters:
+##
+## Returns:
+##
+
 sub list_networks {
 	my $networks = Vim::find_entity_views( view_type=> 'Network');
 	foreach(@$networks) {
@@ -226,7 +230,7 @@ sub list_networks {
         }
 }
 
-## List all networks on esx.. Maybe rename sub to better fit purpose
+## List all dvportgroups on esx..
 ## Parameters:
 ##
 ## Returns:
