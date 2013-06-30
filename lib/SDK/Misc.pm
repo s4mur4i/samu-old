@@ -69,6 +69,7 @@ sub generate_uniq_mac {
 
 sub increment_mac {
 	my ($mac) = @_;
+	print "Need to increment: $mac\n";
 	( my $mac_hex= $mac ) =~ s/://g;
 	my ( $mac_hi, $mac_lo ) = unpack("nN", pack('H*', $mac_hex));
 	if ( $mac_lo == 0xFFFFFFFF ) {
@@ -79,6 +80,13 @@ sub increment_mac {
 	}
 	$mac_hex = sprintf("%04X%08X", $mac_hi, $mac_lo);
 	my $new_mac = join( ':', $mac_hex =~ /../sg );
+	print "Incremented mac address: $new_mac\n";
+	while ( &Vcenter::mac_compare($new_mac) ) {
+                print "Found duplicate mac=>$new_mac, need to regenerate\n";
+                $new_mac = &increment_mac($new_mac);
+                print "New generated mac address: $new_mac\n";
+        }
+	return $new_mac;
 }
 
 ## Splits default provisioned name to variables

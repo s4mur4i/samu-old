@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use Data::Dumper;
 use SDK::Misc;
+use SDK::Vcenter;
 
 BEGIN {
         use Exporter;
@@ -32,7 +33,9 @@ sub add_network_interface {
 	my $device = VirtualE1000->new( connectable=>VirtualDeviceConnectInfo->new(startConnected =>'1', allowGuestControl =>'1', connected => '1') ,wakeOnLanEnabled =>1, macAddress=>$mac , addressType=>"Manual", key=>$key , backing=>$backing, deviceInfo=>Description->new(summary=>'VLAN21', label=>''));
 	my $deviceconfig = VirtualDeviceConfigSpec->new(operation=> VirtualDeviceConfigSpecOperation->new('add'), device=> $device);
 	my $spec = VirtualMachineConfigSpec->new( deviceChange=>[$deviceconfig]);
-	$vmname->ReconfigVM_Task(spec=>$spec);
+	my $task = $vmname->ReconfigVM_Task(spec=>$spec);
+	## Wait for task to complete
+	&Vcenter::getStatus($task);
 }
 
 ## Return number of VirtualE1000 interfaces

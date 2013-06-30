@@ -7,8 +7,8 @@ use Data::Dumper;
 BEGIN {
         use Exporter;
         our @ISA = qw(Exporter);
-        our @EXPORT = qw( &test &mac_compare );
-        our @EXPORT_OK = qw( &test &mac_compare );
+        our @EXPORT = qw( &test &mac_compare &getStatus );
+        our @EXPORT_OK = qw( &test &mac_compare &getStatus );
 }
 
 ## Searches all virtual machines mac address if mac address is already used
@@ -33,6 +33,27 @@ sub mac_compare {
                 }
         }
         return 0;
+}
+
+sub getStatus {
+        my ($taskRef) = @_;
+        my $task_view = Vim::get_view(mo_ref => $taskRef);
+        my $taskinfo = $task_view->info->state->val;
+        my $continue = 1;
+        while ($continue) {
+                my $info = $task_view->info;
+                if ($info->state->val eq 'success') {
+                        $continue = 0;
+                } elsif ($info->state->val eq 'error') {
+                        my $soap_fault = SoapFault->new;
+                        $soap_fault->name($info->error->fault);
+                        $soap_fault->detail($info->error->fault);
+                        $soap_fault->fault_string($info->error->localizedMessage);
+                        die "$soap_fault\n";
+                }
+                sleep 5;
+                $task_view->ViewBase::update_view_data();
+        }
 }
 
 ## Functionality test sub
