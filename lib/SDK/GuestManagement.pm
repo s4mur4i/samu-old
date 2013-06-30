@@ -8,8 +8,8 @@ use SDK::Misc;
 BEGIN {
         use Exporter;
         our @ISA = qw(Exporter);
-        our @EXPORT = qw( &test &add_network_interface &count_network_interface &remove_network_interface &get_network_interface &get_ext_network_interface );
-        our @EXPORT_OK = qw( &test &add_network_interface &count_network_interface &remove_network_interface &get_network_interface &get_ext_network_interface );
+        our @EXPORT = qw( &test &add_network_interface &count_network_interface &remove_network_interface &get_network_interface &get_ext_network_interface &change_network_interface );
+        our @EXPORT_OK = qw( &test &add_network_interface &count_network_interface &remove_network_interface &get_network_interface &get_ext_network_interface &change_network_interface );
 }
 
 ## Add network interface to vm
@@ -123,6 +123,23 @@ sub get_ext_network_interface {
 		push(@label,$interface->deviceInfo->label);
         }
 	return ($network[$num],$label[$num]);
+}
+
+sub change_network_interface {
+	my ($vmname,$num,$network) = @_;
+	my ($key, $unitnumber, $controllerkey, $mac) = &get_network_interface($vmname,$num);
+	$vmname = Vim::find_entity_view(view_type=>'VirtualMachine', filter=> {name => $vmname});
+	$network = Vim::find_entity_view( view_type=> 'Network',filter => { 'name' => "$network" });
+	if ( !defined($network)) {
+		print "Cannot find network\n";
+		exit 15;
+	}
+        my $backing = VirtualEthernetCardNetworkBackingInfo->new(deviceName=>$network->name, network=>$network);
+        my $device = VirtualE1000->new( connectable=>VirtualDeviceConnectInfo->new(startConnected =>'1', allowGuestControl =>'1', connected => '1') ,wakeOnLanEnabled =>1, macAddress=>$mac , addressType=>"Manual", key=>$key , backing=>$backing, deviceInfo=>Description->new(summary=>$network->name, label=>''));
+        my $deviceconfig = VirtualDeviceConfigSpec->new(operation=> VirtualDeviceConfigSpecOperation->new('edit'), device=> $device);
+        my $spec = VirtualMachineConfigSpec->new( deviceChange=>[$deviceconfig]);
+        $vmname->ReconfigVM_Task(spec=>$spec);
+
 }
 
 ## Functionality test sub
