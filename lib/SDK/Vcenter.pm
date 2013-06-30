@@ -7,8 +7,8 @@ use Data::Dumper;
 BEGIN {
         use Exporter;
         our @ISA = qw(Exporter);
-        our @EXPORT = qw( &test &mac_compare &getStatus );
-        our @EXPORT_OK = qw( &test &mac_compare &getStatus );
+        our @EXPORT = qw( &test &mac_compare &Task_getStatus );
+        our @EXPORT_OK = qw( &test &mac_compare &Task_getStatus );
 }
 
 ## Searches all virtual machines mac address if mac address is already used
@@ -35,7 +35,7 @@ sub mac_compare {
         return 0;
 }
 
-sub getStatus {
+sub Task_getStatus {
         my ($taskRef) = @_;
         my $task_view = Vim::get_view(mo_ref => $taskRef);
         my $taskinfo = $task_view->info->state->val;

@@ -9,8 +9,8 @@ use SDK::Vcenter;
 BEGIN {
         use Exporter;
         our @ISA = qw(Exporter);
-        our @EXPORT = qw( &test &add_network_interface &count_network_interface &remove_network_interface &get_network_interface &get_ext_network_interface &change_network_interface );
-        our @EXPORT_OK = qw( &test &add_network_interface &count_network_interface &remove_network_interface &get_network_interface &get_ext_network_interface &change_network_interface );
+        our @EXPORT = qw( &test &add_network_interface &count_network_interface &remove_network_interface &get_network_interface &get_ext_network_interface &change_network_interface &list_dvportgroup &create_dvportgroup &remove_dvportgroup &dvportgroup_status &list_networks );
+        our @EXPORT_OK = qw( &test &add_network_interface &count_network_interface &remove_network_interface &get_network_interface &get_ext_network_interface &change_network_interface &list_dvportgroup &create_dvportgroup &remove_dvportgroup &dvportgroup_status &list_networks );
 }
 
 ## Add network interface to vm
@@ -35,7 +35,7 @@ sub add_network_interface {
 	my $spec = VirtualMachineConfigSpec->new( deviceChange=>[$deviceconfig]);
 	my $task = $vmname->ReconfigVM_Task(spec=>$spec);
 	## Wait for task to complete
-	&Vcenter::getStatus($task);
+	&Vcenter::Task_getStatus($task);
 }
 
 ## Return number of VirtualE1000 interfaces
@@ -132,7 +132,7 @@ sub change_network_interface {
 	my ($vmname,$num,$network) = @_;
 	my ($key, $unitnumber, $controllerkey, $mac) = &get_network_interface($vmname,$num);
 	$vmname = Vim::find_entity_view(view_type=>'VirtualMachine', filter=> {name => $vmname});
-	$network = Vim::find_entity_view( view_type=> 'Network',filter => { 'name' => "$network" });
+	$network = Vim::find_entity_view( view_type=> 'Network',filter => { name=> $network });
 	if ( !defined($network)) {
 		print "Cannot find network\n";
 		exit 15;
@@ -143,6 +143,100 @@ sub change_network_interface {
         my $spec = VirtualMachineConfigSpec->new( deviceChange=>[$deviceconfig]);
         $vmname->ReconfigVM_Task(spec=>$spec);
 
+}
+
+## Create switch to hold port groups
+## Parameters:
+##  name: how to name the switch. Default: ticket
+## Returns:
+##
+
+sub create_switch {
+	my ($name) = @_;
+	my $root_folder = Vim::find_entity_view( view_type => 'Folder', filter => {name => 'network'});
+        my $host_view = Vim::find_entity_view(view_type => 'HostSystem', filter => { name => 'vmware-it1.balabit'});
+        my $hostspec = DistributedVirtualSwitchHostMemberConfigSpec->new(operation=>'add', maxProxySwitchPorts=>99,host=>$host_view);
+        my $dvsconfigspec = DVSConfigSpec->new(name=>$name, maxPorts=>300,description=>"DVS for ticket $name",host=>[$hostspec]);
+        my $spec = DVSCreateSpec->new(configSpec=>$dvsconfigspec);
+        my $task = $root_folder->CreateDVS_Task(spec=>$spec);
+	&Vcenter::Task_getStatus($task);
+}
+
+sub remove_switch {
+	my ($name) = @_;
+	my $switch = Vim::find_entity_view( view_type => 'DistributedVirtualSwitch', filter=>{ name=>$name});
+	my $task = $switch->Destroy_Task;
+	&Vcenter::Task_getStatus($task);
+}
+
+## Create a distributed port group
+## Parameters:
+##  name: name of dv portgroup
+##  switch: name of switch were to add the port group
+## Returns:
+##
+
+sub create_dvportgroup {
+	my ($name,$switch) = @_;
+	my $switch_view = Vim::find_entity_view( view_type => 'DistributedVirtualSwitch', filter => { 'name' => $switch });
+	if (!defined($switch_view)) {
+		&create_switch($switch);
+		$switch_view = Vim::find_entity_view( view_type => 'DistributedVirtualSwitch', filter => { 'name' => $switch });
+	}
+	my $spec = DVPortgroupConfigSpec->new(name=>$name, type=>'earlyBinding',numPorts=>20,description=>"Self created port group");
+        my $task = $switch_view->AddDVPortgroup_Task(spec=>$spec);
+	&Vcenter::Task_getStatus($task);
+}
+
+sub remove_dvportgroup {
+	my ($name) = @_;
+	my $portgroup = Vim::find_entity_view( view_type => 'DistributedVirtualPortgroup', filter=>{ name=>$name});
+	my $parent_switch = $portgroup->config->distributedVirtualSwitch;
+	$parent_switch = Vim::get_view( mo_ref => $parent_switch);
+	my $count = $parent_switch->summary->portgroupName;
+	if ( @$count < 3 ) {
+		print "Last portgroup, need to remove DV switch\n";
+		&remove_switch($parent_switch->name);
+	} else {
+		my $task = $portgroup->Destroy_Task;
+		&Vcenter::Task_getStatus($task);
+	}
+}
+
+## Check if dv port group exists
+## Parameters:
+##  name: name of port group to check
+## Returns:
+##  boolean: True if exists false if not
+
+sub dvportgroup_status {
+	my ($name) = @_;
+	my $network = Vim::find_entity_view( view_type=> 'Network',filter => { 'name' => $name });
+	if (defined($network)) {
+		return 1;
+	} else {
+		return 0;
+	}
+}
+
+sub list_networks {
+	my $networks = Vim::find_entity_views( view_type=> 'Network');
+	foreach(@$networks) {
+                print "name:'" . $_->name ."'\n";
+        }
+}
+
+## List all networks on esx.. Maybe rename sub to better fit purpose
+## Parameters:
+##
+## Returns:
+##
+
+sub list_dvportgroup {
+	my $networks = Vim::find_entity_views( view_type => 'DistributedVirtualPortgroup');
+	foreach(@$networks) {
+		print "name:'" . $_->name ."'\n";
+	}
 }
 
 ## Functionality test sub
