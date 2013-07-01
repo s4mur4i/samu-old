@@ -5,7 +5,7 @@ use warnings;
 use FindBin;
 use lib "$FindBin::Bin/lib";
 use lib '/usr/lib/vmware-vcli/apps';
-use SDK::Support;
+use SDK::Vcenter;
 use VMware::VICommon;
 use VMware::VIRuntime;
 use Data::Dumper;
@@ -19,76 +19,30 @@ my $username = Opts::get_option('username');
 my $password = Opts::get_option('password');
 my $url = Opts::get_option('url');
 Util::connect( $url, $username, $password );
-
+print "Resouce Pool cleanup\n";
 my $rp_pools = Vim::find_entity_views( view_type => 'ResourcePool');
-
 foreach my $pool (@$rp_pools) {
-	if ( ! defined($pool->resourcePool)) {
-		if ( ! defined($pool->vm) ) {
-			my $vim=Vim::get_vim;
-			my $path = Util::get_inventory_path( $pool, $vim );
-			if ( $path =~ m/^\s*Support\/host\/[^\/]*\/Resources\/[^\/]*\s*$/)  {
-				print "Top level Resource pool.. just empty: " . $pool->name . "\n";
-			} else {
-				print "\tSafe to delete Resource pool: " . $pool->name . "\n";
-				eval {
-					$pool->Destroy_Task;
-				};
-			if ($@) {
-				if (ref($@) eq 'SoapFault') {
-					if (ref($@->detail) eq 'RuntimeFault') {
-						Util::trace(0, "There was a runtimefault.\n");
-					} elsif (ref($@->detail) eq 'VimFault') {
-						Util::trace(0,"There was a fault on the Vsphere\n");
-					} else {
-						Util::trace (0, "Fault" . $@ . ""   );
-					}
-					exit 1;
-				} else {
-					Util::trace (0, "Fault" . $@ . ""   );
-					exit 1;
-				};
-			};
-			print "\tResource pool deleted: " . $pool->name . "\n";
-			}
-		} else {
-			print "There are child vm-s: ". $pool->name . "\n";
-		}
-	} else {
-		print "Resource pool has child resource pools: ". $pool->name . "\n";
+	if (&Vcenter::check_if_empty_resource_pool($pool->name)) {
+		print "Deleting resource pool:". $pool->name ."\n";
+		&Vcenter::delete_resource_pool($pool->name);
 	}
 }
-
+print "Folder Cleanup\n";
 my $folders = Vim::find_entity_views( view_type => 'Folder');
 foreach my $folder (@$folders) {
-	if (!defined($folder->parent) || $folder->parent->type eq 'Datacenter') {
-		print "Top level object. No touchy toucy:'" . $folder->name . "'\n";
-		next;
-	}
-	if (!defined($folder->childEntity)) {
-		print "No child entities. Deleting folder:'" .$folder->name . "'\n";
-		eval {
-				$folder->Destroy_Task;
-                };
-		if ($@) {
-			if (ref($@) eq 'SoapFault') {
-				if (ref($@->detail) eq 'RuntimeFault') {
-					Util::trace(0, "There was a runtimefault.\n");
-				} elsif (ref($@->detail) eq 'VimFault') {
-					Util::trace(0,"There was a fault on the Vsphere\n");
-				} else {
-					Util::trace (0, "Fault" . $@ . ""   );
-				}
-				exit 1;
-			} else {
-				Util::trace (0, "Fault" . $@ . ""   );
-				exit 1;
-			};
-
-		}
-	}
+       if (&Vcenter::check_if_empty_folder($folder->name)) {
+                print "Deleting folder: ". $folder->name . "\n";
+		&Vcenter::delete_folder($folder->name);
+        }
 }
-
+print "Switch Cleanup\n";
+my $switchs = Vim::find_entity_views( view_type=> 'DistributedVirtualSwitch');
+foreach my $switch (@$switchs) {
+	if (&Vcenter::check_if_empty_switch($switch->name)) {
+                print "Deleting portgroup: ". $switch->name . "\n";
+                &Vcenter::remove_switch($switch->name);
+        }
+}
 # Disconnect from the server
 Util::disconnect();
 # To mitigate SSL warnings by default
