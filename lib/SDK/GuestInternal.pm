@@ -7,8 +7,8 @@ use Data::Dumper;
 BEGIN {
         use Exporter;
         our @ISA = qw(Exporter);
-        our @EXPORT = qw( &test &acquireGuestAuth &get_xcb_ha_interface &get_interface_info );
-        our @EXPORT_OK = qw( &test &acquireGuestAuth &get_xcb_ha_interface &get_interface_info );
+        our @EXPORT = qw( &test &acquireGuestAuth &get_xcb_ha_interface &get_interface_info &find_root_snapshot );
+        our @EXPORT_OK = qw( &test &acquireGuestAuth &get_xcb_ha_interface &get_interface_info &find_root_snapshot );
 }
 
 ## Acquire Guest authentication information to authenticate through vmware tools
@@ -155,6 +155,14 @@ sub get_interface_info {
         return ($keys[$interface],$unitnumber[$interface],$controllerkey[$interface],$mac[$interface]);
 }
 
+sub find_root_snapshot {
+        my ($snapshot) = @_;
+        if ( defined($snapshot->[0]->{'childSnapshotList'})) {
+                &find_root_snapshot($snapshot->[0]->{'childSnapshotList'});
+        } else {
+        return $snapshot;
+        }
+}
 
 ## Functionailty test sub
 sub test() {

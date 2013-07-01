@@ -6,18 +6,10 @@ use FindBin;
 use lib "$FindBin::Bin/lib";
 use lib '/usr/lib/vmware-vcli/apps';
 use SDK::Support;
+use SDK::GuestInternal;
 use VMware::VICommon;
 use VMware::VIRuntime;
 use Data::Dumper;
-
-sub find_root_snapshot {
-	my ($snapshot) = @_;
-	if ( defined($snapshot->[0]->{'childSnapshotList'})) {
-		find_root_snapshot($snapshot->[0]->{'childSnapshotList'});
-	} else {
-	return $snapshot;
-	}
-}
 
 my %opts = (
 	vmname => {
@@ -38,7 +30,7 @@ Util::connect( $url, $username, $password );
 my $machine_view = Vim::find_entity_view(view_type=>'VirtualMachine', filter => { name => Opts::get_option('vmname')});
 my $snapshot_view = $machine_view->snapshot->rootSnapshotList;
 if (defined($snapshot_view->[0]->{'childSnapshotList'})) {
-	$snapshot_view = find_root_snapshot( $snapshot_view->[0]->{'childSnapshotList'} );
+	$snapshot_view = &GuestInternal::find_root_snapshot( $snapshot_view->[0]->{'childSnapshotList'} );
 }
 $snapshot_view = Vim::get_view (mo_ref =>$snapshot_view->[0]->{'snapshot'});
 my $devices = $snapshot_view->{'config'}->{'hardware'}->{'device'};
@@ -52,7 +44,6 @@ foreach my $device (@$devices) {
 }
 ## This is the disk attached to the last snapshot
 print "my disk is $disk\n";
-## https://vcenter.ittest.balabit/mob/?moid=vm-883&doPath=config.hardware.device[2000].backing
 my $machine_views = Vim::find_entity_views(view_type => 'VirtualMachine', properties => ['layout.disk', 'name']);
 foreach (@$machine_views) {
 	my $machine_view = $_;
