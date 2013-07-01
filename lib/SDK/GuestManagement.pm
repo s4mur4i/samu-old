@@ -207,6 +207,21 @@ sub create_dvportgroup {
 ## Returns:
 ##
 
+sub remove_dvportgroup {
+	my ($name) = @_;
+	my $portgroup = Vim::find_entity_view( view_type=> 'DistributedVirtualPortgroup', filter =>{name =>$name});
+	my $parent_switch = $portgroup->config->distributedVirtualSwitch;
+	$parent_switch = Vim::get_view( mo_ref => $parent_switch);
+	my $count = $parent_switch->summary->portgroupName;
+	if (@$count < 3 ) {
+		print "Last portgroup, need to remove DV switch\n";
+		&remove_switch($parent_switch->name);
+	} else {
+		my $task = $portgroup->Destroy_Task;
+		&Vcenter::Task_getStatus($task);
+	}
+}
+
 sub dvportgroup_status {
 	my ($name) = @_;
 	my $network = Vim::find_entity_view( view_type=> 'Network',filter => { 'name' => $name });
