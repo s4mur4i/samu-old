@@ -105,7 +105,17 @@ sub increment_mac {
 sub vmname_splitter {
 	my ($vmname) = @_;
 	my ( $ticket, $username, $template, $uniq) = $vmname =~ /^([^-]*)-([^-]*)-([^-]*)-(\d{3})$/ ;
-	my ( $family, $version, $lang, $arch, $type ) = $template =~ /^([^_]*)_([^_]*)_([^_]*)_([^_]*)_([^_]*)$/;
+	my ( $family, $version, $lang, $arch, $type );
+	if ( $template =~ /^[^_]*_[^_]*$/ ) {
+		print "XCB product.\n";
+		( $family, $version ) = $template =~ /^([^_]*)_([^_]*)$/;
+		$lang = "en";
+		$arch = "x64";
+		$type = "xcb";
+	} else {
+		( $family, $version, $lang, $arch, $type ) = $template =~ /^([^_]*)_([^_]*)_([^_]*)_([^_]*)_([^_]*)$/;
+	}
+	print "vmname_splitter return: ticket => $ticket, username => $username, family => $family, version => $version, lang => $lang, arch => $arch, type => $type , uniq => $uniq\n";
 	return ($ticket, $username, $family, $version, $lang, $arch, $type , $uniq);
 }
 

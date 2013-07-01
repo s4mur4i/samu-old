@@ -140,13 +140,22 @@ sub change_network_interface {
 	my ($vmname,$num,$network) = @_;
 	my ($key, $unitnumber, $controllerkey, $mac) = &get_network_interface($vmname,$num);
 	$vmname = Vim::find_entity_view(view_type=>'VirtualMachine', filter=> {name => $vmname});
-	$network = Vim::find_entity_view( view_type=> 'Network',filter => { name=> $network });
-	if ( !defined($network)) {
-		print "Cannot find network\n";
-		exit 15;
+	my $network_view = Vim::find_entity_view( view_type => 'DistributedVirtualPortgroup', filter => {name => $network});
+	my $backing;
+	if (!defined($network_view)) {
+		$network = Vim::find_entity_view( view_type=> 'Network',filter => { name=> $network });
+		if ( !defined($network)) {
+			print "Cannot find network\n";
+			exit 15;
+		}
+		$backing = VirtualEthernetCardNetworkBackingInfo->new(deviceName=>$network->name, network=>$network);
+	} else {
+		$network = $network_view;
+		my $switch = Vim::get_view( mo_ref => $network->config->distributedVirtualSwitch);
+		my $port = DistributedVirtualSwitchPortConnection->new(portgroupKey=>$network->key, switchUuid=>$switch->uuid);
+		$backing = VirtualEthernetCardDistributedVirtualPortBackingInfo->new(port=>$port);
 	}
-        my $backing = VirtualEthernetCardNetworkBackingInfo->new(deviceName=>$network->name, network=>$network);
-        my $device = VirtualE1000->new( connectable=>VirtualDeviceConnectInfo->new(startConnected =>'1', allowGuestControl =>'1', connected => '1') ,wakeOnLanEnabled =>1, macAddress=>$mac , addressType=>"Manual", key=>$key , backing=>$backing, deviceInfo=>Description->new(summary=>$network->name, label=>''));
+        my $device = VirtualE1000->new( connectable=>VirtualDeviceConnectInfo->new(startConnected =>'1', allowGuestControl =>'1', connected => '1') ,wakeOnLanEnabled =>1, macAddress=>$mac , addressType=>"Manual", key=>$key , backing=>$backing, deviceInfo=>Description->new(summary=>$network->name, label=>$network->name));
         my $deviceconfig = VirtualDeviceConfigSpec->new(operation=> VirtualDeviceConfigSpecOperation->new('edit'), device=> $device);
         my $spec = VirtualMachineConfigSpec->new( deviceChange=>[$deviceconfig]);
         $vmname->ReconfigVM_Task(spec=>$spec);
@@ -196,9 +205,12 @@ sub create_dvportgroup {
 		&create_switch($switch);
 		$switch_view = Vim::find_entity_view( view_type => 'DistributedVirtualSwitch', filter => { 'name' => $switch });
 	}
-	my $spec = DVPortgroupConfigSpec->new(name=>$name, type=>'earlyBinding',numPorts=>20,description=>"Self created port group");
-        my $task = $switch_view->AddDVPortgroup_Task(spec=>$spec);
-	&Vcenter::Task_getStatus($task);
+	my $test = Vim::find_entity_view( view_type => 'DistributedVirtualPortgroup', filter => {name => $name});
+	if ( !defined($test)) {
+		my $spec = DVPortgroupConfigSpec->new(name=>$name, type=>'earlyBinding',numPorts=>20,description=>"Port group");
+		my $task = $switch_view->AddDVPortgroup_Task(spec=>$spec);
+		&Vcenter::Task_getStatus($task);
+	}
 }
 
 ## Removes dvportgroup , if last, then the switch aswell
