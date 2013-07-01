@@ -54,7 +54,6 @@ sub acquireGuestAuth {
 
 sub runCommandInGuest {
         my ($vmname, $prog, $prog_arg, $env, $workdir, $guestusername, $guestpassword) = @_;
-        print "Variables: prog => " .$prog. " and arg => ".$prog_arg. "\n";
         my $vm_view = Vim::find_entity_view(view_type=>'VirtualMachine',filter=>{name=>$vmname});
         if ( !(defined($guestusername)) || !defined($guestpassword)) {
                 if ( $vmname =~ /^[^-]*-[^-]*-[^-]*-\d{3}$/ ) {
@@ -67,24 +66,15 @@ sub runCommandInGuest {
                   }
                 }
         }
-        print "username=> '$guestusername' password=> '$guestpassword' vmname=> '" . defined($vm_view) . "'\n";
         if ( (!defined($guestusername)) || (!defined($guestpassword)) || (!defined($vm_view)) ) {
-                die("Cannot run. some paramter failed to be parsed or guessed... or both: username=> '$guestusername' password=> '$guestpassword' vmname=> '" . defined($vm_view) . "'");
+		exit 1;
         }
         my $guestOpMgr = Vim::get_view(mo_ref => Vim::get_service_content()->guestOperationsManager);
         my $guestCreds = &acquireGuestAuth($guestOpMgr,$vm_view,$guestusername,$guestpassword);
         my $guestProcMan = Vim::get_view(mo_ref => $guestOpMgr->processManager);
-        #my $guestProgSpec = GuestProgramSpec->new(workingDirectory=> $workdir, programPath=> $prog, arguments => $prog_arg, envVariables =>[$env]);
-        my $guestProgSpec = GuestWindowsProgramSpec->new(programPath=> $prog, arguments => $prog_arg,startMinimized=>1);
-        print Dumper($guestProgSpec);
-        my $pid;
-        eval {
-                $pid = $guestProcMan->StartProgramInGuest(vm=>$vm_view, auth=>$guestCreds, spec=>$guestProgSpec);
-        };
-        if($@) {
-                        print Dumper($@);
-                        die( "Error: " . $@);
-        }
+        my $guestProgSpec = GuestProgramSpec->new(workingDirectory=> $workdir, programPath=> $prog, arguments => $prog_arg, envVariables =>[$env]);
+        #my $guestProgSpec = GuestWindowsProgramSpec->new(programPath=> $prog, arguments => $prog_arg,startMinimized=>1);
+        my $pid = $guestProcMan->StartProgramInGuest(vm=>$vm_view, auth=>$guestCreds, spec=>$guestProgSpec);
         return $pid;
 }
 
@@ -147,7 +137,7 @@ sub get_interface_info {
                 push(@mac,$interface->macAddress);
         }
 	## We need to increment interface count because of perl indexing
-	my $increment + $interface +1;
+	my $increment = $interface +1;
         if ( (@keys lt $increment) && (@unitnumber lt $increment) && (@controllerkey lt $increment) ) {
                 print "Not enough interfaces. Interface $interface was requested but only @keys interfaces\n";
                 exit 1;
