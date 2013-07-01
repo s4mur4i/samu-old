@@ -4,39 +4,10 @@ use strict;
 use warnings;
 use FindBin;
 use lib "$FindBin::Bin/lib";
-use SDK::Support;
+use SDK::Vcenter;
 use VMware::VICommon;
 use VMware::VIRuntime;
 use Data::Dumper;
-
-sub single($) {
-        my ($vmname) = @_;
-        $vmname = Vim::find_entity_view( view_type => 'VirtualMachine',filter => { name => $vmname});
-	my $powerstate = $vmname->runtime->powerState->val;
-	if ( $powerstate eq 'poweredOn') {
-		print "Powering off VM.\n";
-		$vmname->PowerOffVM;
-	}
-	eval {
-		$vmname->Destroy_Task;
-	};
-	if ($@) {
-		if (ref($@) eq 'SoapFault') {
-			if (ref($@->detail) eq 'RuntimeFault') {
-				Util::trace(0, "There was a runtimefault.\n");
-			} elsif (ref($@->detail) eq 'VimFault') {
-				Util::trace(0,"There was a fault on the Vsphere\n");
-			} else {
-				Util::trace (0, "Fault" . $@ . ""   );
-			}
-			exit 1;
-		} else {
-			Util::trace (0, "Fault" . $@ . ""   );
-			exit 1;
-		};
-	};
-	print "Vm deleted succsfully: " . $vmname->name . "\n";
-};
 
 sub ticket($) {
 	my ($ticket) = @_;
@@ -44,7 +15,7 @@ sub ticket($) {
 	if ( @$vm_views ) {
 		foreach (@$vm_views) {
 			print "Going to delete follwoing vm: " . $_->name . "\n";
-			&single($_->name);
+			&Vcenter::delete_virtualmachine($_->name);
 		}
 	} else {
 		print "No vm referenced to this ticket: $ticket\n";
