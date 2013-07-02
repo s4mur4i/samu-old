@@ -7,8 +7,8 @@ use Data::Dumper;
 BEGIN {
         use Exporter;
         our @ISA = qw(Exporter);
-        our @EXPORT = qw( &test &mac_compare &Task_getStatus &delete_virtualmachine &check_if_empty_resource_pool &delete_resource_pool );
-        our @EXPORT_OK = qw( &test &mac_compare &Task_getStatus &delete_virtualmachine &check_if_empty_resource_pool &delete_resource_pool );
+        our @EXPORT = qw( &test &mac_compare &Task_getStatus &delete_virtualmachine &check_if_empty_resource_pool &delete_resource_pool &exists_resource_pool &list_resource_pool_rp &print_resource_pool_content );
+        our @EXPORT_OK = qw( &test &mac_compare &Task_getStatus &delete_virtualmachine &check_if_empty_resource_pool &delete_resource_pool &exists_resource_pool &list_resource_pool_rp &print_resource_pool_content );
 }
 
 ## Searches all virtual machines mac address if mac address is already used
@@ -118,8 +118,6 @@ sub check_if_empty_folder {
 	}
 }
 
-
-
 sub delete_folder {
 	my ($name) = @_;
 	if (&check_if_empty_folder($name)) {
@@ -136,6 +134,85 @@ sub delete_resource_pool {
 		my $task = $name->Destroy_Task;
 		&Task_getStatus($task);
 	}
+}
+
+sub exists_resource_pool {
+	my ($name) = @_;
+	my $rp_view = Vim::find_entity_view(view_type => 'ResourcePool', filter=>{ name => $name});
+	if ( defined($rp_view)) {
+		return 1;
+	}else {
+		return 0;
+	}
+}
+
+sub get_vmname_from_moref {
+	my ($name) = @_;
+	my $view = Vim::get_view(mo_ref => $name);
+	## FIXME implement check to validate if anything is returned.
+	return $view->name;
+}
+
+sub get_rpname_from_moref {
+        my ($name) = @_;
+        my $view = Vim::get_view(mo_ref => $name);
+        ## FIXME implement check to validate if anything is returned.
+        return $view->name;
+}
+
+
+sub list_resource_pool_vms {
+	my ($name) = @_;
+	if (!&exists_resource_pool($name)) {
+		return 0;
+	}
+	my $rp_view = Vim::find_entity_view(view_type => 'ResourcePool', filter=>{ name => $name});
+	my $vms = $rp_view->vm;
+	my @names;
+	foreach (@$vms) {
+		push(@names,&get_vmname_from_moref($_));
+	}
+	return @names;
+}
+
+sub list_resource_pool_rp {
+	my ($name) = @_;
+	if (!&exists_resource_pool($name)) {
+                return 0;
+        }
+	my $rp_view = Vim::find_entity_view(view_type => 'ResourcePool', filter=>{ name => $name});
+	my $rps = $rp_view->resourcePool;
+	my @names;
+	foreach (@$rps) {
+		push(@names,&get_rpname_from_moref($_));
+	}
+	return @names;
+}
+
+sub print_resource_pool_content {
+	my ($name) = @_;
+	if (&Vcenter::exists_resource_pool($name)) {
+                print "Resource pool:$name\n";
+                print "=" x 80 . "\n";
+                my @vms = &list_resource_pool_vms($name);
+                my @rps = &list_resource_pool_rp($name);
+                foreach (@rps) {
+                        print "Resource Pool:'$_'\n";
+                }
+                foreach (@vms) {
+                        print "VM:'$_'\n";
+                }
+                print "=" x 80 . "\n";
+                print "=" x 80 . "\n";
+        } else {
+                print "Resource pool doesn't exist\n";
+		return 3;
+        }
+
+}
+
+sub create_resource_pool {
+	my ($name,$parent) = @_;
 }
 
 ## Functionality test sub
