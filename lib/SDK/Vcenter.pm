@@ -7,8 +7,8 @@ use Data::Dumper;
 BEGIN {
         use Exporter;
         our @ISA = qw(Exporter);
-        our @EXPORT = qw( &test &mac_compare &Task_getStatus &delete_virtualmachine &check_if_empty_resource_pool &delete_resource_pool &exists_resource_pool &list_resource_pool_rp &print_resource_pool_content );
-        our @EXPORT_OK = qw( &test &mac_compare &Task_getStatus &delete_virtualmachine &check_if_empty_resource_pool &delete_resource_pool &exists_resource_pool &list_resource_pool_rp &print_resource_pool_content );
+        our @EXPORT = qw( &test &mac_compare &Task_getStatus &delete_virtualmachine &check_if_empty_resource_pool &delete_resource_pool &exists_resource_pool &list_resource_pool_rp &print_resource_pool_content &print_folder_content &check_if_empty_folder );
+        our @EXPORT_OK = qw( &test &mac_compare &Task_getStatus &delete_virtualmachine &check_if_empty_resource_pool &delete_resource_pool &exists_resource_pool &list_resource_pool_rp &print_resource_pool_content &print_folder_content &check_if_empty_folder );
 }
 
 ## Searches all virtual machines mac address if mac address is already used
@@ -146,6 +146,17 @@ sub exists_resource_pool {
 	}
 }
 
+sub exists_folder {
+        my ($name) = @_;
+        my $folder_view = Vim::find_entity_view(view_type => 'Folder', filter=>{ name => $name});
+        if ( defined($folder_view)) {
+                return 1;
+        }else {
+                return 0;
+        }
+}
+
+## FIXME: Pull the subs together..same function
 sub get_vmname_from_moref {
 	my ($name) = @_;
 	my $view = Vim::get_view(mo_ref => $name);
@@ -160,6 +171,12 @@ sub get_rpname_from_moref {
         return $view->name;
 }
 
+sub get_folder_name_from_moref {
+        my ($name) = @_;
+        my $view = Vim::get_view(mo_ref => $name);
+        ## FIXME implement check to validate if anything is returned.
+        return $view->name;
+}
 
 sub list_resource_pool_vms {
 	my ($name) = @_;
@@ -175,6 +192,23 @@ sub list_resource_pool_vms {
 	return @names;
 }
 
+sub list_folder_vms {
+        my ($name) = @_;
+        if (!&exists_folder($name)) {
+                return 0;
+        }
+        my $folder_view = Vim::find_entity_view(view_type => 'Folder', filter=>{ name => $name});
+        my $vms = $folder_view->childEntity;
+        my @names;
+        foreach (@$vms) {
+		if ($_->type eq 'VirtualMachine' ) {
+			push(@names,&get_vmname_from_moref($_));
+		}
+        }
+        return @names;
+}
+
+
 sub list_resource_pool_rp {
 	my ($name) = @_;
 	if (!&exists_resource_pool($name)) {
@@ -188,6 +222,23 @@ sub list_resource_pool_rp {
 	}
 	return @names;
 }
+
+sub list_folder_folders {
+        my ($name) = @_;
+        if (!&exists_folder($name)) {
+                return 0;
+        }
+        my $folder_view = Vim::find_entity_view(view_type => 'Folder', filter=>{ name => $name});
+        my $folders = $folder_view->childEntity;
+        my @names;
+        foreach (@$folders) {
+		if ($_->type eq 'Folder' ) {
+			push(@names,&get_folder_name_from_moref($_));
+		}
+        }
+        return @names;
+}
+
 
 sub print_resource_pool_content {
 	my ($name) = @_;
@@ -211,6 +262,29 @@ sub print_resource_pool_content {
 
 }
 
+sub print_folder_content {
+        my ($name) = @_;
+        if (&exists_folder($name)) {
+                print "Inventory Folder:$name\n";
+                print "=" x 80 . "\n";
+                my @vms = &list_folder_vms($name);
+                my @folders = &list_folder_folders($name);
+                foreach (@folders) {
+                        print "Folders:'$_'\n";
+                }
+                foreach (@vms) {
+                        print "VM:'$_'\n";
+                }
+                print "=" x 80 . "\n";
+                print "=" x 80 . "\n";
+        } else {
+                print "Folder doesn't exist\n";
+                return 3;
+        }
+
+}
+
+
 sub create_resource_pool {
 	my ($name,$parent) = @_;
 	$parent = Vim::find_entity_view(view_type => 'ResourcePool', filter=>{ name => $parent});
@@ -227,6 +301,22 @@ sub create_resource_pool {
         } else {
 		print "Error: Unable to create new ResourcePool: \"" . $name . "\"\n";
 		return 0;
+        }
+	return 0;
+}
+
+sub create_folder {
+	my ($name,$parent) = @_;
+	if (&exists_folder($parent)) {
+		$parent = Vim::find_entity_view(view_type => 'Folder', filter=>{ name => $parent});
+	}
+	my $new_folder = $parent->CreateFolder(name => $name);
+	if($new_folder->type eq 'Folder') {
+                print "Successfully created new Folder: \"" . $name . "\"\n";
+                return 1;
+        } else {
+                print "Error: Unable to create new Folder: \"" . $name . "\"\n";
+                return 0;
         }
 	return 0;
 }
