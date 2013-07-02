@@ -8,8 +8,8 @@ use SDK::Vcenter;
 BEGIN {
         use Exporter;
         our @ISA = qw(Exporter);
-        our @EXPORT = qw( &test &random_3digit &generate_mac &generate_uniq_mac &increment_mac &vmname_splitter );
-        our @EXPORT_OK = qw( &test &random_3digit &generate_mac &generate_uniq_mac &increment_mac &vmname_splitter );
+        our @EXPORT = qw( &test &random_3digit &generate_mac &generate_uniq_mac &increment_mac &vmname_splitter &generate_vmname );
+        our @EXPORT_OK = qw( &test &random_3digit &generate_mac &generate_uniq_mac &increment_mac &vmname_splitter &generate_vmname );
 }
 
 ## Returns a 3 digit random number
@@ -121,6 +121,15 @@ sub vmname_splitter {
 	}
 	print "vmname_splitter return: ticket => $ticket, username => $username, family => $family, version => $version, lang => $lang, arch => $arch, type => $type , uniq => $uniq\n";
 	return ($ticket, $username, $family, $version, $lang, $arch, $type , $uniq);
+}
+
+sub generate_vmname {
+	my ($ticket,$parent_pool,$os_temp) = @_;
+	my $vmname = $ticket . "-" . $parent_pool . "-" . $os_temp . "-" . &random_3digit;
+	while (&Vcenter::exists_vm($vmname)) {
+		$vmname = $ticket . "-" . $parent_pool . "-" . $os_temp . "-" . &random_3digit;
+	}
+	return $vmname;
 }
 
 ## Functionality test sub

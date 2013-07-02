@@ -5,12 +5,13 @@ use warnings;
 use Data::Dumper;
 use SDK::Misc;
 use SDK::Vcenter;
+use SDK::Support;
 
 BEGIN {
         use Exporter;
         our @ISA = qw(Exporter);
-        our @EXPORT = qw( &test &add_network_interface &count_network_interface &remove_network_interface &get_network_interface &get_ext_network_interface &change_network_interface &list_dvportgroup &create_dvportgroup &remove_dvportgroup &dvportgroup_status &list_networks );
-        our @EXPORT_OK = qw( &test &add_network_interface &count_network_interface &remove_network_interface &get_network_interface &get_ext_network_interface &change_network_interface &list_dvportgroup &create_dvportgroup &remove_dvportgroup &dvportgroup_status &list_networks );
+        our @EXPORT = qw( &test &add_network_interface &count_network_interface &remove_network_interface &get_network_interface &get_ext_network_interface &change_network_interface &list_dvportgroup &create_dvportgroup &remove_dvportgroup &dvportgroup_status &list_networks &CustomizationAdapterMapping_generator );
+        our @EXPORT_OK = qw( &test &add_network_interface &count_network_interface &remove_network_interface &get_network_interface &get_ext_network_interface &change_network_interface &list_dvportgroup &create_dvportgroup &remove_dvportgroup &dvportgroup_status &list_networks &CustomizationAdapterMapping_generator );
 }
 
 ## Add network interface to vm
@@ -268,6 +269,29 @@ sub list_dvportgroup {
 	foreach(@$networks) {
 		print "name:'" . $_->name ."'\n";
 	}
+}
+
+sub CustomizationAdapterMapping_generator {
+	my ($os_temp) = @_;
+	my @return;
+	if ( defined($Support::template_hash{$os})) {
+		my $source_temp = $Support::template_hash{$os}{'path'};
+		$source_temp = &Vcenter::path_to_moref($source_temp);
+		foreach ( @{$source_temp->config->hardware->device}) {
+                        if ( !$_->isa('VirtualE1000')) {
+                                next;
+                        }
+                        my $ip = CustomizationDhcpIpGenerator->new();
+                        my $adapter = CustomizationIPSettings->new(dnsDomain=>'support.balabit',dnsServerList=>['10.21.0.23'],gateway=>['10.21.255.254'],subnetMask=>'255.255.0.0', ip=>$ip);
+                        my $nicsetting = CustomizationAdapterMapping->new(adapter=>$adapter);
+                        push(@return,$nicsetting);
+                }
+
+	} else {
+		print "Cannot find template\n";
+		return 0;
+	}
+	return \@return;
 }
 
 ## Functionality test sub

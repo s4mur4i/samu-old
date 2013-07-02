@@ -150,7 +150,7 @@ sub find_root_snapshot {
         if ( defined($snapshot->[0]->{'childSnapshotList'})) {
                 &find_root_snapshot($snapshot->[0]->{'childSnapshotList'});
         } else {
-        return $snapshot;
+		return $snapshot;
         }
 }
 

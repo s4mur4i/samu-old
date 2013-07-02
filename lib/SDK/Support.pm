@@ -3,12 +3,13 @@ package Support;
 use strict;
 use warnings;
 use Data::Dumper;
+use SDK::Vcenter;
 
 BEGIN {
         use Exporter;
         our @ISA = qw(Exporter);
-        our @EXPORT = qw( &test %template_hash %agents_hash );
-        our @EXPORT_OK = qw( &test %template_hash %agents_hash );
+        our @EXPORT = qw( &test %template_hash %agents_hash &linked_clone_template_folder_path );
+        our @EXPORT_OK = qw( &test %template_hash %agents_hash &linked_clone_template_folder_path );
 }
 
 ## Information about templates and attributes used
@@ -31,6 +32,25 @@ our %agents_hash = (
         'adrienn' => { mac=>'02:01:19:' },
         'varnyu' => { mac=>'02:01:19:' },
 );
+
+sub linked_clone_template_folder_path {
+	my ($name) = @_;
+	if (!defined($template_hash{$name})) {
+		print "Cannot find path for os: $name\n";
+	}
+	if (&Vcenter::exists_folder($name)) {
+		print "Linked folder exists already\n";
+	} else {
+		print "Need to create the linked folder.\n";
+		my $path = $template_hash{$name}{'path'};
+		my $sc = Vim::get_service_content();
+		my $searchindex = Vim::get_view( mo_ref => $sc->searchIndex);
+                my $view = $searchindex->FindByInventoryPath(inventoryPath => $path);
+		$view = Vim::get_view( mo_ref => $view);
+                my $parent_folder = Vim::get_view( mo_ref => $view->parent);
+		&Vcenter::create_folder($name,$parent_folder->name);
+	}
+}
 
 ## Functionality test sub
 sub test() {

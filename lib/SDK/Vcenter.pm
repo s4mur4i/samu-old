@@ -7,8 +7,8 @@ use Data::Dumper;
 BEGIN {
         use Exporter;
         our @ISA = qw(Exporter);
-        our @EXPORT = qw( &test &mac_compare &Task_getStatus &delete_virtualmachine &check_if_empty_resource_pool &delete_resource_pool &exists_resource_pool &list_resource_pool_rp &print_resource_pool_content &print_folder_content &check_if_empty_folder );
-        our @EXPORT_OK = qw( &test &mac_compare &Task_getStatus &delete_virtualmachine &check_if_empty_resource_pool &delete_resource_pool &exists_resource_pool &list_resource_pool_rp &print_resource_pool_content &print_folder_content &check_if_empty_folder );
+        our @EXPORT = qw( &test &mac_compare &Task_getStatus &delete_virtualmachine &check_if_empty_resource_pool &delete_resource_pool &exists_resource_pool &list_resource_pool_rp &print_resource_pool_content &print_folder_content &check_if_empty_folder &exists_vm );
+        our @EXPORT_OK = qw( &test &mac_compare &Task_getStatus &delete_virtualmachine &check_if_empty_resource_pool &delete_resource_pool &exists_resource_pool &list_resource_pool_rp &print_resource_pool_content &print_folder_content &check_if_empty_folder &exists_vm );
 }
 
 ## Searches all virtual machines mac address if mac address is already used
@@ -144,6 +144,16 @@ sub exists_resource_pool {
 	}else {
 		return 0;
 	}
+}
+
+sub exists_vm {
+	my ($name) = @_;
+	my $vm = Vim::find_entity_view(view_type => 'VirtualMachine', filter=>{ name => $name});
+	if ( defined($vm)) {
+                return 1;
+        }else {
+                return 0;
+        }
 }
 
 sub exists_folder {
@@ -287,6 +297,10 @@ sub print_folder_content {
 
 sub create_resource_pool {
 	my ($name,$parent) = @_;
+	if (&exists_resource_pool($name)) {
+		print "Resource pool already exists.\n";
+		return 0;
+	}
 	$parent = Vim::find_entity_view(view_type => 'ResourcePool', filter=>{ name => $parent});
 	my $shareslevel= SharesLevel->new('normal');
         my $cpushares = SharesInfo->new(shares => 4000 ,level => $shareslevel);
@@ -310,6 +324,10 @@ sub create_folder {
 	if (&exists_folder($parent)) {
 		$parent = Vim::find_entity_view(view_type => 'Folder', filter=>{ name => $parent});
 	}
+	if ( &exists_folder($name)) {
+		print "Folder already exists.\n";
+		return 0;
+	}
 	my $new_folder = $parent->CreateFolder(name => $name);
 	if($new_folder->type eq 'Folder') {
                 print "Successfully created new Folder: \"" . $name . "\"\n";
@@ -319,6 +337,15 @@ sub create_folder {
                 return 0;
         }
 	return 0;
+}
+
+sub path_to_moref {
+	my ($path) = @_;
+	my $sc = Vim::get_service_content();
+	my $searchindex = Vim::get_view( mo_ref => $sc->searchIndex);
+	my $template_mo_ref = $searchindex->FindByInventoryPath(inventoryPath => $path);
+	$template_mo_ref = Vim::get_view( mo_ref => $template_mo_ref);
+	return $template_mo_ref;
 }
 
 ## Functionality test sub
