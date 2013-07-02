@@ -191,7 +191,7 @@ sub list_resource_pool_rp {
 
 sub print_resource_pool_content {
 	my ($name) = @_;
-	if (&Vcenter::exists_resource_pool($name)) {
+	if (&exists_resource_pool($name)) {
                 print "Resource pool:$name\n";
                 print "=" x 80 . "\n";
                 my @vms = &list_resource_pool_vms($name);
@@ -213,6 +213,22 @@ sub print_resource_pool_content {
 
 sub create_resource_pool {
 	my ($name,$parent) = @_;
+	$parent = Vim::find_entity_view(view_type => 'ResourcePool', filter=>{ name => $parent});
+	my $shareslevel= SharesLevel->new('normal');
+        my $cpushares = SharesInfo->new(shares => 4000 ,level => $shareslevel);
+        my $memshares = SharesInfo->new(shares => 32928,level => $shareslevel);
+        my $cpuallocation = ResourceAllocationInfo->new(expandableReservation => 'true', limit => -1, reservation => 0, shares => $cpushares);
+        my $memoryallocation = ResourceAllocationInfo->new(expandableReservation => 'true', limit => -1, reservation => 0, shares => $memshares);
+        my $rp_spec = ResourceConfigSpec->new(cpuAllocation => $cpuallocation, memoryAllocation => $memoryallocation);
+	my $name_view = $parent->CreateResourcePool(name => $name, spec => $rp_spec);
+        if($name_view->type eq 'ResourcePool') {
+	        print "Successfully created new ResourcePool: \"" . $name . "\"\n";
+		return 1;
+        } else {
+		print "Error: Unable to create new ResourcePool: \"" . $name . "\"\n";
+		return 0;
+        }
+	return 0;
 }
 
 ## Functionality test sub
