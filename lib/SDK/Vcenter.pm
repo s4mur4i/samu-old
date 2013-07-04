@@ -41,8 +41,7 @@ sub delete_virtualmachine {
         my $powerstate = $name->runtime->powerState->val;
         if ( $powerstate eq 'poweredOn') {
                 print "Powering off VM.\n";
-                my $task = $name->PowerOffVM;
-		sleep 4;
+                my $task = $name->PowerOffVM_Task;
 		&Task_getStatus($task);
         }
 	my $task = $name->Destroy_Task;

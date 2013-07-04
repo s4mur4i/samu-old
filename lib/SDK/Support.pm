@@ -120,7 +120,7 @@ sub win_VirtualMachineCloneSpec {
                 $identity = CustomizationSysprep->new(guiRunOnce=> $runonce,guiUnattended=>$guiunattend,identification=>$identification , userData=>$userdata );
         }
         my $customization_spec = CustomizationSpec->new(globalIPSettings=>$globalipsettings, identity=> $identity, options=> $customoptions, nicSettingMap=>@nicsetting);
-        my $clone_spec = VirtualMachineCloneSpec->new(powerOn => 1,template => 0, snapshot => $snapshot_view, location => $relocate_spec, config => $config_spec, customization => $customization_spec);
+        my $clone_spec = VirtualMachineCloneSpec->new(powerOn => 1,template => 0, snapshot => $snapshot, location => $location, config => $config, customization => $customization_spec);
 	return $clone_spec;
 }
 
@@ -132,13 +132,13 @@ sub lin_VirtualMachineCloneSpec {
         my $globalipsettings = CustomizationGlobalIPSettings->new(dnsServerList=>['10.21.0.23'] , dnsSuffixList=>['support.balabit']);
         my $linuxprep = CustomizationLinuxPrep->new(domain=>'support.balabit',hostName=>$hostname,timeZone=>'Europe/Budapest',hwClockUTC=>1);
         my $customization_spec = CustomizationSpec->new(identity=>$linuxprep, globalIPSettings=> $globalipsettings, nicSettingMap=>@nicsetting);
-        my $clone_spec = VirtualMachineCloneSpec->new(powerOn => 1,template => 0, snapshot => $snapshot_view, location => $relocate_spec, config => $config_spec, customization => $customization_spec);
+        my $clone_spec = VirtualMachineCloneSpec->new(powerOn => 1,template => 0, snapshot => $snapshot, location => $location, config => $config, customization => $customization_spec);
 	return $clone_spec;
 }
 
 sub oth_VirtualMachineCloneSpec {
 	my ($os,$snapshot,$location,$config) = @_;
-	my $clone_spec = VirtualMachineCloneSpec->new(powerOn => 1,template => 0, snapshot => $snapshot_view, location => $relocate_spec,config => $config_spec)
+	my $clone_spec = VirtualMachineCloneSpec->new(powerOn => 1,template => 0, snapshot => $snapshot, location => $location,config => $config);
 	return $clone_spec;
 }
 
