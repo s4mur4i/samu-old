@@ -50,16 +50,19 @@ Util::connect( $url, $username, $password );
 my $vm_view = Vim::find_entity_view(view_type=>'VirtualMachine',filter=>{name=>$vmname});
 my $guestusername;
 my $guestpassword;
-if ( $vmname =~ /^[^-]*-[^-]*-[^-]*-\d{3}$/ ) {
-  my ($os) = $vmname =~ m/^[^-]*-[^-]*-([^-]*)-\d{3}$/ ;
+my ($ticket, $gusername, $family, $version, $lang, $arch, $type , $uniq) = &Misc::vmname_splitter($vmname);
+my $os = "${family}_${version}_${lang}_${arch}_${type}";
+if ( defined($uniq)  ) {
   if ( defined($Support::template_hash{$os})) {
-        #$source_temp = $Support::template_hash{$os}{'path'};
         $guestusername=$Support::template_hash{$os}{'username'};
         $guestpassword=$Support::template_hash{$os}{'password'};
   } else {
         print "Regex matched an OS, but no template found to it os=> '$os'\n";
   }
+} else {
+        print "Vmname not standard name=> '$vmname'\n";
 }
+
 if ( defined(Opts::get_option('guestusername')) && defined(Opts::get_option('guestpassword'))) {
                 $guestusername=Opts::get_option('guestusername');
                 $guestpassword=Opts::get_option('guestpassword');
