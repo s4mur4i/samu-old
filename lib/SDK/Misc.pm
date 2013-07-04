@@ -119,7 +119,7 @@ sub vmname_splitter {
 	} else {
 		( $family, $version, $lang, $arch, $type ) = $template =~ /^([^_]*)_([^_]*)_([^_]*)_([^_]*)_([^_]*)$/;
 	}
-	print "vmname_splitter return: ticket => $ticket, username => $username, family => $family, version => $version, lang => $lang, arch => $arch, type => $type , uniq => $uniq\n";
+	#print "vmname_splitter return: ticket => $ticket, username => $username, family => $family, version => $version, lang => $lang, arch => $arch, type => $type , uniq => $uniq\n";
 	return ($ticket, $username, $family, $version, $lang, $arch, $type , $uniq);
 }
 

@@ -3,6 +3,7 @@ package Vcenter;
 use strict;
 use warnings;
 use Data::Dumper;
+use SDK::Misc;
 
 BEGIN {
         use Exporter;
@@ -347,6 +348,39 @@ sub path_to_moref {
 	$template_mo_ref = Vim::get_view( mo_ref => $template_mo_ref);
 	return $template_mo_ref;
 }
+
+sub print_vm_info {
+	my ($name) = @_;
+	if (&exists_vm($name)) {
+		$name = Vim::find_entity_view(view_type=>'VirtualMachine',filter=>{name=>$name});
+	} else {
+		return 0;
+	}
+	print "VMname: '" .$name->name ."'\n";
+	if ($name->guest->toolsStatus eq 'toolsNotInstalled' ) {
+		print "\tTools not installed. Cannot extract some information\n";
+		print "\tPower State: '" .$name->guest->guestState . "'\n";
+	} else {
+		foreach (@{$name->guest->net}) {
+			print "\tNetwork=>'" . $_->network. "', with ipAddresses=> [ " .join(", ",@{$_->ipAddress}) . "]\n";
+		}
+		print "\tHostname: '" . $name->guest->hostName . "'\n";
+	}
+	my ($ticket, $username, $family, $version, $lang, $arch, $type , $uniq) = &Misc::vmname_splitter($name->name);
+	my $os = "${family}_${version}_${lang}_${arch}_${type}";
+	if ( defined($uniq)  ) {
+		if ( defined($Support::template_hash{$os})) {
+			my $guestusername=$Support::template_hash{$os}{'username'};
+			my $guestpassword=$Support::template_hash{$os}{'password'};
+			print "\tDefault login : $guestusername / $guestpassword\n"
+		} else {
+			print "\tRegex matched an OS, but no template found to it os=> '$os'\n";
+		}
+	} else {
+		print "\tVmname not standard name=> '$name'\n";
+	}
+}
+
 
 ## Functionality test sub
 sub test() {
