@@ -38,7 +38,6 @@ if (defined($switch)) {
 					foreach ( @{$vm->config->hardware->device}) {
 						my $interface = $_;
 						if ( $interface->isa('VirtualE1000')) {
-							print Dumper($interface);
 							if ( exists $interface->backing->{'port'} && $interface->backing->port->portgroupKey eq $portgroup_key) {
 								my $network = Vim::find_entity_view( view_type=> 'Network',filter => { 'name' => "VLAN21" });
 								&GuestManagement::change_network_interface($vm->name,$count,$network->name);

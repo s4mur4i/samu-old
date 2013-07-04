@@ -159,7 +159,8 @@ sub change_network_interface {
         my $device = VirtualE1000->new( connectable=>VirtualDeviceConnectInfo->new(startConnected =>'1', allowGuestControl =>'1', connected => '1') ,wakeOnLanEnabled =>1, macAddress=>$mac , addressType=>"Manual", key=>$key , backing=>$backing, deviceInfo=>Description->new(summary=>$network->name, label=>$network->name));
         my $deviceconfig = VirtualDeviceConfigSpec->new(operation=> VirtualDeviceConfigSpecOperation->new('edit'), device=> $device);
         my $spec = VirtualMachineConfigSpec->new( deviceChange=>[$deviceconfig]);
-        $vmname->ReconfigVM_Task(spec=>$spec);
+        my $task = $vmname->ReconfigVM_Task(spec=>$spec);
+	&Vcenter::Task_getStatus($task);
 }
 
 ## Create switch to hold port groups
