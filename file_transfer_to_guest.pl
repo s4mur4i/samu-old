@@ -37,7 +37,7 @@ my %opts = (
 	dest => {
 		type => "=s",
 		help => "Upload destination file.",
-		required =>0,
+		required =>1,
 	},
 );
 Opts::add_options(%opts);
