@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use FindBin;
 use lib "$FindBin::Bin/lib";
+use lib '/usr/lib/vmware-vcli/apps';
 use SDK::Vcenter;
 use VMware::VICommon;
 use VMware::VIRuntime;
@@ -50,7 +51,7 @@ if (defined($ticket) && ! defined($vmname) ) {
 	&ticket($ticket);
 } elsif ( defined($vmname) && ! defined($ticket)) {
 	print "Delete single vm: $vmname\n";
-	&single($vmname) ;
+	&Vcenter::delete_virtualmachine($vmname) ;
 } elsif ( defined($vmname) && defined($ticket) ) {
 	print "To delete the ticket $ticket or to delete the vm $vmname... that is the question.\n";
 	exit 1;

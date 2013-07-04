@@ -272,7 +272,7 @@ sub list_dvportgroup {
 }
 
 sub CustomizationAdapterMapping_generator {
-	my ($os_temp) = @_;
+	my ($os) = @_;
 	my @return;
 	if ( defined($Support::template_hash{$os})) {
 		my $source_temp = $Support::template_hash{$os}{'path'};
