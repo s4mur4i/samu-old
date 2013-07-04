@@ -13,11 +13,19 @@ use VMware::VIRuntime;
 use Data::Dumper;
 
 sub get_config_spec() {
-   if (Opts::get_option('customize_vm') eq "yes") {
+   if (defined(Opts::get_option('memory')) && defined(Opts::get_option('cpu'))) {
 	   my $memory = Opts::get_option('memory');  # in MB;
 	   my $num_cpus = Opts::get_option('cpu');
 	   my $vm_config_spec = VirtualMachineConfigSpec->new( memoryMB => $memory, numCPUs => $num_cpus,deviceChange=>&Support::generate_network_setup_for_clone(Opts::get_option('os_temp')) );
 	   return $vm_config_spec;
+   } elsif (defined(Opts::get_option('memory'))) {
+	my $memory = Opts::get_option('memory');
+	my $vm_config_spec = VirtualMachineConfigSpec->new( memoryMB => $memory,deviceChange=>&Support::generate_network_setup_for_clone(Opts::get_option('os_temp')) );
+        return $vm_config_spec;
+   } elsif (defined(Opts::get_option('cpu'))) {
+	my $num_cpus = Opts::get_option('cpu');
+	my $vm_config_spec = VirtualMachineConfigSpec->new( numCPUs => $num_cpus,deviceChange=>&Support::generate_network_setup_for_clone(Opts::get_option('os_temp')) );
+        return $vm_config_spec;
    } else {
 	my $vm_config_spec = VirtualMachineConfigSpec->new(deviceChange=>&Support::generate_network_setup_for_clone(Opts::get_option('os_temp')) );
 	return $vm_config_spec;
@@ -34,12 +42,6 @@ my %opts = (
 		type => "=s",
 		help => "The machine tempalte we want to use",
 		required => 1,
-	},
-	customize_vm => {
-		type => "=s",
-		help => "Flag to specify whether or not to customize virtual machine: " . "yes,no,camel",
-		required => 0,
-		default => 'no',
 	},
 	parent_pool => {
 		type => "=s",
@@ -103,16 +105,13 @@ if (defined($snapshot_view->[0]->{'childSnapshotList'})) {
 	$snapshot_view = Vim::get_view (mo_ref =>$snapshot_view->[0]->{'snapshot'});
 }
 my $template_folder = Vim::find_entity_view(view_type => 'Folder', filter =>{name=>$os_temp} );
-my $vmname = &Misc::generate_vmname($ticket,$resource_pool->name,$os);
-## Let the cloneing begin
-## CustomizationWinOptions for optimising
+my $vmname = &Misc::generate_vmname($ticket,$username,$os);
 my $host_view = Vim::find_entity_view(view_type => 'HostSystem', filter => { name => 'vmware-it1.balabit'});
 my $relocate_spec = VirtualMachineRelocateSpec->new( host => $host_view, diskMoveType => "createNewChildDiskBacking", pool => $resource_pool);
-my $fileinfo = VirtualMachineFileInfo->new();
-my $config_spec = VirtualMachineConfigSpec->new( files => $fileinfo);
-my $clone_spec = &get_config_spec();
-## Create default customization spec
-my $customization_spec;
+#my $fileinfo = VirtualMachineFileInfo->new();
+#my $config_spec = VirtualMachineConfigSpec->new( files => $fileinfo);
+my $config_spec = &get_config_spec();
+my $clone_spec;
 if ( $Support::template_hash{$os}{'os'} =~ /win/) {
 	$clone_spec = &Support::win_VirtualMachineCloneSpec($os,$snapshot_view,$relocate_spec,$config_spec);
 } elsif ($Support::template_hash{$os}{'os'} =~ /lin/) {
@@ -120,41 +119,8 @@ if ( $Support::template_hash{$os}{'os'} =~ /win/) {
 } else {
 	$clone_spec = &Support::oth_VirtualMachineCloneSpec($os,$snapshot_view,$relocate_spec,$config_spec);
 }
-eval {
-	$template_mo_ref->CloneVM(  folder => $dest_folder_view->{'mo_ref'}, name=> $vmname, spec=> $clone_spec);
-};
-
-if ($@) {
-	if (ref($@) eq 'SoapFault') {
-		if (ref($@->detail) eq 'FileFault') {
-			Util::trace(0, "\nFailed to access the virtual " ." machine files\n");
-		} elsif (ref($@->detail) eq 'InvalidState') {
-			Util::trace(0,"The operation is not allowed " ."in the current state.\n");
-		} elsif (ref($@->detail) eq 'NotSupported') {
-			Util::trace(0," Operation is not supported by the " ."current agent \n");
-		} elsif (ref($@->detail) eq 'VmConfigFault') {
-			Util::trace(0, "Virtual machine is not compatible with the destination host.\n");
-		} elsif (ref($@->detail) eq 'InvalidPowerState') {
-			Util::trace(0, "The attempted operation cannot be performed " ."in the current state.\n");
-		} elsif (ref($@->detail) eq 'DuplicateName') {
-			Util::trace(0, "The name '$vmname' already exists\n");
-		} elsif (ref($@->detail) eq 'NoDisksToCustomize') {
-			Util::trace(0, "\nThe virtual machine has no virtual disks that" . " are suitable for customization or no guest" . " is present on given virtual machine" . "\n");
-		} elsif (ref($@->detail) eq 'HostNotConnected') {
-			Util::trace(0, "\nUnable to communicate with the remote host, " ."since it is disconnected" . "\n");
-		} elsif (ref($@->detail) eq 'UncustomizableGuest') {
-			Util::trace(0, "\nCustomization is not supported " ."for the guest operating system" . "\n");
-		} else {
-			Util::trace (0, "Fault" . $@ . "\n"   );
-			print Dumper($@);
-		}
-		exit 1;
-	} else {
-		Util::trace (0, "Fault" . $@ . "\n"   );
-			print Dumper($@);
-		exit 1;
-	}
-}
+my $task = $template_mo_ref->CloneVM_Task(  folder => $dest_folder_view->{'mo_ref'}, name=> $vmname, spec=> $clone_spec);
+&Vcenter::Task_getStatus($task);
 print "===================================================================\n";
 print "Machine is provisioned.\n";
 print "Login: '" . $Support::template_hash{$os}{'username'} . "' / '" . $Support::template_hash{$os}{'password'} ."'\n";

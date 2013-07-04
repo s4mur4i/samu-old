@@ -124,10 +124,10 @@ sub vmname_splitter {
 }
 
 sub generate_vmname {
-	my ($ticket,$parent_pool,$os_temp) = @_;
-	my $vmname = $ticket . "-" . $parent_pool . "-" . $os_temp . "-" . &random_3digit;
+	my ($ticket,$username,$os_temp) = @_;
+	my $vmname = $ticket . "-" . $username . "-" . $os_temp . "-" . &random_3digit;
 	while (&Vcenter::exists_vm($vmname)) {
-		$vmname = $ticket . "-" . $parent_pool . "-" . $os_temp . "-" . &random_3digit;
+		$vmname = $ticket . "-" . $username . "-" . $os_temp . "-" . &random_3digit;
 	}
 	return $vmname;
 }
