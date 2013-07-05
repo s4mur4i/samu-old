@@ -26,6 +26,8 @@ our %template_hash = (
         'win_2008_en_x64_sta' => { path => 'Support/vm/templates/Windows/2008/T_win_2008_en_x64_sta',username => 'Administrator', password => 'titkos', key=>'TM24T-X9RMF-VWXK6-X8JC9-BFGM2', os=>'win' },
         'deb_7.0.0_en_amd64_wheezy' => {path => 'Support/vm/templates/Linux/deb/T_deb_7.0.0_en_amd64_wheezy', username => 'root', password => 'titkos', os => 'other' },
 	'deb_6.0.0_en_amd64_squeeze' => {path => 'Support/vm/templates/Linux/deb/T_deb_6.0.0_en_amd64_squeeze', username => 'root', password => 'titkos', os => 'other' },
+	'win_2008r2_en_x64_sta' => { path => 'Support/vm/templates/Windows/2008/T_win_2008r2_en_x64_sta',username => 'Administrator', password => 'TitkoS12', key=>'YC6KT-GKW9T-YTKYR-T4X34-R7VHC', os=>'win' },
+	'win_2008r2sp1_en_x64_sta' => { path => 'Support/vm/templates/Windows/2008/T_win_2008r2sp1_en_x64_sta',username => 'Administrator', password => 'TitkoS12', key=>'YC6KT-GKW9T-YTKYR-T4X34-R7VHC', os=>'win' },
 );
 
 ## Agent information for scripts
