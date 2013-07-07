@@ -5,11 +5,12 @@ use warnings;
 use FindBin;
 use lib "$FindBin::Bin";
 use SDK::Vcenter;
+use URI::Escape;
 BEGIN {
         use Exporter;
         our @ISA = qw(Exporter);
-        our @EXPORT = qw( &test &random_3digit &generate_mac &generate_uniq_mac &increment_mac &vmname_splitter &generate_vmname );
-        our @EXPORT_OK = qw( &test &random_3digit &generate_mac &generate_uniq_mac &increment_mac &vmname_splitter &generate_vmname );
+        our @EXPORT = qw( &test &random_3digit &generate_mac &generate_uniq_mac &increment_mac &vmname_splitter &generate_vmname &increment_disk_name &path_to_url);
+#        our @EXPORT_OK = qw( &test &random_3digit &generate_mac &generate_uniq_mac &increment_mac &vmname_splitter &generate_vmname &increment_disk_name);
 }
 
 ## Returns a 3 digit random number
@@ -89,6 +90,30 @@ sub increment_mac {
 	return $new_mac;
 }
 
+sub increment_disk_name {
+	#[Sirius-UseThisDatastore] 541-s4mur4i-scb_330-668/541-s4mur4i-scb_330-668.vmdk
+	my ($name) = @_;
+	#my ($pre, $num,$post) = $name =~ /(.*)_?(\d*)(.vmdk)/;
+	if ( $name =~ /(.*)_(\d+)(\.vmdk)/  ) {
+		my ($pre, $num,$post) = $name =~ /(.*)_(\d+)(\.vmdk)/;
+		print "Num '" . $num . "'\n";
+		$num++;
+		if ($num == 7) {
+			$num++;
+		}  elsif ($num> 15) {
+			print "Cannot increment further. Last disk used\n";
+			return 0;
+		}
+		return "${pre}_$num$post";
+	} else {
+		print "No num, need to do first increment\n";
+		my ($pre,$post) = $name =~ /(.*)(\.vmdk)/;
+		my $num=1;
+		return "${pre}_$num$post";
+	}
+	return 0;
+}
+
 ## Splits default provisioned name to variables
 ## Parameters:
 ##  vmname: vmname to split
@@ -121,6 +146,17 @@ sub vmname_splitter {
 	}
 	#print "vmname_splitter return: ticket => $ticket, username => $username, family => $family, version => $version, lang => $lang, arch => $arch, type => $type , uniq => $uniq\n";
 	return ($ticket, $username, $family, $version, $lang, $arch, $type , $uniq);
+}
+
+sub path_to_url {
+	my ($path) = @_;
+	my $url_base="https://vcenter.ittest.balabit/folder/";
+	my ($datastore,$path_url) = $path =~ /^\[([^\]]*)\]\s*(.*)$/;
+	my $return = $url_base . $path_url ."?dcPath=Support&dsName=" .$datastore;
+	$return =~ s/-/%2d/g;
+	$return =~ s/\./%2e/g;
+	#$return = uri_escape($return);
+	return $return;
 }
 
 sub generate_vmname {

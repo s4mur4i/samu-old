@@ -10,8 +10,8 @@ use SDK::Support;
 BEGIN {
         use Exporter;
         our @ISA = qw(Exporter);
-        our @EXPORT = qw( &test &add_network_interface &count_network_interface &remove_network_interface &get_network_interface &get_ext_network_interface &change_network_interface &list_dvportgroup &create_dvportgroup &remove_dvportgroup &dvportgroup_status &list_networks &CustomizationAdapterMapping_generator );
-        our @EXPORT_OK = qw( &test &add_network_interface &count_network_interface &remove_network_interface &get_network_interface &get_ext_network_interface &change_network_interface &list_dvportgroup &create_dvportgroup &remove_dvportgroup &dvportgroup_status &list_networks &CustomizationAdapterMapping_generator );
+        our @EXPORT = qw( &test &add_network_interface &count_network_interface &remove_network_interface &get_network_interface &get_ext_network_interface &change_network_interface &list_dvportgroup &create_dvportgroup &remove_dvportgroup &dvportgroup_status &list_networks &CustomizationAdapterMapping_generator &add_disk );
+#        our @EXPORT_OK = qw( &test &add_network_interface &count_network_interface &remove_network_interface &get_network_interface &get_ext_network_interface &change_network_interface &list_dvportgroup &create_dvportgroup &remove_dvportgroup &dvportgroup_status &list_networks &CustomizationAdapterMapping_generator &add_disk );
 }
 
 ## Add network interface to vm
@@ -34,9 +34,37 @@ sub add_network_interface {
 	my $device = VirtualE1000->new( connectable=>VirtualDeviceConnectInfo->new(startConnected =>'1', allowGuestControl =>'1', connected => '1') ,wakeOnLanEnabled =>1, macAddress=>$mac , addressType=>"Manual", key=>$key , backing=>$backing, deviceInfo=>Description->new(summary=>'VLAN21', label=>''));
 	my $deviceconfig = VirtualDeviceConfigSpec->new(operation=> VirtualDeviceConfigSpecOperation->new('add'), device=> $device);
 	my $spec = VirtualMachineConfigSpec->new( deviceChange=>[$deviceconfig]);
-	my $task = $vmname->ReconfigVM_Task(spec=>$spec);
+	#my $task = $vmname->ReconfigVM_Task(spec=>$spec);
 	## Wait for task to complete
-	&Vcenter::Task_getStatus($task);
+	#&Vcenter::Task_getStatus($task);
+}
+
+sub add_disk {
+        my ($vmname,$req_size) = @_;
+	my $view = Vim::find_entity_view(view_type=>'VirtualMachine',filter=>{name=>$vmname});
+        my $disk_count = &count_disk($vmname);
+        my ($key, $size, $path) = &get_disk($vmname,$disk_count-1);
+	my $controller = &get_scsi_controller($vmname);
+	my $controller_key = $controller->key;
+	my $unitnumber = $#{$controller->device} + 1;
+	if ($unitnumber < 7) {
+		print "Not yet reached controllerID\n";
+	} elsif ($unitnumber == 15) {
+		print "ERR: one SCSI controller cannot have more than 15 virtual disks\n";
+		return 0;
+	} else {
+		$unitnumber++;
+	}
+        $key++;
+	my $inc_path = &Misc::increment_disk_name($path);
+	my $disk_backing_info = VirtualDiskFlatVer2BackingInfo->new(fileName => $inc_path, diskMode => "persistent", thinProvisioned=>1 );
+	my $disk = VirtualDisk->new(controllerKey => $controller_key, unitNumber => $unitnumber, key => -1, backing => $disk_backing_info, capacityInKB => $req_size );
+	my $devspec = VirtualDeviceConfigSpec->new(operation => VirtualDeviceConfigSpecOperation->new('add'), device => $disk, fileOperation=>VirtualDeviceConfigSpecFileOperation->new('create') );
+	my $vmspec = VirtualMachineConfigSpec->new(deviceChange => [$devspec] );
+	print "Adding disk to machine.\n";
+        my $task = $view->ReconfigVM_Task(spec=>$vmspec);
+        ## Wait for task to complete
+        &Vcenter::Task_getStatus($task);
 }
 
 ## Return number of VirtualE1000 interfaces
@@ -57,6 +85,20 @@ sub count_network_interface {
         }
         return $count;
 }
+
+sub count_disk {
+        my ($vmname) =@_;
+        $vmname = Vim::find_entity_view(view_type=>'VirtualMachine', filter=> {name => $vmname});
+        my $count=0;
+        foreach ( @{$vmname->config->hardware->device}) {
+                my $disk = $_;
+                if ( $disk->isa('VirtualDisk')) {
+                        $count++;
+                }
+        }
+        return $count;
+}
+
 
 ## Remove network interface from vm
 ## Parameters:
@@ -104,6 +146,25 @@ sub get_network_interface {
         }
         return ($keys[$num],$unitnumber[$num],$controllerkey[$num],$mac[$num]);
 }
+
+sub get_disk {
+        my ($vmname,$num) = @_;
+        $vmname = Vim::find_entity_view(view_type=>'VirtualMachine', filter=> {name => $vmname});
+        my @keys;
+	my @size;
+	my @path;
+        foreach ( @{$vmname->config->hardware->device}) {
+                my $disk = $_;
+                if ( !$disk->isa('VirtualDisk')) {
+                        next;
+                }
+                push(@keys,$disk->key);
+		push(@size,$disk->capacityInKB);
+		push(@path,$disk->backing->fileName);
+        }
+        return ($keys[$num],$size[$num],$path[$num]);
+}
+
 
 ## Get further information about network interface
 ## Parameters:
@@ -293,6 +354,24 @@ sub CustomizationAdapterMapping_generator {
 		return 0;
 	}
 	return \@return;
+}
+
+sub get_scsi_controller {
+	my ($name) = @_;
+	my $vm_view = Vim::find_entity_view(view_type=>'VirtualMachine',filter=>{name=>$name});
+	my $controller;
+	my $num_controller = 0;
+	foreach (@{$vm_view->config->hardware->device}) {
+		if (ref($_) =~ /VirtualBusLogicController|VirtualLsiLogicController|VirtualLsiLogicSASController|ParaVirtualSCSIController/) {
+		$num_controller++;
+		$controller = $_;
+		}
+	}
+	if ($num_controller != 1) {
+		print "Problem with controller count\n";
+		return 0;
+	}
+	return $controller;
 }
 
 ## Functionality test sub
