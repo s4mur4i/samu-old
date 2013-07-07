@@ -10,7 +10,7 @@ use SDK::Support;
 BEGIN {
         use Exporter;
         our @ISA = qw(Exporter);
-        our @EXPORT = qw( &test &add_network_interface &count_network_interface &remove_network_interface &get_network_interface &get_ext_network_interface &change_network_interface &list_dvportgroup &create_dvportgroup &remove_dvportgroup &dvportgroup_status &list_networks &CustomizationAdapterMapping_generator &add_disk &remove_disk );
+        our @EXPORT = qw( &test &add_network_interface &count_network_interface &remove_network_interface &get_network_interface &get_ext_network_interface &change_network_interface &list_dvportgroup &create_dvportgroup &remove_dvportgroup &dvportgroup_status &list_networks &CustomizationAdapterMapping_generator &add_disk &remove_disk &get_cdrom);
 #        our @EXPORT_OK = qw( &test &add_network_interface &count_network_interface &remove_network_interface &get_network_interface &get_ext_network_interface &change_network_interface &list_dvportgroup &create_dvportgroup &remove_dvportgroup &dvportgroup_status &list_networks &CustomizationAdapterMapping_generator &add_disk );
 }
 
@@ -85,6 +85,20 @@ sub count_network_interface {
         }
         return $count;
 }
+
+sub count_cdrom {
+        my ($vmname) =@_;
+        $vmname = Vim::find_entity_view(view_type=>'VirtualMachine', filter=> {name => $vmname});
+        my $count=0;
+        foreach ( @{$vmname->config->hardware->device}) {
+                my $disk = $_;
+                if ( $disk->isa('VirtualCdrom')) {
+                        $count++;
+                }
+        }
+        return $count;
+}
+
 
 sub count_disk {
         my ($vmname) =@_;
@@ -174,6 +188,30 @@ sub get_disk {
 		push(@path,$disk->backing->fileName);
         }
         return ($keys[$num],$size[$num],$path[$num]);
+}
+
+sub get_cdrom {
+        my ($vmname,$num) = @_;
+        $vmname = Vim::find_entity_view(view_type=>'VirtualMachine', filter=> {name => $vmname});
+        my @keys;
+        my @backing;
+        my @label;
+        foreach ( @{$vmname->config->hardware->device}) {
+                my $cdrom = $_;
+                if ( !$cdrom->isa('VirtualCdrom')) {
+                        next;
+                }
+                push(@keys,$cdrom->key);
+		if ($cdrom->backing->isa('VirtualCdromIsoBackingInfo')) {
+			push(@backing,$cdrom->backing->fileName);
+		} elsif ( $cdrom->backing->isa('VirtualCdromRemotePassthroughBackingInfo')) {
+			push(@backing,"Host device");
+		} else {
+			push(@backing,"Unknown");
+		}
+                push(@label,$cdrom->deviceInfo->label);
+        }
+        return ($keys[$num],$backing[$num],$label[$num]);
 }
 
 
