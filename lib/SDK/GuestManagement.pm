@@ -10,7 +10,7 @@ use SDK::Support;
 BEGIN {
         use Exporter;
         our @ISA = qw(Exporter);
-        our @EXPORT = qw( &test &add_network_interface &count_network_interface &remove_network_interface &get_network_interface &get_ext_network_interface &change_network_interface &list_dvportgroup &create_dvportgroup &remove_dvportgroup &dvportgroup_status &list_networks &CustomizationAdapterMapping_generator &add_disk );
+        our @EXPORT = qw( &test &add_network_interface &count_network_interface &remove_network_interface &get_network_interface &get_ext_network_interface &change_network_interface &list_dvportgroup &create_dvportgroup &remove_dvportgroup &dvportgroup_status &list_networks &CustomizationAdapterMapping_generator &add_disk &remove_disk );
 #        our @EXPORT_OK = qw( &test &add_network_interface &count_network_interface &remove_network_interface &get_network_interface &get_ext_network_interface &change_network_interface &list_dvportgroup &create_dvportgroup &remove_dvportgroup &dvportgroup_status &list_networks &CustomizationAdapterMapping_generator &add_disk );
 }
 
@@ -116,6 +116,17 @@ sub remove_network_interface {
         my $spec = VirtualMachineConfigSpec->new( deviceChange=>[$deviceconfig]);
 	$vmname->ReconfigVM_Task(spec=>$spec);
 }
+
+sub remove_disk {
+        my ($vmname,$num) = @_;
+	my ($key, $size, $path) = &get_disk($vmname,$num);
+        $vmname = Vim::find_entity_view(view_type=>'VirtualMachine', filter=> {name => $vmname});
+        my $device = VirtualDisk->new(key=>$key, capacityInKB=> "1");
+        my $deviceconfig = VirtualDeviceConfigSpec->new(operation=> VirtualDeviceConfigSpecOperation->new('remove'), device=> $device, fileOperation=>VirtualDeviceConfigSpecFileOperation->new('destroy'));
+        my $spec = VirtualMachineConfigSpec->new( deviceChange=>[$deviceconfig]);
+        $vmname->ReconfigVM_Task(spec=>$spec);
+}
+
 
 ## Return Information about network interface
 ## Parameters:
