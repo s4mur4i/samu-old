@@ -67,6 +67,25 @@ sub add_disk {
         &Vcenter::Task_getStatus($task);
 }
 
+sub add_cdrom {
+        my ($vmname) = @_;
+        my $view = Vim::find_entity_view(view_type=>'VirtualMachine',filter=>{name=>$vmname});
+        my $cdrom_count = &count_cdrom($vmname);
+	my $ide_key = &get_free_ide_controller($vmname);
+        my ($key, $backing, $label) = &get_disk($vmname,$cdrom_count-1);
+        $key++;
+	my $cdrombacking = VirtualCdromRemotePassthroughBackingInfo->new(exclusive=>0,deviceName=>'');
+	my $cdrom = VirtualCdrom->new(key=>$key,backing=>$cdrombacking,controllerKey=>$ide_key);
+        my $devspec = VirtualDeviceConfigSpec->new(operation => VirtualDeviceConfigSpecOperation->new('add'), device => $cdrom, );
+        my $vmspec = VirtualMachineConfigSpec->new(deviceChange => [$devspec] );
+	print Dumper($vmspec);
+        print "Adding cdrom to machine.\n";
+        my $task = $view->ReconfigVM_Task(spec=>$vmspec);
+        ## Wait for task to complete
+        &Vcenter::Task_getStatus($task);
+}
+
+
 ## Return number of VirtualE1000 interfaces
 ## Parameters:
 ##  vmname: name of vm
@@ -421,6 +440,28 @@ sub get_scsi_controller {
 		return 0;
 	}
 	return $controller;
+}
+
+#VirtualIDEController
+
+sub get_free_ide_controller {
+	my ($name) = @_;
+        my $vm_view = Vim::find_entity_view(view_type=>'VirtualMachine',filter=>{name=>$name});
+        my @controller;
+        my $num_controller = 0;
+	foreach (@{$vm_view->config->hardware->device}) {
+		if (ref($_) =~ /VirtualIDEController/ ) {
+			$num_controller++;
+			push(@controller,$_);
+		}
+	}
+	foreach (@controller) {
+		if (@{$_->device} lt 2) {
+			return $_->key;
+		}
+	}
+	print "Ide controllers full. Cannot add further devices\n";
+	return 0;
 }
 
 ## Functionality test sub
