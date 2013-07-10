@@ -10,7 +10,7 @@ use SDK::Support;
 BEGIN {
         use Exporter;
         our @ISA = qw(Exporter);
-        our @EXPORT = qw( &test &add_network_interface &count_network_interface &remove_network_interface &get_network_interface &get_ext_network_interface &change_network_interface &list_dvportgroup &create_dvportgroup &remove_dvportgroup &dvportgroup_status &list_networks &CustomizationAdapterMapping_generator &add_disk &remove_disk &get_cdrom &remove_cdrom);
+        our @EXPORT = qw( &test &add_network_interface &count_network_interface &remove_network_interface &get_network_interface &get_ext_network_interface &change_network_interface &list_dvportgroup &create_dvportgroup &remove_dvportgroup &dvportgroup_status &list_networks &CustomizationAdapterMapping_generator &add_disk &remove_disk &get_cdrom &remove_cdrom &change_cdrom_to_iso &remove_cdrom_iso);
 #        our @EXPORT_OK = qw( &test &add_network_interface &count_network_interface &remove_network_interface &get_network_interface &get_ext_network_interface &change_network_interface &list_dvportgroup &create_dvportgroup &remove_dvportgroup &dvportgroup_status &list_networks &CustomizationAdapterMapping_generator &add_disk );
 }
 
@@ -81,6 +81,37 @@ sub add_cdrom {
         print "Adding cdrom to machine.\n";
         my $task = $view->ReconfigVM_Task(spec=>$vmspec);
         ## Wait for task to complete
+        &Vcenter::Task_getStatus($task);
+}
+
+sub change_cdrom_to_iso {
+	my ($vmname, $num,$filename) = @_;
+	if (!&Vcenter::datastore_file_exists($filename)) {
+		print "File does not exist on datastore => '$filename'\n";
+		return 0;
+	}
+	my ($datas, $folder,$image) = &Misc::filename_splitter($filename);
+	my $view = Vim::find_entity_view(view_type=>'VirtualMachine',filter=>{name=>$vmname});
+	my ($key, $backing, $label) = &get_cdrom($vmname,$num);
+	my $controllerkey = &get_controller_key($vmname,$key);
+	my $isobacking = VirtualCdromIsoBackingInfo->new(fileName=>$filename);
+	my $device = VirtualCdrom->new(backing=>$isobacking,key=>$key,controllerKey=>$controllerkey);
+	my $configspec = VirtualDeviceConfigSpec->new(device=>$device, operation=>VirtualDeviceConfigSpecOperation->new('edit'));
+	my $spec = VirtualMachineConfigSpec->new(deviceChange=>[$configspec]);
+	my $task = $view->ReconfigVM_Task(spec=>$spec);
+	&Vcenter::Task_getStatus($task);
+}
+
+sub remove_cdrom_iso {
+        my ($vmname, $num) = @_;
+        my ($key, $backing, $label) = &get_cdrom($vmname,$num);
+        my $controllerkey = &get_controller_key($vmname,$key);
+        my $view = Vim::find_entity_view(view_type=>'VirtualMachine',filter=>{name=>$vmname});
+        my $normbacking = VirtualCdromRemotePassthroughBackingInfo->new(exclusive=>0, deviceName=>'');
+        my $device = VirtualCdrom->new(backing=>$normbacking,key=>$key,controllerKey=>$controllerkey);
+        my $configspec = VirtualDeviceConfigSpec->new(device=>$device, operation=>VirtualDeviceConfigSpecOperation->new('edit'));
+        my $spec = VirtualMachineConfigSpec->new(deviceChange=>[$configspec]);
+        my $task = $view->ReconfigVM_Task(spec=>$spec);
         &Vcenter::Task_getStatus($task);
 }
 
@@ -241,6 +272,20 @@ sub get_cdrom {
                 push(@label,$cdrom->deviceInfo->label);
         }
         return ($keys[$num],$backing[$num],$label[$num]);
+}
+
+sub get_controller_key {
+	my ($vmname,$devkey) = @_;
+	$vmname = Vim::find_entity_view(view_type=>'VirtualMachine', filter=> {name => $vmname});
+	my $controllerkey;
+	foreach ( @{$vmname->config->hardware->device}) {
+		my $device = $_;
+		if ( $device->key != $devkey ) {
+                        next;
+                }
+		$controllerkey = $device->controllerKey;
+	}
+	return $controllerkey;
 }
 
 

@@ -9,7 +9,7 @@ use URI::Escape;
 BEGIN {
         use Exporter;
         our @ISA = qw(Exporter);
-        our @EXPORT = qw( &test &random_3digit &generate_mac &generate_uniq_mac &increment_mac &vmname_splitter &generate_vmname &increment_disk_name &path_to_url);
+        our @EXPORT = qw( &test &random_3digit &generate_mac &generate_uniq_mac &increment_mac &vmname_splitter &generate_vmname &increment_disk_name &path_to_url &filename_splitter );
 #        our @EXPORT_OK = qw( &test &random_3digit &generate_mac &generate_uniq_mac &increment_mac &vmname_splitter &generate_vmname &increment_disk_name);
 }
 
@@ -146,6 +146,13 @@ sub vmname_splitter {
 	}
 	#print "vmname_splitter return: ticket => $ticket, username => $username, family => $family, version => $version, lang => $lang, arch => $arch, type => $type , uniq => $uniq\n";
 	return ($ticket, $username, $family, $version, $lang, $arch, $type , $uniq);
+}
+
+sub filename_splitter {
+	my ($filename) = @_;
+	my ($datas, $folder,$image) = $filename =~ qr@^\s*\[([^\]]*)\]\s*(.*)/([^/]*)$@;
+	print "datastore => '$datas', folder => '$folder', image => '$image'\n";
+	return ($datas, $folder,$image);
 }
 
 sub path_to_url {

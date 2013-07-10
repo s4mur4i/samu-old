@@ -9,7 +9,7 @@ use SDK::Support;
 BEGIN {
         use Exporter;
         our @ISA = qw(Exporter);
-        our @EXPORT = qw( &test &mac_compare &Task_getStatus &delete_virtualmachine &check_if_empty_resource_pool &delete_resource_pool &exists_resource_pool &list_resource_pool_rp &print_resource_pool_content &print_folder_content &check_if_empty_folder &exists_vm );
+        our @EXPORT = qw( &test &mac_compare &Task_getStatus &delete_virtualmachine &check_if_empty_resource_pool &delete_resource_pool &exists_resource_pool &list_resource_pool_rp &print_resource_pool_content &print_folder_content &check_if_empty_folder &exists_vm &datastore_file_exists );
 #        our @EXPORT_OK = qw( &test &mac_compare &Task_getStatus &delete_virtualmachine &check_if_empty_resource_pool &delete_resource_pool &exists_resource_pool &list_resource_pool_rp &print_resource_pool_content &print_folder_content &check_if_empty_folder &exists_vm );
 }
 
@@ -382,6 +382,23 @@ sub print_vm_info {
 	}
 }
 
+sub datastore_file_exists {
+	my ($filename) = @_;
+	my ($datas, $folder,$image) = &Misc::filename_splitter($filename);
+	my $datastore = Vim::find_entity_view(view_type=>'Datastore',filter=>{name=>$datas});
+	my $browser = Vim::get_view( mo_ref => $datastore->browser);
+	my $files = FileQueryFlags->new(fileSize => 0, fileType => 1, modification => 0, fileOwner=> 0 );
+	my $searchspec = HostDatastoreBrowserSearchSpec->new(details => $files, matchPattern=>[$image]);
+	my $return = $browser->SearchDatastoreSubFolders(datastorePath=>"[$datas] $folder", searchSpec=>$searchspec);
+	if (defined($return->[0]->file)) {
+		print "File found\n";
+		return 1;
+	} else {
+		print "File not found\n";
+		return 0;
+	}
+
+}
 
 ## Functionality test sub
 sub test() {
