@@ -10,7 +10,7 @@ use SDK::Support;
 BEGIN {
         use Exporter;
         our @ISA = qw(Exporter);
-        our @EXPORT = qw( &test &add_network_interface &count_network_interface &remove_network_interface &get_network_interface &get_ext_network_interface &change_network_interface &list_dvportgroup &create_dvportgroup &remove_dvportgroup &dvportgroup_status &list_networks &CustomizationAdapterMapping_generator &add_disk &remove_disk &get_cdrom &remove_cdrom &change_cdrom_to_iso &remove_cdrom_iso);
+        our @EXPORT = qw( &test &add_network_interface &count_network_interface &remove_network_interface &get_network_interface &get_ext_network_interface &change_network_interface &list_dvportgroup &create_dvportgroup &remove_dvportgroup &dvportgroup_status &list_networks &CustomizationAdapterMapping_generator &add_disk &remove_disk &get_cdrom &remove_cdrom &change_cdrom_to_iso &remove_cdrom_iso &create_snapshot &list_snapshot);
 #        our @EXPORT_OK = qw( &test &add_network_interface &count_network_interface &remove_network_interface &get_network_interface &get_ext_network_interface &change_network_interface &list_dvportgroup &create_dvportgroup &remove_dvportgroup &dvportgroup_status &list_networks &CustomizationAdapterMapping_generator &add_disk );
 }
 
@@ -520,6 +520,41 @@ sub get_free_ide_controller {
 		}
 	}
 	print "Ide controllers full. Cannot add further devices\n";
+	return 0;
+}
+
+sub create_snapshot {
+	my ($vmname,$name,$description) = @_;
+	my $vm_view = Vim::find_entity_view(view_type=>'VirtualMachine',filter=>{name=>$vmname});
+	my $task = $vm_view->CreateSnapshot_Task(name=>$name,description=>$description,memory=>1,quiesce=>1);
+	&Vcenter::Task_getStatus($task);
+}
+
+sub list_snapshot {
+	my ($vmname) = @_;
+	my $vm_view = Vim::find_entity_view(view_type=>'VirtualMachine',filter=>{name=>$vmname});
+	if ( defined($vm_view->snapshot) ) {
+		print "Found snapshots listing\n";
+		&traverse_snapshot($vm_view->snapshot->rootSnapshotList);
+		return 1;
+	} else {
+		print "No snapshots defined on machine\n";
+		return 0;
+	}
+	return 0;
+}
+
+sub traverse_snapshot {
+	my ($snapshot_moref) = @_;
+	#print Dumper($snapshot_moref);
+	if ( defined($snapshot_moref->[0]->{'childSnapshotList'})) {
+		print "ID => '" .$snapshot_moref->[0]->id . "', name => '" . $snapshot_moref->[0]->name . "', createTime=> '" . $snapshot_moref->[0]->createTime . "', description => '" . $snapshot_moref->[0]->description . "'\n\n";
+                &traverse_snapshot($snapshot_moref->[0]->{'childSnapshotList'});
+		return 0;
+        } else {
+		print "ID => '" .$snapshot_moref->[0]->id . "', name => '" . $snapshot_moref->[0]->name . "', createTime=> '" . $snapshot_moref->[0]->createTime . "', description => '" . $snapshot_moref->[0]->description . "'\n\n";
+                return 0;
+        }
 	return 0;
 }
 
