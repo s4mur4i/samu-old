@@ -544,6 +544,31 @@ sub list_snapshot {
 	return 0;
 }
 
+sub remove_snapshot {
+	my ($vmname,$id) = @_;
+	my $vm_view = Vim::find_entity_view(view_type=>'VirtualMachine',filter=>{name=>$vmname});
+	if ( defined($vm_view->snapshot) ) {
+		print "Searching for snapshot\n";
+		my $snapshot = $vm_view->snapshot->rootSnapshotList->[0];
+		while (defined($snapshot)) {
+			if ( $snapshot->id == $id) {
+				print "Found Id removing\n";
+				my $moref = Vim::get_view( mo_ref=>$snapshot->snapshot);
+				my $task = $moref->RemoveSnapshot_Task(removeChildren=>0);
+				&Vcenter::Task_getStatus($task);
+				return 1;
+			} else {
+				### Need to handle multiple list elements
+				$snapshot = $snapshot->childSnapshotList->[0];
+			}
+		}
+	} else {
+                print "No snapshots defined on machine\n";
+                return 0;
+        }
+	return 0;
+}
+
 sub traverse_snapshot {
 	my ($snapshot_moref) = @_;
 	#print Dumper($snapshot_moref);
