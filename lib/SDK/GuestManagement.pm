@@ -532,10 +532,19 @@ sub create_snapshot {
 
 sub list_snapshot {
 	my ($vmname) = @_;
+	my $current_snapshot;
 	my $vm_view = Vim::find_entity_view(view_type=>'VirtualMachine',filter=>{name=>$vmname});
+	if (defined($vm_view->snapshot)) {
+		$current_snapshot = $vm_view->snapshot->currentSnapshot->value;
+	} else {
+		print "No snapshots on machine\n";
+		return 0;
+	}
 	if ( defined($vm_view->snapshot) ) {
 		print "Found snapshots listing\n";
-		&traverse_snapshot($vm_view->snapshot->rootSnapshotList);
+		foreach (@{$vm_view->snapshot->rootSnapshotList}) {
+			&traverse_snapshot($_,$current_snapshot);
+		}
 		return 1;
 	} else {
 		print "No snapshots defined on machine\n";
@@ -548,19 +557,16 @@ sub remove_snapshot {
 	my ($vmname,$id) = @_;
 	my $vm_view = Vim::find_entity_view(view_type=>'VirtualMachine',filter=>{name=>$vmname});
 	if ( defined($vm_view->snapshot) ) {
-		print "Searching for snapshot\n";
-		my $snapshot = $vm_view->snapshot->rootSnapshotList->[0];
-		while (defined($snapshot)) {
-			if ( $snapshot->id == $id) {
+		foreach (@{$vm_view->snapshot->rootSnapshotList}) {
+			my $snapshot = &find_snapshot_by_id($_,$id);
+			if (defined($snapshot)) {
 				print "Found Id removing\n";
 				my $moref = Vim::get_view( mo_ref=>$snapshot->snapshot);
 				my $task = $moref->RemoveSnapshot_Task(removeChildren=>0);
 				&Vcenter::Task_getStatus($task);
 				return 1;
-			} else {
-				### Need to handle multiple list elements
-				$snapshot = $snapshot->childSnapshotList->[0];
 			}
+			return 0;
 		}
 	} else {
                 print "No snapshots defined on machine\n";
@@ -569,16 +575,60 @@ sub remove_snapshot {
 	return 0;
 }
 
-sub traverse_snapshot {
-	my ($snapshot_moref) = @_;
-	#print Dumper($snapshot_moref);
-	if ( defined($snapshot_moref->[0]->{'childSnapshotList'})) {
-		print "ID => '" .$snapshot_moref->[0]->id . "', name => '" . $snapshot_moref->[0]->name . "', createTime=> '" . $snapshot_moref->[0]->createTime . "', description => '" . $snapshot_moref->[0]->description . "'\n\n";
-                &traverse_snapshot($snapshot_moref->[0]->{'childSnapshotList'});
-		return 0;
+sub remove_all_snapshot {
+	my ($vmname) = @_;
+        my $vm_view = Vim::find_entity_view(view_type=>'VirtualMachine',filter=>{name=>$vmname});
+	my $task = $vm_view->RemoveAllSnapshots_Task(consolidate=>1);
+	&Vcenter::Task_getStatus($task);
+	return 1;
+}
+
+sub find_snapshot_by_id {
+	my ($snapshot,$id) = @_;
+	my $return;
+	if ( $snapshot->id == $id ) {
+		return $snapshot;
+	} elsif ( defined($snapshot->childSnapshotList)) {
+		foreach (@{$snapshot->childSnapshotList}) {
+			if ( !defined($return)) {
+				$return = &find_snapshot_by_id($_,$id);
+			}
+		}
+	}
+	return $return;
+}
+
+sub revert_to_snapshot {
+	my ($vmname,$id) = @_;
+        my $vm_view = Vim::find_entity_view(view_type=>'VirtualMachine',filter=>{name=>$vmname});
+	if ( defined($vm_view->snapshot) ) {
+		foreach (@{$vm_view->snapshot->rootSnapshotList}) {
+			my $snapshot = &find_snapshot_by_id($_,$id);
+			if (defined($snapshot)) {
+                                print "Found Id reverting\n";
+                                my $moref = Vim::get_view( mo_ref=>$snapshot->snapshot);
+                                my $task = $moref->RevertToSnapshot_Task(suppressPowerOn=>1);
+                                &Vcenter::Task_getStatus($task);
+                                return 1;
+			}
+		}
         } else {
-		print "ID => '" .$snapshot_moref->[0]->id . "', name => '" . $snapshot_moref->[0]->name . "', createTime=> '" . $snapshot_moref->[0]->createTime . "', description => '" . $snapshot_moref->[0]->description . "'\n\n";
+                print "No snapshots defined on machine\n";
                 return 0;
+        }
+        return 0;
+}
+
+sub traverse_snapshot {
+	my ($snapshot_moref, $current_snapshot) = @_;
+	if ( $snapshot_moref->snapshot->value eq $current_snapshot) {
+		print "*CUR* ";
+	}
+	print "ID => '" .$snapshot_moref->id . "', name => '" . $snapshot_moref->name . "', createTime=> '" . $snapshot_moref->createTime . "', description => '" . $snapshot_moref->description . "'\n\n";
+	if ( defined($snapshot_moref->{'childSnapshotList'})) {
+		foreach (@{$snapshot_moref->{'childSnapshotList'}}) {
+			&traverse_snapshot($_,$current_snapshot);
+		}
         }
 	return 0;
 }
