@@ -136,7 +136,6 @@ sub vmname_splitter {
 	my ( $ticket, $username, $template, $uniq) = $vmname =~ /^([^-]*)-([^-]*)-([^-]*)-(\d{3})$/ ;
 	my ( $family, $version, $lang, $arch, $type );
 	if ( $template =~ /^[^_]*_[^_]*$/ ) {
-		print "XCB product.\n";
 		( $family, $version ) = $template =~ /^([^_]*)_([^_]*)$/;
 		$lang = "en";
 		$arch = "x64";

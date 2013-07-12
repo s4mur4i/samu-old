@@ -362,13 +362,22 @@ sub print_vm_info {
 		print "\tTools not installed. Cannot extract some information\n";
 		print "\tPower State: '" .$name->guest->guestState . "'\n";
 	} else {
-		foreach (@{$name->guest->net}) {
-			print "\tNetwork=>'" . $_->network. "', with ipAddresses=> [ " .join(", ",@{$_->ipAddress}) . "]\n";
+		if (defined($name->guest->net)) {
+			foreach (@{$name->guest->net}) {
+				print "\tNetwork=>'" . $_->network. "', with ipAddresses=> [ " .join(", ",@{$_->ipAddress}) . "]\n";
+			}
+			print "\tHostname: '" . $name->guest->hostName . "'\n";
+		} else {
+			print "\tNo network information available\n";
 		}
-		print "\tHostname: '" . $name->guest->hostName . "'\n";
 	}
 	my ($ticket, $username, $family, $version, $lang, $arch, $type , $uniq) = &Misc::vmname_splitter($name->name);
-	my $os = "${family}_${version}_${lang}_${arch}_${type}";
+	my $os;
+	if ( $type =~ /xcb/ ) {
+		$os = "${family}_${version}";
+	} else {
+		$os = "${family}_${version}_${lang}_${arch}_${type}";
+	}
 	if ( defined($uniq)  ) {
 		if ( defined($Support::template_hash{$os})) {
 			my $guestusername=$Support::template_hash{$os}{'username'};
