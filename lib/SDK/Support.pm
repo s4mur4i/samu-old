@@ -19,6 +19,7 @@ our %template_hash = (
         'scb_300' => { path => 'Support/vm/templates/SCB/3.0/T_scb_300',  username => 'root', password => 'titkos', os=>'scb' },
         'scb_330' => { path => 'Support/vm/templates/SCB/3.3/T_scb_330',  username => 'root', password => 'titkos', os=>'scb' },
         'scb_341' => { path => 'Support/vm/templates/SCB/3.4/T_scb_341', username => 'root', password => 'titkos', os=>'scb' },
+        'scb_342' => { path => 'Support/vm/templates/SCB/3.4/T_scb_342', username => 'root', password => 'titkos', os=>'scb' },
         'win_xpsp2_en_x64_pro' => { path => 'Support/vm/templates/Windows/xp/T_win_xpsp2_en_x64_pro',username => 'admin', password => 'titkos', key=>'T76MT-KCXJW-Y8J2V-PRQVQ-3B9WQ', os=>'win' },
         'win_7_en_x64_pro' => { path => 'Support/vm/templates/Windows/7/T_win_7_en_x64_pro',username => 'admin', password => 'titkos', key=>'FJ82H-XT6CR-J8D7P-XQJJ2-GPDD4', os=>'win' },
         'win_7_en_x86_ent' => { path => 'Support/vm/templates/Windows/7/T_win_7_en_x86_ent',username => 'admin', password => 'titkos', key=>'33PXH-7Y6KF-2VJC9-XBBR8-HVTHH', os=>'win' },
