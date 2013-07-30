@@ -10,7 +10,7 @@ use SDK::Support;
 BEGIN {
         use Exporter;
         our @ISA = qw(Exporter);
-        our @EXPORT = qw( &test &add_network_interface &count_network_interface &remove_network_interface &get_network_interface &get_ext_network_interface &change_network_interface &list_dvportgroup &create_dvportgroup &remove_dvportgroup &dvportgroup_status &list_networks &CustomizationAdapterMapping_generator &add_disk &remove_disk &get_cdrom &remove_cdrom &change_cdrom_to_iso &remove_cdrom_iso &create_snapshot &list_snapshot);
+        our @EXPORT = qw( &test &add_network_interface &count_network_interface &remove_network_interface &get_network_interface &get_ext_network_interface &change_network_interface &list_dvportgroup &create_dvportgroup &remove_dvportgroup &dvportgroup_status &list_networks &CustomizationAdapterMapping_generator &add_disk &remove_disk &get_cdrom &remove_cdrom &change_cdrom_to_iso &remove_cdrom_iso &create_snapshot &list_snapshot &change_altername );
 #        our @EXPORT_OK = qw( &test &add_network_interface &count_network_interface &remove_network_interface &get_network_interface &get_ext_network_interface &change_network_interface &list_dvportgroup &create_dvportgroup &remove_dvportgroup &dvportgroup_status &list_networks &CustomizationAdapterMapping_generator &add_disk );
 }
 
@@ -521,6 +521,40 @@ sub get_free_ide_controller {
 	}
 	print "Ide controllers full. Cannot add further devices\n";
 	return 0;
+}
+
+sub get_annotation_key {
+	my ($vmname,$name) =@_;
+	my $vm_view = Vim::find_entity_view(view_type=>'VirtualMachine',filter=>{name=>$vmname});
+	foreach (@{$vm_view->availableField}) {
+		if ($_->name eq $name  ) {
+			return $_->key;
+		}
+	}
+	return 0;
+}
+
+sub change_altername {
+	my ($vmname,$string) =@_;
+	my $vm_view = Vim::find_entity_view(view_type=>'VirtualMachine',filter=>{name=>$vmname});
+	my $sc = Vim::get_service_content();
+	my $custom = Vim::get_view( mo_ref => $sc->customFieldsManager);
+	my $key = &get_annotation_key($vmname,"alternateName");
+	$custom->SetField(entity=>$vm_view,key=>$key,value=>$string)
+}
+
+sub get_altername {
+	my ($vmname) =@_;
+	my $vm_view = Vim::find_entity_view(view_type=>'VirtualMachine',filter=>{name=>$vmname});
+	my $key = &get_annotation_key($vmname,"alternateName");
+	if (defined($vm_view->value)) {
+		foreach (@{$vm_view->value}) {
+			if ( $_->key eq $key ) {
+				return $_->value;
+			}
+		}
+	}
+	return "";
 }
 
 sub create_snapshot {

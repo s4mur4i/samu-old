@@ -358,9 +358,10 @@ sub print_vm_info {
 		return 0;
 	}
 	print "VMname: '" .$name->name ."'\n";
+	print "\tPower State: '" .$name->guest->guestState . "'\n";
+	print "\tAlternate name: '" . &GuestManagement::get_altername($name->name). "'\n";
 	if ($name->guest->toolsStatus eq 'toolsNotInstalled' ) {
 		print "\tTools not installed. Cannot extract some information\n";
-		print "\tPower State: '" .$name->guest->guestState . "'\n";
 	} else {
 		if (defined($name->guest->net)) {
 			foreach (@{$name->guest->net}) {
