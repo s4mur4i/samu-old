@@ -10,7 +10,7 @@ use SDK::Support;
 BEGIN {
         use Exporter;
         our @ISA = qw(Exporter);
-        our @EXPORT = qw( &test &add_network_interface &count_network_interface &remove_network_interface &get_network_interface &get_ext_network_interface &change_network_interface &list_dvportgroup &create_dvportgroup &remove_dvportgroup &dvportgroup_status &list_networks &CustomizationAdapterMapping_generator &add_disk &remove_disk &get_cdrom &remove_cdrom &change_cdrom_to_iso &remove_cdrom_iso &create_snapshot &list_snapshot &change_altername );
+        our @EXPORT = qw( &test &add_network_interface &count_network_interface &remove_network_interface &get_network_interface &get_ext_network_interface &change_network_interface &list_dvportgroup &create_dvportgroup &remove_dvportgroup &dvportgroup_status &list_networks &CustomizationAdapterMapping_generator &add_disk &remove_disk &get_cdrom &remove_cdrom &change_cdrom_to_iso &remove_cdrom_iso &create_snapshot &list_snapshot &change_altername &poweroff_vm poweron_vm);
 #        our @EXPORT_OK = qw( &test &add_network_interface &count_network_interface &remove_network_interface &get_network_interface &get_ext_network_interface &change_network_interface &list_dvportgroup &create_dvportgroup &remove_dvportgroup &dvportgroup_status &list_networks &CustomizationAdapterMapping_generator &add_disk );
 }
 
@@ -665,6 +665,32 @@ sub traverse_snapshot {
 		}
         }
 	return 0;
+}
+
+sub poweron_vm {
+	my ($vmname) = @_;
+	my $view = Vim::find_entity_view(view_type=>'VirtualMachine',filter=>{name=>$vmname});
+	if ( $view->runtime->powerState->val ne "poweredOff" ) {
+                print "$vmname already powered on.\n";
+                return 0;
+        }
+	my $task = $view->PowerOnVM_Task;
+	&Vcenter::Task_getStatus($task);
+	print "$vmname powered on.\n";
+	return 1;
+}
+
+sub poweroff_vm {
+	my ($vmname) = @_;
+        my $view = Vim::find_entity_view(view_type=>'VirtualMachine',filter=>{name=>$vmname});
+	if ( $view->runtime->powerState->val eq "poweredOff" ) {
+		print "$vmname already powered off.\n";
+		return 0;
+	}
+        my $task = $view->PowerOffVM_Task;
+        &Vcenter::Task_getStatus($task);
+        print "$vmname powered off.\n";
+        return 1;
 }
 
 ## Functionality test sub
