@@ -130,7 +130,7 @@ sub increment_disk_name {
 sub vmname_splitter {
 	my ($vmname) = @_;
 	if ( $vmname !~ /^([^-]*)-([^-]*)-([^-]*)-(\d{1,3})$/ ) {
-		print "Cannot match standard regex\n";
+#		print "Cannot match standard regex\n";
 		return ("unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown");
 	}
 	my ( $ticket, $username, $template, $uniq) = $vmname =~ /^([^-]*)-([^-]*)-([^-]*)-(\d{3})$/ ;
