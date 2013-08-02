@@ -12,7 +12,12 @@ my %opts = (
 	ticket => {
 		type => '=s',
 		help => 'Ticket to power off',
-		required => 1,
+		required => 0,
+	},
+	vmname => {
+		type => '=s',
+		help => 'Vm to power off',
+		required => 0,
 	},
 );
 Opts::add_options(%opts);
@@ -22,15 +27,27 @@ my $username = Opts::get_option('username');
 my $password = Opts::get_option('password');
 my $url = Opts::get_option('url');
 my $ticket = Opts::get_option('ticket');
+my $vmname = Opts::get_option('vmname');
 Util::connect( $url, $username, $password );
-my $machines = Vim::find_entity_views(view_type =>'VirtualMachine',filter=>{ name => qr/^$ticket-/});
-if ( @$machines == 0 ) {
-	print "Ticket machines cannot be found.\n";
-	exit 1;
-}
-foreach (@$machines) {
-	print "Machine: ". $_->name ."\n";
-        &GuestManagement::poweroff_vm($_->name);
+if (defined($ticket) && ! defined($vmname) ) {
+        my $machines = Vim::find_entity_views(view_type =>'VirtualMachine',filter=>{ name => qr/^$ticket-/});
+        if ( @$machines == 0 ) {
+                print "Ticket machines cannot be found.\n";
+                exit 1;
+        }
+        foreach (@$machines) {
+                print "Machine: ". $_->name ."\n";
+                &GuestManagement::poweroff_vm($_->name);
+        }
+} elsif ( defined($vmname) && ! defined($ticket)) {
+        print "Power off single vm: $vmname\n";
+        &GuestManagement::poweroff_vm($vmname) ;
+} elsif ( defined($vmname) && defined($ticket) ) {
+        print "To delete the ticket $ticket or to delete the vm $vmname... that is the question.\n";
+        exit 1;
+} else {
+        print "I don't know what to do....\n";
+        exit 1;
 }
 # Disconnect from the server
 Util::disconnect();

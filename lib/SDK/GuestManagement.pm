@@ -670,6 +670,10 @@ sub traverse_snapshot {
 sub poweron_vm {
 	my ($vmname) = @_;
 	my $view = Vim::find_entity_view(view_type=>'VirtualMachine',filter=>{name=>$vmname});
+	if ( !defined($view)) {
+                print "Cannot find machine $vmname\n";
+                return 0;
+        }
 	if ( $view->runtime->powerState->val ne "poweredOff" ) {
                 print "$vmname already powered on.\n";
                 return 0;
@@ -683,6 +687,10 @@ sub poweron_vm {
 sub poweroff_vm {
 	my ($vmname) = @_;
         my $view = Vim::find_entity_view(view_type=>'VirtualMachine',filter=>{name=>$vmname});
+	if ( !defined($view)) {
+		print "Cannot find machine $vmname\n";
+		return 0;
+	}
 	if ( $view->runtime->powerState->val eq "poweredOff" ) {
 		print "$vmname already powered off.\n";
 		return 0;
