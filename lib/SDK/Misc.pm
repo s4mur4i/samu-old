@@ -133,7 +133,7 @@ sub vmname_splitter {
 #		print "Cannot match standard regex\n";
 		return ("unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown");
 	}
-	my ( $ticket, $username, $template, $uniq) = $vmname =~ /^([^-]*)-([^-]*)-([^-]*)-(\d{3})$/ ;
+	my ( $ticket, $username, $template, $uniq) = $vmname =~ /^([^-]*)-([^-]*)-([^-]*)-(\d{1,3})$/ ;
 	my ( $family, $version, $lang, $arch, $type );
 	if ( $template =~ /^[^_]*_[^_]*$/ ) {
 		( $family, $version ) = $template =~ /^([^_]*)_([^_]*)$/;

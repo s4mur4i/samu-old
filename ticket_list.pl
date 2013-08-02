@@ -18,15 +18,17 @@ my $password = Opts::get_option('password');
 my $url = Opts::get_option('url');
 Util::connect( $url, $username, $password );
 my $machines = Vim::find_entity_views(view_type =>'VirtualMachine');
-my %tickets;
+my %tickets=();
 foreach (@$machines) {
 	my ($ticket, $username, $family, $version, $lang, $arch, $type , $uniq) = &Misc::vmname_splitter($_->name);
-	if ( !defined($tickets{$ticket}) ) {
+	if ( defined($ticket) and  !defined($tickets{$ticket}) ) {
 		$tickets{$ticket}=$username;
 	}
 }
-for my $ticket ( sort {$a <=> $b} (keys %tickets) ) {
-	print "Ticket: $ticket, owner: $tickets{$ticket}\n";
+for my $ticket ( sort (keys %tickets) ) {
+	if ( $ticket ne "" and $ticket ne "unknown" ) {
+		print "Ticket: $ticket, owner: $tickets{$ticket}\n";
+	}
 }
 # Disconnect from the server
 Util::disconnect();
