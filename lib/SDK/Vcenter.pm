@@ -9,7 +9,7 @@ use SDK::Support;
 BEGIN {
         use Exporter;
         our @ISA = qw(Exporter);
-        our @EXPORT = qw( &test &mac_compare &Task_getStatus &delete_virtualmachine &check_if_empty_resource_pool &delete_resource_pool &exists_resource_pool &list_resource_pool_rp &print_resource_pool_content &print_folder_content &check_if_empty_folder &exists_vm &datastore_file_exists );
+        our @EXPORT = qw( &test &mac_compare &Task_getStatus &delete_virtualmachine &check_if_empty_resource_pool &delete_resource_pool &exists_resource_pool &list_resource_pool_rp &print_resource_pool_content &print_folder_content &check_if_empty_folder &exists_vm &datastore_file_exists &entity_exists &get_names );
 #        our @EXPORT_OK = qw( &test &mac_compare &Task_getStatus &delete_virtualmachine &check_if_empty_resource_pool &delete_resource_pool &exists_resource_pool &list_resource_pool_rp &print_resource_pool_content &print_folder_content &check_if_empty_folder &exists_vm );
 }
 
@@ -408,6 +408,32 @@ sub datastore_file_exists {
 		return 0;
 	}
 
+}
+
+sub entity_exists {
+	my ( $type, $name ) =@_;
+	my $views = Vim::find_entity_views(entity_view=>$type,properties=>['name'],filter=>{name=>$name});
+	if ( defined($views) ) {
+		return 1;
+	} else {
+		return 0;
+	}
+}
+
+sub get_names {
+	my ( $type, $name ) =@_;
+	my @names;
+	my $views = Vim::find_entity_views( entity_view=>$type, properties=>['name'], filter=>{ name=> qr/*$name*/ } );
+	if ( &entity_exists($type, $name) ) {
+		foreach (@$views) {
+			push(@names, $_->name);
+		}
+		return @names;
+	}
+	} else {
+		print "No entities found with name: $name";
+		return 0;
+	}
 }
 
 ## Functionality test sub
