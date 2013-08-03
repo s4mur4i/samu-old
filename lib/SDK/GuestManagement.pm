@@ -48,7 +48,7 @@ sub add_disk {
 	my $unitnumber = $#{ $controller->device } + 1;
 	if ( $unitnumber < 7 ) {
 		print "Not yet reached controllerID\n";
-	} elsif ( $unitnumber = = 15 ) {
+	} elsif ( $unitnumber == 15 ) {
 		print "ERR: one SCSI controller cannot have more than 15 virtual disks\n";
 		return 0;
 	} else {
@@ -619,7 +619,7 @@ sub remove_all_snapshot {
 sub find_snapshot_by_id {
 	my ( $snapshot, $id ) = @_;
 	my $return;
-	if ( $snapshot->id = = $id ) {
+	if ( $snapshot->id == $id ) {
 		return $snapshot;
 	} elsif ( defined( $snapshot->childSnapshotList ) ) {
 		foreach ( @{ $snapshot->childSnapshotList } ) {
