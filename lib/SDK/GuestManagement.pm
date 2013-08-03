@@ -8,10 +8,9 @@ use SDK::Vcenter;
 use SDK::Support;
 
 BEGIN {
-        use Exporter;
-        our @ISA = qw(Exporter);
-        our @EXPORT = qw( &test &add_network_interface &count_network_interface &remove_network_interface &get_network_interface &get_ext_network_interface &change_network_interface &list_dvportgroup &create_dvportgroup &remove_dvportgroup &dvportgroup_status &list_networks &CustomizationAdapterMapping_generator &add_disk &remove_disk &get_cdrom &remove_cdrom &change_cdrom_to_iso &remove_cdrom_iso &create_snapshot &list_snapshot &change_altername &poweroff_vm poweron_vm);
-#        our @EXPORT_OK = qw( &test &add_network_interface &count_network_interface &remove_network_interface &get_network_interface &get_ext_network_interface &change_network_interface &list_dvportgroup &create_dvportgroup &remove_dvportgroup &dvportgroup_status &list_networks &CustomizationAdapterMapping_generator &add_disk );
+	use Exporter;
+	our @ISA = qw( Exporter );
+	our @EXPORT = qw( &test &add_network_interface &count_network_interface &remove_network_interface &get_network_interface &get_ext_network_interface &change_network_interface &list_dvportgroup &create_dvportgroup &remove_dvportgroup &dvportgroup_status &list_networks &CustomizationAdapterMapping_generator &add_disk &remove_disk &get_cdrom &remove_cdrom &change_cdrom_to_iso &remove_cdrom_iso &create_snapshot &list_snapshot &change_altername &poweroff_vm poweron_vm );
 }
 
 ## Add network interface to vm
@@ -22,97 +21,97 @@ BEGIN {
 
 sub add_network_interface {
 	## Incremented mac should be tested
-	my ($vmname) = @_;
-	my $int_count = &count_network_interface($vmname);
-	my ($key, $unitnumber, $controllerkey, $mac) = &get_network_interface($vmname,$int_count-1);
-	$mac = &Misc::increment_mac($mac);
+	my ( $vmname ) = @_;
+	my $int_count = &count_network_interface( $vmname );
+	my ( $key, $unitnumber, $controllerkey, $mac ) = &get_network_interface( $vmname, $int_count-1 );
+	$mac = &Misc::increment_mac( $mac );
 	$key++;
 	## Add to default VLAN 21 interface
-	my $switch = Vim::find_entity_view( view_type=> 'Network',filter => { 'name' => "VLAN21" });
-	$vmname = Vim::find_entity_view(view_type=>'VirtualMachine', filter=> {name => $vmname});
-	my $backing = VirtualEthernetCardNetworkBackingInfo->new(deviceName=>$switch->name, network=>$switch);
-	my $device = VirtualE1000->new( connectable=>VirtualDeviceConnectInfo->new(startConnected =>'1', allowGuestControl =>'1', connected => '1') ,wakeOnLanEnabled =>1, macAddress=>$mac , addressType=>"Manual", key=>$key , backing=>$backing, deviceInfo=>Description->new(summary=>'VLAN21', label=>''));
-	my $deviceconfig = VirtualDeviceConfigSpec->new(operation=> VirtualDeviceConfigSpecOperation->new('add'), device=> $device);
-	my $spec = VirtualMachineConfigSpec->new( deviceChange=>[$deviceconfig]);
-	#my $task = $vmname->ReconfigVM_Task(spec=>$spec);
+	my $switch = Vim::find_entity_view( view_type => 'Network', filter => { name => "VLAN21" } );
+	$vmname = Vim::find_entity_view( view_type => 'VirtualMachine', filter => { name => $vmname } );
+	my $backing = VirtualEthernetCardNetworkBackingInfo->new( deviceName => $switch->name, network => $switch );
+	my $device = VirtualE1000->new( connectable => VirtualDeviceConnectInfo->new( startConnected => '1', allowGuestControl => '1', connected => '1' ), wakeOnLanEnabled => 1, macAddress => $mac, addressType => "Manual", key => $key, backing => $backing, deviceInfo => Description->new( summary => 'VLAN21', label => '' ) );
+	my $deviceconfig = VirtualDeviceConfigSpec->new( operation => VirtualDeviceConfigSpecOperation->new( 'add' ), device => $device );
+	my $spec = VirtualMachineConfigSpec->new( deviceChange => [ $deviceconfig ] );
+	my $task = $vmname->ReconfigVM_Task( spec => $spec );
 	## Wait for task to complete
-	#&Vcenter::Task_getStatus($task);
+	&Vcenter::Task_getStatus( $task );
 }
 
 sub add_disk {
-        my ($vmname,$req_size) = @_;
-	my $view = Vim::find_entity_view(view_type=>'VirtualMachine',filter=>{name=>$vmname});
-        my $disk_count = &count_disk($vmname);
-        my ($key, $size, $path) = &get_disk($vmname,$disk_count-1);
-	my $controller = &get_scsi_controller($vmname);
+	my ( $vmname, $req_size ) = @_;
+	my $view = Vim::find_entity_view( view_type => 'VirtualMachine', filter => { name => $vmname } );
+	my $disk_count = &count_disk( $vmname );
+	my ( $key, $size, $path ) = &get_disk( $vmname, $disk_count-1 );
+	my $controller = &get_scsi_controller( $vmname );
 	my $controller_key = $controller->key;
-	my $unitnumber = $#{$controller->device} + 1;
-	if ($unitnumber < 7) {
+	my $unitnumber = $#{ $controller->device } + 1;
+	if ( $unitnumber < 7 ) {
 		print "Not yet reached controllerID\n";
-	} elsif ($unitnumber == 15) {
+	} elsif ( $unitnumber = = 15 ) {
 		print "ERR: one SCSI controller cannot have more than 15 virtual disks\n";
 		return 0;
 	} else {
 		$unitnumber++;
 	}
-        $key++;
-	my $inc_path = &Misc::increment_disk_name($path);
-	my $disk_backing_info = VirtualDiskFlatVer2BackingInfo->new(fileName => $inc_path, diskMode => "persistent", thinProvisioned=>1 );
-	my $disk = VirtualDisk->new(controllerKey => $controller_key, unitNumber => $unitnumber, key => -1, backing => $disk_backing_info, capacityInKB => $req_size );
-	my $devspec = VirtualDeviceConfigSpec->new(operation => VirtualDeviceConfigSpecOperation->new('add'), device => $disk, fileOperation=>VirtualDeviceConfigSpecFileOperation->new('create') );
-	my $vmspec = VirtualMachineConfigSpec->new(deviceChange => [$devspec] );
+	$key++;
+	my $inc_path = &Misc::increment_disk_name( $path );
+	my $disk_backing_info = VirtualDiskFlatVer2BackingInfo->new( fileName => $inc_path, diskMode => "persistent", thinProvisioned => 1 );
+	my $disk = VirtualDisk->new( controllerKey => $controller_key, unitNumber => $unitnumber, key => -1, backing => $disk_backing_info, capacityInKB => $req_size );
+	my $devspec = VirtualDeviceConfigSpec->new( operation => VirtualDeviceConfigSpecOperation->new( 'add' ), device => $disk, fileOperation => VirtualDeviceConfigSpecFileOperation->new( 'create' ) );
+	my $vmspec = VirtualMachineConfigSpec->new( deviceChange => [ $devspec ] );
 	print "Adding disk to machine.\n";
-        my $task = $view->ReconfigVM_Task(spec=>$vmspec);
-        ## Wait for task to complete
-        &Vcenter::Task_getStatus($task);
+	my $task = $view->ReconfigVM_Task( spec => $vmspec );
+	## Wait for task to complete
+	&Vcenter::Task_getStatus( $task );
 }
 
 sub add_cdrom {
-        my ($vmname) = @_;
-        my $view = Vim::find_entity_view(view_type=>'VirtualMachine',filter=>{name=>$vmname});
-        my $cdrom_count = &count_cdrom($vmname);
-	my $ide_key = &get_free_ide_controller($vmname);
-        my ($key, $backing, $label) = &get_disk($vmname,$cdrom_count-1);
-        $key++;
-	my $cdrombacking = VirtualCdromRemotePassthroughBackingInfo->new(exclusive=>0,deviceName=>'');
-	my $cdrom = VirtualCdrom->new(key=>$key,backing=>$cdrombacking,controllerKey=>$ide_key);
-        my $devspec = VirtualDeviceConfigSpec->new(operation => VirtualDeviceConfigSpecOperation->new('add'), device => $cdrom, );
-        my $vmspec = VirtualMachineConfigSpec->new(deviceChange => [$devspec] );
-        print "Adding cdrom to machine.\n";
-        my $task = $view->ReconfigVM_Task(spec=>$vmspec);
-        ## Wait for task to complete
-        &Vcenter::Task_getStatus($task);
+	my ( $vmname ) = @_;
+	my $view = Vim::find_entity_view( view_type => 'VirtualMachine', filter => { name => $vmname } );
+	my $cdrom_count = &count_cdrom( $vmname );
+	my $ide_key = &get_free_ide_controller( $vmname );
+	my ( $key, $backing, $label ) = &get_disk( $vmname, $cdrom_count-1 );
+	$key++;
+	my $cdrombacking = VirtualCdromRemotePassthroughBackingInfo->new( exclusive => 0, deviceName => '' );
+	my $cdrom = VirtualCdrom->new( key => $key, backing => $cdrombacking, controllerKey => $ide_key );
+	my $devspec = VirtualDeviceConfigSpec->new( operation => VirtualDeviceConfigSpecOperation->new( 'add' ), device => $cdrom, );
+	my $vmspec = VirtualMachineConfigSpec->new( deviceChange => [ $devspec ] );
+	print "Adding cdrom to machine.\n";
+	my $task = $view->ReconfigVM_Task( spec => $vmspec );
+	## Wait for task to complete
+	&Vcenter::Task_getStatus( $task );
 }
 
 sub change_cdrom_to_iso {
-	my ($vmname, $num,$filename) = @_;
-	if (!&Vcenter::datastore_file_exists($filename)) {
+	my ( $vmname, $num, $filename ) = @_;
+	if ( !&Vcenter::datastore_file_exists( $filename ) ) {
 		print "File does not exist on datastore => '$filename'\n";
 		return 0;
 	}
-	my ($datas, $folder,$image) = &Misc::filename_splitter($filename);
-	my $view = Vim::find_entity_view(view_type=>'VirtualMachine',filter=>{name=>$vmname});
-	my ($key, $backing, $label) = &get_cdrom($vmname,$num);
-	my $controllerkey = &get_controller_key($vmname,$key);
-	my $isobacking = VirtualCdromIsoBackingInfo->new(fileName=>$filename);
-	my $device = VirtualCdrom->new(backing=>$isobacking,key=>$key,controllerKey=>$controllerkey);
-	my $configspec = VirtualDeviceConfigSpec->new(device=>$device, operation=>VirtualDeviceConfigSpecOperation->new('edit'));
-	my $spec = VirtualMachineConfigSpec->new(deviceChange=>[$configspec]);
-	my $task = $view->ReconfigVM_Task(spec=>$spec);
-	&Vcenter::Task_getStatus($task);
+	my ( $datas, $folder, $image ) = &Misc::filename_splitter( $filename );
+	my $view = Vim::find_entity_view( view_type => 'VirtualMachine', filter => { name => $vmname } );
+	my ( $key, $backing, $label ) = &get_cdrom( $vmname, $num );
+	my $controllerkey = &get_controller_key( $vmname, $key );
+	my $isobacking = VirtualCdromIsoBackingInfo->new( fileName => $filename );
+	my $device = VirtualCdrom->new( backing => $isobacking, key => $key, controllerKey => $controllerkey );
+	my $configspec = VirtualDeviceConfigSpec->new( device => $device, operation => VirtualDeviceConfigSpecOperation->new( 'edit' ) );
+	my $spec = VirtualMachineConfigSpec->new( deviceChange => [ $configspec ] );
+	my $task = $view->ReconfigVM_Task( spec => $spec );
+	&Vcenter::Task_getStatus( $task );
 }
 
 sub remove_cdrom_iso {
-        my ($vmname, $num) = @_;
-        my ($key, $backing, $label) = &get_cdrom($vmname,$num);
-        my $controllerkey = &get_controller_key($vmname,$key);
-        my $view = Vim::find_entity_view(view_type=>'VirtualMachine',filter=>{name=>$vmname});
-        my $normbacking = VirtualCdromRemotePassthroughBackingInfo->new(exclusive=>0, deviceName=>'');
-        my $device = VirtualCdrom->new(backing=>$normbacking,key=>$key,controllerKey=>$controllerkey);
-        my $configspec = VirtualDeviceConfigSpec->new(device=>$device, operation=>VirtualDeviceConfigSpecOperation->new('edit'));
-        my $spec = VirtualMachineConfigSpec->new(deviceChange=>[$configspec]);
-        my $task = $view->ReconfigVM_Task(spec=>$spec);
-        &Vcenter::Task_getStatus($task);
+	my ( $vmname, $num ) = @_;
+	my ( $key, $backing, $label ) = &get_cdrom( $vmname, $num );
+	my $controllerkey = &get_controller_key( $vmname, $key );
+	my $view = Vim::find_entity_view( view_type => 'VirtualMachine', filter => { name => $vmname } );
+	my $normbacking = VirtualCdromRemotePassthroughBackingInfo->new( exclusive => 0, deviceName => '' );
+	my $device = VirtualCdrom->new( backing => $normbacking, key => $key, controllerKey => $controllerkey );
+	my $configspec = VirtualDeviceConfigSpec->new( device => $device, operation => VirtualDeviceConfigSpecOperation->new( 'edit' ) );
+	my $spec = VirtualMachineConfigSpec->new( deviceChange => [ $configspec ] );
+	my $task = $view->ReconfigVM_Task( spec => $spec );
+	&Vcenter::Task_getStatus( $task );
 }
 
 
@@ -123,43 +122,43 @@ sub remove_cdrom_iso {
 ##  count: number of network interfaces
 
 sub count_network_interface {
-	my ($vmname) =@_;
-	$vmname = Vim::find_entity_view(view_type=>'VirtualMachine', filter=> {name => $vmname});
-        my $count=0;
-        foreach ( @{$vmname->config->hardware->device}) {
-                my $interface = $_;
-                if ( $interface->isa('VirtualE1000')) {
+	my ( $vmname ) =@_;
+	$vmname = Vim::find_entity_view( view_type => 'VirtualMachine', filter => { name => $vmname } );
+	my $count =0;
+	foreach ( @{ $vmname->config->hardware->device } ) {
+		my $interface = $_;
+		if ( $interface->isa( 'VirtualE1000' ) ) {
 			$count++;
-                }
-        }
-        return $count;
+		}
+	}
+	return $count;
 }
 
 sub count_cdrom {
-        my ($vmname) =@_;
-        $vmname = Vim::find_entity_view(view_type=>'VirtualMachine', filter=> {name => $vmname});
-        my $count=0;
-        foreach ( @{$vmname->config->hardware->device}) {
-                my $disk = $_;
-                if ( $disk->isa('VirtualCdrom')) {
-                        $count++;
-                }
-        }
-        return $count;
+	my ( $vmname ) =@_;
+	$vmname = Vim::find_entity_view( view_type => 'VirtualMachine', filter => { name => $vmname } );
+	my $count =0;
+	foreach ( @{ $vmname->config->hardware->device } ) {
+		my $disk = $_;
+		if ( $disk->isa( 'VirtualCdrom' ) ) {
+			$count++;
+		}
+	}
+	return $count;
 }
 
 
 sub count_disk {
-        my ($vmname) =@_;
-        $vmname = Vim::find_entity_view(view_type=>'VirtualMachine', filter=> {name => $vmname});
-        my $count=0;
-        foreach ( @{$vmname->config->hardware->device}) {
-                my $disk = $_;
-                if ( $disk->isa('VirtualDisk')) {
-                        $count++;
-                }
-        }
-        return $count;
+	my ( $vmname ) =@_;
+	$vmname = Vim::find_entity_view( view_type => 'VirtualMachine', filter => { name => $vmname } );
+	my $count =0;
+	foreach ( @{ $vmname->config->hardware->device } ) {
+		my $disk = $_;
+		if ( $disk->isa( 'VirtualDisk' ) ) {
+			$count++;
+		}
+	}
+	return $count;
 }
 
 
@@ -171,33 +170,33 @@ sub count_disk {
 ##
 
 sub remove_network_interface {
-	my ($vmname,$num) = @_;
-	my ($key, $unitnumber, $controllerkey, $mac) = &get_network_interface($vmname,$num);
-	$vmname = Vim::find_entity_view(view_type=>'VirtualMachine', filter=> {name => $vmname});
-	my $device = VirtualE1000->new(key=>$key);
-        my $deviceconfig = VirtualDeviceConfigSpec->new(operation=> VirtualDeviceConfigSpecOperation->new('remove'), device=> $device);
-        my $spec = VirtualMachineConfigSpec->new( deviceChange=>[$deviceconfig]);
-	$vmname->ReconfigVM_Task(spec=>$spec);
+	my ( $vmname, $num ) = @_;
+	my ( $key, $unitnumber, $controllerkey, $mac ) = &get_network_interface( $vmname, $num );
+	$vmname = Vim::find_entity_view( view_type => 'VirtualMachine', filter => { name => $vmname } );
+	my $device = VirtualE1000->new( key => $key );
+	my $deviceconfig = VirtualDeviceConfigSpec->new( operation => VirtualDeviceConfigSpecOperation->new( 'remove' ), device => $device );
+	my $spec = VirtualMachineConfigSpec->new( deviceChange => [ $deviceconfig ] );
+	$vmname->ReconfigVM_Task( spec => $spec );
 }
 
 sub remove_disk {
-        my ($vmname,$num) = @_;
-	my ($key, $size, $path) = &get_disk($vmname,$num);
-        $vmname = Vim::find_entity_view(view_type=>'VirtualMachine', filter=> {name => $vmname});
-        my $device = VirtualDisk->new(key=>$key, capacityInKB=> "1");
-        my $deviceconfig = VirtualDeviceConfigSpec->new(operation=> VirtualDeviceConfigSpecOperation->new('remove'), device=> $device, fileOperation=>VirtualDeviceConfigSpecFileOperation->new('destroy'));
-        my $spec = VirtualMachineConfigSpec->new( deviceChange=>[$deviceconfig]);
-        $vmname->ReconfigVM_Task(spec=>$spec);
+	my ( $vmname, $num ) = @_;
+	my ( $key, $size, $path ) = &get_disk( $vmname, $num );
+	$vmname = Vim::find_entity_view( view_type => 'VirtualMachine', filter => { name => $vmname } );
+	my $device = VirtualDisk->new( key => $key, capacityInKB => "1" );
+	my $deviceconfig = VirtualDeviceConfigSpec->new( operation => VirtualDeviceConfigSpecOperation->new( 'remove' ), device => $device, fileOperation => VirtualDeviceConfigSpecFileOperation->new( 'destroy' ) );
+	my $spec = VirtualMachineConfigSpec->new( deviceChange => [$deviceconfig] );
+	$vmname->ReconfigVM_Task( spec => $spec );
 }
 
 sub remove_cdrom {
-        my ($vmname,$num) = @_;
-        my ($key,$backing, $label) = &get_cdrom($vmname,$num);
-        $vmname = Vim::find_entity_view(view_type=>'VirtualMachine', filter=> {name => $vmname});
-        my $device = VirtualCdrom->new(key=>$key);
-        my $deviceconfig = VirtualDeviceConfigSpec->new(operation=> VirtualDeviceConfigSpecOperation->new('remove'), device=> $device);
-        my $spec = VirtualMachineConfigSpec->new( deviceChange=>[$deviceconfig]);
-        $vmname->ReconfigVM_Task(spec=>$spec);
+	my ( $vmname, $num ) = @_;
+	my ( $key, $backing, $label ) = &get_cdrom( $vmname, $num );
+	$vmname = Vim::find_entity_view( view_type => 'VirtualMachine', filter => { name => $vmname } );
+	my $device = VirtualCdrom->new( key => $key );
+	my $deviceconfig = VirtualDeviceConfigSpec->new( operation => VirtualDeviceConfigSpecOperation->new( 'remove' ), device => $device );
+	my $spec = VirtualMachineConfigSpec->new( deviceChange => [$deviceconfig] );
+	$vmname->ReconfigVM_Task( spec => $spec );
 }
 
 
@@ -205,7 +204,7 @@ sub remove_cdrom {
 ## Return Information about network interface
 ## Parameters:
 ##  vmname: name of vm
-##  num: number of interface to return information about (starts at 0)
+##  num: number of interface to return information about ( starts at 0 )
 ## Returns:
 ##  key: device ID key
 ##  unitnumber: Unitnumber on controller
@@ -213,76 +212,76 @@ sub remove_cdrom {
 ##  mac: mac address of interface
 
 sub get_network_interface {
-        my ($vmname,$num) = @_;
-	$vmname = Vim::find_entity_view(view_type=>'VirtualMachine', filter=> {name => $vmname});
-        my @keys;
-        my @unitnumber;
-        my @controllerkey;
-        my @mac;
-        foreach ( @{$vmname->config->hardware->device}) {
-                my $interface = $_;
-                if ( !$interface->isa('VirtualE1000')) {
-                        next;
-                }
-                push(@keys,$interface->key);
-                push(@unitnumber,$interface->unitNumber);
-                push(@controllerkey,$interface->controllerKey);
-                push(@mac,$interface->macAddress);
-        }
-        return ($keys[$num],$unitnumber[$num],$controllerkey[$num],$mac[$num]);
+	my ( $vmname, $num ) = @_;
+	$vmname = Vim::find_entity_view( view_type => 'VirtualMachine', filter => { name => $vmname } );
+	my @keys;
+	my @unitnumber;
+	my @controllerkey;
+	my @mac;
+	foreach ( @{ $vmname->config->hardware->device } ) {
+		my $interface = $_;
+		if ( !$interface->isa( 'VirtualE1000' ) ) {
+			next;
+		}
+		push( @keys, $interface->key );
+		push( @unitnumber, $interface->unitNumber );
+		push( @controllerkey, $interface->controllerKey );
+		push( @mac, $interface->macAddress );
+	}
+	return ( $keys[$num], $unitnumber[$num], $controllerkey[$num], $mac[$num] );
 }
 
 sub get_disk {
-        my ($vmname,$num) = @_;
-        $vmname = Vim::find_entity_view(view_type=>'VirtualMachine', filter=> {name => $vmname});
-        my @keys;
+	my ( $vmname, $num ) = @_;
+	$vmname = Vim::find_entity_view( view_type => 'VirtualMachine', filter => { name => $vmname } );
+	my @keys;
 	my @size;
 	my @path;
-        foreach ( @{$vmname->config->hardware->device}) {
-                my $disk = $_;
-                if ( !$disk->isa('VirtualDisk')) {
-                        next;
-                }
-                push(@keys,$disk->key);
-		push(@size,$disk->capacityInKB);
-		push(@path,$disk->backing->fileName);
-        }
-        return ($keys[$num],$size[$num],$path[$num]);
+	foreach ( @{ $vmname->config->hardware->device } ) {
+		my $disk = $_;
+		if ( !$disk->isa( 'VirtualDisk' ) ) {
+			next;
+		}
+		push( @keys, $disk->key );
+		push( @size, $disk->capacityInKB );
+		push( @path, $disk->backing->fileName );
+	}
+	return ( $keys[$num], $size[$num], $path[$num] );
 }
 
 sub get_cdrom {
-        my ($vmname,$num) = @_;
-        $vmname = Vim::find_entity_view(view_type=>'VirtualMachine', filter=> {name => $vmname});
-        my @keys;
-        my @backing;
-        my @label;
-        foreach ( @{$vmname->config->hardware->device}) {
-                my $cdrom = $_;
-                if ( !$cdrom->isa('VirtualCdrom')) {
-                        next;
-                }
-                push(@keys,$cdrom->key);
-		if ($cdrom->backing->isa('VirtualCdromIsoBackingInfo')) {
-			push(@backing,$cdrom->backing->fileName);
-		} elsif ( $cdrom->backing->isa('VirtualCdromRemotePassthroughBackingInfo')) {
-			push(@backing,"Host device");
-		} else {
-			push(@backing,"Unknown");
+	my ( $vmname, $num ) = @_;
+	$vmname = Vim::find_entity_view( view_type => 'VirtualMachine', filter => { name => $vmname } );
+	my @keys;
+	my @backing;
+	my @label;
+	foreach ( @{ $vmname->config->hardware->device } ) {
+		my $cdrom = $_;
+		if ( !$cdrom->isa( 'VirtualCdrom' ) ) {
+			next;
 		}
-                push(@label,$cdrom->deviceInfo->label);
-        }
-        return ($keys[$num],$backing[$num],$label[$num]);
+		push( @keys, $cdrom->key );
+		if ( $cdrom->backing->isa( 'VirtualCdromIsoBackingInfo' ) ) {
+			push( @backing, $cdrom->backing->fileName );
+		} elsif ( $cdrom->backing->isa( 'VirtualCdromRemotePassthroughBackingInfo' ) ) {
+			push( @backing, "Host device" );
+		} else {
+			push( @backing, "Unknown" );
+		}
+		push( @label, $cdrom->deviceInfo->label );
+	}
+	return ( $keys[$num], $backing[$num], $label[$num] );
 }
 
 sub get_controller_key {
-	my ($vmname,$devkey) = @_;
-	$vmname = Vim::find_entity_view(view_type=>'VirtualMachine', filter=> {name => $vmname});
+	my ( $vmname, $devkey ) = @_;
+	$vmname = Vim::find_entity_view( view_type => 'VirtualMachine', filter => { name => $vmname } );
 	my $controllerkey;
-	foreach ( @{$vmname->config->hardware->device}) {
+	foreach ( @{ $vmname->config->hardware->device } ) {
 		my $device = $_;
-		if ( $device->key != $devkey ) {
-                        next;
-                }
+		if ( $device->key ! = $devkey ) {
+			next;
+		}
 		$controllerkey = $device->controllerKey;
 	}
 	return $controllerkey;
@@ -292,25 +291,25 @@ sub get_controller_key {
 ## Get further information about network interface
 ## Parameters:
 ##  vmname: name of vm
-##  num: number of interface to return information about (starts at 0)
+##  num: number of interface to return information about ( starts at 0 )
 ## Returns:
 ##  network: Network name
 ##  label: Network interface label
 
 sub get_ext_network_interface {
-	my ($vmname,$num) = @_;
-        $vmname = Vim::find_entity_view(view_type=>'VirtualMachine', filter=> {name => $vmname});
+	my ( $vmname, $num ) = @_;
+	$vmname = Vim::find_entity_view( view_type => 'VirtualMachine', filter => { name => $vmname } );
 	my @network;
 	my @label;
-	foreach ( @{$vmname->config->hardware->device}) {
-                my $interface = $_;
-                if ( !$interface->isa('VirtualE1000')) {
-                        next;
-                }
-		push(@network,$interface->backing->deviceName);
-		push(@label,$interface->deviceInfo->label);
-        }
-	return ($network[$num],$label[$num]);
+	foreach ( @{ $vmname->config->hardware->device } ) {
+		my $interface = $_;
+		if ( !$interface->isa( 'VirtualE1000' ) ) {
+			next;
+		}
+		push( @network, $interface->backing->deviceName );
+		push( @label, $interface->deviceInfo->label );
+	}
+	return ( $network[$num], $label[$num] );
 }
 
 ## Changes the attached network to a network interface
@@ -322,29 +321,29 @@ sub get_ext_network_interface {
 ##
 
 sub change_network_interface {
-	my ($vmname,$num,$network) = @_;
-	my ($key, $unitnumber, $controllerkey, $mac) = &get_network_interface($vmname,$num);
-	$vmname = Vim::find_entity_view(view_type=>'VirtualMachine', filter=> {name => $vmname});
-	my $network_view = Vim::find_entity_view( view_type => 'DistributedVirtualPortgroup', filter => {name => $network});
+	my ( $vmname, $num, $network ) = @_;
+	my ( $key, $unitnumber, $controllerkey, $mac ) = &get_network_interface( $vmname, $num );
+	$vmname = Vim::find_entity_view( view_type => 'VirtualMachine', filter => { name => $vmname } );
+	my $network_view = Vim::find_entity_view( view_type => 'DistributedVirtualPortgroup', filter => { name => $network } );
 	my $backing;
-	if (!defined($network_view)) {
-		$network = Vim::find_entity_view( view_type=> 'Network',filter => { name=> $network });
-		if ( !defined($network)) {
+	if ( !defined( $network_view ) ) {
+		$network = Vim::find_entity_view( view_type => 'Network', filter => { name => $network } );
+		if ( !defined( $network ) ) {
 			print "Cannot find network\n";
 			exit 15;
 		}
-		$backing = VirtualEthernetCardNetworkBackingInfo->new(deviceName=>$network->name, network=>$network);
+		$backing = VirtualEthernetCardNetworkBackingInfo->new( deviceName => $network->name, network => $network );
 	} else {
 		$network = $network_view;
-		my $switch = Vim::get_view( mo_ref => $network->config->distributedVirtualSwitch);
-		my $port = DistributedVirtualSwitchPortConnection->new(portgroupKey=>$network->key, switchUuid=>$switch->uuid);
-		$backing = VirtualEthernetCardDistributedVirtualPortBackingInfo->new(port=>$port);
+		my $switch = Vim::get_view( mo_ref => $network->config->distributedVirtualSwitch );
+		my $port = DistributedVirtualSwitchPortConnection->new( portgroupKey => $network->key, switchUuid => $switch->uuid );
+		$backing = VirtualEthernetCardDistributedVirtualPortBackingInfo->new( port => $port );
 	}
-        my $device = VirtualE1000->new( connectable=>VirtualDeviceConnectInfo->new(startConnected =>'1', allowGuestControl =>'1', connected => '1') ,wakeOnLanEnabled =>1, macAddress=>$mac , addressType=>"Manual", key=>$key , backing=>$backing, deviceInfo=>Description->new(summary=>$network->name, label=>$network->name));
-        my $deviceconfig = VirtualDeviceConfigSpec->new(operation=> VirtualDeviceConfigSpecOperation->new('edit'), device=> $device);
-        my $spec = VirtualMachineConfigSpec->new( deviceChange=>[$deviceconfig]);
-        my $task = $vmname->ReconfigVM_Task(spec=>$spec);
-	&Vcenter::Task_getStatus($task);
+	my $device = VirtualE1000->new( connectable => VirtualDeviceConnectInfo->new( startConnected => '1', allowGuestControl => '1', connected => '1' ) , wakeOnLanEnabled => 1, macAddress => $mac , addressType => "Manual", key => $key , backing => $backing, deviceInfo => Description->new( summary => $network->name, label => $network->name ) );
+	my $deviceconfig = VirtualDeviceConfigSpec->new( operation => VirtualDeviceConfigSpecOperation->new( 'edit' ), device => $device );
+	my $spec = VirtualMachineConfigSpec->new( deviceChange => [$deviceconfig] );
+	my $task = $vmname->ReconfigVM_Task( spec => $spec );
+	&Vcenter::Task_getStatus( $task );
 }
 
 ## Create switch to hold port groups
@@ -354,14 +353,14 @@ sub change_network_interface {
 ##
 
 sub create_switch {
-	my ($name) = @_;
-	my $root_folder = Vim::find_entity_view( view_type => 'Folder', filter => {name => 'network'});
-        my $host_view = Vim::find_entity_view(view_type => 'HostSystem', filter => { name => 'vmware-it1.balabit'});
-        my $hostspec = DistributedVirtualSwitchHostMemberConfigSpec->new(operation=>'add', maxProxySwitchPorts=>99,host=>$host_view);
-        my $dvsconfigspec = DVSConfigSpec->new(name=>$name, maxPorts=>300,description=>"DVS for ticket $name",host=>[$hostspec]);
-        my $spec = DVSCreateSpec->new(configSpec=>$dvsconfigspec);
-        my $task = $root_folder->CreateDVS_Task(spec=>$spec);
-	&Vcenter::Task_getStatus($task);
+	my ( $name ) = @_;
+	my $root_folder = Vim::find_entity_view( view_type => 'Folder', filter => { name => 'network' } );
+	my $host_view = Vim::find_entity_view( view_type => 'HostSystem', filter => { name => 'vmware-it1.balabit' } );
+	my $hostspec = DistributedVirtualSwitchHostMemberConfigSpec->new( operation => 'add', maxProxySwitchPorts => 99, host => $host_view );
+	my $dvsconfigspec = DVSConfigSpec->new( name => $name, maxPorts => 300, description => "DVS for ticket $name", host => [$hostspec] );
+	my $spec = DVSCreateSpec->new( configSpec => $dvsconfigspec );
+	my $task = $root_folder->CreateDVS_Task( spec => $spec );
+	&Vcenter::Task_getStatus( $task );
 }
 
 ## Deletes switch from esx
@@ -371,10 +370,10 @@ sub create_switch {
 ##
 
 sub remove_switch {
-	my ($name) = @_;
-	my $switch = Vim::find_entity_view( view_type => 'DistributedVirtualSwitch', filter=>{ name=>$name});
+	my ( $name ) = @_;
+	my $switch = Vim::find_entity_view( view_type => 'DistributedVirtualSwitch', filter => { name => $name } );
 	my $task = $switch->Destroy_Task;
-	&Vcenter::Task_getStatus($task);
+	&Vcenter::Task_getStatus( $task );
 }
 
 ## Create a distributed port group
@@ -385,17 +384,17 @@ sub remove_switch {
 ##
 
 sub create_dvportgroup {
-	my ($name,$switch) = @_;
-	my $switch_view = Vim::find_entity_view( view_type => 'DistributedVirtualSwitch', filter => { 'name' => $switch });
-	if (!defined($switch_view)) {
-		&create_switch($switch);
-		$switch_view = Vim::find_entity_view( view_type => 'DistributedVirtualSwitch', filter => { 'name' => $switch });
+	my ( $name, $switch ) = @_;
+	my $switch_view = Vim::find_entity_view( view_type => 'DistributedVirtualSwitch', filter => { 'name' => $switch } );
+	if ( !defined( $switch_view ) ) {
+		&create_switch( $switch );
+		$switch_view = Vim::find_entity_view( view_type => 'DistributedVirtualSwitch', filter => { 'name' => $switch } );
 	}
-	my $test = Vim::find_entity_view( view_type => 'DistributedVirtualPortgroup', filter => {name => $name});
-	if ( !defined($test)) {
-		my $spec = DVPortgroupConfigSpec->new(name=>$name, type=>'earlyBinding',numPorts=>20,description=>"Port group");
-		my $task = $switch_view->AddDVPortgroup_Task(spec=>$spec);
-		&Vcenter::Task_getStatus($task);
+	my $test = Vim::find_entity_view( view_type => 'DistributedVirtualPortgroup', filter => { name => $name } );
+	if ( !defined( $test ) ) {
+		my $spec = DVPortgroupConfigSpec->new( name => $name, type => 'earlyBinding', numPorts => 20, description => "Port group" );
+		my $task = $switch_view->AddDVPortgroup_Task( spec => $spec );
+		&Vcenter::Task_getStatus( $task );
 	}
 }
 
@@ -406,24 +405,24 @@ sub create_dvportgroup {
 ##
 
 sub remove_dvportgroup {
-	my ($name) = @_;
-	my $portgroup = Vim::find_entity_view( view_type=> 'DistributedVirtualPortgroup', filter =>{name =>$name});
+	my ( $name ) = @_;
+	my $portgroup = Vim::find_entity_view( view_type => 'DistributedVirtualPortgroup', filter => { name => $name } );
 	my $parent_switch = $portgroup->config->distributedVirtualSwitch;
-	$parent_switch = Vim::get_view( mo_ref => $parent_switch);
+	$parent_switch = Vim::get_view( mo_ref => $parent_switch );
 	my $count = $parent_switch->summary->portgroupName;
-	if (@$count < 3 ) {
+	if ( @$count < 3 ) {
 		print "Last portgroup, need to remove DV switch\n";
-		&remove_switch($parent_switch->name);
+		&remove_switch( $parent_switch->name );
 	} else {
 		my $task = $portgroup->Destroy_Task;
-		&Vcenter::Task_getStatus($task);
+		&Vcenter::Task_getStatus( $task );
 	}
 }
 
 sub dvportgroup_status {
-	my ($name) = @_;
-	my $network = Vim::find_entity_view( view_type=> 'Network',filter => { 'name' => $name });
-	if (defined($network)) {
+	my ( $name ) = @_;
+	my $network = Vim::find_entity_view( view_type => 'Network', filter => { 'name' => $name } );
+	if ( defined( $network ) ) {
 		return 1;
 	} else {
 		return 0;
@@ -437,10 +436,10 @@ sub dvportgroup_status {
 ##
 
 sub list_networks {
-	my $networks = Vim::find_entity_views( view_type=> 'Network');
-	foreach(@$networks) {
-                print "name:'" . $_->name ."'\n";
-        }
+	my $networks = Vim::find_entity_views( view_type => 'Network' );
+	foreach( @$networks ) {
+		print "name:'" . $_->name ."'\n";
+	}
 }
 
 ## List all dvportgroups on esx..
@@ -450,27 +449,27 @@ sub list_networks {
 ##
 
 sub list_dvportgroup {
-	my $networks = Vim::find_entity_views( view_type => 'DistributedVirtualPortgroup');
-	foreach(@$networks) {
+	my $networks = Vim::find_entity_views( view_type => 'DistributedVirtualPortgroup' );
+	foreach( @$networks ) {
 		print "name:'" . $_->name ."'\n";
 	}
 }
 
 sub CustomizationAdapterMapping_generator {
-	my ($os) = @_;
+	my ( $os ) = @_;
 	my @return;
-	if ( defined($Support::template_hash{$os})) {
-		my $source_temp = $Support::template_hash{$os}{'path'};
-		$source_temp = &Vcenter::path_to_moref($source_temp);
-		foreach ( @{$source_temp->config->hardware->device}) {
-                        if ( !$_->isa('VirtualE1000')) {
-                                next;
-                        }
-                        my $ip = CustomizationDhcpIpGenerator->new();
-                        my $adapter = CustomizationIPSettings->new(dnsDomain=>'support.balabit',dnsServerList=>['10.21.0.23'],gateway=>['10.21.255.254'],subnetMask=>'255.255.0.0', ip=>$ip);
-                        my $nicsetting = CustomizationAdapterMapping->new(adapter=>$adapter);
-                        push(@return,$nicsetting);
-                }
+	if ( defined( $Support::template_hash{ $os } ) ) {
+		my $source_temp = $Support::template_hash{ $os }{ 'path' };
+		$source_temp = &Vcenter::path_to_moref( $source_temp );
+		foreach ( @{ $source_temp->config->hardware->device } ) {
+			if ( !$_->isa( 'VirtualE1000' ) ) {
+				next;
+			}
+			my $ip = CustomizationDhcpIpGenerator->new( );
+			my $adapter = CustomizationIPSettings->new( dnsDomain => 'support.balabit', dnsServerList => ['10.21.0.23'], gateway => ['10.21.255.254'], subnetMask => '255.255.0.0', ip => $ip );
+			my $nicsetting = CustomizationAdapterMapping->new( adapter => $adapter );
+			push( @return, $nicsetting );
+		}
 
 	} else {
 		print "Cannot find template\n";
@@ -480,17 +479,17 @@ sub CustomizationAdapterMapping_generator {
 }
 
 sub get_scsi_controller {
-	my ($name) = @_;
-	my $vm_view = Vim::find_entity_view(view_type=>'VirtualMachine',filter=>{name=>$name});
+	my ( $name ) = @_;
+	my $vm_view = Vim::find_entity_view( view_type => 'VirtualMachine', filter => { name => $name } );
 	my $controller;
 	my $num_controller = 0;
-	foreach (@{$vm_view->config->hardware->device}) {
-		if (ref($_) =~ /VirtualBusLogicController|VirtualLsiLogicController|VirtualLsiLogicSASController|ParaVirtualSCSIController/) {
+	foreach ( @{ $vm_view->config->hardware->device } ) {
+		if ( ref( $_ ) =~ /VirtualBusLogicController|VirtualLsiLogicController|VirtualLsiLogicSASController|ParaVirtualSCSIController/ ) {
 		$num_controller++;
 		$controller = $_;
 		}
 	}
-	if ($num_controller != 1) {
+	if ( $num_controller ! = 1 ) {
 		print "Problem with controller count\n";
 		return 0;
 	}
@@ -500,19 +499,19 @@ sub get_scsi_controller {
 #VirtualIDEController
 
 sub get_free_ide_controller {
-	my ($name) = @_;
-        my $vm_view = Vim::find_entity_view(view_type=>'VirtualMachine',filter=>{name=>$name});
-        my @controller;
-        my $num_controller = 0;
-	foreach (@{$vm_view->config->hardware->device}) {
-		if (ref($_) =~ /VirtualIDEController/ ) {
+	my ( $name ) = @_;
+	my $vm_view = Vim::find_entity_view( view_type => 'VirtualMachine', filter => { name => $name } );
+	my @controller;
+	my $num_controller = 0;
+	foreach ( @{ $vm_view->config->hardware->device } ) {
+		if ( ref( $_ ) =~ /VirtualIDEController/ ) {
 			$num_controller++;
-			push(@controller,$_);
+			push( @controller, $_ );
 		}
 	}
-	foreach (@controller) {
-		if (defined($_->device)) {
-			if (@{$_->device} lt 2) {
+	foreach ( @controller ) {
+		if ( defined( $_->device ) ) {
+			if ( @{ $_->device } lt 2 ) {
 				return $_->key;
 			}
 		} else {
@@ -524,10 +523,10 @@ sub get_free_ide_controller {
 }
 
 sub get_annotation_key {
-	my ($vmname,$name) =@_;
-	my $vm_view = Vim::find_entity_view(view_type=>'VirtualMachine',filter=>{name=>$vmname});
-	foreach (@{$vm_view->availableField}) {
-		if ($_->name eq $name  ) {
+	my ( $vmname, $name ) =@_;
+	my $vm_view = Vim::find_entity_view( view_type => 'VirtualMachine', filter => { name => $vmname } );
+	foreach ( @{ $vm_view->availableField } ) {
+		if ( $_->name eq $name  ) {
 			return $_->key;
 		}
 	}
@@ -535,20 +534,20 @@ sub get_annotation_key {
 }
 
 sub change_altername {
-	my ($vmname,$string) =@_;
-	my $vm_view = Vim::find_entity_view(view_type=>'VirtualMachine',filter=>{name=>$vmname});
-	my $sc = Vim::get_service_content();
-	my $custom = Vim::get_view( mo_ref => $sc->customFieldsManager);
-	my $key = &get_annotation_key($vmname,"alternateName");
-	$custom->SetField(entity=>$vm_view,key=>$key,value=>$string)
+	my ( $vmname, $string ) =@_;
+	my $vm_view = Vim::find_entity_view( view_type => 'VirtualMachine', filter => { name => $vmname } );
+	my $sc = Vim::get_service_content( );
+	my $custom = Vim::get_view( mo_ref => $sc->customFieldsManager );
+	my $key = &get_annotation_key( $vmname, "alternateName" );
+	$custom->SetField( entity => $vm_view, key => $key, value => $string )
 }
 
 sub get_altername {
-	my ($vmname) =@_;
-	my $vm_view = Vim::find_entity_view(view_type=>'VirtualMachine',filter=>{name=>$vmname});
-	my $key = &get_annotation_key($vmname,"alternateName");
-	if (defined($vm_view->value)) {
-		foreach (@{$vm_view->value}) {
+	my ( $vmname ) =@_;
+	my $vm_view = Vim::find_entity_view( view_type => 'VirtualMachine', filter => { name => $vmname } );
+	my $key = &get_annotation_key( $vmname, "alternateName" );
+	if ( defined( $vm_view->value ) ) {
+		foreach ( @{ $vm_view->value } ) {
 			if ( $_->key eq $key ) {
 				return $_->value;
 			}
@@ -558,26 +557,26 @@ sub get_altername {
 }
 
 sub create_snapshot {
-	my ($vmname,$name,$description) = @_;
-	my $vm_view = Vim::find_entity_view(view_type=>'VirtualMachine',filter=>{name=>$vmname});
-	my $task = $vm_view->CreateSnapshot_Task(name=>$name,description=>$description,memory=>1,quiesce=>1);
-	&Vcenter::Task_getStatus($task);
+	my ( $vmname, $name, $description ) = @_;
+	my $vm_view = Vim::find_entity_view( view_type => 'VirtualMachine', filter => { name => $vmname } );
+	my $task = $vm_view->CreateSnapshot_Task( name => $name, description => $description, memory => 1, quiesce => 1 );
+	&Vcenter::Task_getStatus( $task );
 }
 
 sub list_snapshot {
-	my ($vmname) = @_;
+	my ( $vmname ) = @_;
 	my $current_snapshot;
-	my $vm_view = Vim::find_entity_view(view_type=>'VirtualMachine',filter=>{name=>$vmname});
-	if (defined($vm_view->snapshot)) {
+	my $vm_view = Vim::find_entity_view( view_type => 'VirtualMachine', filter => { name => $vmname } );
+	if ( defined( $vm_view->snapshot ) ) {
 		$current_snapshot = $vm_view->snapshot->currentSnapshot->value;
 	} else {
 		print "No snapshots on machine\n";
 		return 0;
 	}
-	if ( defined($vm_view->snapshot) ) {
+	if ( defined( $vm_view->snapshot ) ) {
 		print "Found snapshots listing\n";
-		foreach (@{$vm_view->snapshot->rootSnapshotList}) {
-			&traverse_snapshot($_,$current_snapshot);
+		foreach ( @{ $vm_view->snapshot->rootSnapshotList } ) {
+			&traverse_snapshot( $_, $current_snapshot );
 		}
 		return 1;
 	} else {
@@ -588,44 +587,44 @@ sub list_snapshot {
 }
 
 sub remove_snapshot {
-	my ($vmname,$id) = @_;
-	my $vm_view = Vim::find_entity_view(view_type=>'VirtualMachine',filter=>{name=>$vmname});
-	if ( defined($vm_view->snapshot) ) {
-		foreach (@{$vm_view->snapshot->rootSnapshotList}) {
-			my $snapshot = &find_snapshot_by_id($_,$id);
-			if (defined($snapshot)) {
+	my ( $vmname, $id ) = @_;
+	my $vm_view = Vim::find_entity_view( view_type => 'VirtualMachine', filter => { name => $vmname } );
+	if ( defined( $vm_view->snapshot ) ) {
+		foreach ( @{ $vm_view->snapshot->rootSnapshotList } ) {
+			my $snapshot = &find_snapshot_by_id( $_, $id );
+			if ( defined( $snapshot ) ) {
 				print "Found Id removing\n";
-				my $moref = Vim::get_view( mo_ref=>$snapshot->snapshot);
-				my $task = $moref->RemoveSnapshot_Task(removeChildren=>0);
-				&Vcenter::Task_getStatus($task);
+				my $moref = Vim::get_view( mo_ref => $snapshot->snapshot );
+				my $task = $moref->RemoveSnapshot_Task( removeChildren => 0 );
+				&Vcenter::Task_getStatus( $task );
 				return 1;
 			}
 			return 0;
 		}
 	} else {
-                print "No snapshots defined on machine\n";
-                return 0;
-        }
+		print "No snapshots defined on machine\n";
+		return 0;
+	}
 	return 0;
 }
 
 sub remove_all_snapshot {
-	my ($vmname) = @_;
-        my $vm_view = Vim::find_entity_view(view_type=>'VirtualMachine',filter=>{name=>$vmname});
-	my $task = $vm_view->RemoveAllSnapshots_Task(consolidate=>1);
-	&Vcenter::Task_getStatus($task);
+	my ( $vmname ) = @_;
+	my $vm_view = Vim::find_entity_view( view_type => 'VirtualMachine', filter => { name => $vmname } );
+	my $task = $vm_view->RemoveAllSnapshots_Task( consolidate => 1 );
+	&Vcenter::Task_getStatus( $task );
 	return 1;
 }
 
 sub find_snapshot_by_id {
-	my ($snapshot,$id) = @_;
+	my ( $snapshot, $id ) = @_;
 	my $return;
-	if ( $snapshot->id == $id ) {
+	if ( $snapshot->id = = $id ) {
 		return $snapshot;
-	} elsif ( defined($snapshot->childSnapshotList)) {
-		foreach (@{$snapshot->childSnapshotList}) {
-			if ( !defined($return)) {
-				$return = &find_snapshot_by_id($_,$id);
+	} elsif ( defined( $snapshot->childSnapshotList ) ) {
+		foreach ( @{ $snapshot->childSnapshotList } ) {
+			if ( !defined( $return ) ) {
+				$return = &find_snapshot_by_id( $_, $id );
 			}
 		}
 	}
@@ -633,61 +632,61 @@ sub find_snapshot_by_id {
 }
 
 sub revert_to_snapshot {
-	my ($vmname,$id) = @_;
-        my $vm_view = Vim::find_entity_view(view_type=>'VirtualMachine',filter=>{name=>$vmname});
-	if ( defined($vm_view->snapshot) ) {
-		foreach (@{$vm_view->snapshot->rootSnapshotList}) {
-			my $snapshot = &find_snapshot_by_id($_,$id);
-			if (defined($snapshot)) {
-                                print "Found Id reverting\n";
-                                my $moref = Vim::get_view( mo_ref=>$snapshot->snapshot);
-                                my $task = $moref->RevertToSnapshot_Task(suppressPowerOn=>1);
-                                &Vcenter::Task_getStatus($task);
-                                return 1;
+	my ( $vmname, $id ) = @_;
+	my $vm_view = Vim::find_entity_view( view_type => 'VirtualMachine', filter => { name => $vmname } );
+	if ( defined( $vm_view->snapshot ) ) {
+		foreach ( @{ $vm_view->snapshot->rootSnapshotList } ) {
+			my $snapshot = &find_snapshot_by_id( $_, $id );
+			if ( defined( $snapshot ) ) {
+				print "Found Id reverting\n";
+				my $moref = Vim::get_view( mo_ref => $snapshot->snapshot );
+				my $task = $moref->RevertToSnapshot_Task( suppressPowerOn => 1 );
+				&Vcenter::Task_getStatus( $task );
+				return 1;
 			}
 		}
-        } else {
-                print "No snapshots defined on machine\n";
-                return 0;
-        }
-        return 0;
+	} else {
+		print "No snapshots defined on machine\n";
+		return 0;
+	}
+	return 0;
 }
 
 sub traverse_snapshot {
-	my ($snapshot_moref, $current_snapshot) = @_;
-	if ( $snapshot_moref->snapshot->value eq $current_snapshot) {
+	my ( $snapshot_moref, $current_snapshot ) = @_;
+	if ( $snapshot_moref->snapshot->value eq $current_snapshot ) {
 		print "*CUR* ";
 	}
-	print "ID => '" .$snapshot_moref->id . "', name => '" . $snapshot_moref->name . "', createTime=> '" . $snapshot_moref->createTime . "', description => '" . $snapshot_moref->description . "'\n\n";
-	if ( defined($snapshot_moref->{'childSnapshotList'})) {
-		foreach (@{$snapshot_moref->{'childSnapshotList'}}) {
-			&traverse_snapshot($_,$current_snapshot);
+	print "ID => '" .$snapshot_moref->id . "', name => '" . $snapshot_moref->name . "', createTime => '" . $snapshot_moref->createTime . "', description => '" . $snapshot_moref->description . "'\n\n";
+	if ( defined( $snapshot_moref->{ 'childSnapshotList' } ) ) {
+		foreach ( @{ $snapshot_moref->{ 'childSnapshotList' }} ) {
+			&traverse_snapshot( $_, $current_snapshot );
 		}
-        }
+	}
 	return 0;
 }
 
 sub poweron_vm {
-	my ($vmname) = @_;
-	my $view = Vim::find_entity_view(view_type=>'VirtualMachine',filter=>{name=>$vmname});
-	if ( !defined($view)) {
-                print "Cannot find machine $vmname\n";
-                return 0;
-        }
+	my ( $vmname ) = @_;
+	my $view = Vim::find_entity_view( view_type => 'VirtualMachine', filter => { name => $vmname } );
+	if ( !defined( $view ) ) {
+		print "Cannot find machine $vmname\n";
+		return 0;
+	}
 	if ( $view->runtime->powerState->val ne "poweredOff" ) {
-                print "$vmname already powered on.\n";
-                return 0;
-        }
+		print "$vmname already powered on.\n";
+		return 0;
+	}
 	my $task = $view->PowerOnVM_Task;
-	&Vcenter::Task_getStatus($task);
+	&Vcenter::Task_getStatus( $task );
 	print "$vmname powered on.\n";
 	return 1;
 }
 
 sub poweroff_vm {
-	my ($vmname) = @_;
-        my $view = Vim::find_entity_view(view_type=>'VirtualMachine',filter=>{name=>$vmname});
-	if ( !defined($view)) {
+	my ( $vmname ) = @_;
+	my $view = Vim::find_entity_view( view_type => 'VirtualMachine', filter => { name => $vmname } );
+	if ( !defined( $view ) ) {
 		print "Cannot find machine $vmname\n";
 		return 0;
 	}
@@ -695,16 +694,16 @@ sub poweroff_vm {
 		print "$vmname already powered off.\n";
 		return 0;
 	}
-        my $task = $view->PowerOffVM_Task;
-        &Vcenter::Task_getStatus($task);
-        print "$vmname powered off.\n";
-        return 1;
+	my $task = $view->PowerOffVM_Task;
+	&Vcenter::Task_getStatus( $task );
+	print "$vmname powered off.\n";
+	return 1;
 }
 
 ## Functionality test sub
 
-sub test() {
-        print "GuestManagement module test sub\n";
+sub test( ) {
+	print "GuestManagement module test sub\n";
 }
 
 #### We need to end with success

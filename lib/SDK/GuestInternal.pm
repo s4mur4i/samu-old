@@ -5,10 +5,9 @@ use warnings;
 use Data::Dumper;
 
 BEGIN {
-        use Exporter;
-        our @ISA = qw(Exporter);
-        our @EXPORT = qw( &test &acquireGuestAuth &get_xcb_ha_interface &get_interface_info &find_root_snapshot );
-        our @EXPORT_OK = qw( &test &acquireGuestAuth &get_xcb_ha_interface &get_interface_info &find_root_snapshot );
+	use Exporter;
+	our @ISA = qw( Exporter );
+	our @EXPORT = qw( &test &acquireGuestAuth &get_xcb_ha_interface &get_interface_info &find_root_snapshot );
 }
 
 ## Acquire Guest authentication information to authenticate through vmware tools
@@ -21,23 +20,23 @@ BEGIN {
 ##  NamePasswordAuthentication Object for authentication
 
 sub acquireGuestAuth {
-        my ($gOpMgr,$vmview,$gu,$gp) = @_;
+	my ( $gOpMgr, $vmview, $gu, $gp ) = @_;
 
-        my $authMgr = Vim::get_view(mo_ref => $gOpMgr->authManager);
-        my $guestAuth = NamePasswordAuthentication->new(username => $gu, password => $gp, interactiveSession => 'false');
+	my $authMgr = Vim::get_view( mo_ref => $gOpMgr->authManager );
+	my $guestAuth = NamePasswordAuthentication->new( username => $gu, password => $gp, interactiveSession => 'false' );
 
-        eval {
-                print "Validating guest credentials in " . $vmview->name . " ...\n";
-                $authMgr->ValidateCredentialsInGuest(vm => $vmview, auth => $guestAuth);
-        };
-        if($@) {
-                die( "Error: " . $@ . "\n");
-                print Dumper($@);
-        } else {
-                print "Succesfully validated guest credentials!\n";
-        }
+	eval {
+		print "Validating guest credentials in " . $vmview->name . " ...\n";
+		$authMgr->ValidateCredentialsInGuest( vm => $vmview, auth => $guestAuth );
+	};
+	if( $@ ) {
+		die( "Error: " . $@ . "\n");
+		print Dumper( $@ );
+	} else {
+		print "Succesfully validated guest credentials!\n";
+	}
 
-        return $guestAuth;
+	return $guestAuth;
 }
 
 ## Runs a command in the guest through vmware tools
@@ -53,29 +52,28 @@ sub acquireGuestAuth {
 ##  pid: pid of task started
 
 sub runCommandInGuest {
-        my ($vmname, $prog, $prog_arg, $env, $workdir, $guestusername, $guestpassword) = @_;
-        my $vm_view = Vim::find_entity_view(view_type=>'VirtualMachine',filter=>{name=>$vmname});
-        if ( !(defined($guestusername)) || !defined($guestpassword)) {
-                if ( $vmname =~ /^[^-]*-[^-]*-[^-]*-\d{3}$/ ) {
-                  my ($os) = $vmname =~ m/^[^-]*-[^-]*-([^-]*)-\d{3}$/ ;
-                  if ( defined($Support::template_hash{$os})) {
-                        $guestusername=$Support::template_hash{$os}{'username'};
-                        $guestpassword=$Support::template_hash{$os}{'password'};
-                  } else {
-                        print "Regex matched an OS, but no template found to it os=> '$os'\n";
-                  }
-                }
-        }
-        if ( (!defined($guestusername)) || (!defined($guestpassword)) || (!defined($vm_view)) ) {
+	my ( $vmname, $prog, $prog_arg, $env, $workdir, $guestusername, $guestpassword ) = @_;
+	my $vm_view = Vim::find_entity_view( view_type => 'VirtualMachine', filter => {name => $vmname } );
+	if ( !defined( $guestusername ) || !defined( $guestpassword ) ) {
+		if ( $vmname =~ /^[^-]*-[^-]*-[^-]*-\d{3}$/ ) {
+			my ( $os ) = $vmname =~ m/^[^-]*-[^-]*-([^-]*)-\d{3}$/ ;
+			if ( defined( $Support::template_hash{$os} ) ) {
+				$guestusername=$Support::template_hash{$os}{'username'};
+				$guestpassword=$Support::template_hash{$os}{'password'};
+			} else {
+			print "Regex matched an OS, but no template found to it os=> '$os'\n";
+			}
+		}
+	}
+	if ( !defined( $guestusername ) || !defined( $guestpassword ) || !defined( $vm_view ) ) {
 		exit 1;
-        }
-        my $guestOpMgr = Vim::get_view(mo_ref => Vim::get_service_content()->guestOperationsManager);
-        my $guestCreds = &acquireGuestAuth($guestOpMgr,$vm_view,$guestusername,$guestpassword);
-        my $guestProcMan = Vim::get_view(mo_ref => $guestOpMgr->processManager);
-        my $guestProgSpec = GuestProgramSpec->new(workingDirectory=> $workdir, programPath=> $prog, arguments => $prog_arg, envVariables =>[$env]);
-        #my $guestProgSpec = GuestWindowsProgramSpec->new(programPath=> $prog, arguments => $prog_arg,startMinimized=>1);
-        my $pid = $guestProcMan->StartProgramInGuest(vm=>$vm_view, auth=>$guestCreds, spec=>$guestProgSpec);
-        return $pid;
+	}
+	my $guestOpMgr = Vim::get_view( mo_ref => Vim::get_service_content()->guestOperationsManager );
+	my $guestCreds = &acquireGuestAuth( $guestOpMgr, $vm_view, $guestusername, $guestpassword );
+	my $guestProcMan = Vim::get_view( mo_ref => $guestOpMgr->processManager );
+	my $guestProgSpec = GuestProgramSpec->new( workingDirectory => $workdir, programPath=> $prog, arguments => $prog_arg, envVariables => [$env] );
+	my $pid = $guestProcMan->StartProgramInGuest( vm => $vm_view, auth => $guestCreds, spec => $guestProgSpec );
+	return $pid;
 }
 
 ## Returns HA interface information for XCB products
@@ -88,26 +86,26 @@ sub runCommandInGuest {
 ##  mac: mac address used reconfigure would override it
 
 sub get_xcb_ha_interface {
-        my ($machine_ref) = @_;
-        my @keys;
-        my @unitnumber;
-        my @controllerkey;
-        my @mac;
-        foreach ( @{$machine_ref->config->hardware->device}) {
-                my $interface = $_;
-                if ( !$interface->isa('VirtualE1000')) {
-                        next;
-                }
-                push(@keys,$interface->key);
-                push(@unitnumber,$interface->unitNumber);
-                push(@controllerkey,$interface->controllerKey);
-                push(@mac,$interface->macAddress);
-        }
-        if ( (@keys lt 4) && (@unitnumber lt 4) && (@controllerkey lt 4) ) {
-                print "Not enough interfaces.\n";
-                exit 1;
-        }
-        return ($keys[3],$unitnumber[3],$controllerkey[3],$mac[3]);
+	my ( $machine_ref ) = @_;
+	my @keys;
+	my @unitnumber;
+	my @controllerkey;
+	my @mac;
+	foreach ( @{$machine_ref->config->hardware->device} ) {
+		my $interface = $_;
+		if ( !$interface->isa( 'VirtualE1000' ) ) {
+			next;
+		}
+		push( @keys, $interface->key );
+		push( @unitnumber, $interface->unitNumber );
+		push( @controllerkey, $interface->controllerKey );
+		push( @mac, $interface->macAddress );
+	}
+	if ( ( @keys lt 4 ) && ( @unitnumber lt 4 ) && ( @controllerkey lt 4 ) ) {
+		print "Not enough interfaces.\n";
+		exit 1;
+	}
+	return ( $keys[3], $unitnumber[3], $controllerkey[3], $mac[3] );
 }
 
 ## Returns interface information of requested machine interface
@@ -121,42 +119,42 @@ sub get_xcb_ha_interface {
 ##  mac: mac address used reconfigure would override it
 
 sub get_interface_info {
-        my ($machine_ref, $interface) = @_;
-        my @keys;
-        my @unitnumber;
-        my @controllerkey;
-        my @mac;
-        foreach ( @{$machine_ref->config->hardware->device}) {
-                my $interface = $_;
-                if ( !$interface->isa('VirtualE1000')) {
-                        next;
-                }
-                push(@keys,$interface->key);
-                push(@unitnumber,$interface->unitNumber);
-                push(@controllerkey,$interface->controllerKey);
-                push(@mac,$interface->macAddress);
-        }
+	my ( $machine_ref, $interface ) = @_;
+	my @keys;
+	my @unitnumber;
+	my @controllerkey;
+	my @mac;
+	foreach ( @{$machine_ref->config->hardware->device} ) {
+		my $interface = $_;
+		if ( !$interface->isa( 'VirtualE1000' ) ) {
+			next;
+		}
+		push( @keys, $interface->key );
+		push( @unitnumber, $interface->unitNumber );
+		push( @controllerkey, $interface->controllerKey );
+		push( @mac, $interface->macAddress );
+	}
 	## We need to increment interface count because of perl indexing
 	my $increment = $interface +1;
-        if ( (@keys lt $increment) && (@unitnumber lt $increment) && (@controllerkey lt $increment) ) {
-                print "Not enough interfaces. Interface $interface was requested but only @keys interfaces\n";
-                exit 1;
-        }
-        return ($keys[$interface],$unitnumber[$interface],$controllerkey[$interface],$mac[$interface]);
+	if ( ( @keys lt $increment ) && ( @unitnumber lt $increment ) && ( @controllerkey lt $increment ) ) {
+		print "Not enough interfaces. Interface $interface was requested but only @keys interfaces\n";
+		exit 1;
+	}
+	return ( $keys[$interface], $unitnumber[$interface], $controllerkey[$interface], $mac[$interface] );
 }
 
 sub find_root_snapshot {
-        my ($snapshot) = @_;
-        if ( defined($snapshot->[0]->{'childSnapshotList'})) {
-                &find_root_snapshot($snapshot->[0]->{'childSnapshotList'});
-        } else {
+	my ( $snapshot ) = @_;
+	if ( defined( $snapshot->[0]->{'childSnapshotList'} ) ) {
+		&find_root_snapshot( $snapshot->[0]->{'childSnapshotList'} );
+	} else {
 		return $snapshot;
-        }
+	}
 }
 
 ## Functionailty test sub
 sub test() {
-        print "GuestInternal module test sub\n";
+	print "GuestInternal module test sub\n";
 }
 
 #### We need to end with success
