@@ -22,6 +22,17 @@ my %opts = (
                 help => "pid if requested program",
                 required => 0,
 	},
+	guestusername => {
+                type => "=s",
+                help => "Username to use to log into machine",
+                required => 0,
+        },
+	guestpassword => {
+                type => "=s",
+                help => "Password to use to log into machine",
+                required => 0,
+        },
+
 );
 Opts::add_options(%opts);
 Opts::parse();
@@ -43,6 +54,11 @@ if ( $vmname =~ /^[^-]*-[^-]*-[^-]*-\d{3}$/ ) {
   } else {
 	print "Regex matched an OS, but no template found to it os=> '$os'\n";
   }
+} else {
+	if ( !defined( Opts::get_option( 'guestusername' ) ) and !defined( Opts::get_option( 'guestpassword' ) ) ) {
+		print "VMname not matched standard, and not usernames defined.\n";
+		exit 1;
+	}
 }
 if ( defined(Opts::get_option('guestusername')) && defined(Opts::get_option('guestpassword'))) {
 		$guestusername=Opts::get_option('guestusername');

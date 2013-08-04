@@ -428,7 +428,6 @@ sub get_names {
 			push( @names, $_->name );
 		}
 		return @names;
-	}
 	} else {
 		print "No entities found with name: $name";
 		return 0;

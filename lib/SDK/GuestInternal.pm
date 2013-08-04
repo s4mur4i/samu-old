@@ -3,11 +3,14 @@ package GuestInternal;
 use strict;
 use warnings;
 use Data::Dumper;
+use LWP::UserAgent;
+use LWP::Simple qw(!head);
+use File::Basename;
 
 BEGIN {
 	use Exporter;
 	our @ISA = qw( Exporter );
-	our @EXPORT = qw( &test &acquireGuestAuth &get_xcb_ha_interface &get_interface_info &find_root_snapshot );
+	our @EXPORT = qw( &test &acquireGuestAuth &get_xcb_ha_interface &get_interface_info &find_root_snapshot &runCommandInGuest &transfer_from_guest &transfer_to_guest );
 }
 
 ## Acquire Guest authentication information to authenticate through vmware tools
@@ -53,20 +56,12 @@ sub acquireGuestAuth {
 
 sub runCommandInGuest {
 	my ( $vmname, $prog, $prog_arg, $env, $workdir, $guestusername, $guestpassword ) = @_;
-	my $vm_view = Vim::find_entity_view( view_type => 'VirtualMachine', filter => {name => $vmname } );
-	if ( !defined( $guestusername ) || !defined( $guestpassword ) ) {
-		if ( $vmname =~ /^[^-]*-[^-]*-[^-]*-\d{3}$/ ) {
-			my ( $os ) = $vmname =~ m/^[^-]*-[^-]*-([^-]*)-\d{3}$/ ;
-			if ( defined( $Support::template_hash{$os} ) ) {
-				$guestusername=$Support::template_hash{$os}{'username'};
-				$guestpassword=$Support::template_hash{$os}{'password'};
-			} else {
-			print "Regex matched an OS, but no template found to it os=> '$os'\n";
-			}
-		}
+	my $vm_view = Vim::find_entity_view( view_type => 'VirtualMachine', filter => { name => $vmname } );
+	if ( !defined( $guestusername ) and !defined( $guestpassword ) ) {
+		( $guestusername, $guestpassword ) = &auth_info( $vmname );
 	}
 	if ( !defined( $guestusername ) || !defined( $guestpassword ) || !defined( $vm_view ) ) {
-		exit 1;
+		return 1;
 	}
 	my $guestOpMgr = Vim::get_view( mo_ref => Vim::get_service_content()->guestOperationsManager );
 	my $guestCreds = &acquireGuestAuth( $guestOpMgr, $vm_view, $guestusername, $guestpassword );
@@ -151,6 +146,97 @@ sub find_root_snapshot {
 		return $snapshot;
 	}
 }
+
+sub transfer_to_guest {
+	my ( $vmname, $path, $dest, $overwrite, $guestusername, $guestpassword ) = @_;
+	my $vm_view = Vim::find_entity_view( view_type => 'VirtualMachine', filter => { name => $vmname } );
+	if ( !defined( $guestusername ) and !defined( $guestpassword ) ) {
+		( $guestusername, $guestpassword ) = &auth_info( $vmname );
+	}
+	if ( !defined( $guestusername ) || !defined( $guestpassword ) || !defined( $vm_view ) ) {
+		return 1;
+	}
+	my $guestOpMgr = Vim::get_view( mo_ref => Vim::get_service_content()->guestOperationsManager );
+	my $guestCreds = &GuestInternal::acquireGuestAuth( $guestOpMgr, $vm_view, $guestusername, $guestpassword );
+	my $guestFileMan = Vim::get_view( mo_ref => $guestOpMgr->fileManager );
+	### Fixme : maybe give some options possibility
+	my $fileattr = GuestFileAttributes->new();
+	my $size = -s $path;
+	my $transferinfo;
+	eval {
+		$transferinfo = $guestFileMan->InitiateFileTransferToGuest( vm => $vm_view, auth => $guestCreds, guestFilePath => $dest, fileAttributes => $fileattr, fileSize => $size, overwrite => $overwrite );
+	};
+	if( $@ ) {
+		die( "Error: " . $@ );
+	}
+	print "Information about file: $path \n";
+	print "Size of file: $size bytes\n";
+	my $ua  = LWP::UserAgent->new();
+	$ua->ssl_opts( verify_hostname => 0 );
+	open( my $fh, "<$path" );
+	my $content = do{ local $/; <$fh> } ;
+	my $req = $ua->put( $transferinfo, Content => $content );
+	if ( $req->is_success() ) {
+		print "OK: ", $req->content ."\n";
+	} else {
+		print "Failed: ", $req->as_string . "\n";
+	}
+}
+
+sub transfer_from_guest {
+	my ( $vmname, $path, $dest, $guestusername, $guestpassword ) = @_;
+	my $vm_view = Vim::find_entity_view( view_type => 'VirtualMachine', filter => { name => $vmname } );
+	if ( !defined( $guestusername ) and !defined( $guestpassword ) ) {
+		( $guestusername, $guestpassword ) = &auth_info( $vmname );
+	}
+	if ( !defined( $guestusername ) || !defined( $guestpassword ) || !defined( $vm_view ) ) {
+		return 1;
+	}
+	my $guestOpMgr = Vim::get_view( mo_ref => Vim::get_service_content()->guestOperationsManager );
+	my $guestCreds = &GuestInternal::acquireGuestAuth( $guestOpMgr, $vm_view, $guestusername, $guestpassword );
+	my $guestFileMan = Vim::get_view( mo_ref => $guestOpMgr->fileManager );
+	my $transferinfo;
+	eval {
+		$transferinfo = $guestFileMan->InitiateFileTransferFromGuest(vm=>$vm_view, auth=>$guestCreds, guestFilePath=>$path);
+	};
+	if($@) {
+		die( "Error: " . $@);
+	}
+	print "Information about file: $path \n";
+	print "Size: " . $transferinfo->size. " bytes\n";
+	print "modification Time: " . $transferinfo->attributes->modificationTime . " and access Time : " .$transferinfo->attributes->accessTime . "\n" ;
+	if ( !defined($dest) ) {
+		my $basename = basename($path);
+		my $content = get($transferinfo->url);
+		open(my $fh, ">/tmp/$basename");
+		print $fh "$content";
+		close($fh);
+	} else {
+		print Dumper($transferinfo);
+		print "Downloading file to: '$dest'\n";
+		my $status = getstore($transferinfo->url,$dest);
+		print "My status is : $status\n";
+	}
+}
+
+sub auth_info {
+	my ( $vmname ) = @_;
+	if ( $vmname =~ /^[^-]*-[^-]*-[^-]*-\d{3}$/ ) {
+		my ( $os ) = $vmname =~ m/^[^-]*-[^-]*-([^-]*)-\d{3}$/ ;
+		if ( defined( $Support::template_hash{$os} ) ) {
+			my $guestusername = $Support::template_hash{$os}{'username'};
+			my $guestpassword = $Support::template_hash{$os}{'password'};
+			return ( $guestusername, $guestpassword );
+		} else {
+			print "Regex matched an OS, but no template found to it os=> '$os'\n";
+			return 1;
+		}
+	} else {
+		print "Not standard name.\n";
+		return 1;
+	}
+}
+
 
 ## Functionailty test sub
 sub test() {

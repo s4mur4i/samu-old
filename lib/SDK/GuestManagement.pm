@@ -279,7 +279,7 @@ sub get_controller_key {
 	my $controllerkey;
 	foreach ( @{ $vmname->config->hardware->device } ) {
 		my $device = $_;
-		if ( $device->key ! = $devkey ) {
+		if ( $device->key != $devkey ) {
 			next;
 		}
 		$controllerkey = $device->controllerKey;
@@ -489,7 +489,7 @@ sub get_scsi_controller {
 		$controller = $_;
 		}
 	}
-	if ( $num_controller ! = 1 ) {
+	if ( $num_controller != 1 ) {
 		print "Problem with controller count\n";
 		return 0;
 	}
@@ -718,8 +718,9 @@ sub move_into_folder {
 	my ( $ticket, $username, $family, $version, $lang, $arch, $type , $uniq ) = &Misc::vmname_splitter( $vmname );
 	my $task = &Vcenter::create_folder( $ticket, "vm" );
 	&Vcenter::Task_getStatus( $task );
+	my $machine_view = Vim::find_entity_view( view_type => 'VirtualMachine', filter => { name => $vmname } );
 	my $folder_view = Vim::find_entity_view( view_type => 'Folder', filter => { name => $ticket } );
-	$task = $folder_view->MoveIntoFolder_Task( list => [ $view ] );
+	$task = $folder_view->MoveIntoFolder_Task( list => [ $machine_view ] );
 	&Vcenter::Task_getStatus( $task );
 	return 1;
 }

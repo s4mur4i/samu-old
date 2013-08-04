@@ -79,7 +79,7 @@ sub generate_network_setup_for_clone {
 			push( @keys, $interface->key )
 		}
 		my @mac;
-		while ( @mac ! = @keys ) {
+		while ( @mac != @keys ) {
 			push( @mac, &Misc::generate_uniq_mac );
 			for ( my $i =1;$i<@keys;$i++ ) {
 				my $last =$mac[ -1 ];
