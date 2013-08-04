@@ -5,7 +5,7 @@ use warnings;
 use FindBin;
 use lib "$FindBin::Bin/lib";
 use lib '/usr/lib/vmware-vcli/apps';
-use SDK::Vcenter;
+use SDK::GuestManagement;
 use VMware::VICommon;
 use VMware::VIRuntime;
 my %opts = (
@@ -23,7 +23,7 @@ my $password = Opts::get_option('password');
 my $url = Opts::get_option('url');
 my $vmname = Opts::get_option('vmname');
 Util::connect( $url, $username, $password );
-&Vcenter::promote_vdisk( $vmname );
+&GuestManagement::promote_vdisk( $vmname );
 # Disconnect from the server
 Util::disconnect();
 # To mitigate SSL warnings by default
