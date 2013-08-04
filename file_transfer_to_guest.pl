@@ -59,10 +59,10 @@ my $path = Opts::get_option('path');
 my $dest = Opts::get_option('dest');
 my $overwrite = Opts::get_option('overwrite');
 Util::connect( $url, $username, $password );
-if ( $guestusername != 0 and $guestpassword != 0 ) {
-	&GuestInternal::tranfer_to_guest( $vmname, $path, $dest, $overwrite, $guestusername, $guestpassword );
+if ( ( defined( $guestusername ) and defined( $guestpassword ) ) and ( $guestusername ne "" and $guestpassword ne "" ) ) {
+	&GuestInternal::transfer_to_guest( $vmname, $path, $dest, $overwrite, $guestusername, $guestpassword );
 } else {
-	&GuestInternal::tranfer_to_guest( $vmname, $path, $dest, $overwrite );
+	&GuestInternal::transfer_to_guest( $vmname, $path, $dest, $overwrite );
 }
 # Disconnect from the server
 Util::disconnect();

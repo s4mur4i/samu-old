@@ -190,6 +190,7 @@ sub transfer_from_guest {
 		( $guestusername, $guestpassword ) = &auth_info( $vmname );
 	}
 	if ( !defined( $guestusername ) || !defined( $guestpassword ) || !defined( $vm_view ) ) {
+		print "pina\n";
 		return 1;
 	}
 	my $guestOpMgr = Vim::get_view( mo_ref => Vim::get_service_content()->guestOperationsManager );

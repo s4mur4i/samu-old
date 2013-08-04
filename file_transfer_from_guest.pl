@@ -51,10 +51,10 @@ my $path = Opts::get_option('path');
 my $dest= Opts::get_option('dest');
 my $guestusername = Opts::get_option('guestusername');
 my $guestpassword = Opts::get_option('guestpassword');
-if ( $guestusername != 0 and $guestpassword != 0 ) {
-        &GuestInternal::tranfer_to_guest( $vmname, $path, $dest, $guestusername, $guestpassword );
+if ( defined( $guestusername ) and defined( $guestpassword ) ) {
+        &GuestInternal::transfer_from_guest( $vmname, $path, $dest, $guestusername, $guestpassword );
 } else {
-        &GuestInternal::tranfer_to_guest( $vmname, $path, $dest );
+        &GuestInternal::transfer_from_guest( $vmname, $path, $dest );
 }
 # Disconnect from the server
 Util::disconnect();
