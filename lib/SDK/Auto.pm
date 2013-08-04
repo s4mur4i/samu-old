@@ -1,4 +1,4 @@
-package Hardware;
+package Auto;
 
 use strict;
 use warnings;
@@ -11,7 +11,7 @@ BEGIN {
 }
 
 sub test() {
-        print "Hardware module test sub\n";
+        print "Automatisation module test sub\n";
 }
 
 #### We need to end with success
