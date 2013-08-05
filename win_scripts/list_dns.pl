@@ -39,10 +39,16 @@ my $workdir='c:\\';
 my $env='PATH=C:\windows\system32';
 my $prog='C:\windows\system32\cmd.exe';
 my $arg = "/c dnscmd /zoneprint $Auto::dns{$zone}{'domain'} >C:/dns.out";
-my $pid = &GuestInternal::runCommandInGuest( $Auto::dns{$zone}{'vmname'}, $prog, $arg, $env, $workdir, $Auto::dns{$zone}{'username'}, $Auto::dns{$zone}{'password'} );
-print "pid is: $pid\n";
-&GuestInternal::transfer_from_guest( $Auto::dns{$zone}{'vmname'}, "C:/dns.out", "/tmp/dns.out", $Auto::dns{$zone}{'username'}, $Auto::dns{$zone}{'password'} );
-
+&GuestInternal::runCommandInGuest( $Auto::dns{$zone}{'vmname'}, $prog, $arg, $env, $workdir, $Auto::dns{$zone}{'username'}, $Auto::dns{$zone}{'password'} );
+&GuestInternal::transfer_from_guest( $Auto::dns{$zone}{'vmname'}, 'C:\dns.out', "/tmp/dns.out", $Auto::dns{$zone}{'username'}, $Auto::dns{$zone}{'password'} );
+open ( my $fh, "/tmp/dns.out" );
+while ( my $line = <$fh> ) {
+	chomp $line;
+	if ( $line !~ /^\s*[_;]/ and $line !~ /^\s*$/ ) {
+		print $line ."\n";
+	}
+}
+close $fh;
 # Disconnect from the server
 Util::disconnect();
 # To mitigate SSL warnings by default

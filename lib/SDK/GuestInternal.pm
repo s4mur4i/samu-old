@@ -190,7 +190,6 @@ sub transfer_from_guest {
 		( $guestusername, $guestpassword ) = &auth_info( $vmname );
 	}
 	if ( !defined( $guestusername ) || !defined( $guestpassword ) || !defined( $vm_view ) ) {
-		print "pina\n";
 		return 1;
 	}
 	my $guestOpMgr = Vim::get_view( mo_ref => Vim::get_service_content()->guestOperationsManager );
@@ -213,10 +212,8 @@ sub transfer_from_guest {
 		print $fh "$content";
 		close($fh);
 	} else {
-		print Dumper($transferinfo);
 		print "Downloading file to: '$dest'\n";
 		my $status = getstore($transferinfo->url,$dest);
-		print "My status is : $status\n";
 	}
 }
 
