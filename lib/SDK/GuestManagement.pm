@@ -466,7 +466,7 @@ sub CustomizationAdapterMapping_generator {
 				next;
 			}
 			my $ip = CustomizationDhcpIpGenerator->new( );
-			my $adapter = CustomizationIPSettings->new( dnsDomain => 'support.balabit', dnsServerList => [ '10.10.20.24' ], gateway => [ '10.21.255.254' ], subnetMask => '255.255.0.0', ip => $ip, netBIOS => CustomizationNetBIOSMode->new( 'disableNetBIOS' ) );
+			my $adapter = CustomizationIPSettings->new( dnsDomain => 'support.balabit', dnsServerList => [ '10.10.0.1' ], gateway => [ '10.21.255.254' ], subnetMask => '255.255.0.0', ip => $ip, netBIOS => CustomizationNetBIOSMode->new( 'disableNetBIOS' ) );
 			my $nicsetting = CustomizationAdapterMapping->new( adapter => $adapter );
 			push( @return, $nicsetting );
 		}

@@ -107,7 +107,7 @@ sub generate_network_setup_for_clone {
 sub win_VirtualMachineCloneSpec {
 	my ( $os, $snapshot, $location, $config ) = @_;
 	print "Running Windows Sysprep\n";
-	my $globalipsettings = CustomizationGlobalIPSettings->new( dnsServerList => [ '10.10.20.24' ] , dnsSuffixList => [ 'support.balabit' ] );
+	my $globalipsettings = CustomizationGlobalIPSettings->new( dnsServerList => [ '10.10.0.1' ] , dnsSuffixList => [ 'support.balabit' ] );
 	my $customoptions = CustomizationWinOptions->new( changeSID => 1, deleteAccounts => 0 );
 	my $custpass = CustomizationPassword->new( plainText => 1, value => 'titkos' );
 	my $guiunattend = CustomizationGuiUnattended->new( autoLogon => 1, autoLogonCount => 1, password => $custpass, timeZone => '095' );
@@ -137,7 +137,7 @@ sub lin_VirtualMachineCloneSpec {
 	print "Running Linux Sysprep\n";
 	my @nicsetting = &GuestManagement::CustomizationAdapterMapping_generator( $os );
 	my $hostname = CustomizationPrefixName->new( base => 'linuxguest' );
-	my $globalipsettings = CustomizationGlobalIPSettings->new( dnsServerList => [ '10.10.20.24' ] , dnsSuffixList => [ 'support.balabit' ] );
+	my $globalipsettings = CustomizationGlobalIPSettings->new( dnsServerList => [ '10.10.0.1' ] , dnsSuffixList => [ 'support.balabit' ] );
 	my $linuxprep = CustomizationLinuxPrep->new( domain => 'support.balabit', hostName => $hostname, timeZone => 'Europe/Budapest', hwClockUTC => 1 );
 	my $customization_spec = CustomizationSpec->new( identity => $linuxprep, globalIPSettings => $globalipsettings, nicSettingMap => @nicsetting );
 	my $clone_spec = VirtualMachineCloneSpec->new( powerOn => 1, template => 0, snapshot => $snapshot, location => $location, config => $config, customization => $customization_spec );
