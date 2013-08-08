@@ -364,9 +364,15 @@ sub print_vm_info {
 	} else {
 		if ( defined( $name->guest->net ) ) {
 			foreach ( @{ $name->guest->net } ) {
-				print "\tNetwork => '" . $_->network. "', with ipAddresses => [ " .join( ", ", @{ $_->ipAddress } ) . " ]\n";
+				if ( defined( $_->ipAddress ) ) {
+					print "\tNetwork => '" . $_->network. "', with ipAddresses => [ " .join( ", ", @{ $_->ipAddress } ) . " ]\n";
+				} else {
+					print "\tNetwork => '" . $_->network. "'\n";
+				}
 			}
-			print "\tHostname: '" . $name->guest->hostName . "'\n";
+			if ( defined( $name->guest->hostName ) ) {
+				print "\tHostname: '" . $name->guest->hostName . "'\n";
+			}
 		} else {
 			print "\tNo network information available\n";
 		}

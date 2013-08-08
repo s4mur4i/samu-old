@@ -27,7 +27,7 @@ our %template_hash = (
 	'deb_7.0.0_en_amd64_wheezy' => { path => 'Support/vm/templates/Linux/deb/T_deb_7.0.0_en_amd64_wheezy', username => 'root', password => 'titkos', os => 'other' },
 	'deb_6.0.0_en_amd64_squeeze' => { path => 'Support/vm/templates/Linux/deb/T_deb_6.0.0_en_amd64_squeeze', username => 'root', password => 'titkos', os => 'other' },
 	'win_2008r2_en_x64_sta' => { path => 'Support/vm/templates/Windows/2008/T_win_2008r2_en_x64_sta', username => 'Administrator', password => 'titkos', key => 'YC6KT-GKW9T-YTKYR-T4X34-R7VHC', os => 'win' },
-	'win_2008r2_en_x64_ent' => { path => 'Support/vm/templates/Windows/2008/T_win_2008r2_en_x64_ent', username => 'Administrator', password => 'TitkoS12', key => ' 489J6-VHDMP-X63PK-3K798-CPX3Y', os => 'win' },
+	'win_2008r2_en_x64_ent' => { path => 'Support/vm/templates/Windows/2008/T_win_2008r2_en_x64_ent', username => 'Administrator', password => 'TitkoS12', key => '489J6-VHDMP-X63PK-3K798-CPX3Y', os => 'win' },
 	'win_2008r2sp1_en_x64_sta' => { path => 'Support/vm/templates/Windows/2008/T_win_2008r2sp1_en_x64_sta', username => 'Administrator', password => 'TitkoS12', key => 'YC6KT-GKW9T-YTKYR-T4X34-R7VHC', os => 'win' },
 	'cent_6.4_en_i386_cent64' => { path => 'Support/vm/templates/Linux/cent/T_cent_6.4_en_i386_cent64', username => 'root', password => 'titkos', os => 'other' },
 	'cent_6.4_en_amd64_cent64' => { path => 'Support/vm/templates/Linux/cent/T_cent_6.4_en_amd64_cent64', username => 'root', password => 'titkos', os => 'other' },
@@ -106,14 +106,14 @@ sub generate_network_setup_for_clone {
 sub win_VirtualMachineCloneSpec {
 	my ( $os, $snapshot, $location, $config ) = @_;
 	print "Running Windows Sysprep\n";
-	my $globalipsettings = CustomizationGlobalIPSettings->new( dnsServerList => [ '10.21.0.23' ] , dnsSuffixList => [ 'support.balabit' ] );
+	my $globalipsettings = CustomizationGlobalIPSettings->new( dnsServerList => [ '10.10.20.24' ] , dnsSuffixList => [ 'support.balabit' ] );
 	my $customoptions = CustomizationWinOptions->new( changeSID => 1, deleteAccounts => 0 );
 	my $custpass = CustomizationPassword->new( plainText => 1, value => 'titkos' );
 	my $guiunattend = CustomizationGuiUnattended->new( autoLogon => 1, autoLogonCount => 1, password => $custpass, timeZone => '095' );
 	my $customname = CustomizationPrefixName->new( base => 'winguest' );
 	my $key =$template_hash{$os}{'key'} ;
 	my $userdata = CustomizationUserData->new( productId => $key , orgName => 'support' , fullName => 'admin' , computerName => $customname );
-	my $identification = CustomizationIdentification->new( domainAdmin => 'Administrator@support.balabit', domainAdminPassword => $custpass, joinDomain => 'support.balabit.' );
+	my $identification = CustomizationIdentification->new( domainAdmin => 'Administrator@support.balabit', domainAdminPassword => $custpass, joinDomain => 'support.balabit' );
 	my $runonce = CustomizationGuiRunOnce->new( commandList => [ "w32tm /resync", "cscript c:/windows/system32/slmgr.vbs /skms prod-dev-winsrv.balabit", "cscript c:/windows/system32/slmgr.vbs /ato" ] );
 	my @nicsetting = &GuestManagement::CustomizationAdapterMapping_generator( $os );
 	## Workaround for Win 2000 and 2003 licensing
@@ -136,7 +136,7 @@ sub lin_VirtualMachineCloneSpec {
 	print "Running Linux Sysprep\n";
 	my @nicsetting = &GuestManagement::CustomizationAdapterMapping_generator( $os );
 	my $hostname = CustomizationPrefixName->new( base => 'linuxguest' );
-	my $globalipsettings = CustomizationGlobalIPSettings->new( dnsServerList => [ '10.21.0.23' ] , dnsSuffixList => [ 'support.balabit' ] );
+	my $globalipsettings = CustomizationGlobalIPSettings->new( dnsServerList => [ '10.10.20.24' ] , dnsSuffixList => [ 'support.balabit' ] );
 	my $linuxprep = CustomizationLinuxPrep->new( domain => 'support.balabit', hostName => $hostname, timeZone => 'Europe/Budapest', hwClockUTC => 1 );
 	my $customization_spec = CustomizationSpec->new( identity => $linuxprep, globalIPSettings => $globalipsettings, nicSettingMap => @nicsetting );
 	my $clone_spec = VirtualMachineCloneSpec->new( powerOn => 1, template => 0, snapshot => $snapshot, location => $location, config => $config, customization => $customization_spec );
