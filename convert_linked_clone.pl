@@ -5,7 +5,6 @@ use warnings;
 use FindBin;
 use lib "$FindBin::Bin/lib";
 use SDK::Support;
-use VMware::VICommon;
 use VMware::VIRuntime;
 use Data::Dumper;
 

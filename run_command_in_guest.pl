@@ -3,11 +3,9 @@ use strict;
 use warnings;
 use FindBin;
 use lib "$FindBin::Bin/lib";
-use lib '/usr/lib/vmware-vcli/apps';
 use SDK::Support;
 use SDK::Misc;
 use SDK::GuestInternal;
-use VMware::VICommon;
 use VMware::VIRuntime;
 use Data::Dumper;
 # ./run_command_in_guest.pl --vmname s3 --guestusername root --guestpassword titkos --prog "/bin/echo" --prog_arg ' $test >anyad' --env "test=pinaPINA" --workdir "/tmp

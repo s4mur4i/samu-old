@@ -4,12 +4,10 @@ use strict;
 use warnings;
 use FindBin;
 use lib "$FindBin::Bin/lib";
-use lib '/usr/lib/vmware-vcli/apps';
 use SDK::Misc;
 use LWP::Simple qw(get);
 use SDK::Kayako;
 use SDK::Bugzilla;
-use VMware::VICommon;
 use VMware::VIRuntime;
 my %opts = (
 );
@@ -33,6 +31,7 @@ for my $ticket ( sort (keys %tickets) ) {
 	if ( $ticket ne "" and $ticket ne "unknown" ) {
 		print "Ticket: $ticket, owner: $tickets{$ticket}";
 		my $result = &Kayako::run_query( $dbh, "select ticketstatustitle from swtickets where ticketid = '$ticket'" );
+		## need to implement multiple tickets in field seperated by space
 		if ( !defined( $result ) ) {
 			print "\n";
 		} else {

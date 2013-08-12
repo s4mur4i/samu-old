@@ -4,9 +4,7 @@ use strict;
 use warnings;
 use FindBin;
 use lib "$FindBin::Bin/lib";
-use lib '/usr/lib/vmware-vcli/apps';
 use SDK::GuestManagement;
-use VMware::VICommon;
 use VMware::VIRuntime;
 use Data::Dumper;
 my %opts = (

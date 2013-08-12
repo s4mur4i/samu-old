@@ -6,7 +6,6 @@ use FindBin;
 use lib "$FindBin::Bin/lib";
 use SDK::GuestManagement;
 use SDK::Misc;
-use VMware::VICommon;
 use VMware::VIRuntime;
 use Data::Dumper;
 

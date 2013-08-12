@@ -4,10 +4,8 @@ use strict;
 use warnings;
 use FindBin;
 use lib "$FindBin::Bin/lib";
-use lib '/usr/lib/vmware-vcli/apps';
 use SDK::GuestManagement;
 use SDK::Misc;
-use VMware::VICommon;
 use VMware::VIRuntime;
 my %opts = (
         ticket => {

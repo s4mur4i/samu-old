@@ -4,11 +4,9 @@ use strict;
 use warnings;
 use FindBin;
 use lib "$FindBin::Bin/lib";
-use lib '/usr/lib/vmware-vcli/apps';
 use SDK::Support;
 use SDK::Vcenter;
 use SDK::Misc;
-use VMware::VICommon;
 use VMware::VIRuntime;
 use Data::Dumper;
 

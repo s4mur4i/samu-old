@@ -5,7 +5,6 @@ use warnings;
 use FindBin;
 use lib "$FindBin::Bin/lib";
 use SDK::Support;
-use Data::Dumper;
 
 sub longest {
     my ($array) = @_;
