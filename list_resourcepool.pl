@@ -2,7 +2,8 @@
 
 use strict;
 use warnings;
-use lib '/usr/lib/vmware-vcli/apps';
+use FindBin;
+use lib "$FindBin::Bin/lib";
 use VMware::VIRuntime;
 use Switch;
 

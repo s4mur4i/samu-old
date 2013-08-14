@@ -9,11 +9,12 @@
 #######################################################################################
 use strict;
 use warnings;
-use lib '/usr/lib/vmware-vcli/apps';
+use FindBin;
+use lib "$FindBin::Bin/lib";
 use VMware::VIM2Runtime;
 use VMware::VILib;
-use AppUtil::HostUtil;
-use AppUtil::VMUtil;
+#use AppUtil::HostUtil;
+#use AppUtil::VMUtil;
 sub browse_datastore;
 sub print_browse;
 sub find_datastores;
