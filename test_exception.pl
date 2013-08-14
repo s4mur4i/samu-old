@@ -21,17 +21,11 @@ my $url = Opts::get_option('url');
 Util::connect( $url, $username, $password );
 # Disconnect from the server
 try {
-#	BaseException->throw( error => 'Hiba faszom' );
-	NoEntityException->throw( error => 'Nincs faszom', entity => 'Halozat1-23' );
+	#BaseException->throw( error => 'Hiba faszom' );
+	EntityNumException->throw( error => 'Nincs faszom', entity => 'Halozat1-23', count => '2' );
 }
 catch {
-	print Dumper($_);
-	die $_ unless blessed $_ && $_->can('rethrow');
-	if ( $_->isa('BaseException') ) {
-          warn $_->error, "\n";
-		warn "Entity name:" .  $_->entity ."\n";
-          exit;
-      }
+	&Error::catch( $_ );
 }
 Util::disconnect();
 # To mitigate SSL warnings by default
