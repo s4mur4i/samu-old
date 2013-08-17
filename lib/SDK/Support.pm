@@ -6,6 +6,7 @@ use Data::Dumper;
 use SDK::Vcenter;
 use SDK::Misc;
 use SDK::GuestManagement;
+use SDK::Error;
 
 BEGIN {
 	use Exporter;
@@ -47,31 +48,43 @@ sub linked_clone_template_folder_path {
 	my ( $name ) = @_;
 	my $mo_ref;
 	if ( !defined( $template_hash{$name} ) ) {
-		print "Cannot find path for os: $name\n";
+		SDK::Error::Entity::Path->throw( error => 'Could not retrieve path from template hash', path => $name );
 	}
 	if ( &Vcenter::exists_folder( $name ) ) {
 		print "Linked folder exists already\n";
-		$mo_ref = Vim::find_entity_view( view_type => 'Folder', filter => {name => $name} );
+		#$mo_ref = Vim::find_entity_view( view_type => 'Folder', filter => {name => $name} );
 	} else {
 		print "Need to create the linked folder.\n";
 		my $path = $template_hash{$name}{'path'};
-		my $sc = Vim::get_service_content( );
+		my $sc = Vim::get_service_content();
+		if ( !defined( $sc ) ) {
+			SDK::Error::Entity::ServiceContent->throw( error => 'Could not retrieve Service Content' );
+		}
 		my $searchindex = Vim::get_view( mo_ref => $sc->searchIndex );
 		my $view = $searchindex->FindByInventoryPath( inventoryPath => $path );
+		if ( !defined( $view ) ) {
+			SDK::Error::Entity::Path->throw( error => 'Could not retrieve mo ref from path', path => $path );
+		}
 		$view = Vim::get_view( mo_ref => $view );
 		my $parent_folder = Vim::get_view( mo_ref => $view->parent );
-		$mo_ref =  &Vcenter::create_folder( $name, $parent_folder->name );
+		&Vcenter::create_folder( $name, $parent_folder->name );
 	}
 }
 
 sub generate_network_setup_for_clone {
 	my ( $os ) = @_;
-	my @return;
 	if ( defined( $template_hash{$os} ) ) {
+		my @return;
 		my $path = $template_hash{$os}{'path'};
-		my $sc = Vim::get_service_content( );
+		my $sc = Vim::get_service_content();
+		if ( !defined( $sc ) ) {
+			SDK::Error::Entity::ServiceContent->throw( error => 'Could not retrieve Service Content' );
+		}
 		my $searchindex = Vim::get_view( mo_ref => $sc->searchIndex );
 		my $view = $searchindex->FindByInventoryPath( inventoryPath => $path );
+		if ( !defined( $view ) ) {
+			SDK::Error::Entity::Path->throw( error => 'Could not retrieve moref from path', path => $path );
+		}
 		my $template_mo_ref = Vim::get_view( mo_ref => $view );
 		my @keys;
 		foreach ( @{$template_mo_ref->config->hardware->device} ) {
@@ -97,11 +110,10 @@ sub generate_network_setup_for_clone {
 			my $deviceconfigspec = VirtualDeviceConfigSpec->new( device => $ethernetcard, operation => $operation );
 			push( @return, $deviceconfigspec );
 		}
+		return \@return;
 	} else {
-		print "No such template\n";
-		return 0;
+		SDK::Error::Template::Exists->throw( error => 'Template does not exists', template => $os );
 	}
-	return \@return;
 }
 
 sub win_VirtualMachineCloneSpec {

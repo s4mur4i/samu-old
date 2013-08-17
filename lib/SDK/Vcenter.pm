@@ -51,7 +51,7 @@ sub delete_virtualmachine {
 	&Task_getStatus( $task );
 	$view = Vim::find_entity_views( view_type => 'VirtualMachine', properties => [ 'name' ] ,filter => { name => $vmname } );
 	if ( scalar(@$view) ne 0 ) {
-		SDK::Error::Entityi::Exists->throw( error => 'Could not delete virtual machine', entity => $vmname );
+		SDK::Error::Entity::Exists->throw( error => 'Could not delete virtual machine', entity => $vmname );
 	}
 	print "Vm deleted succsfully: " . $view->name . "\n";
 }
@@ -84,7 +84,7 @@ sub Task_getStatus {
 
 sub check_if_empty_switch {
 	my ( $name ) = @_;
-	my $view = Vim::find_entity_view( view_type => 'DistributedVirtualSwitch', propertiesv=> [ 'summary->portgroupName' ], filter => { name => $name } );
+	my $view = Vim::find_entity_view( view_type => 'DistributedVirtualSwitch', properties => [ 'summary->portgroupName' ], filter => { name => $name } );
 	if ( !defined( $view ) ) {
 		SDK::Error::Entity::NumException->throw( error => 'Switch does not exist', entity => $name, count => '0' );
 	}
@@ -98,15 +98,14 @@ sub check_if_empty_switch {
 
 sub check_if_empty_resource_pool {
 	my ( $name ) = @_;
-	$name = Vim::find_entity_view( view_type => 'ResourcePool', filter => { name => $name } );
-	if ( !defined( $name ) ) {
-		print "No such resource pool.\n";
-		return 0;
+	my $view = Vim::find_entity_view( view_type => 'ResourcePool', properties => [ 'name' ], filter => { name => $name } );
+	if ( !defined( $view ) ) {
+		SDK::Error::Entity::NumException->throw( error => 'Resourcepool does not exis', entity => $name, count => '0' );
 	}
-	if ( defined( $name->vm ) ) {
+	if ( defined( $view->vm ) ) {
 		return 0;
 	} else {
-		if ( defined( $name->resourcePool ) ) {
+		if ( defined( $view->resourcePool ) ) {
 			return 0;
 		} else {
 			return 1;
@@ -116,12 +115,11 @@ sub check_if_empty_resource_pool {
 
 sub check_if_empty_folder {
 	my ( $name ) = @_;
-	$name = Vim::find_entity_view( view_type => 'Folder', filter => { name => $name } );
-	if ( !defined( $name ) ) {
-		print "No such folder.\n";
-		return 0;
+	my $view = Vim::find_entity_view( view_type => 'Folder', properties => [ 'name' ], filter => { name => $name } );
+	if ( !defined( $view ) ) {
+		SDK::Error::Entity::NumException->throw( error => 'Folder does not exis', entity => $name, count => '0' );
 	}
-	if ( !defined( $name->childEntity ) ) {
+	if ( !defined( $view->childEntity ) ) {
 		return 1;
 	} else {
 		return 0;
@@ -130,26 +128,35 @@ sub check_if_empty_folder {
 
 sub delete_folder {
 	my ( $name ) = @_;
+	my $view = Vim::find_entity_view( view_type => 'Folder', properties => [ 'name' ], filter => { name => $name } );
 	if ( &check_if_empty_folder( $name ) ) {
-		$name = Vim::find_entity_view( view_type => 'Folder', filter => { name => $name } );
-		my $task = $name->Destroy_Task;
+		my $task = $view->Destroy_Task;
 		&Task_getStatus( $task );
 	}
+	$view = Vim::find_entity_views( view_type => 'Folder', properties => [ 'name' ] ,filter => { name => $name } );
+	if ( scalar(@$view) ne 0 ) {
+		SDK::Error::Entity::Exists->throw( error => 'Could not delete folder', entity => $name );
+	}
+
 }
 
 sub delete_resource_pool {
 	my ( $name ) = @_;
+	my $view = Vim::find_entity_view( view_type => 'ResourcePool', properties => [ 'name' ], filter => { name => $name } );
 	if ( &check_if_empty_resource_pool( $name ) ) {
-		$name = Vim::find_entity_view( view_type => 'ResourcePool', filter => { name => $name } );
-		my $task = $name->Destroy_Task;
+		my $task = $view->Destroy_Task;
 		&Task_getStatus( $task );
+	}
+	$view = Vim::find_entity_view( view_type => 'ResourcePool', properties => [ 'name' ], filter => { name => $name } );
+	if ( scalar(@$view) ne 0 ) {
+		SDK::Error::Entity::Exists->throw( error => 'Could not delete resource pool', entity => $name );
 	}
 }
 
 sub exists_resource_pool {
 	my ( $name ) = @_;
-	my $rp_view = Vim::find_entity_view( view_type => 'ResourcePool', filter => { name => $name } );
-	if ( defined( $rp_view ) ) {
+	my $view = Vim::find_entity_view( view_type => 'ResourcePool', properties => [ 'name' ], filter => { name => $name } );
+	if ( defined( $view ) ) {
 		return 1;
 	}else {
 		return 0;
@@ -158,8 +165,8 @@ sub exists_resource_pool {
 
 sub exists_vm {
 	my ( $name ) = @_;
-	my $vm = Vim::find_entity_view( view_type => 'VirtualMachine', filter => { name => $name } );
-	if ( defined( $vm ) ) {
+	my $view = Vim::find_entity_view( view_type => 'VirtualMachine', properties => [ 'name' ], filter => { name => $name } );
+	if ( defined( $view ) ) {
 		return 1;
 	}else {
 		return 0;
@@ -168,33 +175,20 @@ sub exists_vm {
 
 sub exists_folder {
 	my ( $name ) = @_;
-	my $folder_view = Vim::find_entity_view( view_type => 'Folder', filter => { name => $name } );
-	if ( defined( $folder_view ) ) {
+	my $view = Vim::find_entity_view( view_type => 'Folder', properties => [ 'name' ], filter => { name => $name } );
+	if ( defined( $view ) ) {
 		return 1;
 	}else {
 		return 0;
 	}
 }
 
-## FIXME: Pull the subs together..same function
-sub get_vmname_from_moref {
+sub get_name_from_moref {
 	my ( $name ) = @_;
 	my $view = Vim::get_view( mo_ref => $name );
-	## FIXME implement check to validate if anything is returned.
-	return $view->name;
-}
-
-sub get_rpname_from_moref {
-	my ( $name ) = @_;
-	my $view = Vim::get_view( mo_ref => $name );
-	## FIXME implement check to validate if anything is returned.
-	return $view->name;
-}
-
-sub get_folder_name_from_moref {
-	my ( $name ) = @_;
-	my $view = Vim::get_view( mo_ref => $name );
-	## FIXME implement check to validate if anything is returned.
+	if ( !defined( $view ) ) {
+		SDK::Error::Entity::NumException->throw( error => 'Could not retrieve name for mo ref', entity => $name, count => '0' );
+	}
 	return $view->name;
 }
 
@@ -203,13 +197,17 @@ sub list_resource_pool_vms {
 	if ( !&exists_resource_pool( $name ) ) {
 		return 0;
 	}
-	my $rp_view = Vim::find_entity_view( view_type => 'ResourcePool', filter => { name => $name } );
-	my $vms = $rp_view->vm;
+	my $view = Vim::find_entity_view( view_type => 'ResourcePool', properties => [ 'vm' ], filter => { name => $name } );
+	my $vms = $view->vm;
 	my @names;
 	foreach ( @$vms ) {
-		push( @names, &get_vmname_from_moref( $_ ) );
+		push( @names, &get_name_from_moref( $_ ) );
 	}
-	return @names;
+	if ( scalar( @names) gt 0 ) {
+		return @names;
+	} else {
+		return 0;
+	}
 }
 
 sub list_folder_vms {
@@ -217,15 +215,19 @@ sub list_folder_vms {
 	if ( !&exists_folder( $name ) ) {
 		return 0;
 	}
-	my $folder_view = Vim::find_entity_view( view_type => 'Folder', filter => { name => $name } );
+	my $view = Vim::find_entity_view( view_type => 'Folder', properties => [ 'childEntity' ], filter => { name => $name } );
 	my $vms = $folder_view->childEntity;
 	my @names;
 	foreach ( @$vms ) {
 		if ( $_->type eq 'VirtualMachine' ) {
-			push( @names, &get_vmname_from_moref( $_ ) );
+			push( @names, &get_name_from_moref( $_ ) );
 		}
 	}
-	return @names;
+	if ( scalar( @names) gt 0 ) {
+		return @names;
+	} else {
+		return 0;
+	}
 }
 
 
@@ -234,13 +236,17 @@ sub list_resource_pool_rp {
 	if ( !&exists_resource_pool( $name ) ) {
 		return 0;
 	}
-	my $rp_view = Vim::find_entity_view( view_type => 'ResourcePool', filter => { name => $name } );
-	my $rps = $rp_view->resourcePool;
+	my $view = Vim::find_entity_view( view_type => 'ResourcePool', properties => [ 'resourcePool' ], filter => { name => $name } );
+	my $rps = $view->resourcePool;
 	my @names;
 	foreach ( @$rps ) {
-		push( @names, &get_rpname_from_moref( $_ ) );
+		push( @names, &get_name_from_moref( $_ ) );
 	}
-	return @names;
+	if ( scalar( @names ) gt 0 ) {
+		return @names;
+	} else {
+		return 0;
+	}
 }
 
 sub list_folder_folders {
@@ -248,17 +254,20 @@ sub list_folder_folders {
 	if ( !&exists_folder( $name ) ) {
 		return 0;
 	}
-	my $folder_view = Vim::find_entity_view( view_type => 'Folder', filter => { name => $name } );
-	my $folders = $folder_view->childEntity;
+	my $view = Vim::find_entity_view( view_type => 'Folder', properties => [ 'childEntity' ], filter => { name => $name } );
+	my $folders = $view->childEntity;
 	my @names;
 	foreach ( @$folders ) {
 		if ( $_->type eq 'Folder' ) {
-			push( @names, &get_folder_name_from_moref( $_ ) );
+			push( @names, &get_name_from_moref( $_ ) );
 		}
 	}
-	return @names;
+	if ( scalar( @names ) gt 0 ) {
+		return @names;
+	} else {
+		return 0;
+	}
 }
-
 
 sub print_resource_pool_content {
 	my ( $name ) = @_;
@@ -276,8 +285,7 @@ sub print_resource_pool_content {
 		print " =" x 80 . "\n";
 		print " =" x 80 . "\n";
 	} else {
-		print "Resource pool doesn't exist\n";
-		return 3;
+		SDK::Error::Entity::NumException->throw( error => 'Resource pool not exists', entity => $name, count => '0' );
 	}
 
 }
@@ -298,12 +306,10 @@ sub print_folder_content {
 		print " =" x 80 . "\n";
 		print " =" x 80 . "\n";
 	} else {
-		print "Folder doesn't exist\n";
-		return 3;
+		SDK::Error::Entity::NumException->throw( error => 'Folder not exists', entity => $name, count => '0' );
 	}
 
 }
-
 
 sub create_resource_pool {
 	my ( $name, $parent ) = @_;
@@ -311,7 +317,7 @@ sub create_resource_pool {
 		print "Resource pool already exists.\n";
 		return 0;
 	}
-	$parent = Vim::find_entity_view( view_type => 'ResourcePool', filter => { name => $parent } );
+	$parent = Vim::find_entity_view( view_type => 'ResourcePool', properties => [ 'name' ], filter => { name => $parent } );
 	my $shareslevel = SharesLevel->new( 'normal' );
 	my $cpushares = SharesInfo->new( shares => 4000 , level => $shareslevel );
 	my $memshares = SharesInfo->new( shares => 32928, level => $shareslevel );
@@ -323,51 +329,55 @@ sub create_resource_pool {
 		print "Successfully created new ResourcePool: \"" . $name . "\"\n";
 		return 1;
 	} else {
-		print "Error: Unable to create new ResourcePool: \"" . $name . "\"\n";
-		return 0;
+		SDK::Error::Entity::NumException->throw( error => 'Could not create resource pool', entity => $name, count => '0' );
 	}
-	return 0;
 }
 
 sub create_folder {
 	my ( $name, $parent ) = @_;
+	my $view;
 	if ( &exists_folder( $parent ) ) {
-		$parent = Vim::find_entity_view( view_type => 'Folder', filter => { name => $parent } );
+		$view = Vim::find_entity_view( view_type => 'Folder', properties => [ 'name' ], filter => { name => $parent } );
 	}
 	if ( &exists_folder( $name ) ) {
 		print "Folder already exists.\n";
 		return 0;
 	}
-	my $new_folder = $parent->CreateFolder( name => $name );
+	my $new_folder = $view->CreateFolder( name => $name );
 	if( $new_folder->type eq 'Folder' ) {
 		print "Successfully created new Folder: \"" . $name . "\"\n";
 		return 1;
 	} else {
-		print "Error: Unable to create new Folder: \"" . $name . "\"\n";
-		return 0;
+		SDK::Error::Entity::NumException->throw( error => 'Could not create folder', entity => $name, count => '0' );
 	}
-	return 0;
 }
 
 sub path_to_moref {
 	my ( $path ) = @_;
 	my $sc = Vim::get_service_content( );
+	if ( !defined( $sc ) ) {
+		SDK::Error::Entity::ServiceContent->throw( error => 'Could not retrieve Service Content' );
+	}
 	my $searchindex = Vim::get_view( mo_ref => $sc->searchIndex );
 	my $template_mo_ref = $searchindex->FindByInventoryPath( inventoryPath => $path );
+	if ( !defined( $template_mo_ref ) ) {
+		SDK::Error::Entity::NumException->throw( error => 'No template found to path', entity => $path, count => '0' );
+	}
 	$template_mo_ref = Vim::get_view( mo_ref => $template_mo_ref );
 	return $template_mo_ref;
 }
 
 sub print_vm_info {
 	my ( $name ) = @_;
+	my $view;
 	if ( &exists_vm( $name ) ) {
-		$name = Vim::find_entity_view( view_type => 'VirtualMachine', filter => { name => $name } );
+		$view = Vim::find_entity_view( view_type => 'VirtualMachine', properties => [ 'name', 'guest' ], filter => { name => $name } );
 	} else {
-		return 0;
+		SDK::Error::Entity::NumException->throw( error => 'Could not find VM', entity => $name, count => '0' );
 	}
-	print "VMname: '" .$name->name ."'\n";
-	print "\tPower State: '" .$name->guest->guestState . "'\n";
-	print "\tAlternate name: '" . &GuestManagement::get_altername( $name->name ). "'\n";
+	print "VMname: '" . $name->name . "'\n";
+	print "\tPower State: '" . $name->guest->guestState . "'\n";
+	print "\tAlternate name: '" . &GuestManagement::get_altername( $name->name ) . "'\n";
 	if ( $name->guest->toolsStatus eq 'toolsNotInstalled' ) {
 		print "\tTools not installed. Cannot extract some information\n";
 	} else {
@@ -409,7 +419,10 @@ sub print_vm_info {
 sub datastore_file_exists {
 	my ( $filename ) = @_;
 	my ( $datas, $folder, $image ) = &Misc::filename_splitter( $filename );
-	my $datastore = Vim::find_entity_view( view_type => 'Datastore', filter => { name => $datas } );
+	my $datastore = Vim::find_entity_view( view_type => 'Datastore', properties => [ 'browser' ], filter => { name => $datas } );
+	if ( !defined( $datastore ) ) {
+		SDK::Error::Entity::NumException->throw( error => 'Could not find datastore', entity => $datas, count => '0' );
+	}
 	my $browser = Vim::get_view( mo_ref => $datastore->browser );
 	my $files = FileQueryFlags->new( fileSize => 0, fileType => 1, modification => 0, fileOwner => 0 );
 	my $searchspec = HostDatastoreBrowserSearchSpec->new( details => $files, matchPattern => [ $image ] );

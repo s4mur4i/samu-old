@@ -108,7 +108,6 @@ sub increment_disk_name {
 		my $num =1;
 		return "${pre}_$num$post";
 	}
-	return 0;
 }
 
 ## Splits default provisioned name to variables

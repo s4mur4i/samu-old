@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use Data::Dumper;
 use DBI;
+use SDK::Error;
 
 BEGIN {
         use Exporter;
@@ -16,6 +17,9 @@ sub connect_kayako {
 	my $user = "vmware-infra";
 	my $pass = "Di2ooChei9iohewe";
 	my $dbh = DBI->connect( $dsn, $user, $pass, { RaiseError => 1, AutoCommit => 0 } ) or return "ERROR";
+	if ( !defined( $dbh ) ) {
+		SDK::Error::DBI::Connect->( error => 'Could not connect to Kayako DB', worker => 'kayako-connect');
+	}
 	return $dbh;
 }
 

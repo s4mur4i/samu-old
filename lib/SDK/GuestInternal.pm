@@ -6,6 +6,7 @@ use Data::Dumper;
 use LWP::UserAgent;
 use LWP::Simple qw(!head);
 use File::Basename;
+use SDK::Error;
 
 BEGIN {
 	use Exporter;
@@ -33,8 +34,7 @@ sub acquireGuestAuth {
 		$authMgr->ValidateCredentialsInGuest( vm => $vmview, auth => $guestAuth );
 	};
 	if( $@ ) {
-		die( "Error: " . $@ . "\n");
-		print Dumper( $@ );
+		SDK::Error::Entity::Auth->throw( error => 'Could not aquire Guest authentication object', entity => $vmview->name, username => $gu, password => $gp );
 	} else {
 		print "Succesfully validated guest credentials!\n";
 	}
@@ -56,14 +56,20 @@ sub acquireGuestAuth {
 
 sub runCommandInGuest {
 	my ( $vmname, $prog, $prog_arg, $env, $workdir, $guestusername, $guestpassword ) = @_;
-	my $vm_view = Vim::find_entity_view( view_type => 'VirtualMachine', filter => { name => $vmname } );
+	my $vm_view = Vim::find_entity_view( view_type => 'VirtualMachine', properties => [ 'name' ], filter => { name => $vmname } );
+	if ( !defined( $vm_view ) ) {
+		SDK::Error::Entity::NumException->throw( error => 'Cannot find VM', entity => $vmname, count => '0' );
+	}
 	if ( !defined( $guestusername ) and !defined( $guestpassword ) ) {
 		( $guestusername, $guestpassword ) = &auth_info( $vmname );
 	}
 	if ( !defined( $guestusername ) || !defined( $guestpassword ) || !defined( $vm_view ) ) {
-		return 1;
+		SDK::Error::Entity::Auth->throw( error => 'Missing argument for authentication', entity => !defined( $vm_view ) ? '0' : '1', username => !defined( $guestusername ) ? '0' : '1' , password => !defined( $guestpassword ) ? '0' : '1' );
 	}
 	my $guestOpMgr = Vim::get_view( mo_ref => Vim::get_service_content()->guestOperationsManager );
+	if ( !defined( $guestOpMgr ) ) {
+		SDK::Error::Entity::ServiceContent->throw( error => 'Could not retrieve Operation Manager' );
+	}
 	my $guestCreds = &acquireGuestAuth( $guestOpMgr, $vm_view, $guestusername, $guestpassword );
 	my $guestProcMan = Vim::get_view( mo_ref => $guestOpMgr->processManager );
 	my $guestProgSpec = GuestProgramSpec->new( workingDirectory => $workdir, programPath=> $prog, arguments => $prog_arg, envVariables => [$env] );
@@ -150,13 +156,19 @@ sub find_root_snapshot {
 sub transfer_to_guest {
 	my ( $vmname, $path, $dest, $overwrite, $guestusername, $guestpassword ) = @_;
 	my $vm_view = Vim::find_entity_view( view_type => 'VirtualMachine', filter => { name => $vmname } );
+	if ( !defined( $vm_view ) ) {
+		SDK::Error::Entity::NumException->throw( error => 'Cannot find VM', entity => $vmname, count => '0' );
+	}
 	if ( !defined( $guestusername ) and !defined( $guestpassword ) ) {
 		( $guestusername, $guestpassword ) = &auth_info( $vmname );
 	}
 	if ( !defined( $guestusername ) || !defined( $guestpassword ) || !defined( $vm_view ) ) {
-		return 1;
+		SDK::Error::Entity::Auth->throw( error => 'Missing argument for authentication', entity => !defined( $vm_view ) ? '0' : '1', username => !defined( $guestusername ) ? '0' : '1' , password => !defined( $guestpassword ) ? '0' : '1' );
 	}
 	my $guestOpMgr = Vim::get_view( mo_ref => Vim::get_service_content()->guestOperationsManager );
+	if ( !defined( $guestOpMgr ) ) {
+		SDK::Error::Entity::ServiceContent->throw( error => 'Could not retrieve Operation Manager' );
+	}
 	my $guestCreds = &GuestInternal::acquireGuestAuth( $guestOpMgr, $vm_view, $guestusername, $guestpassword );
 	my $guestFileMan = Vim::get_view( mo_ref => $guestOpMgr->fileManager );
 	### Fixme : maybe give some options possibility
@@ -167,7 +179,7 @@ sub transfer_to_guest {
 		$transferinfo = $guestFileMan->InitiateFileTransferToGuest( vm => $vm_view, auth => $guestCreds, guestFilePath => $dest, fileAttributes => $fileattr, fileSize => $size, overwrite => $overwrite );
 	};
 	if( $@ ) {
-		die( "Error: " . $@ );
+		SDK::Error::Entity::TransferError->throw( error => 'Could not retrieve Transfer information' );
 	}
 	print "Information about file: $path \n";
 	print "Size of file: $size bytes\n";
@@ -179,20 +191,26 @@ sub transfer_to_guest {
 	if ( $req->is_success() ) {
 		print "OK: ", $req->content ."\n";
 	} else {
-		print "Failed: ", $req->as_string . "\n";
+		SDK::Error::Entity::TransferError->throw( error => $req->as_string );
 	}
 }
 
 sub transfer_from_guest {
 	my ( $vmname, $path, $dest, $guestusername, $guestpassword ) = @_;
-	my $vm_view = Vim::find_entity_view( view_type => 'VirtualMachine', filter => { name => $vmname } );
+	my $vm_view = Vim::find_entity_view( view_type => 'VirtualMachine', properties => [ 'name' ], filter => { name => $vmname } );
+        if ( !defined( $vm_view ) ) {
+		SDK::Error::Entity::NumException->throw( error => 'Cannot find VM', entity => $vmname, count => '0' );
+	}
 	if ( !defined( $guestusername ) and !defined( $guestpassword ) ) {
 		( $guestusername, $guestpassword ) = &auth_info( $vmname );
 	}
 	if ( !defined( $guestusername ) || !defined( $guestpassword ) || !defined( $vm_view ) ) {
-		return 1;
+		SDK::Error::Entity::Auth->throw( error => 'Missing argument for authentication', entity => !defined( $vm_view ) ? '0' : '1', username => !defined( $guestusername ) ? '0' : '1' , password => !defined( $guestpassword ) ? '0' : '1' );
 	}
 	my $guestOpMgr = Vim::get_view( mo_ref => Vim::get_service_content()->guestOperationsManager );
+	if ( !defined( $guestOpMgr ) ) {
+		SDK::Error::Entity::ServiceContent->throw( error => 'Could not retrieve Operation Manager' );
+	}
 	my $guestCreds = &GuestInternal::acquireGuestAuth( $guestOpMgr, $vm_view, $guestusername, $guestpassword );
 	my $guestFileMan = Vim::get_view( mo_ref => $guestOpMgr->fileManager );
 	my $transferinfo;
@@ -200,7 +218,7 @@ sub transfer_from_guest {
 		$transferinfo = $guestFileMan->InitiateFileTransferFromGuest(vm=>$vm_view, auth=>$guestCreds, guestFilePath=>$path);
 	};
 	if($@) {
-		die( "Error: " . $@);
+		SDK::Error::Entity::TransferError->throw( error => 'Could not retrieve Transfer information' );
 	}
 	print "Information about file: $path \n";
 	print "Size: " . $transferinfo->size. " bytes\n";

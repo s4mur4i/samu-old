@@ -18,8 +18,11 @@ sub bugzilla_status {
 	for my $line ( split qr/\R/, get( $url ) ) {
 		( $content ) = $line =~ /\s*<span id="static_bug_status">(\w+)/ if ( $line =~ /<span id="static_bug_status">/ ) ;
 	}
-	return $content;
-
+	if ( defined( $content ) ) {
+		return $content;
+	} else {
+		return "Unknown";
+	}
 }
 
 sub test() {
