@@ -5,11 +5,12 @@ use warnings;
 use Data::Dumper;
 use SDK::Misc;
 use SDK::Support;
+use SDK::Error;
 
 BEGIN {
 	use Exporter;
 	our @ISA = qw( Exporter );
-	our @EXPORT = qw( &test &mac_compare &Task_getStatus &delete_virtualmachine &check_if_empty_resource_pool &delete_resource_pool &exists_resource_pool &list_resource_pool_rp &print_resource_pool_content &print_folder_content &check_if_empty_folder &exists_vm &datastore_file_exists &entity_exists &get_names );
+	our @EXPORT = qw( &test &mac_compare &Task_getStatus &delete_virtualmachine &check_if_empty_resource_pool &delete_resource_pool &exists_resource_pool &list_resource_pool_rp &print_resource_pool_content &print_folder_content &check_if_empty_folder &exists_vm &datastore_file_exists &entity_exists &get_names &num_check );
 }
 
 ## Searches all virtual machines mac address if mac address is already used
@@ -37,35 +38,44 @@ sub mac_compare {
 }
 
 sub delete_virtualmachine {
-	my ( $name ) = @_;
-	$name = Vim::find_entity_view( view_type => 'VirtualMachine', filter => { name => $name } );
-	my $powerstate = $name->runtime->powerState->val;
+	my ( $vmname ) = @_;
+	&num_check( $vmname, 'VirtualMachine' );
+	my $view = Vim::find_entity_view( view_type => 'VirtualMachine', properties => [ 'runtime->powerState->val' ] ,filter => { name => $vmname } );
+	my $powerstate = $view->runtime->powerState->val;
 	if ( $powerstate eq 'poweredOn' ) {
 		print "Powering off VM.\n";
-		my $task = $name->PowerOffVM_Task;
+		my $task = $view->PowerOffVM_Task;
 		&Task_getStatus( $task );
 	}
-	my $task = $name->Destroy_Task;
+	my $task = $view->Destroy_Task;
 	&Task_getStatus( $task );
-	print "Vm deleted succsfully: " . $name->name . "\n";
-
+	$view = Vim::find_entity_views( view_type => 'VirtualMachine', properties => [ 'name' ] ,filter => { name => $vmname } );
+	if ( scalar(@$view) ne 0 ) {
+		SDK::Error::Entityi::Exists->throw( error => 'Could not delete virtual machine', entity => $vmname );
+	}
+	print "Vm deleted succsfully: " . $view->name . "\n";
 }
 
 sub Task_getStatus {
 	my ( $taskRef ) = @_;
 	my $task_view = Vim::get_view( mo_ref => $taskRef );
-	my $taskinfo = $task_view->info->state->val;
+	if ( !defined( $task_view ) ) {
+		SDK::Error::Task::NotDefined->throw( error => 'No task_view found for reference' );
+	}
+	#my $taskinfo = $task_view->info->state->val;
 	my $continue = 1;
 	while ( $continue ) {
-		my $info = $task_view->info;
-		if ( $info->state->val eq 'success' ) {
+		print Dumper($task_view);
+		#my $info = $task_view->info;
+		if ( $task_view->info->state->val eq 'success' ) {
 			$continue = 0;
 		} elsif ( $info->state->val eq 'error' ) {
-			my $soap_fault = SoapFault->new;
-			$soap_fault->name( $info->error->fault );
-			$soap_fault->detail( $info->error->fault );
-			$soap_fault->fault_string( $info->error->localizedMessage );
-			die "$soap_fault\n";
+		#	my $soap_fault = SoapFault->new;
+		#	$soap_fault->name( $info->error->fault );
+		#	$soap_fault->detail( $info->error->fault );
+		#	$soap_fault->fault_string( $info->error->localizedMessage );
+		#	die "$soap_fault\n";
+			SDK::Error::Task::Error->throw( error=> 'Error happened during task', detail => $task_view->info->error->fault, fault => $task_view->info->error->localizedMessage );
 		}
 		sleep 1;
 		$task_view->ViewBase::update_view_data( );
@@ -74,13 +84,12 @@ sub Task_getStatus {
 
 sub check_if_empty_switch {
 	my ( $name ) = @_;
-	$name = Vim::find_entity_view( view_type => 'DistributedVirtualSwitch', filter => { name => $name } );
-	if ( !defined( $name ) ) {
-		print "No such switch.\n";
-		return 0;
+	my $view = Vim::find_entity_view( view_type => 'DistributedVirtualSwitch', propertiesv=> [ 'summary->portgroupName' ], filter => { name => $name } );
+	if ( !defined( $view ) ) {
+		SDK::Error::Entity::NumException->throw( error => 'Switch does not exist', entity => $name, count => '0' );
 	}
 	my $count = $name->summary->portgroupName;
-	if ( @$count < 2 ) {
+	if ( scalar( @$count ) < 2 ) {
 		return 1;
 	} else {
 		return 0;
@@ -417,7 +426,7 @@ sub datastore_file_exists {
 
 sub entity_exists {
 	my ( $type, $name ) =@_;
-	my $views = Vim::find_entity_views( entity_view => $type, properties => [ 'name' ], filter => { name => $name } );
+	my $views = Vim::find_entity_views( view_type => $type, properties => [ 'name' ], filter => { name => $name } );
 	if ( defined( $views ) ) {
 		return 1;
 	} else {
@@ -428,7 +437,7 @@ sub entity_exists {
 sub get_names {
 	my ( $type, $name ) =@_;
 	my @names;
-	my $views = Vim::find_entity_views( entity_view => $type, properties => [ 'name' ], filter => { name => qr/*$name*/ } );
+	my $views = Vim::find_entity_views( view_type => $type, properties => [ 'name' ], filter => { name => qr/*$name*/ } );
 	if ( &entity_exists( $type, $name ) ) {
 		foreach ( @$views ) {
 			push( @names, $_->name );
@@ -436,6 +445,16 @@ sub get_names {
 		return @names;
 	} else {
 		print "No entities found with name: $name";
+		return 0;
+	}
+}
+
+sub num_check {
+	my ( $vmname, $type ) = @_;
+	my $views = Vim::find_entity_views( view_type => $type, properties => [ 'name' ], filter => { name => $vmname } );
+	if ( scalar(@$views) ne 1 ) {
+		SDK::Error::Entity::NumException->throw( error => 'Entity count not expected', entity => $vmname, count => scalar(@$views) );
+	} else {
 		return 0;
 	}
 }

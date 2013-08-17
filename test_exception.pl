@@ -6,8 +6,7 @@ use FindBin;
 use lib "$FindBin::Bin/lib";
 #use SDK::Hardware;
 use SDK::Error;
-use Try::Tiny;
-use Scalar::Util qw( blessed );
+use SDK::Vcenter;
 use VMware::VIRuntime;
 use Data::Dumper;
 my %opts = (
@@ -20,12 +19,12 @@ my $password = Opts::get_option('password');
 my $url = Opts::get_option('url');
 Util::connect( $url, $username, $password );
 # Disconnect from the server
-try {
-	#BaseException->throw( error => 'Hiba faszom' );
-	EntityNumException->throw( error => 'Nincs faszom', entity => 'Halozat1-23', count => '2' );
-}
-catch {
-	&Error::catch( $_ );
+eval {
+	&Vcenter::vm_num_check('a');
+};
+if ($@) {
+#	print Dumper($@);
+	&Error::catch_ex( $@ );
 }
 Util::disconnect();
 # To mitigate SSL warnings by default
