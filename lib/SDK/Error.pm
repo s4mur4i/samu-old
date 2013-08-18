@@ -51,10 +51,24 @@ use Exception::Class (
 		isa => 'SDK::Error::Entity',
 		description => 'Error happened trying to transfer file',
 	},
+	'SDK::Error::Entity::HWError' => {
+		isa => 'SDK::Error::Entity',
+		description => 'HW reconfigure error',
+		fields => [ 'entity', 'hw' ],
+	},
+	'SDK::Error::Entity::Snapshot' => {
+		isa => 'SDK::Error::Entity',
+		description => 'Snapshot Error',
+	},
 	## Template Exceptions
 	'SDK::Error::Template::Exists' => {
 		isa => 'SDK::Error::Template',
 		description => 'Template does not exist',
+		fields => [ 'template' ],
+	},
+	'SDK::Error::Template::Error' => {
+		isa => 'SDK::Error::Template',
+		description => 'Error with tempalte',
 		fields => [ 'template' ],
 	},
 	## DBI Exceptions
@@ -99,10 +113,16 @@ sub catch_ex {
 		print "Desc=>" . $ex->error . ",entity=>" . $ex->entity . ",user=>" . $ex->username . ",pass=>" . $ex->password . "\n";
 	} elsif ( $ex->isa( 'SDK::Error::Entity::TransferError' ) ) {
 		print "Desc=>" . $ex->error . "\n";
+	} elsif ( $ex->isa( 'SDK::Error::Entity::HWError' ) ) {
+		print "Desc=>" . $ex->error . ",entity=>" . $ex->entity . ",hw=>" . $ex->hw . "\n";
+	} elsif ( $ex->isa( 'SDK::Error::Entity::Snapshot' ) ) {
+		print "Desc=>" . $ex->error . "\n";
 	} elsif ( $ex->isa( 'SDK::Error::Task::Error' ) ) {
 		print "Desc=>" . $ex->error . ",detail=>" . $ex->detail . ",fault=>" . $ex->fault . "\n";
 	} elsif ( $ex->isa( 'SDK::Error::Template::Exists' ) ) {
 		print "Desc=>" . $ex->error . ",template=>" .$ex->template . "\n";
+	} elsif ( $ex->isa( 'SDK::Error::Template::Error' ) ) {
+		print "Desc=>" . $ex->error . ",template=>" . $ex->template .  "\n";
 	} elsif ( $ex->isa('SDK::Error::BaseException') ) {
 		print "Desc=>'" . $ex->error . "\n";
 	} elsif ( $ex->isa( 'Exception::Class' ) ) {
