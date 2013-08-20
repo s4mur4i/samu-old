@@ -171,7 +171,7 @@ sub oth_VirtualMachineCloneSpec {
 ## Functionality test sub
 sub test( ) {
 	Util::trace( 4, "Started Support::test sub\n" );
-	print "Support module test sub\n";
+	Util::trace( 0, "Support module test sub\n" );
 	Util::trace( 4, "Finished Support::test \n" );
 }
 
