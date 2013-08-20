@@ -3,7 +3,6 @@ package Error;
 use strict;
 use warnings;
 use lib "$FindBin::Bin";
-#use Try::Tiny;
 use Scalar::Util qw( blessed );
 use Data::Dumper;
 use Switch;
@@ -99,44 +98,48 @@ use overload '""' => sub {$_[0]->as_string}, 'bool' => sub {1}, fallback => 1;
 
 sub catch_ex {
 	my ( $ex ) = @_;
+	Util::trace( 4, "Starting Error:catch_ex sub\n" );
 	if ( $ex->isa( 'SDK::Error::Entity::NumException' ) ) {
-		print "Desc=>'" . $ex->error . "',entity=>'" . $ex->entity ."',count=>'" . $ex->count . "'\n";
+		Util::trace( 0, "Desc=>'" . $ex->error . "',entity=>'" . $ex->entity ."',count=>'" . $ex->count . "'\n" );
 	} elsif ( $ex->isa( 'SDK::Error::Entity::Exists' ) ) {
-		print "Desc=>'" . $ex->error . "',entity=>'" . $ex->entity . "'\n";
+		Util::trace( 0, "Desc=>'" . $ex->error . "',entity=>'" . $ex->entity . "'\n" );
 	} elsif ( $ex->isa( 'SDK::Error::Task::NotDefined' ) ) {
-		print "Desc=>" . $ex->error . "\n";
+		Util::trace( 0, "Desc=>" . $ex->error . "\n" );
 	} elsif ( $ex->isa( 'SDK::Error::Entity::ServiceContent' ) ) {
-		print "Desc=>" . $ex->error . "\n";
+		Util::trace( 0, "Desc=>" . $ex->error . "\n" );
 	} elsif ( $ex->isa( 'SDK::Error::Entity::Path' ) ) {
-		print "Desc=>" . $ex->error . ",path=>" . $ex->path . "\n";
+		Util::trace( 0, "Desc=>" . $ex->error . ",path=>" . $ex->path . "\n" );
 	} elsif ( $ex->isa( 'SDK::Error::Entity::Auth' ) ) {
-		print "Desc=>" . $ex->error . ",entity=>" . $ex->entity . ",user=>" . $ex->username . ",pass=>" . $ex->password . "\n";
+		Util::trace( 0, "Desc=>" . $ex->error . ",entity=>" . $ex->entity . ",user=>" . $ex->username . ",pass=>" . $ex->password . "\n" );
 	} elsif ( $ex->isa( 'SDK::Error::Entity::TransferError' ) ) {
-		print "Desc=>" . $ex->error . "\n";
+		Util::trace( 0, "Desc=>" . $ex->error . "\n" );
 	} elsif ( $ex->isa( 'SDK::Error::Entity::HWError' ) ) {
-		print "Desc=>" . $ex->error . ",entity=>" . $ex->entity . ",hw=>" . $ex->hw . "\n";
+		Util::trace( 0, "Desc=>" . $ex->error . ",entity=>" . $ex->entity . ",hw=>" . $ex->hw . "\n" );
 	} elsif ( $ex->isa( 'SDK::Error::Entity::Snapshot' ) ) {
-		print "Desc=>" . $ex->error . "\n";
+		Util::trace( 0, "Desc=>" . $ex->error . "\n" );
 	} elsif ( $ex->isa( 'SDK::Error::Task::Error' ) ) {
-		print "Desc=>" . $ex->error . ",detail=>" . $ex->detail . ",fault=>" . $ex->fault . "\n";
+		Util::trace( 0, "Desc=>" . $ex->error . ",detail=>" . $ex->detail . ",fault=>" . $ex->fault . "\n" );
 	} elsif ( $ex->isa( 'SDK::Error::Template::Exists' ) ) {
-		print "Desc=>" . $ex->error . ",template=>" .$ex->template . "\n";
+		Util::trace( 0, "Desc=>" . $ex->error . ",template=>" .$ex->template . "\n" );
 	} elsif ( $ex->isa( 'SDK::Error::Template::Error' ) ) {
-		print "Desc=>" . $ex->error . ",template=>" . $ex->template .  "\n";
+		Util::trace( 0, "Desc=>" . $ex->error . ",template=>" . $ex->template .  "\n" );
 	} elsif ( $ex->isa('SDK::Error::BaseException') ) {
-		print "Desc=>'" . $ex->error . "\n";
+		Util::trace( 0, "Desc=>'" . $ex->error . "\n" );
 	} elsif ( $ex->isa( 'Exception::Class' ) ) {
-		print "Cannot understand the object, throwing dump.\n";
+		Util::trace( 0, "Cannot understand the object, throwing dump.\n" );
 		print Dumper($ex);
 	} else {
-		print "I'm blue and I'm a WTF.....";
+		Util::trace( 0, "I'm blue and I'm a WTF....." );
 	}
+	Util::trace( 4, "Finished Error::catch_ex sub\n" );
 	exit;
 }
 
 ## Functionality test sub
 sub test( ) {
-	print "Error module test sub\n";
+	Util::trace( 4, "Starting Error:test sub\n" );
+	Util::trace( 0, "Error module test sub\n" );
+	Util::trace( 4, "Finished Error::test sub\n" );
 }
 
 #### We need to end with success
