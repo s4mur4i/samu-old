@@ -30,7 +30,7 @@ use Exception::Class (
 	},
 	'SDK::Error::Entity::Exists' => {
 		isa => 'SDK::Error::Entity',
-		description => 'After operation Entity still exists'.
+		description => 'After operation Entity still exists',
 		fields => [ 'entity' ],
 	},
 	'SDK::Error::Entity::ServiceContent' => {
