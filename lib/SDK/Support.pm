@@ -46,15 +46,14 @@ our %agents_hash = (
 
 sub linked_clone_template_folder_path {
 	my ( $name ) = @_;
+	Util::trace( 4, "Started Support::linked_clone_template_folder_path sub \n" );
 	my $mo_ref;
 	if ( !defined( $template_hash{$name} ) ) {
 		SDK::Error::Entity::Path->throw( error => 'Could not retrieve path from template hash', path => $name );
 	}
 	if ( &Vcenter::exists_folder( $name ) ) {
-		print "Linked folder exists already\n";
-		#$mo_ref = Vim::find_entity_view( view_type => 'Folder', filter => {name => $name} );
 	} else {
-		print "Need to create the linked folder.\n";
+		Util::trace( 3, "Need to create the linked folder\n" );
 		my $path = $template_hash{$name}{'path'};
 		my $sc = Vim::get_service_content();
 		if ( !defined( $sc ) ) {
@@ -69,10 +68,12 @@ sub linked_clone_template_folder_path {
 		my $parent_folder = Vim::get_view( mo_ref => $view->parent );
 		&Vcenter::create_folder( $name, $parent_folder->name );
 	}
+	Util::trace( 4, "Finished Support::linked_clone_template_folder_path sub\n" );
 }
 
 sub generate_network_setup_for_clone {
 	my ( $os ) = @_;
+	Util::trace( 4, "Started Support::generate_network_setup_for_clone sub, os=>'$os'\n" );
 	if ( defined( $template_hash{$os} ) ) {
 		my @return;
 		my $path = $template_hash{$os}{'path'};
@@ -101,7 +102,7 @@ sub generate_network_setup_for_clone {
 				my $last =$mac[ -1 ];
 				my $new_mac = &Misc::increment_mac( $last );
 				push( @mac, $new_mac );
-				print "Next interface mac address is $mac[ -1 ]\n";
+				Util::trace( 3, "Next interface mac address is $mac[ -1 ]\n" );
 			}
 		}
 		for ( my $i =0;$i<@keys;$i++ ) {
@@ -110,6 +111,7 @@ sub generate_network_setup_for_clone {
 			my $deviceconfigspec = VirtualDeviceConfigSpec->new( device => $ethernetcard, operation => $operation );
 			push( @return, $deviceconfigspec );
 		}
+		Util::trace( 4, "Finished Support::generate_network_setup_for_clone sub\n" );
 		return \@return;
 	} else {
 		SDK::Error::Template::Exists->throw( error => 'Template does not exists', template => $os );
@@ -118,7 +120,7 @@ sub generate_network_setup_for_clone {
 
 sub win_VirtualMachineCloneSpec {
 	my ( $os, $snapshot, $location, $config ) = @_;
-	print "Running Windows Sysprep\n";
+	Util::trace( 4, "Started Support::win_VirtualMachineCloneSpec sub\n" );
 	my $globalipsettings = CustomizationGlobalIPSettings->new( dnsServerList => [ '10.10.0.1' ] , dnsSuffixList => [ 'support.balabit' ] );
 	my $customoptions = CustomizationWinOptions->new( changeSID => 1, deleteAccounts => 0 );
 	my $custpass = CustomizationPassword->new( plainText => 1, value => 'titkos' );
@@ -129,42 +131,48 @@ sub win_VirtualMachineCloneSpec {
 	my $identification = CustomizationIdentification->new( domainAdmin => 'Administrator@support.balabit', domainAdminPassword => $custpass, joinDomain => 'support.balabit' );
 	my $runonce = CustomizationGuiRunOnce->new( commandList => [ "w32tm /resync", "cscript c:/windows/system32/slmgr.vbs /skms prod-dev-winsrv.balabit", "cscript c:/windows/system32/slmgr.vbs /ato" ] );
 	my @nicsetting = &GuestManagement::CustomizationAdapterMapping_generator( $os );
-	## Workaround for Win 2000 and 2003 licensing
 	my $identity;
 	if ( ( $os =~ /^win_2003/ ) || ( $os =~ /^win_2000/ ) ) {
-		print "Win 2k/2k3 licensing workaround.\n";
+		Util::trace( 3, "Win2k3 and Win2k licensing workaround\n" );
 		my $automode = CustomizationLicenseDataMode->new( 'perSeat' );
 		my $licenseprintdata =  CustomizationLicenseFilePrintData->new( autoMode => $automode );
 		$identity = CustomizationSysprep->new( guiRunOnce => $runonce, guiUnattended => $guiunattend, identification => $identification , userData => $userdata, licenseFilePrintData => $licenseprintdata );
 	} else {
+		Util::trace( 3, "No license file generation required\n" );
 		$identity = CustomizationSysprep->new( guiRunOnce => $runonce, guiUnattended => $guiunattend, identification => $identification , userData => $userdata );
 	}
 	my $customization_spec = CustomizationSpec->new( globalIPSettings => $globalipsettings, identity => $identity, options => $customoptions, nicSettingMap => @nicsetting );
 	my $clone_spec = VirtualMachineCloneSpec->new( powerOn => 1, template => 0, snapshot => $snapshot, location => $location, config => $config, customization => $customization_spec );
+	Util::trace ( 4, "Finished Support::win_VirtualMachineCloneSpec sub\n" );
 	return $clone_spec;
 }
 
 sub lin_VirtualMachineCloneSpec {
 	my ( $os, $snapshot, $location, $config ) = @_;
-	print "Running Linux Sysprep\n";
+	Util::trace( 4, "Started Support::lin_VirtualMachineCloneSpec sub\n" );
 	my @nicsetting = &GuestManagement::CustomizationAdapterMapping_generator( $os );
 	my $hostname = CustomizationPrefixName->new( base => 'linuxguest' );
 	my $globalipsettings = CustomizationGlobalIPSettings->new( dnsServerList => [ '10.10.0.1' ] , dnsSuffixList => [ 'support.balabit' ] );
 	my $linuxprep = CustomizationLinuxPrep->new( domain => 'support.balabit', hostName => $hostname, timeZone => 'Europe/Budapest', hwClockUTC => 1 );
 	my $customization_spec = CustomizationSpec->new( identity => $linuxprep, globalIPSettings => $globalipsettings, nicSettingMap => @nicsetting );
 	my $clone_spec = VirtualMachineCloneSpec->new( powerOn => 1, template => 0, snapshot => $snapshot, location => $location, config => $config, customization => $customization_spec );
+	Util::trace ( 4, "Finished Support::lin_VirtualMachineCloneSpec sub\n" );
 	return $clone_spec;
 }
 
 sub oth_VirtualMachineCloneSpec {
 	my ( $os, $snapshot, $location, $config ) = @_;
+	Util::trace( 4, "Started Support::oth_VirtualMachineCloneSpec sub\n" );
 	my $clone_spec = VirtualMachineCloneSpec->new( powerOn => 1, template => 0, snapshot => $snapshot, location => $location, config => $config );
+	Util::trace ( 4, "Finished Support::oth_VirtualMachineCloneSpec sub\n" );
 	return $clone_spec;
 }
 
 ## Functionality test sub
 sub test( ) {
+	Util::trace( 4, "Started Support::test sub\n" );
 	print "Support module test sub\n";
+	Util::trace( 4, "Finished Support::test \n" );
 }
 
 #### We need to end with success
