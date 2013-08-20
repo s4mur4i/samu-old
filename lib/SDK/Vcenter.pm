@@ -69,7 +69,7 @@ sub Task_getStatus {
 		#my $info = $task_view->info;
 		if ( $task_view->info->state->val eq 'success' ) {
 			$continue = 0;
-		} elsif ( $info->state->val eq 'error' ) {
+		} elsif ( $task_view->info->state->val eq 'error' ) {
 		#	my $soap_fault = SoapFault->new;
 		#	$soap_fault->name( $info->error->fault );
 		#	$soap_fault->detail( $info->error->fault );
@@ -216,7 +216,7 @@ sub list_folder_vms {
 		return 0;
 	}
 	my $view = Vim::find_entity_view( view_type => 'Folder', properties => [ 'childEntity' ], filter => { name => $name } );
-	my $vms = $folder_view->childEntity;
+	my $vms = $view->childEntity;
 	my @names;
 	foreach ( @$vms ) {
 		if ( $_->type eq 'VirtualMachine' ) {
