@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use Data::Dumper;
 use SDK::GuestInternal;
+use SDK::Error;
 
 BEGIN {
         use Exporter;
@@ -18,6 +19,7 @@ our %dns = (
 
 sub list_dns {
 	my ( $zone ) = @_;
+	Util::trace( 4, "Started Auto::list_dns sub, zone=>'$zone'\n" );
 	my $workdir='c:\\';
 	my $env='PATH=C:\windows\system32';
 	my $prog='C:\windows\system32\cmd.exe';
@@ -32,6 +34,7 @@ sub list_dns {
 		}
 	}
 	close $fh;
+	Util::trace( 4, "Finished Auto::list_dns sub\n" );
 }
 
 sub install_puppet {
@@ -39,7 +42,9 @@ sub install_puppet {
 }
 
 sub test() {
-        print "Automatisation module test sub\n";
+	Util::trace( 4, "Starting Auto::test sub\n" );
+        Util::trace( 0, "Automatisation module test sub\n" );
+	Util::trace( 4, "Finished Auto::test sub\n" );
 }
 
 #### We need to end with success
