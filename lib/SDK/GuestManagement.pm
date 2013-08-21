@@ -21,8 +21,8 @@ BEGIN {
 ##
 
 sub add_network_interface {
-	## Incremented mac should be tested
 	my ( $vmname ) = @_;
+	Util::trace( 4, "Starting GuestManagement::add_network_interface sub, vmname=>'$vmname'\n" );
 	my $int_count = &count_network_interface( $vmname );
 	my ( $key, $unitnumber, $controllerkey, $mac ) = &get_network_interface( $vmname, $int_count-1 );
 	$mac = &Misc::increment_mac( $mac );
@@ -42,10 +42,12 @@ sub add_network_interface {
 	my $spec = VirtualMachineConfigSpec->new( deviceChange => [ $deviceconfig ] );
 	my $task = $view->ReconfigVM_Task( spec => $spec );
 	&Vcenter::Task_getStatus( $task );
+	Util::trace( 4, "Finished GuestManagement::add_network_interface sub\n" );
 }
 
 sub add_disk {
 	my ( $vmname, $req_size ) = @_;
+	Util::trace( 4, "Starting GuestManagement::add_disk sub\n" );
 	my $view = Vim::find_entity_view( view_type => 'VirtualMachine', properties => [ 'name' ], filter => { name => $vmname } );
 	if ( !defined( $view ) ) {
 		SDK::Error::Entity::NumException->throw( error => 'Could not find VM entity', entity => $vmname, count => '0' );
@@ -56,7 +58,7 @@ sub add_disk {
 	my $controller_key = $controller->key;
 	my $unitnumber = $#{ $controller->device } + 1;
 	if ( $unitnumber < 7 ) {
-		print "Not yet reached controllerID\n";
+		Util::trace( 2, "Not yet reached controllerID\n" );
 	} elsif ( $unitnumber == 15 ) {
 		SDK::Error::Entity::HWError->throw( error => 'SCSI controller has already 15 disks', entity => $vmname, hw => 'SCSI Controller' );
 	} else {
@@ -68,13 +70,15 @@ sub add_disk {
 	my $disk = VirtualDisk->new( controllerKey => $controller_key, unitNumber => $unitnumber, key => -1, backing => $disk_backing_info, capacityInKB => $req_size );
 	my $devspec = VirtualDeviceConfigSpec->new( operation => VirtualDeviceConfigSpecOperation->new( 'add' ), device => $disk, fileOperation => VirtualDeviceConfigSpecFileOperation->new( 'create' ) );
 	my $vmspec = VirtualMachineConfigSpec->new( deviceChange => [ $devspec ] );
-	print "Adding disk to machine.\n";
+	Util::trace( 1, "Adding disk to machine\n" );
 	my $task = $view->ReconfigVM_Task( spec => $vmspec );
 	&Vcenter::Task_getStatus( $task );
+	Util::trace( 4, "Finishing GuestManagement::add_disk sub\n" );
 }
 
 sub add_cdrom {
 	my ( $vmname ) = @_;
+	Util::trace( 4, "Starting GuestManagement::add_cdrom sub, vmname=>'$vmname'\n" );
 	my $view = Vim::find_entity_view( view_type => 'VirtualMachine', properties => [ 'name' ], filter => { name => $vmname } );
 	if ( !defined( $view ) ) {
 		SDK::Error::Entity::NumException->throw( error => 'Could not find VM entity', entity => $vmname, count => '0' );
@@ -87,13 +91,15 @@ sub add_cdrom {
 	my $cdrom = VirtualCdrom->new( key => $key, backing => $cdrombacking, controllerKey => $ide_key );
 	my $devspec = VirtualDeviceConfigSpec->new( operation => VirtualDeviceConfigSpecOperation->new( 'add' ), device => $cdrom, );
 	my $vmspec = VirtualMachineConfigSpec->new( deviceChange => [ $devspec ] );
-	print "Adding cdrom to machine.\n";
+	Util::trace( 1, "Adding cdrom to machine\n" );
 	my $task = $view->ReconfigVM_Task( spec => $vmspec );
 	&Vcenter::Task_getStatus( $task );
+	Util::trace( 4, "Finishing GuestManagement::add_cdrom sub\n" );
 }
 
 sub change_cdrom_to_iso {
 	my ( $vmname, $num, $filename ) = @_;
+	Util::trace( 4, "Starting GuestManagement::change_cdrom_to_iso sub, vmname=>'$vmname', num=>'$num', filename=>'$filename'\n" );
 	if ( !&Vcenter::datastore_file_exists( $filename ) ) {
 		SDK::Error::Entity::Path->throw( error => 'File does not exist on datastore', path => $filename );
 	}
@@ -110,10 +116,12 @@ sub change_cdrom_to_iso {
 	my $spec = VirtualMachineConfigSpec->new( deviceChange => [ $configspec ] );
 	my $task = $view->ReconfigVM_Task( spec => $spec );
 	&Vcenter::Task_getStatus( $task );
+	Util::trace( 4, "Finishing GuestManagement::change_cdrom_to_iso sub\n" );
 }
 
 sub remove_cdrom_iso {
 	my ( $vmname, $num ) = @_;
+	Util::trace( 4, "Starting GuestManagement::remove_cdrom_iso sub, vmname=>'$vmname', num=>'$num'\n" );
 	my ( $key, $backing, $label ) = &get_cdrom( $vmname, $num );
 	my $controllerkey = &get_controller_key( $vmname, $key );
 	my $view = Vim::find_entity_view( view_type => 'VirtualMachine', properties => [ 'name' ], filter => { name => $vmname } );
@@ -126,6 +134,7 @@ sub remove_cdrom_iso {
 	my $spec = VirtualMachineConfigSpec->new( deviceChange => [ $configspec ] );
 	my $task = $view->ReconfigVM_Task( spec => $spec );
 	&Vcenter::Task_getStatus( $task );
+	Util::trace( 4, "Finishing GuestManagement::remove_cdrom_iso sub\n" );
 }
 
 
@@ -137,6 +146,7 @@ sub remove_cdrom_iso {
 
 sub count_network_interface {
 	my ( $vmname ) =@_;
+	Util::trace( 4, "Starting GuestManagement::count_network_interface sub, vmname=>'$vmname'\n" );
 	my $view = Vim::find_entity_view( view_type => 'VirtualMachine', properties => [ 'name' ], filter => { name => $vmname } );
 	if ( !defined( $view ) ) {
 		SDK::Error::Entity::NumException->throw( error => 'Could not retrieve VM entity', entity => $vmname, count => '0' );
@@ -148,11 +158,13 @@ sub count_network_interface {
 			$count++;
 		}
 	}
+	Util::trace( 4, "Finishing GuestManagement::count_network_interface sub\n" );
 	return $count;
 }
 
 sub count_cdrom {
 	my ( $vmname ) =@_;
+	Util::trace( 4, "Starting  GuestManagement::count_cdrom sub, vmname=>'$vmname'\n" );
 	my $view = Vim::find_entity_view( view_type => 'VirtualMachine', properties => [ 'name' ], filter => { name => $vmname } );
 	if ( !defined( $view ) ) {
 		SDK::Error::Entity::NumException->throw( error => 'Could not retrieve VM entity', entity => $vmname, count => '0' );
@@ -164,11 +176,13 @@ sub count_cdrom {
 			$count++;
 		}
 	}
+	Util::trace( 4, "Finishing GuestManagement::count_cdrom sub\n" );
 	return $count;
 }
 
 sub count_disk {
 	my ( $vmname ) =@_;
+	Util::trace( 4, "Starting GuestManagement::count_disk sub, vmname=>'$vmname'\n" );
 	my $view = Vim::find_entity_view( view_type => 'VirtualMachine', properties => [ 'name' ], filter => { name => $vmname } );
 	if ( !defined( $view ) ) {
 		SDK::Error::Entity::NumException->throw( error => 'Could not retrieve VM entity', entity => $vmname, count => '0' );
@@ -180,6 +194,7 @@ sub count_disk {
 			$count++;
 		}
 	}
+	Util::trace( 4, "Finishing GuestManagement::count_disk sub\n" );
 	return $count;
 }
 
@@ -192,6 +207,7 @@ sub count_disk {
 
 sub remove_network_interface {
 	my ( $vmname, $num ) = @_;
+	Util::trace( 4, "Starting GustManagement::remove_network_interface sub, vmname=>'$vmname', num=>'$num'\n" );
 	my ( $key, $unitnumber, $controllerkey, $mac ) = &get_network_interface( $vmname, $num );
 	my $view = Vim::find_entity_view( view_type => 'VirtualMachine', properties => [ 'name' ], filter => { name => $vmname } );
 	if ( !defined( $view ) ) {
@@ -201,10 +217,12 @@ sub remove_network_interface {
 	my $deviceconfig = VirtualDeviceConfigSpec->new( operation => VirtualDeviceConfigSpecOperation->new( 'remove' ), device => $device );
 	my $spec = VirtualMachineConfigSpec->new( deviceChange => [ $deviceconfig ] );
 	$view->ReconfigVM_Task( spec => $spec );
+	Util::trace( 4, "Finishing GustManagement::remove_network_interface sub\n" );
 }
 
 sub remove_disk {
 	my ( $vmname, $num ) = @_;
+	Util::trace( 4, "Starting GuestManagement::remove_disk sub, vmname=>'$vmname', num=>'$num'\n" );
 	my ( $key, $size, $path ) = &get_disk( $vmname, $num );
 	my $view = Vim::find_entity_view( view_type => 'VirtualMachine', properties => [ 'name' ], filter => { name => $vmname } );
 	if ( !defined( $view ) ) {
@@ -214,10 +232,12 @@ sub remove_disk {
 	my $deviceconfig = VirtualDeviceConfigSpec->new( operation => VirtualDeviceConfigSpecOperation->new( 'remove' ), device => $device, fileOperation => VirtualDeviceConfigSpecFileOperation->new( 'destroy' ) );
 	my $spec = VirtualMachineConfigSpec->new( deviceChange => [$deviceconfig] );
 	$view->ReconfigVM_Task( spec => $spec );
+	Util::trace( 4, "Finishing GuestManagement::remove_disk sub\n" );
 }
 
 sub remove_cdrom {
 	my ( $vmname, $num ) = @_;
+	Util::trace( 4, "Starting GuestManagement::remove_cdrom sub, vmname=>'$vmname', num=>'$num'\n" );
 	my ( $key, $backing, $label ) = &get_cdrom( $vmname, $num );
 	my $view = Vim::find_entity_view( view_type => 'VirtualMachine', properties => [ 'name' ], filter => { name => $vmname } );
 	if ( !defined( $view ) ) {
@@ -227,9 +247,8 @@ sub remove_cdrom {
 	my $deviceconfig = VirtualDeviceConfigSpec->new( operation => VirtualDeviceConfigSpecOperation->new( 'remove' ), device => $device );
 	my $spec = VirtualMachineConfigSpec->new( deviceChange => [$deviceconfig] );
 	$view->ReconfigVM_Task( spec => $spec );
+	Util::trace( 4, "Finishing GuestManagement::remove_cdrom sub\n" );
 }
-
-
 
 ## Return Information about network interface
 ## Parameters:
@@ -243,6 +262,7 @@ sub remove_cdrom {
 
 sub get_network_interface {
 	my ( $vmname, $num ) = @_;
+	Util::trace( 4, "Starting GuestManagement::get_network_interface sub, vmname=>'$vmname', num=>'$num'\n" );
 	my $view = Vim::find_entity_view( view_type => 'VirtualMachine', properties => [ 'name' ], filter => { name => $vmname } );
 	if ( !defined( $view ) ) {
 		SDK::Error::Entity::NumException->throw( error => 'Could not retrieve VM entity', entity => $vmname, count => '0' );
@@ -261,11 +281,13 @@ sub get_network_interface {
 		push( @controllerkey, $interface->controllerKey );
 		push( @mac, $interface->macAddress );
 	}
+	Util::trace( 4, "Finishing GuestManagement::get_network_interface sub\n" );
 	return ( $keys[$num], $unitnumber[$num], $controllerkey[$num], $mac[$num] );
 }
 
 sub get_disk {
 	my ( $vmname, $num ) = @_;
+	Util::trace( 4, "Starting GuestManagement::get_disk sub, vmname=>'$vmname', num=>'$num'\n" );
 	my $view = Vim::find_entity_view( view_type => 'VirtualMachine', properties => [ 'name' ], filter => { name => $vmname } );
 	if ( !defined( $view ) ) {
 		SDK::Error::Entity::NumException->throw( error => 'Could not retrieve VM entity', entity => $vmname, count => '0' );
@@ -282,11 +304,13 @@ sub get_disk {
 		push( @size, $disk->capacityInKB );
 		push( @path, $disk->backing->fileName );
 	}
+	Util::trace( 4, "Finishing GuestManagement::get_disk sub\n" );
 	return ( $keys[$num], $size[$num], $path[$num] );
 }
 
 sub get_cdrom {
 	my ( $vmname, $num ) = @_;
+	Util::trace( 4, "Starting GuestManagement::get_cdrom sub, vmname=>'$vmname', num=>'$num'\n" );
 	my $view = Vim::find_entity_view( view_type => 'VirtualMachine', properties => [ 'name' ], filter => { name => $vmname } );
 	if ( !defined( $view ) ) {
 		SDK::Error::Entity::NumException->throw( error => 'Could not retrieve VM entity', entity => $vmname, count => '0' );
@@ -309,11 +333,13 @@ sub get_cdrom {
 		}
 		push( @label, $cdrom->deviceInfo->label );
 	}
+	Util::trace( 4, "Finishing GuestManagement::get_cdrom sub\n" );
 	return ( $keys[$num], $backing[$num], $label[$num] );
 }
 
 sub get_controller_key {
 	my ( $vmname, $devkey ) = @_;
+	Util::trace( 4, "Starting GuestManagement::get_controller_key sub, vmname=>'$vmname', devkey=>'$devkey'\n" );
 	my $view = Vim::find_entity_view( view_type => 'VirtualMachine', properties => [ 'name' ], filter => { name => $vmname } );
 	if ( !defined( $view ) ) {
 		SDK::Error::Entity::NumException->throw( error => 'Could not retrieve VM entity', entity => $vmname, count => '0' );
@@ -326,6 +352,7 @@ sub get_controller_key {
 		}
 		$controllerkey = $device->controllerKey;
 	}
+	Util::trace( 4, "Finishing GuestManagement::get_controller_key sub\n" );
 	return $controllerkey;
 }
 
@@ -340,6 +367,7 @@ sub get_controller_key {
 
 sub get_ext_network_interface {
 	my ( $vmname, $num ) = @_;
+	Util::trace( 4, "Starting GuestManagement::get_ext_network_interface sub, vmname=>'$vmname', num=>'$num'\n" );
 	my $view = Vim::find_entity_view( view_type => 'VirtualMachine', properties => [ 'name' ], filter => { name => $vmname } );
 	if ( !defined( $view ) ) {
 		SDK::Error::Entity::NumException->throw( error => 'Could not retrieve VM entity', entity => $vmname, count => '0' );
@@ -354,6 +382,7 @@ sub get_ext_network_interface {
 		push( @network, $interface->backing->deviceName );
 		push( @label, $interface->deviceInfo->label );
 	}
+	Util::trace( 4, "Finishing GuestManagement::get_ext_network_interface sub\n" );
 	return ( $network[$num], $label[$num] );
 }
 
@@ -367,6 +396,7 @@ sub get_ext_network_interface {
 
 sub change_network_interface {
 	my ( $vmname, $num, $network ) = @_;
+	Util::trace( 4, "Starting GuestManagement::change_network_interface sub, vmname=>'$vmname', num=>'$num', network=>'$network'\n" );
 	my ( $key, $unitnumber, $controllerkey, $mac ) = &get_network_interface( $vmname, $num );
 	my $view = Vim::find_entity_view( view_type => 'VirtualMachine', properties => [ 'name' ], filter => { name => $vmname } );
 	if ( !defined( $view ) ) {
@@ -390,6 +420,7 @@ sub change_network_interface {
 	my $spec = VirtualMachineConfigSpec->new( deviceChange => [$deviceconfig] );
 	my $task = $view->ReconfigVM_Task( spec => $spec );
 	&Vcenter::Task_getStatus( $task );
+	Util::trace( 4, "Finishing GuestManagement::change_network_interface sub\n" );
 }
 
 ## Create switch to hold port groups
@@ -400,6 +431,7 @@ sub change_network_interface {
 
 sub create_switch {
 	my ( $name ) = @_;
+	Util::trace( 4, "Starting GuestManagement::create_switch sub, name=>'$name'\n" );
 	my $root_folder = Vim::find_entity_view( view_type => 'Folder', properties => [ 'name' ], filter => { name => 'network' } );
 	if ( !defined( $root_folder ) ) {
 		SDK::Error::Entity::NumException->throw( error => 'Could not retrieve Network root folder', entity => 'Network root folder', count => '0' );
@@ -413,6 +445,7 @@ sub create_switch {
 	my $spec = DVSCreateSpec->new( configSpec => $dvsconfigspec );
 	my $task = $root_folder->CreateDVS_Task( spec => $spec );
 	&Vcenter::Task_getStatus( $task );
+	Util::trace( 4, "Finishing GuestManagement::create_switch sub\n" );
 }
 
 ## Deletes switch from esx
@@ -423,12 +456,14 @@ sub create_switch {
 
 sub remove_switch {
 	my ( $name ) = @_;
+	Util::trace( 4, "Starting GuestManagement::remove_switch sub, name=>'$name'\n" );
 	my $switch = Vim::find_entity_view( view_type => 'DistributedVirtualSwitch', properties => [ 'name' ], filter => { name => $name } );
 	if ( !defined( $switch ) ) {
 		SDK::Error::Entity::NumException->throw( error => 'Could not retrieve switch view', entity => $name, count => '0' );
 	}
 	my $task = $switch->Destroy_Task;
 	&Vcenter::Task_getStatus( $task );
+	Util::trace( 4, "Finishing GuestManagement::remove_switch sub\n" );
 }
 
 ## Create a distributed port group
@@ -440,6 +475,7 @@ sub remove_switch {
 
 sub create_dvportgroup {
 	my ( $name, $switch ) = @_;
+	Util::trace( 4, "Starting GuestManagement::create_dvportgroup sub, name=>'$name', switch=>'$switch'\n" );
 	my $switch_view = Vim::find_entity_view( view_type => 'DistributedVirtualSwitch', properties => [ 'name' ], filter => { 'name' => $switch } );
 	if ( !defined( $switch_view ) ) {
 		&create_switch( $switch );
@@ -451,6 +487,7 @@ sub create_dvportgroup {
 		my $task = $switch_view->AddDVPortgroup_Task( spec => $spec );
 		&Vcenter::Task_getStatus( $task );
 	}
+	Util::trace( 4, "Finishing GuestManagement::create_dvportgroup sub\n" );
 }
 
 ## Removes dvportgroup , if last, then the switch aswell
@@ -461,6 +498,7 @@ sub create_dvportgroup {
 
 sub remove_dvportgroup {
 	my ( $name ) = @_;
+	Util::trace( 4, "Starting GuestManagement::remove_dvportgroup sub, name=>'$name'\n" );
 	my $portgroup = Vim::find_entity_view( view_type => 'DistributedVirtualPortgroup', properties => [ 'config.distribuedVirtualSwitch', 'summary.portgroupName' ], filter => { name => $name } );
 	if ( !defined( $portgroup ) ) {
 		SDK::Error::Entity::NumException->throw( error => 'No DVP found', entity => $name, count => '0' );
@@ -469,20 +507,24 @@ sub remove_dvportgroup {
 	$parent_switch = Vim::get_view( mo_ref => $parent_switch );
 	my $count = $parent_switch->summary->portgroupName;
 	if ( @$count < 3 ) {
-		print "Last portgroup, need to remove DV switch\n";
+		Util::trace( 2, "Last portgroup, need to remove DV switch\n" );
 		&remove_switch( $parent_switch->name );
 	} else {
 		my $task = $portgroup->Destroy_Task;
 		&Vcenter::Task_getStatus( $task );
 	}
+	Util::trace( 4, "Finishing GuestManagement::remove_dvportgroup sub\n" );
 }
 
 sub dvportgroup_status {
 	my ( $name ) = @_;
+	Util::trace( 4, "Starting GuestManagement::dvportgroup_status sub, name=>'$name'\n" );
 	my $network = Vim::find_entity_view( view_type => 'Network', properties => [ 'name' ], filter => { 'name' => $name } );
 	if ( defined( $network ) ) {
+		Util::trace( 4, "Finishing GuestManagement::dvportgroup_status sub, return=>'true'\n" );
 		return 1;
 	} else {
+		Util::trace( 4, "Finishing GuestManagement::dvportgroup_status sub, return=>'false'\n" );
 		return 0;
 	}
 }
@@ -494,13 +536,15 @@ sub dvportgroup_status {
 ##
 
 sub list_networks {
+	Util::trace( 4, "Starting GuestManagement::list_networks sub\n" );
 	my $networks = Vim::find_entity_views( view_type => 'Network', properties => [ 'name' ] );
 	if ( !defined( $networks ) ) {
 		SDK::Error::Entity::NumException->throw( error => 'No DVP found', entity => 'DistributedVirtualPortGroup', count => '0' );
 	}
 	foreach( @$networks ) {
-		print "name:'" . $_->name ."'\n";
+		Util::trace( 0, "name:'" . $_->name ."'\n");
 	}
+	Util::trace( 4, "Finishing GuestManagement::list_networks sub\n" );
 }
 
 ## List all dvportgroups on esx..
@@ -510,17 +554,20 @@ sub list_networks {
 ##
 
 sub list_dvportgroup {
+	Util::trace( 4, "Starting GuestManagement::list_dvportgroup sub\n" );
 	my $networks = Vim::find_entity_views( view_type => 'DistributedVirtualPortgroup', properties => [ 'name' ] );
 	if ( !defined( $networks ) ) {
 		SDK::Error::Entity::NumException->throw( error => 'No DVP found', entity => 'DistributedVirtualPortGroup', count => '0' );
 	}
 	foreach( @$networks ) {
-		print "name:'" . $_->name ."'\n";
+		Util::trace( 0, "name:'" . $_->name ."'\n" );
 	}
+	Util::trace( 4, "Finishing GuestManagement::list_dvportgroup sub\n" );
 }
 
 sub CustomizationAdapterMapping_generator {
 	my ( $os ) = @_;
+	Util::trace( 4, "Starting GuestManagement::CustomizationAdapterMapping_generator sub, os=>'$os'\n\n" );
 	my @return;
 	if ( defined( $Support::template_hash{ $os } ) ) {
 		my $source_temp = $Support::template_hash{ $os }{ 'path' };
@@ -538,11 +585,13 @@ sub CustomizationAdapterMapping_generator {
 	} else {
 		SDK::Error::Template::Error->throw( error => 'Cannot find template', template => $os );
 	}
+	Util::trace( 4, "Finishing GuestManagement::CustomizationAdapterMapping_generator sub\n" );
 	return \@return;
 }
 
 sub get_scsi_controller {
 	my ( $name ) = @_;
+	Util::trace( 4, "Starting GuestManagement::get_scsi_controller sub, name=>'$name'\n" );
 	my $view = Vim::find_entity_view( view_type => 'VirtualMachine', properties => [ 'config.hardware.device' ], filter => { name => $name } );
 	if ( !defined( $view ) ) {
 		SDK::Error::Entity::NumException->throw( error => 'Could not find VM entity', entity => $name, count => '0' );
@@ -558,6 +607,7 @@ sub get_scsi_controller {
 	if ( $num_controller != 1 ) {
 		SDK::Error::Entity::HWError->throw( error => 'Scsi controller count not good', entity => $name, hw => 'SCSI Controller' );
 	}
+	Util::trace( 4, "Finishing GuestManagement::get_scsi_controller sub\n" );
 	return $controller;
 }
 
@@ -565,6 +615,7 @@ sub get_scsi_controller {
 
 sub get_free_ide_controller {
 	my ( $name ) = @_;
+	Util::trace( 4, "Starting GuestManagement::get_free_ide_controller sub, name=>'$name'\n" );
 	my $view = Vim::find_entity_view( view_type => 'VirtualMachine', properties => [ 'config.hardware.device' ], filter => { name => $name } );
 	if ( !defined( $view ) ) {
 		SDK::Error::Entity::NumException->throw( error => 'Could not find VM entity', entity => $name, count => '0' );
@@ -580,9 +631,11 @@ sub get_free_ide_controller {
 	foreach ( @controller ) {
 		if ( defined( $_->device ) ) {
 			if ( @{ $_->device } lt 2 ) {
+				Util::trace( 4, "Finishing GuestManagement::get_free_ide_controller sub\n" );
 				return $_->key;
 			}
 		} else {
+			Util::trace( 4, "Finishing GuestManagement::get_free_ide_controller sub\n" );
 			return $_->key;
 		}
 	}
@@ -591,6 +644,7 @@ sub get_free_ide_controller {
 
 sub get_annotation_key {
 	my ( $vmname, $name ) =@_;
+	Util::trace( 4, "Starting GuestManagement::get_annotation_key sub, vmname=>'$vmname', name=>'$name'\n" );
 	my $view = Vim::find_entity_view( view_type => 'VirtualMachine', properties => [ 'availableField' ], filter => { name => $vmname } );
 	if ( !defined( $view ) ) {
 		SDK::Error::Entity::NumException->throw( error => 'Could not find VM entity', entity => $vmname, count => '0' );
@@ -600,11 +654,13 @@ sub get_annotation_key {
 			return $_->key;
 		}
 	}
+	Util::trace( 4, "Finishing GuestManagement::get_annotation_key sub\n" );
 	return 0;
 }
 
 sub change_altername {
 	my ( $vmname, $string ) =@_;
+	Util::trace( 4, "Starting GuestManagement::change_altername sub, vmname=>'$vmname', string=>'$string'\n" );
 	my $view = Vim::find_entity_view( view_type => 'VirtualMachine', properties => [ 'name' ], filter => { name => $vmname } );
 	if ( !defined( $view ) ) {
 		SDK::Error::Entity::NumException->throw( error => 'Could not find VM entity', entity => $vmname, count => '0' );
@@ -616,10 +672,12 @@ sub change_altername {
 	my $custom = Vim::get_view( mo_ref => $sc->customFieldsManager );
 	my $key = &get_annotation_key( $vmname, "alternateName" );
 	$custom->SetField( entity => $view, key => $key, value => $string )
+	Util::trace( 4, "Finishing GuestManagement::change_altername sub\n" );
 }
 
 sub get_altername {
 	my ( $vmname ) =@_;
+	Util::trace( 4, "Starting GuestManagement::get_altername sub, vmname=>'$vmname'\n" );
 	my $view = Vim::find_entity_view( view_type => 'VirtualMachine', properties => [ 'value' ], filter => { name => $vmname } );
 	if ( !defined( $view ) ) {
 		SDK::Error::Entity::NumException->throw( error => 'Could not find VM entity', entity => $vmname, count => '0' );
@@ -632,21 +690,25 @@ sub get_altername {
 			}
 		}
 	}
+	Util::trace( 4, "Finishing GuestManagement::get_altername sub\n" );
 	return "";
 }
 
 sub create_snapshot {
 	my ( $vmname, $name, $description ) = @_;
+	Util::trace( 4, "Starting GuestManagement::create_snapshot sub, vmname=>'$vmname', name=>'$name', description=>'$description'\n" );
 	my $view = Vim::find_entity_view( view_type => 'VirtualMachine', properties => [ 'name' ], filter => { name => $vmname } );
 	if ( !defined( $view ) ) {
 		SDK::Error::Entity::NumException->throw( error => 'Could not find VM entity', entity => $vmname, count => '0' );
 	}
 	my $task = $view->CreateSnapshot_Task( name => $name, description => $description, memory => 1, quiesce => 1 );
 	&Vcenter::Task_getStatus( $task );
+	Util::trace( 4, "Finishing GuestManagement::create_snapshot sub" );
 }
 
 sub list_snapshot {
 	my ( $vmname ) = @_;
+	Util::trace( 4, "Starting GuestManagement::list_snapshot sub, vmname=>'$vmname'\n" );
 	my $current_snapshot;
 	my $view = Vim::find_entity_view( view_type => 'VirtualMachine', filter => { name => $vmname } );
 	if ( !defined( $view ) ) {
@@ -658,19 +720,22 @@ sub list_snapshot {
 		SDK::Error::Entity::Snapshot->throw( error => "No snapshot found by vm $vmname" );
 	}
 	if ( defined( $view->snapshot ) ) {
-		print "Found snapshots listing\n";
+		Util::trace( 2, "Found snapshots listing\n" );
 		foreach ( @{ $view->snapshot->rootSnapshotList } ) {
 			&traverse_snapshot( $_, $current_snapshot );
 		}
+		Util::trace( 4, "Finishing GuestManagement::list_snapshot sub, return=>'success'\n" );
 		return 1;
 	} else {
 		SDK::Error::Entity::Snapshot->throw( error => "No snapshot found by vm $vmname" );
 	}
+	Util::trace( 4, "Finishing GuestManagement::list_snapshot sub, return=>'failure'\n" );
 	return 0;
 }
 
 sub remove_snapshot {
 	my ( $vmname, $id ) = @_;
+	Util::trace( 4, "Starting GuestManagement::remove_snapshot sub, vmname=>'$vmname', id=>'$id'\n" );
 	my $view = Vim::find_entity_view( view_type => 'VirtualMachine', properties => [ 'snapshot' ], filter => { name => $vmname } );
 	if ( !defined( $view ) ) {
 		SDK::Error::Entity::NumException->throw( error => 'Could not find VM entity', entity => $vmname, count => '0' );
@@ -679,33 +744,37 @@ sub remove_snapshot {
 		foreach ( @{ $view->snapshot->rootSnapshotList } ) {
 			my $snapshot = &find_snapshot_by_id( $_, $id );
 			if ( defined( $snapshot ) ) {
-				print "Found Id removing\n";
+				Util::trace( 1, "Found Id removing\n" );
 				my $moref = Vim::get_view( mo_ref => $snapshot->snapshot );
 				my $task = $moref->RemoveSnapshot_Task( removeChildren => 0 );
 				&Vcenter::Task_getStatus( $task );
+				Util::trace( 4, "Finishing GuestManagement::remove_snapshot sub, return=>'success'\n" );
 				return 1;
 			}
-			return 0;
 		}
 	} else {
 		SDK::Error::Entity::Snapshot->throw( error => "No snapshot found by vm $vmname" );
 	}
+	Util::trace( 4, "Finishing GuestManagement::remove_snapshot sub, return=>'failure'\n" );
 	return 0;
 }
 
 sub remove_all_snapshot {
 	my ( $vmname ) = @_;
+	Util::trace( 4, "Starting GuestManagement::remove_all_snapshot sub, vmname=>'$vmname'\n" );
 	my $view = Vim::find_entity_view( view_type => 'VirtualMachine', properties => [ 'name' ], filter => { name => $vmname } );
 	if ( !defined( $view ) ) {
 		SDK::Error::Entity::NumException->throw( error => 'Could not find VM entity', entity => $vmname, count => '0' );
 	}
 	my $task = $view->RemoveAllSnapshots_Task( consolidate => 1 );
 	&Vcenter::Task_getStatus( $task );
+	Util::trace( 4, "Finishing GuestManagement::remove_all_snapshot sub\n" );
 	return 1;
 }
 
 sub find_snapshot_by_id {
 	my ( $snapshot, $id ) = @_;
+	Util::trace( 4, "Starting GuestManagement::find_snapshot_by_id sub, id=>'$id'\n" );
 	my $return;
 	if ( $snapshot->id == $id ) {
 		return $snapshot;
@@ -716,11 +785,13 @@ sub find_snapshot_by_id {
 			}
 		}
 	}
+	Util::trace( 4, "Finishing GuestManagement::find_snapshot_by_id sub" );
 	return $return;
 }
 
 sub revert_to_snapshot {
 	my ( $vmname, $id ) = @_;
+	Util::trace( 4, "Starting GuestManagement::revert_to_snapshot sub, vmname=>'$vmname', id=>'$id'\n" );
 	my $view = Vim::find_entity_view( view_type => 'VirtualMachine', properties => [ 'snapshot' ], filter => { name => $vmname } );
 	if ( !defined( $view ) ) {
 		SDK::Error::Entity::NumException->throw( error => 'Could not find VM entity', entity => $vmname, count => '0' );
@@ -729,65 +800,75 @@ sub revert_to_snapshot {
 		foreach ( @{ $view->snapshot->rootSnapshotList } ) {
 			my $snapshot = &find_snapshot_by_id( $_, $id );
 			if ( defined( $snapshot ) ) {
-				print "Found Id reverting\n";
+				Util::trace( 1, "Found Id reverting\n" );
 				my $moref = Vim::get_view( mo_ref => $snapshot->snapshot );
 				my $task = $moref->RevertToSnapshot_Task( suppressPowerOn => 1 );
 				&Vcenter::Task_getStatus( $task );
+				Util::trace( 4, "Finishing GuestManagement::revert_to_snapshot sub, return=>'success'\n" );
 				return 1;
 			}
 		}
 	} else {
 		SDK::Error::Entity::Snapshot->throw( error => "No snapshot found by vm $vmname" );
 	}
+	Util::trace( 4, "Finishing GuestManagement::revert_to_snapshot sub, return=>'failure'\n" );
 	return 0;
 }
 
 sub traverse_snapshot {
 	my ( $snapshot_moref, $current_snapshot ) = @_;
+	Util::trace( 4, "Starting GuestManagement::traverse_snapshot sub, current_snapshot=>'$current_snapshot'\n" );
 	if ( $snapshot_moref->snapshot->value eq $current_snapshot ) {
-		print "*CUR* ";
+		Util::trace( 0, "*CUR* " );
 	}
-	print "ID => '" .$snapshot_moref->id . "', name => '" . $snapshot_moref->name . "', createTime => '" . $snapshot_moref->createTime . "', description => '" . $snapshot_moref->description . "'\n\n";
+	Util::trace( 0, "ID => '" .$snapshot_moref->id . "', name => '" . $snapshot_moref->name . "', createTime => '" . $snapshot_moref->createTime . "', description => '" . $snapshot_moref->description . "'\n\n" );
 	if ( defined( $snapshot_moref->{ 'childSnapshotList' } ) ) {
 		foreach ( @{ $snapshot_moref->{ 'childSnapshotList' }} ) {
 			&traverse_snapshot( $_, $current_snapshot );
 		}
 	}
+	Util::trace( 4, "Finishing GuestManagement::traverse_snapshot sub\n" );
 	return 0;
 }
 
 sub poweron_vm {
 	my ( $vmname ) = @_;
+	Util::trace( 4, "Starting GuestManagement::poweron_vm sub, vmname=>'$vmname'\n" );
 	my $view = Vim::find_entity_view( view_type => 'VirtualMachine', properties => [ 'runtime.powerState' ], filter => { name => $vmname } );
 	if ( !defined( $view ) ) {
 		SDK::Error::Entity::NumException->throw( error => 'Could not find VM entity', entity => $vmname, count => '0' );
 	}
 	if ( $view->runtime->powerState->val ne "poweredOff" ) {
-		print "$vmname already powered on.\n";
+		Util::trace( 0, "$vmname already powered on\n" );
 		return 0;
 	}
 	my $task = $view->PowerOnVM_Task;
 	&Vcenter::Task_getStatus( $task );
-	print "$vmname powered on.\n";
+	Util::trace( 0, "$vmname powered on\n" );
+	Util::trace( 4, "Finished GuestManagement::poweron_vm sub\n" );
 }
 
 sub poweroff_vm {
 	my ( $vmname ) = @_;
+	Util::trace( 4, "Starting GuetsManagement::poweroff_vm sub, vmname=>'$vmname'\n" );
 	my $view = Vim::find_entity_view( view_type => 'VirtualMachine', properties => [ 'runtime.powerState' ], filter => { name => $vmname } );
 	if ( !defined( $view ) ) {
 		SDK::Error::Entity::NumException->throw( error => 'Could not find VM entity', entity => $vmname, count => '0' );
 	}
-	if ( $view->runtime->powerState->val eq "poweredOff" ) {
-		print "$vmname already powered off.\n";
+	my $powerstate = $view->get_property('runtime.powerState');
+	if ( $powerstate->val eq "poweredOff" ) {
+		Util::trace( 0, "$vmname already powered off.\n" );
 		return 0;
 	}
 	my $task = $view->PowerOffVM_Task;
 	&Vcenter::Task_getStatus( $task );
-	print "$vmname powered off.\n";
+	Util::trace( 0, "$vmname powered off\n" );
+	Util::trace( 4, "Finishing GuetsManagement::poweroff_vm sub\n" );
 }
 
 sub promote_vdisk {
 	my ( $vmname ) = @_;
+	Util::trace( 4, "Starting GuetsManagement::promote_vdisk sub, vmname=>'$vmname'\n" );
 	&poweroff_vm( $vmname );
 	my $view = Vim::find_entity_view( view_type => 'VirtualMachine', properties => [ 'name' ], filter => { name => $vmname } );
 	if ( !defined( $view ) ) {
@@ -796,11 +877,13 @@ sub promote_vdisk {
 	my $task = $view->PromoteDisks_Task(unlink=>1);
 	&Vcenter::Task_getStatus( $task );
 	&move_into_folder( $vmname );
+	Util::trace( 4, "Finished GuetsManagement::promote_vdisk sub\n" );
 	return 1;
 }
 
 sub move_into_folder {
 	my ( $vmname ) = @_;
+	Util::trace( 4, "Starting GuetsManagement::move_into_folder sub, vmname=>'$vmname'\n" );
 	my ( $ticket, $username, $family, $version, $lang, $arch, $type , $uniq ) = &Misc::vmname_splitter( $vmname );
 	&Vcenter::create_folder( $ticket, "vm" );
 	my $machine_view = Vim::find_entity_view( view_type => 'VirtualMachine', properties => [ 'name' ], filter => { name => $vmname } );
@@ -813,12 +896,15 @@ sub move_into_folder {
 	}
 	my $task = $folder_view->MoveIntoFolder_Task( list => [ $machine_view ] );
 	&Vcenter::Task_getStatus( $task );
+	Util::trace( 4, "Finished GuetsManagement::move_into_folder sub\n" );
 }
 
 ## Functionality test sub
 
 sub test( ) {
-	print "GuestManagement module test sub\n";
+	Util::trace( 4, "StartedGuestManagement sub\n" );
+	Util::trace( 0, "GuestManagement module test sub\n" );
+	Util::trace( 4, "Finished GuestManagement::test sub\n" );
 }
 
 #### We need to end with success
