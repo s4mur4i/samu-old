@@ -10,14 +10,15 @@ use Data::Dumper;
 
 sub ticket($) {
 	my ($ticket) = @_;
-	my $vm_views = Vim::find_entity_views( view_type => 'VirtualMachine', filter => { name => qr/^$ticket-/ });
+	my $vm_views = Vim::find_entity_views( view_type => 'VirtualMachine', properties => [ 'name' ], filter => { name => qr/^$ticket-/ });
 	if ( @$vm_views ) {
 		foreach (@$vm_views) {
-			print "Going to delete follwoing vm: " . $_->name . "\n";
-			&Vcenter::delete_virtualmachine($_->name);
+			Util::trace( 0, "Going to delete follwoing vm: " . $_->name . "\n" );
+			eval { &Vcenter::delete_virtualmachine($_->name); };
+			if ($@) { &Error::catch_ex( $@ ); }
 		}
 	} else {
-		print "No vm referenced to this ticket: $ticket\n";
+		Util::trace( 0, "No vm referenced to this ticket: $ticket\n" );
 		exit 2;
 	};
 };
@@ -45,16 +46,17 @@ my $ticket = Opts::get_option('ticket');
 my $vmname = Opts::get_option('vmname');
 
 if (defined($ticket) && ! defined($vmname) ) {
-	print "Delete ticket content: $ticket\n";
+	Util::trace( 0, "Delete ticket content: $ticket\n" );
 	&ticket($ticket);
 } elsif ( defined($vmname) && ! defined($ticket)) {
-	print "Delete single vm: $vmname\n";
-	&Vcenter::delete_virtualmachine($vmname) ;
+	Util::trace( 0, "Delete single vm: $vmname\n" );
+	eval { &Vcenter::delete_virtualmachine($vmname) ; };
+	if ($@) { &Error::catch_ex( $@ ); }
 } elsif ( defined($vmname) && defined($ticket) ) {
-	print "To delete the ticket $ticket or to delete the vm $vmname... that is the question.\n";
+	Util::trace( 0, "To delete the ticket $ticket or to delete the vm $vmname... that is the question.\n" );
 	exit 1;
 } else {
-	print "I don't know what to do....\n";
+	Util::trace( 0, "I don't know what to do....\n" );
 	exit 1;
 }
 

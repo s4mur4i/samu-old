@@ -7,13 +7,6 @@ use lib "$FindBin::Bin/lib";
 use VMware::VIRuntime;
 use Switch;
 
-sub display {
-   my %args = @_;
-   my $name = $args{name};
-   my $value = $args{value};
-   Util::trace(0,$name . " " . $value . "\n");
-}
-
 sub convert_seconds_to_hhmmss {
 	my $dayz=int($_[0]/86400);
 	my $leftover=$_[0] % 86400;
@@ -162,8 +155,6 @@ if ( defined(Opts::get_option('pool'))) {
 } else {
 	$entityname = Opts::get_option('username');
 }
-#print "entityname: $entityname\n";
-#$entityname = "test";
 my $vim=Vim::get_vim;
 my $rp_views = Vim::find_entity_views (view_type => 'ResourcePool', filter => {name => $entityname});
 unless (@$rp_views) { Util::trace(0, "Resource pool $entityname not found.\n"); }
@@ -182,7 +173,7 @@ foreach(@$rp_views) {
 			my $obj_content = $_;
 			my $mob = $obj_content->obj;
 			my $obj = Vim::get_view(mo_ref=>$mob);
-			display(name=>"VM :",value=>$obj->name);
+			Util::trace( 0, "name=>VM :,value=>" . $obj->name . "\n" );
 			## Where is the VM
 			my $path= Util::get_inventory_path($obj, $vim);
 			$path =~ s/^\s*Support\/vm\///;
@@ -197,18 +188,18 @@ foreach(@$rp_views) {
 			## Support/host/vmware-it1.balabit/Resources/test/test
 			$parent_path =~ s/^\s*Support\/host\/.*\/Resources\///;
 			my @parent_path = split( '/', $parent_path);
-			print "\tParent resourcepool path: Root ";
+			Util::trace( 0, "\tParent resourcepool path: Root " );
 			foreach my $parent_level (@parent_path) {
-				print " -> $parent_level";
+				Util::trace( 0, " -> $parent_level" );
 			}
-			print "\n";
+			Util::trace( 0, "\n" );
 			my $ip;
 			if ( defined($obj-> {'guest'} -> {'ipAddress'})) {
 				$ip = $obj-> {'guest'} -> {'ipAddress'};
 			} else {
 				$ip = "Unknown";
 			}
-			print "\tIp address of guest: " . $ip ."\n";
+			Util::trace( 0, "\tIp address of guest: " . $ip ."\n" );
 			## Vmware tools
 			my $tools= $obj->{'guest'}->{'toolsStatus'}->{'val'};
 			switch($tools) {
@@ -217,7 +208,7 @@ foreach(@$rp_views) {
 				case "toolsOk" { $tools = "VMware Tools is running and the version is current." }
 				case "toolsOld" { $tools = "VMware Tools is running, but the version is not current." }
 			}
-			print "\tVmware Tools: $tools\n";
+			Util::trace ( 0, "\tVmware Tools: $tools\n" );
 			## Power State
 			my $state = $obj->{'guest'}->{'guestState'};
 			switch() {
@@ -228,13 +219,13 @@ foreach(@$rp_views) {
 				case "notrunning" { $state = "Guest is not running." }
 				case "unknown" { $state = "Guest information is not available. " }
 			}
-			print "\tPowerstate: $state\n";
+			Util::trace( 0, "\tPowerstate: $state\n" );
 			## Active memory usage in MB
 			my $active_memory = $obj ->{'summary'}-> {'quickStats'}->{'guestMemoryUsage'};
-			print "\tActive memory usage: $active_memory MB\n";
+			Util::trace( 0, "\tActive memory usage: $active_memory MB\n" );
 			## Active Cpu usage in Mhz
 			my $active_cpu = $obj ->{'summary'}-> {'quickStats'}->{'overallCpuUsage'};
-			print "\tActive cpu usage: $active_cpu Mhz\n";
+			Util::trace( 0, "\tActive cpu usage: $active_cpu Mhz\n" );
 			## OS type
 			my $os;
 			if ( defined($obj ->{'guest'}->{'guestFullName'})) {
@@ -246,7 +237,7 @@ foreach(@$rp_views) {
 					$os = "unknown";
 				}
 			}
-			print "\tOS: $os\n";
+			Util::trace( 0, "\tOS: $os\n" );
 			## Alert
 			my $alert = $obj ->{'summary'}->{'overallStatus'}->{'val'};
 			switch($alert) {
@@ -255,7 +246,7 @@ foreach(@$rp_views) {
 				case "red" { $alert = "!!! The entity definitely has a problem. !!!" }
 				case "yellow" { $alert = "!!! The entity might have a problem. !!!" }
 			}
-			print "\tAlarm: $alert\n";
+			Util::trace( 0, "\tAlarm: $alert\n" );
 			## uptime
 			my $uptime;
 			if ( defined($obj ->{'summary'}->{'quickStats'}->{'uptimeSeconds'}) ) {
@@ -263,18 +254,18 @@ foreach(@$rp_views) {
 			} else {
 				$uptime = "No uptime available.";
 			}
-			print "\tUptime(ddd:hh:mm:ss): $uptime\n";
+			Util::trace( 0, "\tUptime(ddd:hh:mm:ss): $uptime\n" );
 		}
 	} else {
-		print "This is not the resource pool you are looking for.\n";
+		Util::trace( 0, "This is not the resource pool you are looking for.\n" );
 		my $path= Util::get_inventory_path($_, $vim);
 		$path =~ s/^\s*Support\/host\/.*\/Resources\///;
 		my @path = split( '/', $path);
-		print "Resource Pool path: Root ";
+		Util::trace( 0, "Resource Pool path: Root " );
 		foreach my $level (@path) {
-			print " -> $level";
+			Util::trace( 0, " -> $level" );
 		}
-		print "\n";
+		Util::trace( 0, "\n" );
 	}
 }
 # Disconnect from the server

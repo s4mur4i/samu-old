@@ -4,7 +4,6 @@ use strict;
 use warnings;
 use FindBin;
 use lib "$FindBin::Bin/lib";
-use SDK::Support;
 use VMware::VIRuntime;
 use Data::Dumper;
 
@@ -22,12 +21,11 @@ $indent = 0;
 $datacenter_views = Vim::find_entity_views( view_type => 'Datacenter', properties => ["name", "vmFolder"]);
 foreach ( @{$datacenter_views} )
 {
-	print "Datacenter: " . $_->name . "\n";
+	Util::trace( 0, "Datacenter: " . $_->name . "\n" );
 	TraverseFolder($_->vmFolder, $indent);
 }
 
-sub TraverseFolder
-{
+sub TraverseFolder {
 	my ($entity_moref, $index) = @_;
 	my ($num_entities, $entity_view, $child_view, $i, $mo);
 	$index += 2;
@@ -37,14 +35,12 @@ sub TraverseFolder
 		foreach $mo ( @{$entity_view->childEntity} ) {
 			$child_view = Vim::get_view( mo_ref => $mo, properties => ['name']);
 			if ( $child_view->isa("VirtualMachine") ) {
-				print " " x $index . "Virtual Machine: " . $child_view->name . "\n" ;
+				Util::trace( 0, " " x $index . "Virtual Machine: " . $child_view->name . "\n" );
 			}
 
 			if ( $child_view->isa("Folder") ) {
 				print " " x $index . "Folder: " . $child_view->name . "\n";
-				$child_view = Vim::get_view(
-					mo_ref => $mo, properties => ['name', 'childEntity']
-				);
+				$child_view = Vim::get_view( mo_ref => $mo, properties => ['name', 'childEntity'] );
 				TraverseFolder($mo, $index);
 			}
 		}

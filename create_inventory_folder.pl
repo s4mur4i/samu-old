@@ -27,15 +27,18 @@ my $url = Opts::get_option('url');
 my $name = Opts::get_option('name');
 my $parent = Opts::get_option('parent');
 Util::connect( $url, $username, $password );
+eval {
 if (!defined($parent)) {
 	$parent = "vm";
 } else {
 	if (!&Vcenter::exists_folder($parent)) {
-		print "Parent is not found.\n";
+		Util::trace( 0, "Parent is not found.\n" );
 		exit 3;
 	}
 }
 &Vcenter::create_folder($name,$parent);
+};
+if ($@) { &Error::catch_ex( $@ ); }
 # Disconnect from the server
 Util::disconnect();
 # To mitigate SSL warnings by default

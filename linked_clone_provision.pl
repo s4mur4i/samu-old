@@ -70,8 +70,9 @@ my $vim=Vim::get_vim;
 my $ticket = Opts::get_option('ticket');
 my $os_temp = Opts::get_option('os_temp');
 my $parent_pool = Opts::get_option('parent_pool');
+eval {
 if (!&Vcenter::exists_resource_pool($parent_pool)) {
-	print "Parent pool does not exist.\n";
+	Util::trace( 0, "Parent pool does not exist.\n" );
 	exit 3;
 }
 &Vcenter::create_resource_pool($ticket,$parent_pool);
@@ -119,10 +120,12 @@ if ( $Support::template_hash{$os}{'os'} =~ /win/) {
 }
 my $task = $template_mo_ref->CloneVM_Task(  folder => $dest_folder_view->{'mo_ref'}, name=> $vmname, spec=> $clone_spec);
 &Vcenter::Task_getStatus($task);
-print "===================================================================\n";
-print "Machine is provisioned.\n";
-print "Login: '" . $Support::template_hash{$os}{'username'} . "' / '" . $Support::template_hash{$os}{'password'} ."'\n";
-print "Unique name of vm: " . $vmname . "\n";
+Util::trace( 0, "===================================================================\n" );
+Util::trace( 0, "Machine is provisioned.\n" );
+Util::trace( 0, "Login: '" . $Support::template_hash{$os}{'username'} . "' / '" . $Support::template_hash{$os}{'password'} ."'\n" );
+Util::trace( 0, "Unique name of vm: " . $vmname . "\n" );
+};
+if ($@) { &Error::catch_ex( $@ ); }
 # Disconnect from the server
 Util::disconnect();
 # To mitigate SSL warnings by default

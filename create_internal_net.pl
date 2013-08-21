@@ -36,7 +36,7 @@ my $name;
 foreach (@vm) {
 	my $machine = Vim::find_entity_view(view_type=>'VirtualMachine', filter=> {name => $_});
 	if (!defined($machine)) {
-		print "Cannot find machine: $_";
+		Util::trace( 0, "Cannot find machine: $_" );
 		next;
 	}
 	my ($ticket, $username, $family, $version, $lang, $arch, $type , $uniq) = &Misc::vmname_splitter($machine->name);
@@ -44,9 +44,10 @@ foreach (@vm) {
 		$ticket = $req_ticket;
 	}
 	if ( !defined($ticket)) {
-		print "Could not parse name from VM, or no ticket information specified.\n";
+		Util::trace( 0, "Could not parse name from VM, or no ticket information specified.\n" );
 		next;
 	}
+	eval {
 	if (!defined($name)) {
 		$name = $ticket . "-int-" . &Misc::random_3digit;
 		while (&GuestManagement::dvportgroup_status($name)) {
@@ -59,6 +60,8 @@ foreach (@vm) {
 	} else {
 		&GuestManagement::change_network_interface($machine->name,0,$name);
 	}
+	};
+	if ($@) { &Error::catch_ex( $@ ); }
 }
 # Disconnect from the server
 Util::disconnect();

@@ -35,7 +35,8 @@ my $vmname = Opts::get_option('vmname');
 my $name = Opts::get_option('name');
 my $description = Opts::get_option('description');
 Util::connect( $url, $username, $password );
-&GuestManagement::create_snapshot($vmname,$name,$description);
+eval { &GuestManagement::create_snapshot($vmname,$name,$description); };
+if ($@) { &Error::catch_ex( $@ ); }
 # Disconnect from the server
 Util::disconnect();
 # To mitigate SSL warnings by default

@@ -28,7 +28,8 @@ my $url = Opts::get_option('url');
 my $vmname = Opts::get_option('vmname');
 my $num = Opts::get_option('num');
 Util::connect( $url, $username, $password );
-&GuestManagement::remove_cdrom_iso($vmname, $num);
+eval { &GuestManagement::remove_cdrom_iso($vmname, $num); };
+if ($@) { &Error::catch_ex( $@ ); }
 # Disconnect from the server
 Util::disconnect();
 # To mitigate SSL warnings by default

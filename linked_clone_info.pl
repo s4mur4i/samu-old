@@ -23,7 +23,7 @@ my $username = Opts::get_option('username');
 my $password = Opts::get_option('password');
 my $url = Opts::get_option('url');
 Util::connect( $url, $username, $password );
-
+eval {
 ## Get machine view
 my $machine_view = Vim::find_entity_view(view_type=>'VirtualMachine', filter => { name => Opts::get_option('vmname')});
 my $snapshot_view = $machine_view->snapshot->rootSnapshotList;
@@ -41,7 +41,7 @@ foreach my $device (@$devices) {
 	}
 }
 ## This is the disk attached to the last snapshot
-print "my disk is $disk\n";
+Util::trace( 0, "my disk is $disk\n" );
 my $machine_views = Vim::find_entity_views(view_type => 'VirtualMachine', properties => ['layout.disk', 'name']);
 foreach (@$machine_views) {
 	my $machine_view = $_;
@@ -49,12 +49,13 @@ foreach (@$machine_views) {
 	foreach my $vdisk (@$disks) {
 		foreach my $diskfile ( @{$vdisk->{'diskFile'}}) {
 			if ( $diskfile eq $disk) {
-				print "Machine name: " . $machine_view->get_property('name') . "\n";
+				Util::trace( 0, "Machine name: " . $machine_view->get_property('name') . "\n" );
 			}
 		}
 	}
 }
-
+};
+if ($@) { &Error::catch_ex( $@ ); }
 # Disconnect from the server
 Util::disconnect();
 # To mitigate SSL warnings by default

@@ -15,7 +15,8 @@ my $username = Opts::get_option('username');
 my $password = Opts::get_option('password');
 my $url = Opts::get_option('url');
 Util::connect( $url, $username, $password );
-&GuestManagement::list_dvportgroup;
+eval { &GuestManagement::list_dvportgroup; };
+if ($@) { &Error::catch_ex( $@ ); }
 # Disconnect from the server
 Util::disconnect();
 # To mitigate SSL warnings by default

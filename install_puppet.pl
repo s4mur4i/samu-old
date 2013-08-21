@@ -26,15 +26,16 @@ my $url = Opts::get_option('url');
 Util::connect( $url, $username, $password );
 my ( $ticket, $user_name, $family, $version, $lang, $arch, $type , $uniq ) = &Misc::vmname_splitter($vmname);
 if ( defined($family) and $family eq 'win' ) {
-	print "Installing puppet in windows environment\n";
+	Util::trace( 0, "Installing puppet in windows environment\n" );
 	my $workdir='c:\\';
 	my $env='PATH=C:\windows\system32';
 	my $prog='c:\WINDOWS\system32\msiexec.exe';
         my $arg = '/qb /l*v C:\install.txt /i "\\\\share.balabit\install\Windows\MS_Server_Applications\puppet\puppet-2.7.12.msi" PUPPET_MASTER_SERVER=puppet.ittest.balabit INSTALLDIR=C:\puppet';
 #        my $arg = '/qb /l*v C:\install.txt /a "C:\puppet-2.7.12.msi" PUPPET_MASTER_SERVER=puppet.ittest.balabit INSTALLDIR=C:\puppet';
-        &GuestInternal::runCommandInGuest( $vmname, $prog, $arg, $env, $workdir, 'administrator@support.balabit', "titkos" );
+        eval { &GuestInternal::runCommandInGuest( $vmname, $prog, $arg, $env, $workdir, 'administrator@support.balabit', "titkos" ); };
+	if ($@) { &Error::catch_ex( $@ ); }
 } else {
-	print "Not yet supported platform.\n";
+	Util::trace( 0, "Not yet supported platform.\n" );
 	exit 1;
 }
 

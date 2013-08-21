@@ -23,9 +23,10 @@ my $vmname = Opts::get_option('vmname');
 Util::connect( $url, $username, $password );
 $vmname = Vim::find_entity_view(view_type=>'VirtualMachine', filter=> {name => $vmname});
 if (!defined($vmname) ) {
-        print "Cannot find VM\n";
+        Util::trace( 0, "Cannot find VM\n" );
         exit 1;
 }
+eval {
 my $count = &GuestManagement::count_network_interface($vmname->name);
 my $numb = 0;
 while ($count > 0) {
@@ -35,6 +36,8 @@ while ($count > 0) {
 	$count--;
 	$numb++;
 }
+};
+if ($@) { &Error::catch_ex( $@ ); }
 # Disconnect from the server
 Util::disconnect();
 # To mitigate SSL warnings by default

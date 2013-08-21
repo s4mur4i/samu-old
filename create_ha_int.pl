@@ -30,13 +30,14 @@ foreach (@vmname) {
 	my $vm_view = Vim::find_entity_view(view_type=>'VirtualMachine', filter=> {name => $_});
 	my ($ticket, $username, $family, $version, $lang, $arch, $type , $uniq) = &Misc::vmname_splitter($_);
 	if ( !defined($vm_view)) {
-		print "Machine not defined:" .$_ ."\n";
+		Util::trace( 0, "Machine not defined:" .$_ ."\n" );
 		next;
 	}
 	if (!defined($ticket)) {
-		print "Cannot parse ticket.\n";
+		Util::trace( 0, "Cannot parse ticket.\n" );
 		next;
 	}
+	eval {
 	if (!defined($dv_name)) {
                 $dv_name = $ticket . "-ha-" . &Misc::random_3digit;
                 while (&GuestManagement::dvportgroup_status($dv_name)) {
@@ -47,9 +48,11 @@ foreach (@vmname) {
 	if ( $type eq "xcb" ) {
 		&GuestManagement::change_network_interface($_,3,$dv_name);
 	} else {
-		print "Not XCB product. Not building HA with it\n";
+		Util::trace( 0, "Not XCB product. Not building HA with it\n" );
 		next;
 	}
+	};
+	if ($@) { &Error::catch_ex( $@ ); }
 }
 # Disconnect from the server
 Util::disconnect();

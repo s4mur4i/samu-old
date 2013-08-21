@@ -25,9 +25,9 @@ while ( my ($keys) = each (%Support::template_hash)) {
 my $longest = &longest(\@sorted);
 
 for (@sorted) {
-	print "Name:'$_'";
+	Util::trace( 0, "Name:'$_'" );
 	my $length = length;
 	$length = ($longest - $length) +1;
-	print " " x $length;
-	print "Path: $Support::template_hash{$_}{'path'}\n";
+	Util::trace( 0, " " x $length );
+	Util::trace( 0, "Path: $Support::template_hash{$_}{'path'}\n" );
 }

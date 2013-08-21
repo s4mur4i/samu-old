@@ -28,13 +28,16 @@ my $url = Opts::get_option('url');
 Util::connect( $url, $username, $password );
 my $name = Opts::get_option('name');
 my $parent = Opts::get_option('parent');
+eval {
 if (!&Vcenter::exists_resource_pool($parent)) {
-	print "Parent Cannot be found.\n";
+	Util::trace( 0, "Parent Cannot be found.\n" );
 	exit 3;
 }
 if ( !&Vcenter::create_resource_pool($name,$parent)) {
 	exit 3;
 }
+}
+if ($@) { &Error::catch_ex( $@ ); }
 # Disconnect from the server
 Util::disconnect();
 # To mitigate SSL warnings by default

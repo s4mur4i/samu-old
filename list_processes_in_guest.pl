@@ -50,21 +50,17 @@ if ( $vmname =~ /^[^-]*-[^-]*-[^-]*-\d{3}$/ ) {
 	$guestusername=$Support::template_hash{$os}{'username'};
 	$guestpassword=$Support::template_hash{$os}{'password'};
   } else {
-	print "Regex matched an OS, but no template found to it os=> '$os'\n";
+	Util::trace( 0, "Regex matched an OS, but no template found to it os=> '$os'\n" );
   }
 } else {
 	if ( !defined( Opts::get_option( 'guestusername' ) ) and !defined( Opts::get_option( 'guestpassword' ) ) ) {
-		print "VMname not matched standard, and not usernames defined.\n";
+		Util::trace( 0, print "VMname not matched standard, and not usernames defined.\n" );
 		exit 1;
 	}
 }
 if ( defined(Opts::get_option('guestusername')) && defined(Opts::get_option('guestpassword'))) {
 		$guestusername=Opts::get_option('guestusername');
 		$guestpassword=Opts::get_option('guestpassword');
-}
-print "username=> '$guestusername' password=> '$guestpassword' vmname=> '" . defined($vm_view) . "'\n";
-if ( (!defined($guestusername)) || (!defined($guestpassword)) || (!defined($vm_view)) ) {
-	die("Cannot run. some paramter failed to be parsed or guessed... or both: username=> '$guestusername' password=> '$guestpassword' vmname=> '" . defined($vm_view) . "'");
 }
 my $guestOpMgr = Vim::get_view(mo_ref => Vim::get_service_content()->guestOperationsManager);
 my $guestCreds = &GuestInternal::acquireGuestAuth($guestOpMgr,$vm_view,$guestusername,$guestpassword);
@@ -77,9 +73,7 @@ eval {
 	@pids =$guestProcMan->ListProcessesInGuest(vm=>$vm_view, auth=>$guestCreds);
 	}
 };
-if($@) {
-                die( "Error: " . $@);
-}
+if ($@) { &Error::catch_ex( $@ ); }
 print Dumper(@pids);
 # Disconnect from the server
 Util::disconnect();

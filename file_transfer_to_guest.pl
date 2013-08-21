@@ -57,11 +57,14 @@ my $path = Opts::get_option('path');
 my $dest = Opts::get_option('dest');
 my $overwrite = Opts::get_option('overwrite');
 Util::connect( $url, $username, $password );
+eval {
 if ( ( defined( $guestusername ) and defined( $guestpassword ) ) and ( $guestusername ne "" and $guestpassword ne "" ) ) {
 	&GuestInternal::transfer_to_guest( $vmname, $path, $dest, $overwrite, $guestusername, $guestpassword );
 } else {
 	&GuestInternal::transfer_to_guest( $vmname, $path, $dest, $overwrite );
 }
+};
+if ($@) { &Error::catch_ex( $@ ); }
 # Disconnect from the server
 Util::disconnect();
 # To mitigate SSL warnings by default
