@@ -671,7 +671,7 @@ sub change_altername {
 	}
 	my $custom = Vim::get_view( mo_ref => $sc->customFieldsManager );
 	my $key = &get_annotation_key( $vmname, "alternateName" );
-	$custom->SetField( entity => $view, key => $key, value => $string )
+	$custom->SetField( entity => $view, key => $key, value => $string );
 	Util::trace( 4, "Finishing GuestManagement::change_altername sub\n" );
 }
 

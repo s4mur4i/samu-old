@@ -29,7 +29,7 @@ sub mac_compare {
 		foreach( @$devices ) {
 			if( $_->isa( "VirtualEthernetCard" ) ) {
 				if ( $mac eq $_->macAddress ) {
-					Util::trace( 4, "Finished Vcenter::mac_compare sub, mac found\N" );
+					Util::trace( 4, "Finished Vcenter::mac_compare sub, mac found\n" );
 					return 1;
 				}
 			}
