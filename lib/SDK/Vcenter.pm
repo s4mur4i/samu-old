@@ -473,12 +473,10 @@ sub datastore_file_exists {
 	my $searchspec = HostDatastoreBrowserSearchSpec->new( details => $files, matchPattern => [ $image ] );
 	my $return = $browser->SearchDatastoreSubFolders( datastorePath => "[ $datas ] $folder", searchSpec => $searchspec );
 	if ( defined( $return->[ 0 ]->file ) ) {
-		Util::trace( 4, "Finished\n" );
-		print "File found\n";
+		Util::trace( 4, "Finishing Vcenter::datastore_file_exists sub, return=>'File Found'\n" );
 		return 1;
 	} else {
-		Util::trace( 4, "\n" );
-		print "File not found\n";
+		Util::trace( 4, "Finishing Vcenter::datastore_file_exists sub, return=>'File not Found'\n" );
 		return 0;
 	}
 
