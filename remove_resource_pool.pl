@@ -21,16 +21,19 @@ my $password = Opts::get_option('password');
 my $url = Opts::get_option('url');
 Util::connect( $url, $username, $password );
 my $name = Opts::get_option('name');
+eval {
 if (&Vcenter::exists_resource_pool($name)) {
 	print "Resource pool exists, deleting\n";
 	if (&Vcenter::check_if_empty_resource_pool($name)) {
                 &Vcenter::delete_resource_pool($name);
         } else {
-		print "Resource pool not empty. Clean up first\n";
+		Util::trace( 0, "Resource pool not empty. Clean up first\n" );
 	}
 } else {
-	print "Cannot find resource pool\n";
+	Util::trace( 0, "Cannot find resource pool\n" );
 }
+};
+if ($@) { &Error::catch_ex( $@ ); }
 # Disconnect from the server
 Util::disconnect();
 # To mitigate SSL warnings by default

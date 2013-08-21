@@ -27,7 +27,8 @@ my $url = Opts::get_option('url');
 my $vmname = Opts::get_option('vmname');
 my $name = Opts::get_option('name');
 Util::connect( $url, $username, $password );
-&GuestManagement::change_altername($vmname,$name);
+eval { &GuestManagement::change_altername($vmname,$name); };
+if ($@) { &Error::catch_ex( $@ ); }
 # Disconnect from the server
 Util::disconnect();
 # To mitigate SSL warnings by default

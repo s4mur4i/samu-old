@@ -21,16 +21,19 @@ my $password = Opts::get_option('password');
 my $url = Opts::get_option('url');
 my $name = Opts::get_option('name');
 Util::connect( $url, $username, $password );
+eval {
 if (&Vcenter::exists_folder($name)) {
-        print "Folder exists, deleting\n";
+        Util::trace( 0, "Folder exists, deleting\n" );
         if (&Vcenter::check_if_empty_folder($name)) {
                 &Vcenter::delete_folder($name);
         } else {
-                print "Folder not empty. Clean up first\n";
+                Util::trace( 0, "Folder not empty. Clean up first\n" );
         }
 } else {
-        print "Cannot find folder\n";
+        Util::trace( 0, "Cannot find folder\n" );
 }
+};
+if ($@) { &Error::catch_ex( $@ ); }
 # Disconnect from the server
 Util::disconnect();
 # To mitigate SSL warnings by default

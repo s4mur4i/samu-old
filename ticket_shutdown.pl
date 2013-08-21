@@ -6,6 +6,7 @@ use FindBin;
 use lib "$FindBin::Bin/lib";
 use SDK::GuestManagement;
 use VMware::VIRuntime;
+use SDK::Error;
 my %opts = (
 	ticket => {
 		type => '=s',
@@ -30,23 +31,26 @@ Util::connect( $url, $username, $password );
 if (defined($ticket) && ! defined($vmname) ) {
         my $machines = Vim::find_entity_views(view_type =>'VirtualMachine',filter=>{ name => qr/^$ticket-/});
         if ( @$machines == 0 ) {
-                print "Ticket machines cannot be found.\n";
+                Util::trace( 0, "Ticket machines cannot be found.\n" );
                 exit 1;
         }
         foreach (@$machines) {
-                print "Machine: ". $_->name ."\n";
-                &GuestManagement::poweroff_vm($_->name);
+                Util::trace( 0, "Machine: ". $_->name ."\n" );
+                eval { &GuestManagement::poweroff_vm($_->name) };
+		if ($@) { &Error::catch_ex( $@ ); }
         }
 } elsif ( defined($vmname) && ! defined($ticket)) {
-        print "Power off single vm: $vmname\n";
-        &GuestManagement::poweroff_vm($vmname) ;
+        Util::trace( 0, "Power off single vm: $vmname\n" );
+        eval { &GuestManagement::poweroff_vm($vmname) };
+	if ($@) { &Error::catch_ex( $@ ); }
 } elsif ( defined($vmname) && defined($ticket) ) {
-        print "To delete the ticket $ticket or to delete the vm $vmname... that is the question.\n";
+        Util::trace( 0, "To delete the ticket $ticket or to delete the vm $vmname... that is the question.\n" );
         exit 1;
 } else {
-        print "I don't know what to do....\n";
+        Util::trace( 0, "I don't know what to do....\n" );
         exit 1;
 }
+
 # Disconnect from the server
 Util::disconnect();
 # To mitigate SSL warnings by default

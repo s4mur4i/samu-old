@@ -23,7 +23,8 @@ my $ticket = Opts::get_option('ticket');
 Util::connect( $url, $username, $password );
 my $machines = Vim::find_entity_views(view_type =>'VirtualMachine',filter=>{ name => qr/^$ticket-/});
 foreach (@$machines) {
-	&Vcenter::print_vm_info($_->name);
+	eval { &Vcenter::print_vm_info($_->name); };
+	if ($@) { &Error::catch_ex( $@ ); }
 }
 # Disconnect from the server
 Util::disconnect();

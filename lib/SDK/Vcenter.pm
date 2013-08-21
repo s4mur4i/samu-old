@@ -85,12 +85,13 @@ sub Task_getStatus {
 sub check_if_empty_switch {
 	my ( $name ) = @_;
 	Util::trace( 4, "Starting Vcenter::check_if_empty_switch sub, name=>'$name'\n" );
-	my $view = Vim::find_entity_view( view_type => 'DistributedVirtualSwitch', properties => [ 'summary.portgroupName' ], filter => { name => $name } );
+	my $view = Vim::find_entity_view( view_type => 'DistributedVirtualSwitch', properties => [ 'summary.portgroupName', 'name' ], filter => { name => $name } );
 	if ( !defined( $view ) ) {
 		SDK::Error::Entity::NumException->throw( error => 'Switch does not exist', entity => $name, count => '0' );
 	}
-	my $count = $name->get_property('summary.portgroupName');
-	if ( scalar( @$count ) < 2 ) {
+	my $count = $view->get_property('summary.portgroupName');
+	Util::trace( 5, "My count is=>@$count\n" );
+	if ( @$count < 2 ) {
 		Util::trace( 4, "Finished Vcenter::check_if_empty_switch sub, return=>'true'\n" );
 		return 1;
 	} else {
@@ -102,7 +103,7 @@ sub check_if_empty_switch {
 sub check_if_empty_resource_pool {
 	my ( $name ) = @_;
 	Util::trace( 4, "Starting Vcenter::check_if_empty_resource_pool sub, name=>'$name'\n" );
-	my $view = Vim::find_entity_view( view_type => 'ResourcePool', properties => [ 'name' ], filter => { name => $name } );
+	my $view = Vim::find_entity_view( view_type => 'ResourcePool', properties => [ 'name', 'vm', 'resourcePool' ], filter => { name => $name } );
 	if ( !defined( $view ) ) {
 		SDK::Error::Entity::NumException->throw( error => 'Resourcepool does not exis', entity => $name, count => '0' );
 	}
@@ -118,7 +119,7 @@ sub check_if_empty_resource_pool {
 sub check_if_empty_folder {
 	my ( $name ) = @_;
 	Util::trace( 4, "Starting Vcenter::check_if_empty_folder sub, name=>'$name'\n" );
-	my $view = Vim::find_entity_view( view_type => 'Folder', properties => [ 'name' ], filter => { name => $name } );
+	my $view = Vim::find_entity_view( view_type => 'Folder', properties => [ 'name', 'childEntity' ], filter => { name => $name } );
 	if ( !defined( $view ) ) {
 		SDK::Error::Entity::NumException->throw( error => 'Folder does not exis', entity => $name, count => '0' );
 	}

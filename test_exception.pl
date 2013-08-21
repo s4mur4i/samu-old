@@ -23,7 +23,6 @@ eval {
 	&Vcenter::vm_num_check('a');
 };
 if ($@) {
-#	print Dumper($@);
 	&Error::catch_ex( $@ );
 }
 Util::disconnect();

@@ -838,7 +838,8 @@ sub poweron_vm {
 	if ( !defined( $view ) ) {
 		SDK::Error::Entity::NumException->throw( error => 'Could not find VM entity', entity => $vmname, count => '0' );
 	}
-	if ( $view->runtime->powerState->val ne "poweredOff" ) {
+	my $powerstate = $view->get_property('runtime.powerState');
+	if ( $powerstate->val ne "poweredOff" ) {
 		Util::trace( 0, "$vmname already powered on\n" );
 		return 0;
 	}

@@ -28,8 +28,9 @@ while ( &GuestManagement::dvportgroup_status($name) ) {
 	$random = &Misc::random_3digit();
 	$name = $ticket . "-" . $random;
 }
-print "Port group name is going to be: $name\n";
-&GuestManagement::create_dvportgroup($name,$ticket);
+Util::trace( 0, "Port group name is going to be: $name\n" );
+eval { &GuestManagement::create_dvportgroup($name,$ticket); };
+if ($@) { &Error::catch_ex( $@ ); }
 # Disconnect from the server
 Util::disconnect();
 # To mitigate SSL warnings by default

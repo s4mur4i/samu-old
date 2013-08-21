@@ -30,13 +30,14 @@ my $url = Opts::get_option('url');
 Util::connect( $url, $username, $password );
 my $vmname = Opts::get_option('vmname');
 my $count = Opts::get_option('count');
-$vmname = Vim::find_entity_view(view_type=>'VirtualMachine', filter=> {name => $vmname});
+$vmname = Vim::find_entity_view(view_type=>'VirtualMachine', properties => [ 'name' ], filter=> {name => $vmname});
 if (!defined($vmname) ) {
-        print "Cannot find VM\n";
+        Util::trace( 0, "Cannot find VM\n" );
 	exit 1;
 }
 while ($count > 0) {
-	&GuestManagement::add_network_interface($vmname->name);
+	eval { &GuestManagement::add_network_interface($vmname->name); };
+	if ($@) { &Error::catch_ex( $@ ); }
 	$count--;
 }
 # Disconnect from the server

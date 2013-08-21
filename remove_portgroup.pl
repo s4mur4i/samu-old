@@ -23,10 +23,11 @@ my $name = Opts::get_option('name');
 Util::connect( $url, $username, $password );
 my $portgroup = Vim::find_entity_views( view_type => 'DistributedVirtualPortgroup', filter=>{ name=>$name});
 if (defined($portgroup)) {
-	print "Removing\n";
-	&GuestManagement::remove_dvportgroup($name);
+	Util::trace( 0, "Removing\n" );
+	eval { &GuestManagement::remove_dvportgroup($name); };
+	if ($@) { &Error::catch_ex( $@ ); }
 } else {
-	print "No network under name: $name\n";
+	Util::trace( 0, "No network under name: $name\n" );
 }
 # Disconnect from the server
 Util::disconnect();

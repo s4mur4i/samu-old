@@ -22,12 +22,13 @@ my $password = Opts::get_option('password');
 my $url = Opts::get_option('url');
 Util::connect( $url, $username, $password );
 my $vmname = Opts::get_option('vmname');
-$vmname = Vim::find_entity_view(view_type=>'VirtualMachine', filter=> {name => $vmname});
+$vmname = Vim::find_entity_view(view_type=>'VirtualMachine', properties => [ 'name' ], filter=> {name => $vmname});
 if (!defined($vmname) ) {
-        print "Cannot find VM\n";
+        Util::trace( 0, "Cannot find VM\n" );
 	exit 1;
 }
-&GuestManagement::add_cdrom($vmname->name);
+eval { &GuestManagement::add_cdrom($vmname->name); };
+if ($@) { &Error::catch_ex( $@ ); }
 # Disconnect from the server
 Util::disconnect();
 # To mitigate SSL warnings by default

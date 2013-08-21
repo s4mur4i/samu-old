@@ -14,7 +14,7 @@ my %opts = (
 	},
 	name => {
 		type => '=s',
-		help => 'Name of snapshot to remove',
+		help => 'Name of snapshot to remove //not implemented yet',
 		required => 0,
 	},
 	id => {
@@ -33,14 +33,15 @@ my $vmname = Opts::get_option('vmname');
 my $name = Opts::get_option('name');
 my $id = Opts::get_option('id');
 if ( defined($name) && defined($id) ) {
-	print "Both name and id defined.\n";
+	Util::trace( 0, "Both name and id defined.\n" );
 	exit 1;
 } elsif (!defined($name) && !defined($id)) {
-	print "Id or name not defined.\n";
+	Util::trace( 0, "Id or name not defined.\n" );
 	exit 1;
 }
 Util::connect( $url, $username, $password );
-&GuestManagement::revert_to_snapshot($vmname, $id);
+eval { &GuestManagement::revert_to_snapshot($vmname, $id); };
+if ($@) { &Error::catch_ex( $@ ); }
 # Disconnect from the server
 Util::disconnect();
 # To mitigate SSL warnings by default

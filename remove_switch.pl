@@ -24,10 +24,11 @@ Util::connect( $url, $username, $password );
 my $switch = Vim::find_entity_view( view_type => 'DistributedVirtualSwitch', filter=>{ name=>$name});
 if (defined($switch)) {
 	my $portgroups = $switch->summary->portgroupName;
+	eval {
 	foreach (@$portgroups) {
 		my $portgroup = Vim::find_entity_view( view_type => 'DistributedVirtualPortgroup', filter => {name => $_});
 		if (defined($portgroup->vm)) {
-			print "Switch has child vm-s\n";
+			Util::trace( 0, "Switch has child vm-s\n" );
 			my $vms = $portgroup->vm;
 			foreach (@$vms) {
 				my $portgroup_key = $portgroup->key;
@@ -47,8 +48,10 @@ if (defined($switch)) {
 		}
 	}
 	&GuestManagement::remove_switch($name);
+	};
+	if ($@) { &Error::catch_ex( $@ ); }
 } else {
-	print "No switch under name: $name\n";
+	Util::trace( 0, "No switch under name: $name\n" );
 }
 # Disconnect from the server
 Util::disconnect();

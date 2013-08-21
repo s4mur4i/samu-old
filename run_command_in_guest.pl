@@ -56,7 +56,7 @@ my $datacenter = Opts::get_option('datacenter');
 my $vmname = Opts::get_option('vmname');
 my $url = Opts::get_option('url');
 Util::connect( $url, $username, $password );
-my $vm_view = Vim::find_entity_view(view_type=>'VirtualMachine',filter=>{name=>$vmname});
+eval {
 my $guestusername;
 my $guestpassword;
 my ($ticket, $username2, $family, $version, $lang, $arch, $type , $uniq) = &Misc::vmname_splitter($vmname);
@@ -69,17 +69,14 @@ if ( defined(Opts::get_option('guestusername')) && defined(Opts::get_option('gue
 		$guestusername=Opts::get_option('guestusername');
 		$guestpassword=Opts::get_option('guestpassword');
 }
-print "username=> '$guestusername' password=> '$guestpassword' vmname=> '" . defined($vm_view) . "'\n";
-if ( (!defined($guestusername)) || (!defined($guestpassword)) || (!defined($vm_view)) ) {
-	die("Cannot run. some paramter failed to be parsed or guessed... or both: username=> '$guestusername' password=> '$guestpassword' vmname=> '" . defined($vm_view) . "'");
-}
 my $prog = Opts::get_option('prog');
 my $prog_arg = Opts::get_option('prog_arg');
 my $env = Opts::get_option('env');
 my $workdir = Opts::get_option('workdir');
 my $pid = &GuestInternal::runCommandInGuest($vmname,$prog, $prog_arg, $env, $workdir, $guestusername, $guestpassword);
-print "Pid is $pid\n";
-
+Util::trace( 0, "Pid is $pid\n" );
+};
+if ($@) { &Error::catch_ex( $@ ); }
 # Disconnect from the server
 Util::disconnect();
 # To mitigate SSL warnings by default

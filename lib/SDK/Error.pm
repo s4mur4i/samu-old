@@ -129,7 +129,8 @@ sub catch_ex {
 		Util::trace( 0, "Cannot understand the object, throwing dump.\n" );
 		print Dumper($ex);
 	} else {
-		Util::trace( 0, "I'm blue and I'm a WTF....." );
+		print Dumper($ex);
+		Util::trace( 0, "I'm blue and I'm a WTF.....\n" );
 	}
 	Util::trace( 4, "Finished Error::catch_ex sub\n" );
 	exit;

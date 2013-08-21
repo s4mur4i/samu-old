@@ -35,7 +35,8 @@ my $vmname = Opts::get_option('vmname');
 my $num = Opts::get_option('num');
 my $iso = Opts::get_option('iso');
 Util::connect( $url, $username, $password );
-&GuestManagement::change_cdrom_to_iso($vmname, $num,$iso);
+eval { &GuestManagement::change_cdrom_to_iso($vmname, $num,$iso); };
+if ($@) { &Error::catch_ex( $@ ); }
 # Disconnect from the server
 Util::disconnect();
 # To mitigate SSL warnings by default

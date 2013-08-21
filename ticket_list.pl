@@ -20,7 +20,9 @@ my $url = Opts::get_option('url');
 Util::connect( $url, $username, $password );
 my $machines = Vim::find_entity_views(view_type =>'VirtualMachine', properties => [ 'name' ] );
 my %tickets=();
+eval {
 my $dbh = &Kayako::connect_kayako();
+if ($@) { &Error::catch_ex( $@ ); }
 foreach (@$machines) {
 	my ($ticket, $username, $family, $version, $lang, $arch, $type , $uniq) = &Misc::vmname_splitter($_->name);
 	if ( defined($ticket) and  !defined($tickets{$ticket}) ) {
@@ -29,13 +31,13 @@ foreach (@$machines) {
 }
 for my $ticket ( sort (keys %tickets) ) {
 	if ( $ticket ne "" and $ticket ne "unknown" ) {
-		print "Ticket: $ticket, owner: $tickets{$ticket}";
+		Util::trace( 0, "Ticket: $ticket, owner: $tickets{$ticket}" );
 		my $result = &Kayako::run_query( $dbh, "select ticketstatustitle from swtickets where ticketid = '$ticket'" );
 		## need to implement multiple tickets in field seperated by space
 		if ( !defined( $result ) ) {
 			print "\n";
 		} else {
-			print ", ticket status: " . $$result{ticketstatustitle} ."";
+			Util::trace( 0, ", ticket status: " . $$result{ticketstatustitle} ."" );
 			$result = &Kayako::run_query( $dbh, "select fieldvalue from swcustomfieldvalues where typeid = '$ticket' and customfieldid = '25'" );
 			if ( !defined($result) or $$result{fieldvalue} eq "" ) {
 				print "\n";
@@ -44,7 +46,7 @@ for my $ticket ( sort (keys %tickets) ) {
 				foreach ( @result ) {
 					#print " result: '$_'\n";
 					if ( $_ eq "" ) {
-						print "\n";
+						Util::trace( 0, "\n" );
 					} else {
 						my $id;
 						if ($_ =~ /^\s*\d+\s*$/ ) {
@@ -54,12 +56,12 @@ for my $ticket ( sort (keys %tickets) ) {
 						} else {
 							$id = $_;
 						}
-						print ", bugzilla: " . $id;
+						Util::trace( 0, ", bugzilla: " . $id );
 						my $content = &Bugzilla::bugzilla_status( $id );
 						if ( !defined( $content ) ) {
-							print "\n";
+							Util::trace( 0, "\n" );
 						} else {
-							print ", bugzilla status: $content\n";
+							Util::trace( 0, ", bugzilla status: $content\n" );
 						}
 
 					}
@@ -69,6 +71,8 @@ for my $ticket ( sort (keys %tickets) ) {
 	}
 }
 &Kayako::disconnect_kayako($dbh);
+};
+if ($@) { &Error::catch_ex( $@ ); }
 # Disconnect from the server
 Util::disconnect();
 # To mitigate SSL warnings by default
