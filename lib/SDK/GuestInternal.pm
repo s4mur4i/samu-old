@@ -25,20 +25,19 @@ BEGIN {
 
 sub acquireGuestAuth {
 	my ( $gOpMgr, $vmview, $gu, $gp ) = @_;
-
+	Util::trace( 4, "Starting GuestInternal::acquireGuestAuth sub\n" );
 	my $authMgr = Vim::get_view( mo_ref => $gOpMgr->authManager );
 	my $guestAuth = NamePasswordAuthentication->new( username => $gu, password => $gp, interactiveSession => 'false' );
-
 	eval {
-		print "Validating guest credentials in " . $vmview->name . " ...\n";
+		Util::trace( 2, "Validating guest credentials in " . $vmview->name . " ...\n" );
 		$authMgr->ValidateCredentialsInGuest( vm => $vmview, auth => $guestAuth );
 	};
 	if( $@ ) {
 		SDK::Error::Entity::Auth->throw( error => 'Could not aquire Guest authentication object', entity => $vmview->name, username => $gu, password => $gp );
 	} else {
-		print "Succesfully validated guest credentials!\n";
+		Util::trace( 1, "Succesfully validated guest credentials!\n" );
 	}
-
+	Util::trace( 4, "Finishing GuestInternal::acquireGuestAuth sub\n" );
 	return $guestAuth;
 }
 
@@ -56,6 +55,7 @@ sub acquireGuestAuth {
 
 sub runCommandInGuest {
 	my ( $vmname, $prog, $prog_arg, $env, $workdir, $guestusername, $guestpassword ) = @_;
+	Util::trace( 4, "Starting GuestInternal::runCommandInGuest sub\n" );
 	my $vm_view = Vim::find_entity_view( view_type => 'VirtualMachine', properties => [ 'name' ], filter => { name => $vmname } );
 	if ( !defined( $vm_view ) ) {
 		SDK::Error::Entity::NumException->throw( error => 'Cannot find VM', entity => $vmname, count => '0' );
@@ -74,6 +74,7 @@ sub runCommandInGuest {
 	my $guestProcMan = Vim::get_view( mo_ref => $guestOpMgr->processManager );
 	my $guestProgSpec = GuestProgramSpec->new( workingDirectory => $workdir, programPath=> $prog, arguments => $prog_arg, envVariables => [$env] );
 	my $pid = $guestProcMan->StartProgramInGuest( vm => $vm_view, auth => $guestCreds, spec => $guestProgSpec );
+	Util::trace( 4, "Finishing GuestInternal::runCommandInGuest sub\n" );
 	return $pid;
 }
 
@@ -88,6 +89,7 @@ sub runCommandInGuest {
 
 sub get_xcb_ha_interface {
 	my ( $machine_ref ) = @_;
+	Util::trace( 4, "Starting GuestInternal::get_xcb_ha_interface sub\n" );
 	my @keys;
 	my @unitnumber;
 	my @controllerkey;
@@ -103,9 +105,10 @@ sub get_xcb_ha_interface {
 		push( @mac, $interface->macAddress );
 	}
 	if ( ( @keys lt 4 ) && ( @unitnumber lt 4 ) && ( @controllerkey lt 4 ) ) {
-		print "Not enough interfaces.\n";
+		Util::trace( 2, "Not enough interfaces\n" );
 		exit 1;
 	}
+	Util::trace( 4, "Finishing GuestInternal::get_xcb_ha_interface sub\n" );
 	return ( $keys[3], $unitnumber[3], $controllerkey[3], $mac[3] );
 }
 
@@ -121,6 +124,7 @@ sub get_xcb_ha_interface {
 
 sub get_interface_info {
 	my ( $machine_ref, $interface ) = @_;
+	Util::trace( 4, "Starting GuestInternal::get_interface_info sub, interface=>'$interface'\n" );
 	my @keys;
 	my @unitnumber;
 	my @controllerkey;
@@ -138,23 +142,27 @@ sub get_interface_info {
 	## We need to increment interface count because of perl indexing
 	my $increment = $interface +1;
 	if ( ( @keys lt $increment ) && ( @unitnumber lt $increment ) && ( @controllerkey lt $increment ) ) {
-		print "Not enough interfaces. Interface $interface was requested but only @keys interfaces\n";
-		exit 1;
+		Util::trace( 2, "Not enough interfaces. Interface $interface was requested but only @keys interfaces\n" );
+		SDK::Error::Entity::HWError->throw( error => "Requested interface cannot be found", entity => $machine_ref->name, hw=> 'Interface count' );
 	}
+	Util::trace( 4, "Finishing GuestInternal::get_interface_info sub\n" );
 	return ( $keys[$interface], $unitnumber[$interface], $controllerkey[$interface], $mac[$interface] );
 }
 
 sub find_root_snapshot {
 	my ( $snapshot ) = @_;
+	Util::trace( 4, "Starting GuestInternal::find_root_snapshot sub\n" );
 	if ( defined( $snapshot->[0]->{'childSnapshotList'} ) ) {
 		&find_root_snapshot( $snapshot->[0]->{'childSnapshotList'} );
 	} else {
+		Util::trace( 4, "Finishing GuestInternal::find_root_snapshot sub\n" );
 		return $snapshot;
 	}
 }
 
 sub transfer_to_guest {
 	my ( $vmname, $path, $dest, $overwrite, $guestusername, $guestpassword ) = @_;
+	Util::trace( 4, "Starting GuestInternal::transfer_to_guest sub\n" );
 	my $vm_view = Vim::find_entity_view( view_type => 'VirtualMachine', filter => { name => $vmname } );
 	if ( !defined( $vm_view ) ) {
 		SDK::Error::Entity::NumException->throw( error => 'Cannot find VM', entity => $vmname, count => '0' );
@@ -181,22 +189,24 @@ sub transfer_to_guest {
 	if( $@ ) {
 		SDK::Error::Entity::TransferError->throw( error => 'Could not retrieve Transfer information' );
 	}
-	print "Information about file: $path \n";
-	print "Size of file: $size bytes\n";
+	Util::trace( 0, "Information about file:'$path'\n" );
+	Util::trace( 0, "Size of file: $size bytes\n" );
 	my $ua  = LWP::UserAgent->new();
 	$ua->ssl_opts( verify_hostname => 0 );
 	open( my $fh, "<$path" );
 	my $content = do{ local $/; <$fh> } ;
 	my $req = $ua->put( $transferinfo, Content => $content );
 	if ( $req->is_success() ) {
-		print "OK: ", $req->content ."\n";
+		Util::trace( 4, "OK: ", $req->content ."\n" );
 	} else {
 		SDK::Error::Entity::TransferError->throw( error => $req->as_string );
 	}
+	Util::trace( 4, "Finishing GuestInternal::transfer_to_guest sub\n" );
 }
 
 sub transfer_from_guest {
 	my ( $vmname, $path, $dest, $guestusername, $guestpassword ) = @_;
+	Util::trace( 4, "Starting GuestInternal::transfer_from_guest sub\n" );
 	my $vm_view = Vim::find_entity_view( view_type => 'VirtualMachine', properties => [ 'name' ], filter => { name => $vmname } );
         if ( !defined( $vm_view ) ) {
 		SDK::Error::Entity::NumException->throw( error => 'Cannot find VM', entity => $vmname, count => '0' );
@@ -220,9 +230,9 @@ sub transfer_from_guest {
 	if($@) {
 		SDK::Error::Entity::TransferError->throw( error => 'Could not retrieve Transfer information' );
 	}
-	print "Information about file: $path \n";
-	print "Size: " . $transferinfo->size. " bytes\n";
-	print "modification Time: " . $transferinfo->attributes->modificationTime . " and access Time : " .$transferinfo->attributes->accessTime . "\n" ;
+	Util::trace( 0, "Information about file: $path \n" );
+	Util::trace( 0, "Size: " . $transferinfo->size. " bytes\n" );
+	Util::trace( 0, "modification Time: " . $transferinfo->attributes->modificationTime . " and access Time : " .$transferinfo->attributes->accessTime . "\n" );
 	if ( !defined($dest) ) {
 		my $basename = basename($path);
 		my $content = get($transferinfo->url);
@@ -230,13 +240,15 @@ sub transfer_from_guest {
 		print $fh "$content";
 		close($fh);
 	} else {
-		print "Downloading file to: '$dest'\n";
+		Util::trace( 4, "Downloading file to: '$dest'\n" );
 		my $status = getstore($transferinfo->url,$dest);
 	}
+	Util::trace( 4, "Finishing GuestInternal::transfer_from_guest sub\n" );
 }
 
 sub auth_info {
 	my ( $vmname ) = @_;
+	Util::trace( 4, "Starting GuestInternal::auth_info sub, vmname=>'$vmname'\n" );
 	if ( $vmname =~ /^[^-]*-[^-]*-[^-]*-\d{3}$/ ) {
 		my ( $os ) = $vmname =~ m/^[^-]*-[^-]*-([^-]*)-\d{3}$/ ;
 		if ( defined( $Support::template_hash{$os} ) ) {
@@ -244,11 +256,11 @@ sub auth_info {
 			my $guestpassword = $Support::template_hash{$os}{'password'};
 			return ( $guestusername, $guestpassword );
 		} else {
-			print "Regex matched an OS, but no template found to it os=> '$os'\n";
+			Util::trace( 4, "Finishing GuestInternal::auth_info sub, Regex matched an OS, but no template found to it os=> '$os'\n" );
 			return 1;
 		}
 	} else {
-		print "Not standard name.\n";
+		Util::trace( 4, "Finishing GuestInternal::auth_info sub, Not Standard name\n" );
 		return 1;
 	}
 }
@@ -256,7 +268,9 @@ sub auth_info {
 
 ## Functionailty test sub
 sub test() {
-	print "GuestInternal module test sub\n";
+	Util::trace( 4, "Starting GuestInternal::test sub\n" );
+	Util::trace( 0, "GuestInternal module test sub\n" );
+	Util::trace( 4, "Finishing GuestInternal::test sub\n" );
 }
 
 #### We need to end with success
