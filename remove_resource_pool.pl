@@ -23,7 +23,7 @@ Util::connect( $url, $username, $password );
 my $name = Opts::get_option('name');
 eval {
 if (&Vcenter::exists_resource_pool($name)) {
-	print "Resource pool exists, deleting\n";
+	Util::trace( 0, "Resource pool exists, deleting\n" );
 	if (&Vcenter::check_if_empty_resource_pool($name)) {
                 &Vcenter::delete_resource_pool($name);
         } else {

@@ -32,7 +32,7 @@ my $numb = 0;
 while ($count > 0) {
 	my ($key, $unitnumber, $controllerkey, $mac) = &GuestManagement::get_network_interface($vmname->name,$numb);
 	my ($network, $label) = &GuestManagement::get_ext_network_interface($vmname->name,$numb);
-	print "$numb\t$key\t$mac\t$network\t$label\n";
+	Util::trace( 0, "$numb\t$key\t$mac\t$network\t$label\n" );
 	$count--;
 	$numb++;
 }

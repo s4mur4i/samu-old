@@ -54,7 +54,7 @@ if ( $vmname =~ /^[^-]*-[^-]*-[^-]*-\d{3}$/ ) {
   }
 } else {
 	if ( !defined( Opts::get_option( 'guestusername' ) ) and !defined( Opts::get_option( 'guestpassword' ) ) ) {
-		Util::trace( 0, print "VMname not matched standard, and not usernames defined.\n" );
+		Util::trace( 0, "VMname not matched standard, and not usernames defined.\n" );
 		exit 1;
 	}
 }

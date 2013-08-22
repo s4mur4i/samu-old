@@ -31,7 +31,7 @@ my $count = &GuestManagement::count_cdrom($vmname->name);
 my $numb = 0;
 while ($count > 0) {
         my ($key,$backing,$label) = &GuestManagement::get_cdrom($vmname->name,$numb);
-        print "$numb\t$key\t$backing\t$label\n";
+        Util::trace( 0, "$numb\t$key\t$backing\t$label\n" );
         $count--;
         $numb++;
 }

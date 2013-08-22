@@ -44,7 +44,7 @@ if (defined($ticket) && ! defined($vmname) ) {
         eval { &GuestManagement::poweron_vm($vmname); } ;
 	if ($@) { &Error::catch_ex( $@ ); }
 } elsif ( defined($vmname) && defined($ticket) ) {
-        Util::trace( 0, print "To delete the ticket $ticket or to delete the vm $vmname... that is the question.\n" );
+        Util::trace( 0, "To delete the ticket $ticket or to delete the vm $vmname... that is the question.\n" );
         exit 1;
 } else {
         Util::trace( 0, "I don't know what to do....\n" );

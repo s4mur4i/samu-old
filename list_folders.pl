@@ -39,7 +39,7 @@ sub TraverseFolder {
 			}
 
 			if ( $child_view->isa("Folder") ) {
-				print " " x $index . "Folder: " . $child_view->name . "\n";
+				Util::trace( 0, " " x $index . "Folder: " . $child_view->name . "\n" );
 				$child_view = Vim::get_view( mo_ref => $mo, properties => ['name', 'childEntity'] );
 				TraverseFolder($mo, $index);
 			}

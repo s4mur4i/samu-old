@@ -178,11 +178,11 @@ foreach(@$rp_views) {
 			my $path= Util::get_inventory_path($obj, $vim);
 			$path =~ s/^\s*Support\/vm\///;
 			my @path = split( '/', $path);
-			print "\tInventory Path: Root ";
+			Util::tace( 0, "\tInventory Path: Root " );
 			foreach my $level (@path) {
-				print " -> $level";
+				Util::trace( 0, " -> $level" );
 			}
-			print "\n";
+			Util::trace( 0, "\n" );
 			my $parent_rp_view = Vim::get_view(mo_ref=>$obj->resourcePool);
 			my $parent_path= Util::get_inventory_path($parent_rp_view,$vim);
 			## Support/host/vmware-it1.balabit/Resources/test/test

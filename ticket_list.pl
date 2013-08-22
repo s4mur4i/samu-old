@@ -35,16 +35,15 @@ for my $ticket ( sort (keys %tickets) ) {
 		my $result = &Kayako::run_query( $dbh, "select ticketstatustitle from swtickets where ticketid = '$ticket'" );
 		## need to implement multiple tickets in field seperated by space
 		if ( !defined( $result ) ) {
-			print "\n";
+			Util::trace( 0, "\n" );
 		} else {
 			Util::trace( 0, ", ticket status: " . $$result{ticketstatustitle} ."" );
 			$result = &Kayako::run_query( $dbh, "select fieldvalue from swcustomfieldvalues where typeid = '$ticket' and customfieldid = '25'" );
 			if ( !defined($result) or $$result{fieldvalue} eq "" ) {
-				print "\n";
+				Util::trace( 0, "\n" );
 			} else {
 				my @result = split( " ", $$result{fieldvalue} );
 				foreach ( @result ) {
-					#print " result: '$_'\n";
 					if ( $_ eq "" ) {
 						Util::trace( 0, "\n" );
 					} else {

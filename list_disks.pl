@@ -31,7 +31,7 @@ my $count = &GuestManagement::count_disk($vmname->name);
 my $numb = 0;
 while ($count > 0) {
         my ($key,$size,$path) = &GuestManagement::get_disk($vmname->name,$numb);
-        print "$numb\t$key\t$size KB\t$path\n";
+        Util::trace( 0, "$numb\t$key\t$size KB\t$path\n" );
         $count--;
         $numb++;
 }
