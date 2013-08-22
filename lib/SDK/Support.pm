@@ -34,6 +34,7 @@ our %template_hash = (
 	'cent_6.0_en_amd64_cent64' => { path => 'Support/vm/templates/Linux/cent/T_cent_6.0_en_amd64_cent64', username => 'root', password => 'titkos', os => 'other' },
 	'cent_6.4_en_i386_cent64' => { path => 'Support/vm/templates/Linux/cent/T_cent_6.4_en_i386_cent64', username => 'root', password => 'titkos', os => 'other' },
 	'cent_6.4_en_amd64_cent64' => { path => 'Support/vm/templates/Linux/cent/T_cent_6.4_en_amd64_cent64', username => 'root', password => 'titkos', os => 'other' },
+	'oracle_5.6_en_x64_ent' => { path => 'Support/vm/templates/Linux/cent/T_oracle_5.6_en_x64_ent', username => 'root', password => 'titkos', os => 'other' },
 	'ssb_302' => { path => 'Support/vm/templates/SSB/3.0/T_ssb_302',  username => 'root', password => 'titkos', os => 'ssb' },
 );
 
