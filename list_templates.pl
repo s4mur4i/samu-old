@@ -5,6 +5,7 @@ use warnings;
 use FindBin;
 use lib "$FindBin::Bin/lib";
 use SDK::Support;
+use VMware::VIRuntime;
 
 sub longest {
     my ($array) = @_;
