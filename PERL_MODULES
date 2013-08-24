@@ -1,7 +1,6 @@
 Archive::Zip
 Data::Dumper
 Exception::Class
-File::Basename
 File::Path
 Getopt::Long
 HTTP::Cookies
@@ -11,7 +10,6 @@ HTTP::Response
 LWP::ConnCache
 LWP::Simple
 LWP::UserAgent
-MIME::Base64
 Pod::Simple
 Pod::Usage
 Scalar::Util
@@ -22,10 +20,7 @@ XML::LibXML
 Carp
 DBI
 Encode
-entity
 Exporter
 FindBin
 Switch
-Sys::Syslog
-vars
 DBD::mysql
