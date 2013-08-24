@@ -8,6 +8,7 @@ use warnings;
 #
 use Getopt::Long qw(:config bundling pass_through);
 use Sys::Syslog qw(:standard :macros);
+use File::Basename;
 
 my $verbosity;
 
@@ -24,7 +25,7 @@ sub log2line {
     my %args = @_;
     my $sep = '';
     my ($package, $filename, $line, $subroutine, $hasargs, $wantarray, $evaltext, $is_require) = caller(1);
-    my $prefix = "$filename " . getpwuid($<) . " [$level] [".$$."]";
+    my $prefix = basename($filename) . " " . getpwuid($<) . " [$level] [".$$."]";
 
     closelog();
     openlog($prefix, "", LOG_USER);
