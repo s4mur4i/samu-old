@@ -152,6 +152,10 @@ my $man = 0;
 
     Add a thin provisioned hard disk to a vm
 
+=item I<snapshot>
+
+    List snapshots attached to a vm
+
 =back
 
 =head1 VM_delete_function
@@ -176,6 +180,10 @@ my $man = 0;
 
     Delete a hard disk from a vm
 
+=item I<snapshot>
+
+    List snapshots attached to a vm
+
 =back
 
 =head1 VM_change_function
@@ -199,6 +207,10 @@ my $man = 0;
 =item I<altername>
 
     Change the alternative name of a vm
+
+=item I<snapshot>
+
+    List snapshots attached to a vm
 
 =back
 

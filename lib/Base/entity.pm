@@ -30,76 +30,48 @@ BEGIN() {
 
 =cut
 
+our $module_opts = {
+    helper => 'VM',
+    functions => {
+        clone => {function => \&clone, },
+        add => {function => \&add, },
+        delete => {function => \&delete, },
+        list => {
+            helper => 'VM_list_function',
+            functions => {
+                cdrom => { helper => 'AUTHOR', function => \&list_cdrom },
+                network => { helper => 'AUTHOR', function => \&list_network},
+                disk => { helper => 'AUTHOR', function => \&list_disk},
+                snapshopt => {helper => 'AUTHOR', function => \&list_snapshot},
+            },
+        },
+        change => {function => \&change, },
+    }
+};
+
 sub main {
     &Log::debug("Entity::main sub started");
-    switch ($ARGV[0]) {
-        case "clone"   { shift @ARGV; &clone }
-        case "add" { shift @ARGV; &add }
-        case "delete" { shift @ARGV; &delete }
-        case "list" { shift @ARGV; &list }
-        case "change" { shift @ARGV; &change }
-        else    { pod2usage(-verbose => 99, -noperldoc => 1, -output => \*STDOUT, -sections => [ qw(VM) ] ); }
-    }
+    &option_parser($module_opts,"main");
 }
 
-sub list {
-    &Log::debug("Entity::list sub started");
+sub option_parser($$) {
+    my $opts = shift;
+    my $module_name = shift;
     GetOptions(
-        'help|h' => \$help,
-    );
-    &Log::debug("list help is=>'$help'");
-    if ($help) {
-        &Log::debug("List Help requested");
-        pod2usage(-verbose => 99, -noperldoc => 1, -output => \*STDOUT, -sections => [ qw(VM_list_function) ] );
+            'help|h' => \$help,
+            );
+    $help and pod2usage(-verbose => 99, -noperldoc => 1, -output => \*STDOUT, -sections => [ $opts->{helper} ] );
+    if (exists $opts->{function}) {
+        &Log::debug("Invoking handler function of $module_name");
+        &{$opts->{function}};
     }
 
-}
-
-sub clone {
-    &Log::debug("Entity::clone sub started");
-    GetOptions(
-        'help|h' => \$help,
-    );
-    &Log::debug("Clone help is=>'$help'");
-    if ($help) {
-        &Log::debug("Clone Help requested");
-        pod2usage(-verbose => 99, -noperldoc => 1, -output => \*STDOUT, -sections => [ qw(VM_clone_funtion) ] );
-    }
-}
-
-sub add {
-    &Log::debug("Entity::add sub started");
-    GetOptions(
-        'help|h' => \$help,
-    );
-    &Log::debug("Add help is=>'$help'");
-    if ($help) {
-        &Log::debug("Add Help requested");
-        pod2usage(-verbose => 99, -noperldoc => 1, -output => \*STDOUT, -sections => [ qw(VM_add_function) ] );
-    }
-}
-
-sub delete {
-    &Log::debug("Entity::delete sub started");
-    GetOptions(
-        'help|h' => \$help,
-    );
-    &Log::debug("Delete help is=>'$help'");
-    if ($help) {
-        &Log::debug("Delete Help requested");
-        pod2usage(-verbose => 99, -noperldoc => 1, -output => \*STDOUT, -sections => [ qw(VM_delete_function) ] );
-    }
-}
-
-sub change {
-    &Log::debug("Entity::change sub started");
-    GetOptions(
-        'help|h' => \$help,
-    );
-    &Log::debug("Change help is=>'$help'");
-    if ($help) {
-        &Log::debug("Change Help requested");
-        pod2usage(-verbose => 99, -noperldoc => 1, -output => \*STDOUT, -sections => [ qw(ENTITY_CHANGE) ] );
+    my $arg = shift @ARGV;
+    if (defined $arg and exists $opts->{functions}->{$arg}) {
+           &Log::debug("Forwarding parsing to subfunction parser $arg");
+           &option_parser($opts->{functions}->{$arg},$arg);
+    } else {
+        pod2usage(-verbose => 99, -noperldoc => 1, -output => \*STDOUT, -sections => [ $opts->{helper} ] );
     }
 }
 
