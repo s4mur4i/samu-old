@@ -5,6 +5,7 @@ use warnings;
 use BB::Log;
 use Getopt::Long qw(:config bundling pass_through require_order);
 use Pod::Usage;
+use FindBin;
 
 BEGIN() {
     use Exporter();
@@ -22,7 +23,7 @@ sub option_parser($$) {
     GetOptions(
             'help|h' => \$help,
             );
-    $help and pod2usage(-verbose => 99, -noperldoc => 1, -output => \*STDOUT, -sections => $opts->{helper} );
+    $help and pod2usage(-verbose => 99, -noperldoc => 1, -input => $FindBin::Bin . "/doc/main.pod", -output => \*STDOUT, -sections => $opts->{helper} );
     if (exists $opts->{module}) {
         my $module = 'Base::'.$opts->{module};
         &Log::debug("loading module $module");
@@ -40,7 +41,7 @@ sub option_parser($$) {
            &Log::debug("Forwarding parsing to subfunction parser $arg");
            &option_parser($opts->{functions}->{$arg},$arg);
     } else {
-        pod2usage(-verbose => 99, -noperldoc => 1, -output => \*STDOUT, -sections => $opts->{helper} );
+        pod2usage(-verbose => 99, -noperldoc => 1, -input => $FindBin::Bin . "/doc/main.pod", -output => \*STDOUT, -sections => $opts->{helper} );
     }
 }
 

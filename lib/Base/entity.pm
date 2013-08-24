@@ -2,12 +2,7 @@ package entity;
 
 use strict;
 use warnings;
-use Data::Dumper;
 use BB::Log;
-use Switch;
-use Getopt::Long qw(:config bundling pass_through require_order);
-use VMware::VIRuntime;
-use Pod::Usage;
 use Base::misc;
 
 my $help = 0;
@@ -53,6 +48,22 @@ our $module_opts = {
 sub main {
     &Log::debug("Entity::main sub started");
     &misc::option_parser($module_opts,"main");
+}
+
+sub list_cdrom {
+
+}
+
+sub list_network {
+
+}
+
+sub list_disk {
+
+}
+
+sub list_snapshot {
+
 }
 
 1;
