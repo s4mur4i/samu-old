@@ -11,11 +11,20 @@ use BB::Log;
 use Getopt::Long qw(:config bundling pass_through require_order);
 use VMware::VIRuntime;
 use Pod::Usage;
-use Base::entity;
+use Base::misc;
 use Switch;
 
 my $help = 0;
 my $man = 0;
+
+my $jew_opts = {
+    helper => [ qw(SYNOPSIS OPTIONS) ],
+    functions => {
+        vm => { helper => 'VM', module => 'entity', function => \&entity::main },
+        datastore => { helper => 'AUTHOR', module => 'datastore', function => \&datastore::main },
+    }
+};
+
 =pod
 
 =head1 NAME
@@ -214,28 +223,6 @@ my $man = 0;
 
 =back
 
-=cut
-
-sub entity {
-    &Log::debug("Entity has been called");
-    GetOptions(
-        'help|h' => \$help,
-    );
-    &Log::debug("Entity help is=>'$help'");
-    if ($help) {
-        &Log::debug("Entity Help requested");
-        pod2usage(-verbose => 99, -noperldoc => 1, -output => \*STDOUT, -sections => [ qw(VM) ] );
-    }
-    &Log::debug("Handing over run to entity.pm");
-    if ( defined($ARGV[0]) ) {
-        &entity::main;
-    } else {
-        &Log::warning("No action requested. Please read the help");
-    }
-}
-
-=pod
-
 =head1 TICKET
 
 =head2 SYNOPSIS
@@ -252,23 +239,6 @@ sub entity {
 
 =back
 
-=cut
-
-
-sub ticket {
-   &Log::debug("Ticket has been called");
-    GetOptions(
-        'help|h' => \$help,
-    );
-    &Log::debug("Ticket help is=>'$help'");
-    if ($help) {
-        &Log::debug("Ticket Help requested");
-        pod2usage(-verbose => 99, -noperldoc => 1, -output => \*STDOUT, -sections => [ qw(TICKET) ] );
-    }
-}
-
-=pod
-
 =head1 DATASTORE
 
 =head2 SYNOPSIS
@@ -284,22 +254,6 @@ sub ticket {
     Print the help page
 
 =back
-
-=cut
-
-sub datastore {
-    &Log::debug("Datastore has been called");
-    GetOptions(
-        'help|h' => \$help,
-    );
-    &Log::debug("Datastore help is=>'$help'");
-    if ($help) {
-        &Log::debug("Datastore Help requested");
-        pod2usage(-verbose => 99, -noperldoc => 1, -output => \*STDOUT, -sections => [ qw(DATASTORE) ] );
-    }
-}
-
-=pod
 
 =head1 KAYAKO
 
@@ -319,18 +273,6 @@ sub datastore {
 
 =cut
 
-sub kayako {
-
-}
-
-=pod
-
-=cut
-
-sub bugzilla {
-
-}
-
 sub podman {
     &Log::debug("Man requested");
     pod2usage({-verbose => 2, -output => \*STDOUT});
@@ -343,23 +285,14 @@ sub podhelp {
 
 ### Main
 &Log::debug("Starting Script");
+
 GetOptions(
     'help|h' => \&podhelp,
     'man|m' => \&podman,
     );
 
-if (!defined($ARGV[0])) {
-    &podhelp;
-}
+&misc::option_parser($jew_opts,"jew_main");
 
-switch ($ARGV[0]) {
-    case "vm"     { shift; &entity }
-    case "ticket" { shift; &ticket }
-    case "datastore" { shift; &datastore }
-    case "bugzilla" { shift; &bugzilla }
-    case "kayako" { shift; &kayako }
-    else          { &podhelp }
-}
 __END__
 
 =head1 BUGS
