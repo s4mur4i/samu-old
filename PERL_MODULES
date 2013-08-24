@@ -1,5 +1,6 @@
 Archive::Zip
 Data::Dumper
+Exception::Class
 File::Basename
 File::Path
 Getopt::Long
@@ -11,13 +12,20 @@ LWP::ConnCache
 LWP::Simple
 LWP::UserAgent
 MIME::Base64
+Pod::Simple
+Pod::Usage
+Scalar::Util
+Sys::Syslog
 URI::Escape
 URI::URL
 XML::LibXML
 Carp
 DBI
 Encode
+entity
 Exporter
 FindBin
 Switch
+Sys::Syslog
+vars
 DBD::mysql

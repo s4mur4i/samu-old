@@ -11,7 +11,7 @@ use BB::Log;
 use Getopt::Long qw(:config bundling pass_through require_order);
 use VMware::VIRuntime;
 use Pod::Usage;
-use entity;
+use Base::entity;
 use Switch;
 
 my $help = 0;
