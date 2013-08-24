@@ -17,13 +17,18 @@ BEGIN() {
 
 our $help;
 
+sub call_pod2usage($) {
+	my $helper = shift;
+	pod2usage(-verbose => 99, -noperldoc => 1, -input => $FindBin::Bin . "/doc/main.pod", -output => \*STDOUT, -sections => $helper );
+}
+
 sub option_parser($$) {
     my $opts = shift;
     my $module_name = shift;
     GetOptions(
             'help|h' => \$help,
             );
-    $help and pod2usage(-verbose => 99, -noperldoc => 1, -input => $FindBin::Bin . "/doc/main.pod", -output => \*STDOUT, -sections => $opts->{helper} );
+    $help and &call_pod2usage($opts->{helper});
     if (exists $opts->{module}) {
         my $module = 'Base::'.$opts->{module};
         &Log::debug("loading module $module");
@@ -38,10 +43,10 @@ sub option_parser($$) {
 
     my $arg = shift @ARGV;
     if (defined $arg and exists $opts->{functions}->{$arg}) {
-           &Log::debug("Forwarding parsing to subfunction parser $arg");
-           &option_parser($opts->{functions}->{$arg},$arg);
+	    &Log::debug("Forwarding parsing to subfunction parser $arg");
+	    &option_parser($opts->{functions}->{$arg},$arg);
     } else {
-        pod2usage(-verbose => 99, -noperldoc => 1, -input => $FindBin::Bin . "/doc/main.pod", -output => \*STDOUT, -sections => $opts->{helper} );
+	    call_pod2usage($opts->{helper});
     }
 }
 
