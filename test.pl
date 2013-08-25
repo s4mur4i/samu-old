@@ -6,7 +6,6 @@ use FindBin;
 use lib "$FindBin::Bin/lib";
 use Test::More;
 use Test::Exception;
-use Data::Dumper;
 
 BEGIN {
     ## Test Base modules
@@ -26,7 +25,7 @@ BEGIN {
     use_ok('BB::Support');
 
     ## Helper modules for testing
-    use_ok('Pod::Usage');
+#    use_ok('Pod::Usage');
 }
 
 ## Documentation tests
@@ -41,8 +40,9 @@ my $module_opts = {
 #ok(&misc::option_parser($module_opts, "TEST") );
 
 ## support test
-ok( UNIVERSAL::isa( &Support::template_keys, "ARRAY"), 'template_keys returned array' );
-throws_ok { &Support::template_info('TEST') } 'Template::Status', 'template_info throws exception';
+ok( UNIVERSAL::isa( &Support::get_keys, "ARRAY"), 'template_keys returned array' );
+ok( UNIVERSAL::isa( &Support::get_key_info("scb_342"), "HASH"), 'get_key_info returns hash' );
+throws_ok { &Support::get_key_info('TEST') } 'Template::Status', 'template_info throws exception';
 
 ## Exception tests
 throws_ok { Entity::NumException->throw( error => 'test', entity => 'test', count => '0' ) } 'Entity', 'Entity Num Exception';
