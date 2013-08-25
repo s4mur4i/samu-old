@@ -34,7 +34,6 @@ sub option_parser($$) {
         &Log::debug("loading module $module");
         eval "use $module;";
         $module->import();
-        #use "Base::$opt->{module}";
     }
     if (exists $opts->{function}) {
         &Log::debug("Invoking handler function of $module_name");

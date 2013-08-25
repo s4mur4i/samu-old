@@ -110,8 +110,6 @@ sub catch_ex {
 		&Log::critical("Desc=>'" . $ex->error . "',entity=>'" . $ex->entity ."',count=>'" . $ex->count);
 	} elsif ( $ex->isa( 'Entity::Status' ) ) {
 		&Log::critical("Desc=>'" . $ex->error . "',entity=>'" . $ex->entity);
-	} elsif ( $ex->isa( 'SDK::Error::Task::NotDefined' ) ) {
-		&Log::critical("Desc=>" . $ex->error);
 	} elsif ( $ex->isa( 'Entity::Auth' ) ) {
 		&Log::critical("Desc=>" . $ex->error . ",entity=>" . $ex->entity . ",user=>" . $ex->username . ",pass=>" . $ex->password);
 	} elsif ( $ex->isa( 'Entity::TransferError' ) ) {
