@@ -16,15 +16,15 @@
 
 =over
 
-=item I<--help|-h>
+=item --help|-h
 
     Print the help page
 
-=item I<--man|-m>
+=item --man|-m
 
     Print the man page with information about all modules
 
-=item I<-v|-vv|-vvv>
+=item -v|-vv|-vvv
 
     Increase verbosity of printing
 
@@ -43,27 +43,27 @@
 
 =over
 
-=item I<vm>
+=item vm
 
     Access VM Entity functions
 
-=item I<datastore>
+=item datastore
 
     Access Datastore functions
 
-=item I<ticket>
+=item ticket
 
     Access ticket functions
 
-=item I<kayako>
+=item kayako
 
     Access kayako functions
 
-=item I<bugzilla>
+=item bugzilla
 
     Access bugzilla functions
 
-=item I<admin>
+=item admin
 
     Higher level commands for administering or maintenance of the Vcenter and environment
 
@@ -75,247 +75,249 @@
 
 =head1 VM
 
-=head2 SYNOPSIS
+=head3 SYNOPSIS
 
     jew.pl vm [options] [function]
 
-=head2 OPTIONS
+=head3 OPTIONS
 
 =over
 
-=item I<--help|-h>
+=item --help|-h
 
     Print the help page
 
 =back
 
-=head2 FUNCTIONS
+=head3 FUNCTIONS
 
 =over
 
-=item I<clone>
+=item clone
 
     Sub used to provision vm guests from templates.
 
-=item I<add>
+=item add
 
     Sub to add different hardwares to a guest
 
-=item I<list>
+=item list
 
     Sub to list different hardwares of a guest
 
-=item I<delete>
+=item delete
 
     Sub to delete/remove different hardwares of a guest
 
-=item I<change>
+=item change
 
     Sub to change settings of a guest
 
-=item I<info>
+=item info
 
     Sub used to dump information about a vm
 
 =back
 
-=head1 VM_clone_function
+=head1 VM_FUNCTIONS
 
-=head2 SYNOPSIS
+=head2 VM_clone_function
+
+=head3 SYNOPSIS
 
     jew.pl vm clone [options]
 
-=head2 OPTIONS
+=head3 OPTIONS
 
 =over
 
-=item I<--help|-h>
+=item --help|-h
 
     Print the help page
 
 =back
 
-=head1 VM_list_function
+=head2 VM_list_function
 
-=head2 SYNOPSIS
+=head3 SYNOPSIS
 
     jew.pl vm list [options] [function]
 
-=head2 OPTIONS
+=head3 OPTIONS
 
 =over
 
-=item I<--help|-h>
+=item --help|-h
 
     Print the help page
 
 =back
 
-=head2 FUNCTIONS
+=head3 FUNCTIONS
 
 =over
 
-=item I<network>
+=item network
 
     List network interfaces attached to a vm
 
-=item I<cdrom>
+=item cdrom
 
     List cdrom-s attached to a vm
 
-=item I<disk>
+=item disk
 
     List disk-s attached to a vm
 
-=item I<snapshot>
+=item snapshot
 
     List snapshots attached to a vm
 
 =back
 
-=head1 VM_add_function
+=head2 VM_add_function
 
-=head2 SYNOPSIS
+=head3 SYNOPSIS
 
     jew.pl vm add [options] [function]
 
-=head2 OPTIONS
+=head3 OPTIONS
 
 =over
 
-=item I<--help|-h>
+=item --help|-h
 
     Print the help page
 
 =back
 
-=head2 FUNCTIONS
+=head3 FUNCTIONS
 
 =over
 
-=item I<cdrom>
+=item cdrom
 
     Add a cdrom drive to a vm
 
-=item I<network>
+=item network
 
     Add a network interface to a vm
 
-=item I<disk>
+=item disk
 
     Add a thin provisioned hard disk to a vm
 
-=item I<snapshot>
+=item snapshot
 
     List snapshots attached to a vm
 
 =back
 
-=head1 VM_delete_function
+=head2 VM_delete_function
 
-=head2 SYNOPSIS
+=head3 SYNOPSIS
 
     jew.pl vm delete [options] [function]
 
-=head2 OPTIONS
+=head3 OPTIONS
 
 =over
 
-=item I<--help|-h>
+=item --help|-h
 
     Print the help page
 
 =back
 
-=head2 FUNCTIONS
+=head3 FUNCTIONS
 
 =over
 
-=item I<cdrom>
+=item cdrom
 
     Delete a cdrom drive to a vm
 
-=item I<network>
+=item network
 
     Delete a network interface to a vm
 
-=item I<disk>
+=item disk
 
     Delete a hard disk from a vm
 
-=item I<snapshot>
+=item snapshot
 
     Delete a snapshot attached to a vm
 
 =back
 
-=head1 VM_change_function
+=head2 VM_change_function
 
-=head2 SYNOPSIS
+=head3 SYNOPSIS
 
     jew.pl vm change [options] [function]
 
-=head2 OPTIONS
+=head3 OPTIONS
 
 =over
 
-=item I<--help|-h>
+=item --help|-h
 
     Print the help page
 
 =back
 
-=head2 FUNCTIONS
+=head3 FUNCTIONS
 
 =over
 
-=item I<cdrom>
+=item cdrom
 
     Change the backend iso to a cdrom drive
 
-=item I<network>
+=item network
 
     Change the network connected to a network
 
-=item I<altername>
+=item altername
 
     Change the alternative name of a vm
 
-=item I<snapshot>
+=item snapshot
 
     Revert to snapshot attached to a vm
 
-=item I<power>
+=item power
 
     Change the power state of a vm
 
 =back
 
-=head1 VM_info_function
+=head2 VM_info_function
 
-=head2 SYNOPSIS
+=head3 SYNOPSIS
 
     jew.pl vm info [options] [function]
 
-=head2 OPTIONS
+=head3 OPTIONS
 
 =over
 
-=item I<--help|-h>
+=item --help|-h
 
     Print the help page
 
 =back
 
-=head2 FUNCTIONS
+=head3 FUNCTIONS
 
 =over
 
-=item I<dumper>
+=item dumper
 
     This information is used for development purposes, It dumps all object information about vm to STDOUT
 
-=item I<runtime>
+=item runtime
 
     Information about runtime environment
 
@@ -323,102 +325,102 @@
 
 =head1 TICKET
 
-=head2 SYNOPSIS
+=head3 SYNOPSIS
 
     jew.pl ticket [options] [function]
 
 
-=head2 OPTIONS
+=head3 OPTIONS
 
 =over
 
-=item I<--help|-h>
+=item --help|-h
 
     Print the help page
 
 =back
 
-=head2 FUNCTIONS
+=head3 FUNCTIONS
 
 =over
 
-=item I<list>
+=item list
 
     List all ticket on the ESXi, their owner, the kayako status currently, and if possible the Bugzilla status
 
-=item I<info>
+=item info
 
     List all machines attached to a ticket, and their logon information
 
-=item I<on>
+=item on
 
     Turn all machines on attached to a ticket
 
-=item I<off>
+=item off
 
     Turn all machines off attached to a ticket
 
 =back
 
-=head1 TICKET_list_function
+=head2 TICKET_list_function
 
-=head2 SYNOPSIS
+=head3 SYNOPSIS
 
     jew.pl ticket list [options]
 
-=head2 OPTIONS
+=head3 OPTIONS
 
 =over
 
-=item I<--help|-h>
+=item --help|-h
 
     Print the help page
 
 =back
 
-=head1 TICKET_info_function
+=head2 TICKET_info_function
 
-=head2 SYNOPSIS
+=head3 SYNOPSIS
 
     jew.pl ticket info [options]
 
-=head2 OPTIONS
+=head3 OPTIONS
 
 =over
 
-=item I<--help|-h>
+=item --help|-h
 
     Print the help page
 
 =back
 
-=head1 TICKET_on_function
+=head2 TICKET_on_function
 
-=head2 SYNOPSIS
+=head3 SYNOPSIS
 
     jew.pl ticket on [options]
 
-=head2 OPTIONS
+=head3 OPTIONS
 
 =over
 
-=item I<--help|-h>
+=item --help|-h
 
     Print the help page
 
 =back
 
-=head1 TICKET_off_function
+=head2 TICKET_off_function
 
-=head2 SYNOPSIS
+=head3 SYNOPSIS
 
     jew.pl ticket off [options]
 
-=head2 OPTIONS
+=head3 OPTIONS
 
 =over
 
-=item I<--help|-h>
+=item --help|-h
 
     Print the help page
 
@@ -426,101 +428,101 @@
 
 =head1 DATASTORE
 
-=head2 SYNOPSIS
+=head3 SYNOPSIS
 
     jew.pl datastore [options] [function]
 
-=head2 OPTIONS
+=head3 OPTIONS
 
 =over
 
-=item I<--help|-h>
+=item --help|-h
 
     Print the help page
 
 =back
 
-=head2 FUNCTIONS
+=head3 FUNCTIONS
 
 =over
 
-=item I<list>
+=item list
 
     List datastores mounted on Vcenter
 
-=item I<add>
+=item add
 
     Add a datastore to the Vcenter
 
-=item I<delete>
+=item delete
 
     Unmount and delete a datastore from the Vcenter
 
-=item I<info>
+=item info
 
     Information about a datastore
 
 =back
 
-=head1 DATASTORE_list_function
+=head2 DATASTORE_list_function
 
-=head2 SYNOPSIS
+=head3 SYNOPSIS
 
     jew.pl datastore list [options]
 
-=head2 OPTIONS
+=head3 OPTIONS
 
 =over
 
-=item I<-help>
+=item -help
 
     Prints the help page
 
 =back
 
-=head1 DATASTORE_add_function
+=head2 DATASTORE_add_function
 
-=head2 SYNOPSIS
+=head3 SYNOPSIS
 
     jew.pl datastore add [options]
 
-=head2 OPTIONS
+=head3 OPTIONS
 
 =over
 
-=item I<-help>
+=item -help
 
     Prints the help page
 
 =back
 
-=head1 DATASTORE_delete_function
+=head2 DATASTORE_delete_function
 
-=head2 SYNOPSIS
+=head3 SYNOPSIS
 
     jew.pl datastore delete [options]
 
-=head2 OPTIONS
+=head3 OPTIONS
 
 =over
 
-=item I<-help>
+=item -help
 
     Prints the help page
 
 =back
 
-=head1 DATASTORE_info_function
+=head2 DATASTORE_info_function
 
-=head2 SYNOPSIS
+=head3 SYNOPSIS
 
     jew.pl datastore info [options]
 
-=head2 OPTIONS
+=head3 OPTIONS
 
 =over
 
-=item I<--help|-h>
+=item --help|-h
 
     Prints the help page
 
@@ -528,25 +530,25 @@
 
 =head1 KAYAKO
 
-=head2 SYNOPSIS
+=head3 SYNOPSIS
 
     jew.pl kayako [options] [functions]
 
-=head2 OPTIONS
+=head3 OPTIONS
 
 =over
 
-=item I<-help|-h>
+=item -help|-h
 
     Print the help page
 
 =back
 
-=head2 FUNCTIONS
+=head3 FUNCTIONS
 
 =over
 
-=item I<TBD>
+=item TBD
 
     To Be Defined
 
@@ -554,25 +556,25 @@
 
 =head1 BUGZILLA
 
-=head2 SYNOPSIS
+=head3 SYNOPSIS
 
     jew.pl bugzilla [options] [functions]
 
-=head2 OPTIONS
+=head3 OPTIONS
 
 =over
 
-=item I<-help|-h>
+=item -help|-h
 
     Print the help page
 
 =back
 
-=head2 FUNCTIONS
+=head3 FUNCTIONS
 
 =over
 
-=item I<TBD>
+=item TBD
 
     To Be Defined
 
@@ -580,27 +582,43 @@
 
 =head1 ADMIN
 
-=head2 SYSNOPSIS
+=head3 SYSNOPSIS
 
     jew.pl admin [options] [functions]
 
-=head2 OPTIONS
+=head3 OPTIONS
 
 =over
 
-=item I<--help|-h>
+=item --help|-h
 
     Print the help page
 
 =back
 
-=head2 FUNCTIONS
+=head3 FUNCTIONS
 
 =over
 
-=item I<cleanup>
+=item cleanup
 
     Start the cleanup task to remove empty entites on the Vcenter
+
+=back
+
+=head2 ADMIN_cleanup_function
+
+=head3 SYSNOPSIS
+
+    jew.pl admin cleanup [options]
+
+=head3 OPTIONS
+
+=over
+
+=item --help|-h
+
+    Print the help page
 
 =back
 

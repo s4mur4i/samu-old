@@ -49,4 +49,7 @@ sub option_parser($$) {
     }
 }
 
+sub test {
+    return 0;
+}
 1

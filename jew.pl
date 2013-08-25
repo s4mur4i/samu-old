@@ -6,7 +6,6 @@ use warnings;
 use Data::Dumper;
 use FindBin;
 use lib "$FindBin::Bin/lib";
-#use BB::Log qw(debug error normal info);
 use BB::Log;
 use Getopt::Long qw(:config bundling pass_through require_order);
 use VMware::VIRuntime;
