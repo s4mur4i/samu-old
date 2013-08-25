@@ -17,6 +17,8 @@ Sys::Syslog
 URI::Escape
 URI::URL
 XML::LibXML
+5.006001
+5.14.0
 Carp
 DBI
 Encode
