@@ -29,20 +29,52 @@ BEGIN() {
 our $module_opts = {
     helper => 'VM',
     functions => {
-        clone => {function => \&clone, },
-        add => {function => \&add, },
-        delete => {function => \&delete, },
+        clone => { helper => 'VM_clone_function', function => \&clone_vm, },
+        info => {
+            helper => 'VM_info_function',
+            functions => {
+                dumper => { helper => 'AUTHOR', function => \&info_dumper },
+                runtime => { helper => 'AUTHOR', function => \&info_runtime },
+            }
+        },
+        add => {
+            helper => 'VM_add_function',
+            functions => {
+                cdrom => { helper => 'AUTHOR', function => \&add_cdrom },
+                network => { helper => 'AUTHOR', function => \&add_network },
+                disk => { helper => 'AUTHOR', function => \&add_disk },
+                snapshot => { helper => 'AUTHOR', function => \&add_snapshot },
+            },
+        },
+        delete => {
+            helper => 'VM_delete_function',
+            functions => {
+                cdrom => { helper => 'AUTHOR', function => \&delete_cdrom },
+                network => { helper => 'AUTHOR', function => \&delete_network },
+                disk => { helper => 'AUTHOR', function => \&delete_disk },
+                snapshot => { helper => 'AUTHOR', function => \&delete_snapshot },
+            },
+        },
         list => {
             helper => 'VM_list_function',
             functions => {
                 cdrom => { helper => 'AUTHOR', function => \&list_cdrom },
-                network => { helper => 'AUTHOR', function => \&list_network},
-                disk => { helper => 'AUTHOR', function => \&list_disk},
-                snapshopt => {helper => 'AUTHOR', function => \&list_snapshot},
+                network => { helper => 'AUTHOR', function => \&list_network },
+                disk => { helper => 'AUTHOR', function => \&list_disk },
+                snapshopt => { helper => 'AUTHOR', function => \&list_snapshot },
             },
         },
-        change => {function => \&change, },
-    }
+        change => {
+            helper => 'VM_change_function',
+            functions => {
+                cdrom => { helper => 'AUTHOR', function => \&change_cdrom },
+                network => { helper => 'AUTHOR', function => \&change_network },
+                disk => { helper => 'AUTHOR', function => \&change_disk },
+                snapshot => { helper => 'AUTHOR', function => \&change_snapshot },
+                power => { helper => 'AUTHOR', function => \&change_power },
+            },
+        },
+    },
 };
 
 sub main {
@@ -66,5 +98,8 @@ sub list_snapshot {
 
 }
 
+sub clone_vm {
+    &Log::debug("Entity::clone sub started");
+}
 1;
 __END__

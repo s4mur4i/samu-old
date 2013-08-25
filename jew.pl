@@ -13,18 +13,20 @@ use VMware::VIRuntime;
 use Pod::Usage;
 use Base::misc;
 use Switch;
+use 5.14.0;
 
 my $help = 0;
 my $man = 0;
 
 my $jew_opts = {
-    helper => [ qw(SYNOPSIS OPTIONS) ],
+    helper => [ qw(SYNOPSIS OPTIONS FUNCTIONS) ],
     functions => {
         vm => { helper => 'VM', module => 'entity', function => \&entity::main },
         datastore => { helper => 'DATASTORE', module => 'datastore', function => \&datastore::main },
         kayako => { helper => 'KAYAKO', module => 'kayako', function => \&kayako::main },
         ticket => { helper => 'TICKET', module => 'ticket', function => \&ticket::main },
         bugzilla => { helper => 'BUGZILLA', module => 'bugzilla', function => \&bugzilla::main },
+        admin => { helper => 'ADMIN', module => 'admin', function => \&admin::main },
     }
 };
 
@@ -35,7 +37,7 @@ sub podman {
 
 sub podhelp {
     &Log::debug("Help requested");
-    pod2usage({-verbose => 99, -output => \*STDOUT ,-input => $FindBin::Bin . "/doc/main.pod", -noperldoc => 1, -sections => [ qw(SYNOPSIS OPTIONS) ] });
+    pod2usage({-verbose => 99, -output => \*STDOUT ,-input => $FindBin::Bin . "/doc/main.pod", -noperldoc => 1, -sections => [ qw(SYNOPSIS OPTIONS FUNCTIONS) ] });
 }
 
 ### Main
