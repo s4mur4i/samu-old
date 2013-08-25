@@ -6,11 +6,11 @@
 
     This script is used as a wrapper script for automatisation task used by support.
 
-    To get information about any sub module call any option with help
+    To get information about any sub module call any option with help. Documentation and information can be reached under the repective sub module help.
 
 =head1 SYNOPSIS
 
-    jew.pl [-v] [--help|-h] [--man|-m] [options]
+    jew.pl [options] [function]
 
 =head1 OPTIONS
 
@@ -22,11 +22,26 @@
 
 =item I<--man|-m>
 
-    Print the man page
+    Print the man page with information about all modules
 
 =item I<-v|-vv|-vvv>
 
     Increase verbosity of printing
+
+=item -v
+    Print WARNING messages
+
+=item -vv
+    Print INFO messages
+
+=item -vvv
+    Print DEBUG information used at development or troubleshooting phase
+
+=back
+
+=head1 FUNCTIONS
+
+=over
 
 =item I<vm>
 
@@ -48,25 +63,35 @@
 
     Access bugzilla functions
 
+=item I<admin>
+
+    Higher level commands for administering or maintenance of the Vcenter and environment
+
 =back
 
 =head1 SUBS
 
-    List of defined function, each can be called with it's own help and detailed information. Each sub has their own help defined.
+    List of defined functions, each can be called with it's own help and detailed information. Each sub has their own help defined.
 
 =head1 VM
 
 =head2 SYNOPSIS
 
-    jew.pl vm [options]
+    jew.pl vm [options] [function]
 
 =head2 OPTIONS
 
 =over
 
-=item I<-help|h>
+=item I<--help|-h>
 
     Print the help page
+
+=back
+
+=head2 FUNCTIONS
+
+=over
 
 =item I<clone>
 
@@ -86,7 +111,27 @@
 
 =item I<change>
 
-    Sub to change hardware settings of a guest
+    Sub to change settings of a guest
+
+=item I<info>
+
+    Sub used to dump information about a vm
+
+=back
+
+=head1 VM_clone_function
+
+=head2 SYNOPSIS
+
+    jew.pl vm clone [options]
+
+=head2 OPTIONS
+
+=over
+
+=item I<--help|-h>
+
+    Print the help page
 
 =back
 
@@ -94,9 +139,19 @@
 
 =head2 SYNOPSIS
 
-    jew.pl vm list [options]
+    jew.pl vm list [options] [function]
 
 =head2 OPTIONS
+
+=over
+
+=item I<--help|-h>
+
+    Print the help page
+
+=back
+
+=head2 FUNCTIONS
 
 =over
 
@@ -122,9 +177,19 @@
 
 =head2 SYNOPSIS
 
-    jew.pl vm add [options]
+    jew.pl vm add [options] [function]
 
 =head2 OPTIONS
+
+=over
+
+=item I<--help|-h>
+
+    Print the help page
+
+=back
+
+=head2 FUNCTIONS
 
 =over
 
@@ -150,9 +215,19 @@
 
 =head2 SYNOPSIS
 
-    jew.pl vm delete [options]
+    jew.pl vm delete [options] [function]
 
 =head2 OPTIONS
+
+=over
+
+=item I<--help|-h>
+
+    Print the help page
+
+=back
+
+=head2 FUNCTIONS
 
 =over
 
@@ -170,7 +245,7 @@
 
 =item I<snapshot>
 
-    List snapshots attached to a vm
+    Delete a snapshot attached to a vm
 
 =back
 
@@ -178,9 +253,19 @@
 
 =head2 SYNOPSIS
 
-    jew.pl vm change [options]
+    jew.pl vm change [options] [function]
 
 =head2 OPTIONS
+
+=over
+
+=item I<--help|-h>
+
+    Print the help page
+
+=back
+
+=head2 FUNCTIONS
 
 =over
 
@@ -198,7 +283,41 @@
 
 =item I<snapshot>
 
-    List snapshots attached to a vm
+    Revert to snapshot attached to a vm
+
+=item I<power>
+
+    Change the power state of a vm
+
+=back
+
+=head1 VM_info_function
+
+=head2 SYNOPSIS
+
+    jew.pl vm info [options] [function]
+
+=head2 OPTIONS
+
+=over
+
+=item I<--help|-h>
+
+    Print the help page
+
+=back
+
+=head2 FUNCTIONS
+
+=over
+
+=item I<dumper>
+
+    This information is used for development purposes, It dumps all object information about vm to STDOUT
+
+=item I<runtime>
+
+    Information about runtime environment
 
 =back
 
@@ -206,13 +325,100 @@
 
 =head2 SYNOPSIS
 
-    jew.pl ticket [options]
+    jew.pl ticket [options] [function]
+
 
 =head2 OPTIONS
 
 =over
 
-=item I<-help|h>
+=item I<--help|-h>
+
+    Print the help page
+
+=back
+
+=head2 FUNCTIONS
+
+=over
+
+=item I<list>
+
+    List all ticket on the ESXi, their owner, the kayako status currently, and if possible the Bugzilla status
+
+=item I<info>
+
+    List all machines attached to a ticket, and their logon information
+
+=item I<on>
+
+    Turn all machines on attached to a ticket
+
+=item I<off>
+
+    Turn all machines off attached to a ticket
+
+=back
+
+=head1 TICKET_list_function
+
+=head2 SYNOPSIS
+
+    jew.pl ticket list [options]
+
+=head2 OPTIONS
+
+=over
+
+=item I<--help|-h>
+
+    Print the help page
+
+=back
+
+=head1 TICKET_info_function
+
+=head2 SYNOPSIS
+
+    jew.pl ticket info [options]
+
+=head2 OPTIONS
+
+=over
+
+=item I<--help|-h>
+
+    Print the help page
+
+=back
+
+=head1 TICKET_on_function
+
+=head2 SYNOPSIS
+
+    jew.pl ticket on [options]
+
+=head2 OPTIONS
+
+=over
+
+=item I<--help|-h>
+
+    Print the help page
+
+=back
+
+=head1 TICKET_off_function
+
+=head2 SYNOPSIS
+
+    jew.pl ticket off [options]
+
+=head2 OPTIONS
+
+=over
+
+=item I<--help|-h>
 
     Print the help page
 
@@ -222,15 +428,101 @@
 
 =head2 SYNOPSIS
 
-    jew.pl datastore [options]
+    jew.pl datastore [options] [function]
 
 =head2 OPTIONS
 
 =over
 
-=item I<-help|h>
+=item I<--help|-h>
 
     Print the help page
+
+=back
+
+=head2 FUNCTIONS
+
+=over
+
+=item I<list>
+
+    List datastores mounted on Vcenter
+
+=item I<add>
+
+    Add a datastore to the Vcenter
+
+=item I<delete>
+
+    Unmount and delete a datastore from the Vcenter
+
+=item I<info>
+
+    Information about a datastore
+
+=back
+
+=head1 DATASTORE_list_function
+
+=head2 SYNOPSIS
+
+    jew.pl datastore list [options]
+
+=head2 OPTIONS
+
+=over
+
+=item I<-help>
+
+    Prints the help page
+
+=back
+
+=head1 DATASTORE_add_function
+
+=head2 SYNOPSIS
+
+    jew.pl datastore add [options]
+
+=head2 OPTIONS
+
+=over
+
+=item I<-help>
+
+    Prints the help page
+
+=back
+
+=head1 DATASTORE_delete_function
+
+=head2 SYNOPSIS
+
+    jew.pl datastore delete [options]
+
+=head2 OPTIONS
+
+=over
+
+=item I<-help>
+
+    Prints the help page
+
+=back
+
+=head1 DATASTORE_info_function
+
+=head2 SYNOPSIS
+
+    jew.pl datastore info [options]
+
+=head2 OPTIONS
+
+=over
+
+=item I<--help|-h>
+
+    Prints the help page
 
 =back
 
@@ -238,7 +530,7 @@
 
 =head2 SYNOPSIS
 
-    jew.pl kayako [options]
+    jew.pl kayako [options] [functions]
 
 =head2 OPTIONS
 
@@ -250,11 +542,21 @@
 
 =back
 
+=head2 FUNCTIONS
+
+=over
+
+=item I<TBD>
+
+    To Be Defined
+
+=back
+
 =head1 BUGZILLA
 
 =head2 SYNOPSIS
 
-    jew.pl bugzilla [options]
+    jew.pl bugzilla [options] [functions]
 
 =head2 OPTIONS
 
@@ -263,6 +565,42 @@
 =item I<-help|-h>
 
     Print the help page
+
+=back
+
+=head2 FUNCTIONS
+
+=over
+
+=item I<TBD>
+
+    To Be Defined
+
+=back
+
+=head1 ADMIN
+
+=head2 SYSNOPSIS
+
+    jew.pl admin [options] [functions]
+
+=head2 OPTIONS
+
+=over
+
+=item I<--help|-h>
+
+    Print the help page
+
+=back
+
+=head2 FUNCTIONS
+
+=over
+
+=item I<cleanup>
+
+    Start the cleanup task to remove empty entites on the Vcenter
 
 =back
 
@@ -272,7 +610,7 @@
 
 =over
 
-=item * We are still experimental...could be alot of problems
+=item * POD prints the help page incorrectly. The underlines are replaced by * when used with noperldoc option
 
 =back
 
