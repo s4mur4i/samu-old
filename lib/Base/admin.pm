@@ -4,6 +4,9 @@ use strict;
 use warnings;
 use BB::Log;
 use Base::misc;
+use BB::Misc;
+use BB::Support;
+use Data::Dumper;
 
 my $help = 0;
 BEGIN() {
@@ -30,9 +33,13 @@ our $module_opts = {
     helper => 'ADMIN',
     functions => {
         cleanup => {
-            helper => 'ADMIN_CLEANUP_function',
+            helper => 'ADMIN_function/ADMIN_cleanup_function',
             function => \&cleanup,
             },
+        templates => {
+            helper=> 'ADMIN_function/ADMIN_templates_function',
+            function => \&templates,
+        },
         },
 };
 
@@ -41,5 +48,22 @@ sub main {
     &misc::option_parser($module_opts,"main");
 }
 
-1;
+sub cleanup {
+
+}
+
+sub templates {
+    &Log::debug("Admin::templates sub started");
+    my $keys = &Support::get_keys('template');
+    my $max = &Misc::array_longest($keys);
+    &Log::debug("Longest element in array: $max");
+    for my $template ( @$keys ) {
+        &Log::debug("Element working on:'$template'");
+        my $path = &Support::get_key_value('template',$template,'path');
+        my $length = ( $max - length( $template ) ) +1;
+        &Log::normal("Name:'$template'" . " " x $length . "Path:'$path'");
+    }
+}
+
+1
 __END__
