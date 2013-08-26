@@ -3,6 +3,7 @@ package Support;
 use strict;
 use warnings;
 use BB::Error;
+use Data::Dumper;
 
 BEGIN {
     use Exporter;
@@ -42,11 +43,16 @@ my %template_hash = (
     'ssb_302' => { path => 'Support/vm/templates/SSB/3.0/T_ssb_302',  username => 'root', password => 'titkos', os => 'ssb' },
 );
 
-our %agents_hash = (
+my %agents_hash = (
     's4mur4i' => { mac => '02:01:20:' },
     'balage' => { mac => '02:01:12:' },
     'adrienn' => { mac => '02:01:19:' },
     'varnyu' => { mac => '02:01:19:' },
+);
+
+my %map_hash = (
+    'agents' => \%agents_hash,
+    'template' => \%template_hash,
 );
 
 
@@ -56,16 +62,20 @@ our %agents_hash = (
 
 =head3 arguments
 
-    No arguments needed
-
 =head3 return
 
-    Returns array ref of template_hash keys
+=head3 exception
 
 =cut
 
-sub get_keys {
-    return [keys %template_hash];
+sub get_keys($) {
+    my ( $hash ) = @_;
+    if ( defined $map_hash{$hash} ) {
+        my $req_hash = $map_hash{$hash};
+        return [keys %$req_hash];
+    } else {
+        Template::Status->throw( error => 'Requested hash_map was not found', template => $hash );
+    }
 }
 
 =pod
@@ -76,34 +86,28 @@ sub get_keys {
 
 =item template
 
-    Template which information should be returned from template_hash
-
 =head3 return
-
-    Returns the hash ref of information
 
 =head3 exception
 
-    If the templat is not found a Template::Status will be thrown
-
 =cut
 
-sub get_key_info($) {
-    my ( $template ) =@_;
-    if ( defined($template_hash{$template}) ) {
-        return $template_hash{$template};
+sub get_key_info($$) {
+    my ( $hash, $key ) =@_;
+    if ( grep/^$key$/, @{&get_keys($hash)} ) {
+        return $map_hash{$hash}->{$key};
     } else {
-        Template::Status->throw( error => 'Requested template was not found', template => $template );
+        Template::Status->throw( error => 'Requested key info was not found', template => $key );
     }
 }
 
-sub get_key_valuei($$) {
-    my ( $template, $key ) = @_;
-    my $hashref = &get_key_info( $template );
-    if ( defined( $hashref->{$key} ) ) {
-        return $hashref->{$key};
+sub get_key_value($$$) {
+    my ( $hash, $key, $value ) = @_;
+    my $key_hash = &get_key_info( $hash, $key );
+    if ( defined($$key_hash{$value}) ) {
+        return $$key_hash{$value};
     } else {
-        Template::Status->throw( error => 'Requested template value was not found', template => $template );
+        Template::Status->throw( error => 'Requested key value was not found', template => $value );
     }
 }
 

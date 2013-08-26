@@ -7,6 +7,7 @@ use lib "$FindBin::Bin/lib";
 use Test::More;
 use Test::Exception;
 use Data::Dumper;
+use Scalar::Util qw(reftype);
 
 BEGIN {
     ## Test Base modules
@@ -41,9 +42,18 @@ my $module_opts = {
 #ok(&misc::option_parser($module_opts, "TEST") );
 
 ## support test
-ok( UNIVERSAL::isa( &Support::get_keys, "ARRAY"), 'template_keys returned array' );
-ok( UNIVERSAL::isa( &Support::get_key_info("scb_342"), "HASH"), 'get_key_info returns hash' );
-throws_ok { &Support::get_key_info('TEST') } 'Template::Status', 'template_info throws exception';
+## get_keys
+ok( ref(&Support::get_keys("agents")) eq 'ARRAY', 'get_keys returned array' );
+throws_ok { &Support::get_keys('TEST') } 'Template::Status', 'get_keys throws exception';
+## get_key_info
+ok( ref( &Support::get_key_info('template','scb_342')) eq 'HASH', 'get_key_info returned hash' );
+throws_ok { &Support::get_key_info('TEST', 'TEST') } 'Template::Status', 'get_key_info throws exception for bad map';
+throws_ok { &Support::get_key_info('template', 'TEST') } 'Template::Status', 'get_key_info throws exception for bad key';
+## get_key_value
+ok( ref(\&Support::get_key_value('agents','s4mur4i','mac')) eq 'SCALAR', 'get_key_value returned scalar' );
+throws_ok { &Support::get_key_value('TEST', 'TEST','TEST') } 'Template::Status', 'get_key_value throws exception for bad map';
+throws_ok { &Support::get_key_value('agents', 'TEST','TEST') } 'Template::Status', 'get_key_value throws exception for bad key';
+throws_ok { &Support::get_key_value('agents', 's4mur4i','TEST') } 'Template::Status', 'get_key_value throws exception for bad value';
 
 ## Exception tests
 throws_ok { Entity::NumException->throw( error => 'test', entity => 'test', count => '0' ) } 'Entity', 'Entity Num Exception';
