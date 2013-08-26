@@ -47,6 +47,10 @@ my %agents_hash = (
     'balage' => { mac => '02:01:12:' },
     'adrienn' => { mac => '02:01:19:' },
     'varnyu' => { mac => '02:01:19:' },
+    'kkovari' => { mac => '02:01:00:' },
+    'szaki' => { mac => '02:01:00:' },
+    'blehel' => { mac => '02:01:00:' },
+    'imre' => { mac => '02:01:00:' },
 );
 
 my %map_hash = (
