@@ -12,42 +12,6 @@ BEGIN {
 	our @EXPORT = qw( &test &random_3digit &generate_mac &generate_uniq_mac &increment_mac &vmname_splitter &generate_vmname &increment_disk_name &path_to_url &filename_splitter );
 }
 
-## Returns a 3 digit random number
-## Parameters:
-##
-## Returns:
-##  random: 3 digit random number
-sub random_3digit {
-	Util::trace( 4, "Started Misc::random_3digit sub\n" );
-	my $random;
-	$random = int( rand( 999 ) );
-	Util::trace( 4, "Finished Misc::random_3digit sub return=>'$random'\n" );
-	return $random;
-}
-
-## Generates a new mac according to agents pool
-## Parameters:
-##
-## Returns:
-##  mac: new mac address format: xx:xx:xx:xx:xx:xx
-
-sub generate_mac {
-	my $username = Opts::get_option( 'username' );
-	Util::trace( 4, "Starting Misc::generate_mac sub, username=>'$username'\n" );
-	my $mac_base;
-	if ( !defined( $Support::agents_hash{$username} ) ) {
-		$mac_base = "02:01:00:";
-	} else {
-		$mac_base = $Support::agents_hash{$username}{'mac'};
-	}
-	my @chars = ( "A".."F", "0".."9" );
-	my $mac = join( "", @chars[ map { rand @chars } ( 1..6 ) ] );
-	$mac =~ s/(..)/$1:/g;
-	chop $mac;
-	Util::trace( 4, "Finished Misc::generate_mac sub, mac=>'$mac_base$mac'\n" );
-	return "$mac_base$mac";
-}
-
 ## Generates a new mac and test if uniq
 ## Parameters:
 ##
@@ -65,35 +29,6 @@ sub generate_uniq_mac {
 	}
 	Util::trace( 4, "Finished Misc::generate_uniq_mac sub, mac=>'$mac'\n" );
 	return $mac;
-}
-
-## Increment mac address by 1
-## Parameters:
-##  mac: mac address to increment format: xx:xx:xx:xx:xx:xx
-## Returns:
-##  mac: incremented mac address format: xx:xx:xx:xx:xx:xx
-
-sub increment_mac {
-	my ( $mac ) = @_;
-	Util::trace( 4, "Starting Misc::increment_mac sub, mac=>'$mac'\n" );
-	( my $mac_hex = $mac ) =~ s/://g;
-	my ( $mac_hi, $mac_lo ) = unpack( "nN", pack( 'H*', $mac_hex ) );
-	if ( $mac_lo == 0xFFFFFFFF ) {
-		$mac_hi = ( $mac_hi + 1 ) & 0xFFFF;
-		$mac_lo = 0;
-	} else {
-		++$mac_lo;
-	}
-	$mac_hex = sprintf( "%04X%08X", $mac_hi, $mac_lo );
-	my $new_mac = join( ':', $mac_hex =~ /../sg );
-	Util::trace( 3, "Incremented mac address=>'$new_mac'\n" );
-	while ( &Vcenter::mac_compare( $new_mac ) ) {
-		Util::trace( 3, "Found duplicate mac =>'$new_mac', need to regenerate\n" );
-		$new_mac = &increment_mac( $new_mac );
-		Util::trace( 3, "New generated mac address=>'$new_mac'\n" );
-	}
-	Util::trace( 4, "Finished Misc::increment_mac sub, incremented_mac=>'$new_mac'\n" );
-	return $new_mac;
 }
 
 sub increment_disk_name {
@@ -117,41 +52,6 @@ sub increment_disk_name {
 	Util::trace( 4, "Finished Misc::increment_disk_name sub, incremented_name=>'${pre}_$num$post'\n" );
 	return "${pre}_$num$post";
 }
-
-## Splits default provisioned name to variables
-## Parameters:
-##  vmname: vmname to split
-## Returns:
-##  ticket: ticket number vm is attached to
-##  username: User who provisioned machine
-##  family: OS family of template
-##  version: OS version of template
-##  lang: OS language of template
-##  arch: x64 or x86
-##  type: Which version of OS
-##  uniq: Uniq number attached to machine
-
-sub vmname_splitter {
-	my ( $vmname ) = @_;
-	Util::trace( 4, "Starting Misc::vmname_splitter sub, vmname=>'$vmname'\n" );
-	if ( $vmname !~ /^([^-]*)-([^-]*)-([^-]*)-(\d{1,3})$/ ) {
-		Util::trace( 4, "Not standard name, returning unknown\n" );
-		return ( "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown" );
-	}
-	my ( $ticket, $username, $template, $uniq ) = $vmname =~ /^([^-]*)-([^-]*)-([^-]*)-(\d{1,3})$/ ;
-	my ( $family, $version, $lang, $arch, $type );
-	if ( $template =~ /^[^_]*_[^_]*$/ ) {
-		( $family, $version ) = $template =~ /^([^_]*)_([^_]*)$/;
-		$lang = "en";
-		$arch = "x64";
-		$type = "xcb";
-	} else {
-		( $family, $version, $lang, $arch, $type ) = $template =~ /^([^_]*)_([^_]*)_([^_]*)_([^_]*)_([^_]*)$/;
-	}
-	Util::trace( 4, "Finished Misc::vmname_splitter sub, ticket=>'$ticket', username=>'$username', family=>'$family', version=>'$version', lang=>'$lang', arch=>'$arch', type=>'$type', uniq=>'$uniq'\n" );
-	return ( $ticket, $username, $family, $version, $lang, $arch, $type , $uniq );
-}
-
 sub filename_splitter {
 	my ( $filename ) = @_;
 	Util::trace( 4, "Starting Misc::filename_splitter sub, filename=>'$filename'\n" );

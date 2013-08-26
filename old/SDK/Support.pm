@@ -15,14 +15,6 @@ BEGIN {
 }
 
 
-## Agent information for scripts
-our %agents_hash = (
-	's4mur4i' => { mac => '02:01:20:' },
-	'balage' => { mac => '02:01:12:' },
-	'adrienn' => { mac => '02:01:19:' },
-	'varnyu' => { mac => '02:01:19:' },
-);
-
 sub linked_clone_template_folder_path {
 	my ( $name ) = @_;
 	Util::trace( 4, "Started Support::linked_clone_template_folder_path sub \n" );
