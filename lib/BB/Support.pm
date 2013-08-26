@@ -1,4 +1,4 @@
-ackage Support;
+package Support;
 
 use strict;
 use warnings;
@@ -65,11 +65,7 @@ our %agents_hash = (
 =cut
 
 sub get_keys {
-    my @keys;
-    for my $key ( keys %template_hash ) {
-        push(@keys, $key);
-    }
-    return \@keys;
+    return [keys %template_hash];
 }
 
 =pod
