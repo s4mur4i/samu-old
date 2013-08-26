@@ -3,7 +3,6 @@ package Support;
 use strict;
 use warnings;
 use BB::Error;
-use Data::Dumper;
 
 BEGIN {
     use Exporter;

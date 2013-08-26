@@ -8,7 +8,6 @@ use Test::More;
 use Test::Exception;
 use Data::Dumper;
 use Scalar::Util qw(reftype);
-
 BEGIN {
     ## Test Base modules
 
@@ -25,23 +24,15 @@ BEGIN {
     use_ok('BB::Log');
     use_ok('BB::Error');
     use_ok('BB::Support');
-
-    ## Helper modules for testing
-#    use_ok('Pod::Usage');
+    use_ok('BB::Misc');
 }
 
-## Documentation tests
+diag('Modules test complete');
+
+diag('Documentation tests');
 ok( -e $FindBin::Bin . "/doc/main.pod", "Main.pod exists");
 
-## misc test
-my $module_opts = {
-        helper => 'AUTHOR',
-        functions => {
-        },
-};
-#ok(&misc::option_parser($module_opts, "TEST") );
-
-## support test
+diag('Support.pm sub test');
 ## get_keys
 ok( ref(&Support::get_keys("agents")) eq 'ARRAY', 'get_keys returned array' );
 throws_ok { &Support::get_keys('TEST') } 'Template::Status', 'get_keys throws exception';
@@ -55,7 +46,11 @@ throws_ok { &Support::get_key_value('TEST', 'TEST','TEST') } 'Template::Status',
 throws_ok { &Support::get_key_value('agents', 'TEST','TEST') } 'Template::Status', 'get_key_value throws exception for bad key';
 throws_ok { &Support::get_key_value('agents', 's4mur4i','TEST') } 'Template::Status', 'get_key_value throws exception for bad value';
 
-## Exception tests
+diag('Misc.pm sub test');
+## array_longest
+ok ( &Misc::array_longest( ["t","te","test","tes" ]) eq 4, 'array_longest returned longest element');
+
+diag('Exception tests');
 throws_ok { Entity::NumException->throw( error => 'test', entity => 'test', count => '0' ) } 'Entity', 'Entity Num Exception';
 throws_ok { Entity::Status->throw( error => 'test', entity => 'test' ) } 'Entity', 'Entity Status Exception';
 throws_ok { Entity::Auth->throw( error => 'test', entity => 'test', username => 'Joe', password => 'secret' ) } 'Entity', 'Entity Auth Exception';
