@@ -51,6 +51,7 @@ diag('Misc.pm sub test');
 ok ( &Misc::array_longest( ["t","te","test","tes" ]) eq 4, 'array_longest returned longest element');
 like( &Misc::random_3digit, qr/^\d{1,3}$/, 'random_3digit gave correct random number');
 like( &Misc::generate_mac('s4mur4i'), qr/^([0-9A-F]{2}:){5}[0-9A-F]{2}$/, 'generate_mac gave a valid mac address' );
+like( &Misc::increment_mac('00:00:00:00:00:00'), qr/^(00:){5}01$/, 'increment_mac gave a valid mac address' );
 
 diag('Exception tests');
 throws_ok { Entity::NumException->throw( error => 'test', entity => 'test', count => '0' ) } 'Entity', 'Entity Num Exception';

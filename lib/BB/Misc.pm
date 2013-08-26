@@ -9,7 +9,7 @@ use BB::Support;
 BEGIN {
     use Exporter;
     our @ISA = qw( Exporter );
-    our @EXPORT = qw( &array_longest &random_3digit &generate_mac );
+    our @EXPORT = qw( &array_longest &random_3digit &generate_mac &increment_mac );
 }
 
 sub array_longest {
@@ -41,6 +41,23 @@ sub generate_mac {
     chop $mac;
     &Log::debug("Finished Misc::generate_mac sub, mac=>'$mac_base$mac'");
     return "$mac_base$mac";
+}
+
+sub increment_mac {
+    my ( $mac ) = @_;
+    &Log::debug("Starting Misc::increment_mac, mac=>'$mac'");
+    ( my $mac_hex = $mac ) =~ s/://g;
+    my ( $mac_hi, $mac_lo ) = unpack( "nN", pack( 'H*', $mac_hex ) );
+    if ( $mac_lo == 0xFFFFFFFF ) {
+        $mac_hi = ( $mac_hi + 1 ) & 0xFFFF;
+        $mac_lo = 0;
+    } else {
+        ++$mac_lo;
+    }
+    $mac_hex = sprintf( "%04X%08X", $mac_hi, $mac_lo );
+    my $new_mac = join( ':', $mac_hex =~ /../sg );
+    &Log::debug("Incrementd mac, mac=>'$new_mac'");
+    return $new_mac;
 }
 
 
