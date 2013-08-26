@@ -9,10 +9,10 @@ use BB::Support;
 BEGIN {
     use Exporter;
     our @ISA = qw( Exporter );
-    our @EXPORT = qw( &array_longest &random_3digit &generate_mac &increment_mac );
+    our @EXPORT = qw( &array_longest &random_3digit &generate_mac &increment_mac &vmname_splitter );
 }
 
-sub array_longest {
+sub array_longest($) {
     my ( $array ) = @_;
     &Log::debug("Starting Misc::array_longest sub");
     my $max = -1;
@@ -30,7 +30,7 @@ sub random_3digit {
     return int( rand( 999 ) );
 }
 
-sub generate_mac {
+sub generate_mac($) {
     my ( $username ) = @_;
     &Log::debug("Starting Misc::generate_mac sub, username=>'$username'");
     my $mac_base = &Support::get_key_value('agents',$username,'mac');
@@ -43,7 +43,7 @@ sub generate_mac {
     return "$mac_base$mac";
 }
 
-sub increment_mac {
+sub increment_mac($) {
     my ( $mac ) = @_;
     &Log::debug("Starting Misc::increment_mac, mac=>'$mac'");
     ( my $mac_hex = $mac ) =~ s/://g;
@@ -58,6 +58,28 @@ sub increment_mac {
     my $new_mac = join( ':', $mac_hex =~ /../sg );
     &Log::debug("Incrementd mac, mac=>'$new_mac'");
     return $new_mac;
+}
+
+sub vmname_splitter($) {
+    my ( $vmname ) = @_;
+    &Log::debug("Starting Misc::vmname_splitter sub, vmname=>'$vmname'");
+    if ( $vmname !~ /^([^-]*)-([^-]*)-([^-]*)-(\d{1,3})$/ ) {
+        &Log::warning("vmname is not standard. Returning unknown");
+        return ( "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown" );
+    }
+    my ( $ticket, $username, $template, $uniq ) = $vmname =~ /^([^-]*)-([^-]*)-([^-]*)-(\d{1,3})$/ ;
+    &Log::debug("ticket=>'$ticket',username=>'$username',uniq=>'$uniq'");
+    my ( $family, $version, $lang, $arch, $type );
+    if ( $template =~ /^[^_]*_[^_]*$/ ) {
+        ( $family, $version ) = $template =~ /^([^_]*)_([^_]*)$/;
+        $lang = "en";
+        $arch = "x64";
+        $type = "xcb";
+    } else {
+        ( $family, $version, $lang, $arch, $type ) = $template =~ /^([^_]*)_([^_]*)_([^_]*)_([^_]*)_([^_]*)$/;
+    }
+    &Log::debug("family=>'$family',version=>'$version',lang=>'$lang',arch=>'$arch',type=>'$type'");
+    return ( $ticket, $username, $family, $version, $lang, $arch, $type , $uniq );
 }
 
 
