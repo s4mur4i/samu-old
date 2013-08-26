@@ -119,7 +119,7 @@
 
 =back
 
-=head1 VM_FUNCTIONS
+=head1 VM_functions
 
 =head2 VM_clone_function
 
@@ -362,6 +362,8 @@
 
 =back
 
+=head1 TICKET_functions
+
 =head2 TICKET_list_function
 
 =head3 SYNOPSIS
@@ -464,6 +466,8 @@
 
 =back
 
+=head1 DATASTORE_functions
+
 =head2 DATASTORE_list_function
 
 =head3 SYNOPSIS
@@ -554,6 +558,8 @@
 
 =back
 
+=head1 KAYAKO_functions
+
 =head1 BUGZILLA
 
 =head3 SYNOPSIS
@@ -580,6 +586,8 @@
 
 =back
 
+=head1 BUGZILLA_functions
+
 =head1 ADMIN
 
 =head3 SYSNOPSIS
@@ -604,7 +612,13 @@
 
     Start the cleanup task to remove empty entites on the Vcenter
 
+=item templates
+
+    List template names and paths
+
 =back
+
+=head1 ADMIN_functions
 
 =head2 ADMIN_cleanup_function
 
@@ -622,13 +636,29 @@
 
 =back
 
+=head2 ADMIN_templates_function
+
+=head3 SYNOPSIS
+
+    jew.pl admin templates [options]
+
+=head3 OPTIONS
+
+=over
+
+=item --help|-h
+
+    Print the help page
+
+=back
+
 =head1 BUGS
 
     Known Bugs:
 
 =over
 
-=item * POD prints the help page incorrectly. The underlines are replaced by * when used with noperldoc option
+=item * There is alot of anal sex happening at my desk
 
 =back
 
