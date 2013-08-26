@@ -6,7 +6,6 @@ use BB::Log;
 use Base::misc;
 use BB::Misc;
 use BB::Support;
-use Data::Dumper;
 
 my $help = 0;
 BEGIN() {
@@ -56,7 +55,6 @@ sub templates {
     &Log::debug("Admin::templates sub started");
     my $keys = &Support::get_keys('template');
     my $max = &Misc::array_longest($keys);
-    &Log::debug("Longest element in array: $max");
     for my $template ( @$keys ) {
         &Log::debug("Element working on:'$template'");
         my $path = &Support::get_key_value('template',$template,'path');
