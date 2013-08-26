@@ -23,6 +23,7 @@ sub call_pod2usage($) {
 }
 
 sub option_parser($$) {
+    &Log::debug("Misc::option_parser sub starting");
     my $opts = shift;
     my $module_name = shift;
     GetOptions(
@@ -38,6 +39,7 @@ sub option_parser($$) {
     if (exists $opts->{function}) {
         &Log::debug("Invoking handler function of $module_name");
         &{$opts->{function}};
+        exit;
     }
 
     my $arg = shift @ARGV;
@@ -45,6 +47,7 @@ sub option_parser($$) {
 	    &Log::debug("Forwarding parsing to subfunction parser $arg");
 	    &option_parser($opts->{functions}->{$arg},$arg);
     } else {
+        &Log::debug("Calling helper");
 	    call_pod2usage($opts->{helper});
     }
 }
