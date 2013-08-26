@@ -14,6 +14,8 @@ Pod::Simple
 Pod::Usage
 Scalar::Util
 Sys::Syslog
+Test::Exception
+Test::More
 URI::Escape
 URI::URL
 XML::LibXML
