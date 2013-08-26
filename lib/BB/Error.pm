@@ -127,13 +127,13 @@ sub catch_ex {
     }
     ## Template Exceptions
 	if ( $ex->isa( 'Connection::Connect' ) ) {
-        &Log::critical("Desc=>" . $ex->error . ",template=>" . $ex->template);
-	} elsif ( $ex->isa( 'Template::Error' ) ) {
-		&Log::critical("Desc=>" . $ex->error . ",template=>" . $ex->template);
-    }
+        &Log::critical("Desc=>" . $ex->error . ",type=>" . $ex->type . ",dest=>" . $ex->dest );
+	}
     ## Connection Exceptions
 	if ( $ex->isa( 'Template::Status' ) ) {
-        &Log::critical("Desc=>" . $ex->error . ",type=>" . $ex->type . ",dest=>" . $ex->dest);
+        &Log::critical("Desc=>" . $ex->error . ",template=>" . $ex->template);
+    } elsif ( $ex->isa( 'Template::Error' ) ) {
+        &Log::critical("Desc=>" . $ex->error . ",template=>" . $ex->template);
     }
     ## Task Exceptions
     if ( $ex->isa( 'Task::NotDefined' ) ) {
