@@ -9,7 +9,7 @@ use Test::Exception;
 use Data::Dumper;
 use Scalar::Util qw(reftype);
 BEGIN {
-    ## Test Base modules
+    diag('Test Base modules');
 
     use_ok('Base::entity');
     use_ok('Base::datastore');
@@ -19,42 +19,48 @@ BEGIN {
     use_ok('Base::admin');
     use_ok('Base::misc');
 
-    ## Test BB modules
+    diag('Test BB modules');
 
     use_ok('BB::Log');
     use_ok('BB::Error');
     use_ok('BB::Support');
     use_ok('BB::Misc');
+
+    diag('Test Pod2wiki module');
+
+    use_ok('Pod::Simple::Wiki::Dokuwiki');
 }
 
-diag('Modules test complete');
-
 diag('Documentation tests');
+
 ok( -e $FindBin::Bin . "/doc/main.pod", "Main.pod exists");
 
 diag('Support.pm sub test');
-## get_keys
+
 ok( ref(&Support::get_keys("agents")) eq 'ARRAY', 'get_keys returned array' );
 throws_ok { &Support::get_keys('TEST') } 'Template::Status', 'get_keys throws exception';
-## get_key_info
+
 ok( ref( &Support::get_key_info('template','scb_342')) eq 'HASH', 'get_key_info returned hash' );
 throws_ok { &Support::get_key_info('TEST', 'TEST') } 'Template::Status', 'get_key_info throws exception for bad map';
 throws_ok { &Support::get_key_info('template', 'TEST') } 'Template::Status', 'get_key_info throws exception for bad key';
-## get_key_value
+
 ok( ref(\&Support::get_key_value('agents','s4mur4i','mac')) eq 'SCALAR', 'get_key_value returned scalar' );
 throws_ok { &Support::get_key_value('TEST', 'TEST','TEST') } 'Template::Status', 'get_key_value throws exception for bad map';
 throws_ok { &Support::get_key_value('agents', 'TEST','TEST') } 'Template::Status', 'get_key_value throws exception for bad key';
 throws_ok { &Support::get_key_value('agents', 's4mur4i','TEST') } 'Template::Status', 'get_key_value throws exception for bad value';
 
 diag('Misc.pm sub test');
-## array_longest
+
 ok ( &Misc::array_longest( ["t","te","test","tes" ]) eq 4, 'array_longest returned longest element');
+
 like( &Misc::random_3digit, qr/^\d{1,3}$/, 'random_3digit gave correct random number');
+
 like( &Misc::generate_mac('s4mur4i'), qr/^([0-9A-F]{2}:){5}[0-9A-F]{2}$/, 'generate_mac gave a valid mac address' );
+
 like( &Misc::increment_mac('00:00:00:00:00:00'), qr/^(00:){5}01$/, 'increment_mac gave a valid mac address' );
-is( &Misc::vmname_splitter('TEST'), ( 'unknown', 'unknown', 'unknown', 'unknown', 'unknown', 'unknown', 'unknown' ) , 'vmname_splitter returns unknown at not matched regex');
-is( &Misc::vmname_splitter('ticket-owner-family_version_lang_arch_type-111'), ( 'ticket', 'owner', 'family', 'version', 'lang', 'arch', 'type', '111' ) , 'vmname_splitter split a standard Win vmname');
-is( &Misc::vmname_splitter('ticket-owner-family_version-1'), ( 'ticket', 'owner', 'family', 'version', 'en', 'x64', 'xcb', '1' ) , 'vmname_splitter split a standard XCB vmname');
+ok( ref( &Misc::vmname_splitter('TEST')) eq 'HASH',  'vmname_splitter returns hash');
+#is( &Misc::vmname_splitter('ticket-owner-family_version_lang_arch_type-111'), ( 'ticket', 'owner', 'family', 'version', 'lang', 'arch', 'type', '111' ) , 'vmname_splitter split a standard Win vmname');
+#is( &Misc::vmname_splitter('ticket-owner-family_version-1'), ( 'ticket', 'owner', 'family', 'version', 'en', 'x64', 'xcb', '1' ) , 'vmname_splitter split a standard XCB vmname');
 
 diag('Exception tests');
 throws_ok { Entity::NumException->throw( error => 'test', entity => 'test', count => '0' ) } 'Entity', 'Entity Num Exception';

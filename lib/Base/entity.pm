@@ -29,16 +29,16 @@ BEGIN() {
 our $module_opts = {
     helper => 'VM',
     functions => {
-        clone => { helper => 'VM_FUNCTIONS/VM_clone_function', function => \&clone_vm, },
+        clone => { helper => 'VM_functions/VM_clone_function', function => \&clone_vm, },
         info => {
-            helper => 'VM/VM_info_function',
+            helper => 'VM_functions/VM_info_function',
             functions => {
                 dumper => { helper => 'AUTHOR', function => \&info_dumper },
                 runtime => { helper => 'AUTHOR', function => \&info_runtime },
             }
         },
         add => {
-            helper => 'VM_FUNCTIONS/VM_add_function',
+            helper => 'VM_functions/VM_add_function',
             functions => {
                 cdrom => { helper => 'AUTHOR', function => \&add_cdrom },
                 network => { helper => 'AUTHOR', function => \&add_network },
@@ -47,7 +47,7 @@ our $module_opts = {
             },
         },
         delete => {
-            helper => 'VM_FUNCTIONS/VM_delete_function',
+            helper => 'VM_functions/VM_delete_function',
             functions => {
                 cdrom => { helper => 'AUTHOR', function => \&delete_cdrom },
                 network => { helper => 'AUTHOR', function => \&delete_network },
@@ -56,7 +56,7 @@ our $module_opts = {
             },
         },
         list => {
-            helper => 'VM_FUNCTIONS/VM_list_function',
+            helper => 'VM_functions/VM_list_function',
             functions => {
                 cdrom => { helper => 'AUTHOR', function => \&list_cdrom },
                 network => { helper => 'AUTHOR', function => \&list_network },
@@ -65,7 +65,7 @@ our $module_opts = {
             },
         },
         change => {
-            helper => 'VM_FUNCTIONS/VM_change_function',
+            helper => 'VM_functions/VM_change_function',
             functions => {
                 cdrom => { helper => 'AUTHOR', function => \&change_cdrom },
                 network => { helper => 'AUTHOR', function => \&change_network },

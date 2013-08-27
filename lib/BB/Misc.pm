@@ -35,22 +35,20 @@ sub generate_mac($) {
     &Log::debug("Starting Misc::generate_mac sub, username=>'$username'");
     my $mac_base = &Support::get_key_value('agents',$username,'mac');
     &Log::debug("mac_base for $username=>'$mac_base'");
-    my @chars = ( "A".."F", "0".."9" );
-    my $mac = join( "", @chars[ map { rand @chars } ( 1..6 ) ] );
-    $mac =~ s/(..)/$1:/g;
-    chop $mac;
+    my $mac = join ':', map { sprintf("%02X",int rand(256)) } (1..3);
     &Log::debug("Finished Misc::generate_mac sub, mac=>'$mac_base$mac'");
     return "$mac_base$mac";
 }
 
+
+# increment 1 on the last 3 bytes of the MAC. if overflow occurrs, then throw error
 sub increment_mac($) {
     my ( $mac ) = @_;
     &Log::debug("Starting Misc::increment_mac, mac=>'$mac'");
     ( my $mac_hex = $mac ) =~ s/://g;
     my ( $mac_hi, $mac_lo ) = unpack( "nN", pack( 'H*', $mac_hex ) );
-    if ( $mac_lo == 0xFFFFFFFF ) {
-        $mac_hi = ( $mac_hi + 1 ) & 0xFFFF;
-        $mac_lo = 0;
+    if ( $mac_lo & 0x00FFFFFF == 0x00FFFFFF ) {
+#error
     } else {
         ++$mac_lo;
     }
@@ -62,24 +60,18 @@ sub increment_mac($) {
 
 sub vmname_splitter($) {
     my ( $vmname ) = @_;
+    my %return = ();
     &Log::debug("Starting Misc::vmname_splitter sub, vmname=>'$vmname'");
-    if ( $vmname !~ /^([^-]*)-([^-]*)-([^-]*)-(\d{1,3})$/ ) {
-        &Log::warning("vmname is not standard. Returning unknown");
-        return ( "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown", "unknown" );
-    }
-    my ( $ticket, $username, $template, $uniq ) = $vmname =~ /^([^-]*)-([^-]*)-([^-]*)-(\d{1,3})$/ ;
-    &Log::debug("ticket=>'$ticket',username=>'$username',uniq=>'$uniq'");
-    my ( $family, $version, $lang, $arch, $type );
-    if ( $template =~ /^[^_]*_[^_]*$/ ) {
-        ( $family, $version ) = $template =~ /^([^_]*)_([^_]*)$/;
-        $lang = "en";
-        $arch = "x64";
-        $type = "xcb";
+    my ( $ticket, $username, $template, $uniq ) = $vmname =~ /^([^-]*)-([^-]*)-([^-]*)-(\d{1,3})$/;
+    if ( defined($template) && $template =~ /^([^_]*)_([^_]*)_([^_]*)_([^_]*)_([^_]*)$/ ) {
+        %return = ( ticket => $ticket, username => $username, uniq => $uniq, family => $1, version => $2, lang => $3, arch => $4, type => $5 );
+    } elsif ( defined($template) && $template =~ /^([^_]*)_([^_]*)$/ ) {
+        %return = ( ticket => $ticket, username => $username, uniq => $uniq, family => $1, version => $2, lang => 'en', arch => 'x64', type => 'xcb' );
     } else {
-        ( $family, $version, $lang, $arch, $type ) = $template =~ /^([^_]*)_([^_]*)_([^_]*)_([^_]*)_([^_]*)$/;
+        &Log::warning("vmname is not standard. Returning unknown");
+        %return = ( ticket => 'unknown', username => 'unknown', uniq => 'unknown', family => 'unknown', version => 'unknown', lang => 'unknown', arch => 'unknown', type => 'unknown' );
     }
-    &Log::debug("family=>'$family',version=>'$version',lang=>'$lang',arch=>'$arch',type=>'$type'");
-    return ( $ticket, $username, $family, $version, $lang, $arch, $type , $uniq );
+    return \%return;
 }
 
 
