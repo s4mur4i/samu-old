@@ -9,7 +9,7 @@ use BB::Support;
 BEGIN {
     use Exporter;
     our @ISA = qw( Exporter );
-    our @EXPORT = qw( &array_longest &random_3digit &generate_mac &increment_mac &vmname_splitter );
+    our @EXPORT = qw( &array_longest &random_3digit &generate_mac &increment_mac &vmname_splitter &increment_disk_name &filename_splitter );
 }
 
 sub array_longest($) {
@@ -48,7 +48,8 @@ sub increment_mac($) {
     ( my $mac_hex = $mac ) =~ s/://g;
     my ( $mac_hi, $mac_lo ) = unpack( "nN", pack( 'H*', $mac_hex ) );
     if ( $mac_lo & 0x00FFFFFF == 0x00FFFFFF ) {
-#error
+        &Log::warning("Mac addressed reached end of pool");
+        Entity::Mac->throw( error => "Mac addressed reached end of pool", mac => $mac );
     } else {
         ++$mac_lo;
     }
@@ -74,6 +75,39 @@ sub vmname_splitter($) {
     return \%return;
 }
 
+sub increment_disk_name($) {
+    my ( $name ) = @_;
+    &Log::debug("Starting Misc::increment_disk_name sub, name=>'$name'");
+    my ( $pre, $num, $post );
+    if ( $name =~ /(.*)_(\d+)(\.vmdk)/ ) {
+        ( $pre, $num, $post ) = ($1, $2, $3);
+        &Log::debug("disk has already been incremented, incrementing again");
+        $num++;
+        if ( $num == 7 ) {
+            &Log::warning("We have reached the controller Id need to step one");
+            $num++;
+        }  elsif ( $num > 15 ) {
+            Entity::NumException->throw( error => 'Cannot increment further. Last disk used', entity => $name, count => '15' );
+        }
+    } else {
+        &Log::debug("This will be first increment to disk name");
+        ( $pre, $post ) = $name =~ /(.*)(\.vmdk)/;
+        $num =1;
+    }
+    &Log::debug("disk name has been incremented=>'${pre}_$num$post'");
+    return "${pre}_$num$post";
+}
+
+sub filename_splitter {
+    my ( $filename ) = @_;
+    &Log::debug("Starting Misc::filename_splitter sub, filename=>'$filename'");
+    my ( $datas, $folder, $image ) = $filename =~ qr@^\s*\[([^\]]*)\]\s*(.*)/([^/]*)$@;
+    if ( !defined($datas) ) {
+        Vcenter::Path->throw( error => 'Could not split filename, not according to regex', path => $filename );
+    }
+    &Log::debug("Finished Misc::filename_splitter sub, datastore=>'$datas', folder=>'$folder', image=>'$image'");
+    return [ $datas, $folder, $image ];
+}
 
 1
 __END__

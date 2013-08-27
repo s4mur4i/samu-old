@@ -31,35 +31,6 @@ sub generate_uniq_mac {
 	return $mac;
 }
 
-sub increment_disk_name {
-	my ( $name ) = @_;
-	Util::trace( 4, "Starting Misc::increment_disk_name sub, name=>'$name'\n" );
-	my ( $pre, $num, $post );
-	if ( $name =~ /(.*)_(\d+)(\.vmdk)/ ) {
-		( $pre, $num, $post ) = $name =~ /(.*)_(\d+)(\.vmdk)/;
-		Util::trace( 5, "Incremented Num:'" . $num . "'\n" );
-		$num++;
-		if ( $num == 7 ) {
-			$num++;
-		}  elsif ( $num > 15 ) {
-			SDK::Error::Entity::NumException->throw( error => 'Cannot increment further. Last disk used', entity => $name, count => '15' );
-		}
-	} else {
-		Util::trace( 5, "No num, need to do first increment\n" );
-		( $pre, $post ) = $name =~ /(.*)(\.vmdk)/;
-		$num =1;
-	}
-	Util::trace( 4, "Finished Misc::increment_disk_name sub, incremented_name=>'${pre}_$num$post'\n" );
-	return "${pre}_$num$post";
-}
-sub filename_splitter {
-	my ( $filename ) = @_;
-	Util::trace( 4, "Starting Misc::filename_splitter sub, filename=>'$filename'\n" );
-	my ( $datas, $folder, $image ) = $filename =~ qr@^\s*\[([^\]]*)\]\s*(.*)/([^/]*)$@;
-	Util::trace( 4, "Finished Misc::filename_splitter sub, datastore=>'$datas', folder=>'$folder', image=>'$image'\n" );
-	return ( $datas, $folder, $image );
-}
-
 sub path_to_url {
 	my ( $path ) = @_;
 	Util::trace( 4, "Starting Misc::path_to_url sub, path=>'$path'\n" );

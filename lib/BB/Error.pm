@@ -52,6 +52,11 @@ use Exception::Class (
 		description => 'Snapshot Error',
         fields => [ 'snapshot' ],
 	},
+    'Entity::Mac' => {
+        isa => 'Entity',
+        description => 'There was a problem with a mac',
+        fields => [ 'mac' ],
+    },
 
     ## Vcenter Exceptions
 
@@ -118,6 +123,8 @@ sub catch_ex {
 		&Log::critical("Desc=>" . $ex->error . ",entity=>" . $ex->entity . ",hw=>" . $ex->hw);
 	} elsif ( $ex->isa( 'Entity::Snapshot' ) ) {
 		&Log::critical("Desc=>" . $ex->error);
+    } elsif ( $ex->isa( 'Entity::Mac' ) ) {
+        &Log::critical("Desc=>" . $ex->error . ",mac=>" . $ex->mac );
     }
     ## Vcenter Exceptions
 	if ( $ex->isa( 'Vcenter::ServiceContent' ) ) {
