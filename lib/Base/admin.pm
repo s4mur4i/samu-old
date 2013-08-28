@@ -6,6 +6,7 @@ use BB::Log;
 use Base::misc;
 use BB::Misc;
 use BB::Support;
+use BB::VCenter;
 
 my $help = 0;
 BEGIN() {
@@ -32,14 +33,18 @@ our $module_opts = {
     helper => 'ADMIN',
     functions => {
         cleanup => {
-            helper => 'ADMIN_function/ADMIN_cleanup_function',
+            helper => 'ADMIN_functions/ADMIN_cleanup_function',
             function => \&cleanup,
             },
         templates => {
-            helper=> 'ADMIN_function/ADMIN_templates_function',
+            helper => 'ADMIN_functions/ADMIN_templates_function',
             function => \&templates,
         },
+        test => {
+            helper => 'ADMIN_functions/ADMIN_test_function',
+            function => \&test,
         },
+    },
 };
 
 sub main {
@@ -63,5 +68,14 @@ sub templates {
     }
 }
 
+sub test {
+    my %opt = ();
+    &VCenter::SDK_options(%opt);
+    &VCenter::connect_vcenter();
+    my $si_moref = ManagedObjectReference->new(type => 'ServiceInstance',value => 'ServiceInstance');
+    my $si_view = Vim::get_view(mo_ref => $si_moref);
+    &Log::normal("Server Time : ". $si_view->CurrentTime());
+    &VCenter::disconnect_vcenter();
+}
 1
 __END__

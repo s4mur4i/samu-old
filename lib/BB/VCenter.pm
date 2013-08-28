@@ -10,7 +10,7 @@ use Data::Dumper;
 BEGIN {
     use Exporter;
     our @ISA = qw( Exporter );
-    our @EXPORT = qw( &num_check &SDK_options &connet_vcenter);
+    our @EXPORT = qw( &num_check &SDK_options &connet_vcenter &disconnect_vcenter );
 }
 
 sub num_check($$) {

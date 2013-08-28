@@ -8,11 +8,12 @@ use FindBin;
 use lib "$FindBin::Bin/lib";
 use BB::Log;
 use Getopt::Long qw(:config bundling pass_through require_order);
-use VMware::VIRuntime;
+#use VMware::VIRuntime;
 use Pod::Usage;
 use Base::misc;
 use Switch;
 use 5.14.0;
+use BB::Error;
 
 my $help = 0;
 my $man = 0;
@@ -51,6 +52,10 @@ GetOptions(
     'man|m' => \&podman,
     );
 
+eval {
 &misc::option_parser($jew_opts,"jew_main");
-
+};
+if ( $@ ) {
+    &Error::catch_ex($@);
+}
 __END__

@@ -616,6 +616,10 @@
 
     List template names and paths
 
+=item test
+
+    Test connection to VCenter. Prints the Server time
+
 =back
 
 =head1 ADMIN_functions
@@ -641,6 +645,22 @@
 =head3 SYNOPSIS
 
     jew.pl admin templates [options]
+
+=head3 OPTIONS
+
+=over
+
+=item --help|-h
+
+    Print the help page
+
+=back
+
+=head2 ADMIN_test_function
+
+=head3 SYSNOPSIS
+
+    jew.pl admin test [options]
 
 =head3 OPTIONS
 
