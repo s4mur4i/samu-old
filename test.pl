@@ -7,7 +7,8 @@ use lib "$FindBin::Bin/lib";
 use Test::More;
 use Test::Exception;
 use Data::Dumper;
-use Scalar::Util qw(reftype);
+#use Scalar::Util qw(reftype);
+use Test::MockModule;
 BEGIN {
     diag('Test Base modules');
 
@@ -25,17 +26,23 @@ BEGIN {
     use_ok('BB::Error');
     use_ok('BB::Support');
     use_ok('BB::Misc');
+    use_ok('BB::VCenter');
 
     diag('Test Pod2wiki module');
 
     use_ok('Pod::Simple::Wiki::Dokuwiki');
+
+    diag('Vmware framework');
+    use_ok('VMware::VIRuntime');
 }
-
+###
 diag('Documentation tests');
-
+###
 ok( -e $FindBin::Bin . "/doc/main.pod", "Main.pod exists");
 
+###
 diag('Support.pm sub test');
+###
 
 ok( ref(&Support::get_keys("agents")) eq 'ARRAY', 'get_keys returned array' );
 throws_ok { &Support::get_keys('TEST') } 'Template::Status', 'get_keys throws exception';
@@ -49,7 +56,9 @@ throws_ok { &Support::get_key_value('TEST', 'TEST','TEST') } 'Template::Status',
 throws_ok { &Support::get_key_value('agents', 'TEST','TEST') } 'Template::Status', 'get_key_value throws exception for bad key';
 throws_ok { &Support::get_key_value('agents', 's4mur4i','TEST') } 'Template::Status', 'get_key_value throws exception for bad value';
 
+###
 diag('Misc.pm sub test');
+###
 
 ok ( &Misc::array_longest( ["t","te","test","tes" ]) eq 4, 'array_longest returned longest element');
 
@@ -77,7 +86,20 @@ ok( ref(&Misc::filename_splitter("[datastore] big/jew/dick.vmdk")) eq 'ARRAY', '
 is_deeply( &Misc::filename_splitter("[datastore] big/jew/dick.vmdk"), \@array, 'filename_splitter returned correct information'  );
 throws_ok{ &Misc::filename_splitter("I will be an exception") } 'Vcenter::Path', 'filename_splitter throws exception';
 
+like( &Misc::generate_vmname("ticket", "joe", "os_temp"), qr/^ticket-joe-os_temp-\d{1,3}$/, 'generate_vmname returned a valid vmname' );
+
+###
+diag('VCenter sub tests');
+###
+#{
+#use VMware::VICommon;
+#my $module = new Test::MockModule('VMware::VICommon');
+#$module->mock( 'Vim::find_entity_views' => sub{ return [ "test" ] });
+#ok( &VCenter::num_check("test","test") , 'num_check sub succesfuly run');
+#}
+###
 diag('Exception tests');
+###
 throws_ok { Entity::NumException->throw( error => 'test', entity => 'test', count => '0' ) } 'Entity', 'Entity Num Exception';
 throws_ok { Entity::Status->throw( error => 'test', entity => 'test' ) } 'Entity', 'Entity Status Exception';
 throws_ok { Entity::Auth->throw( error => 'test', entity => 'test', username => 'Joe', password => 'secret' ) } 'Entity', 'Entity Auth Exception';

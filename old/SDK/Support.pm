@@ -1,19 +1,3 @@
-package Support;
-
-use strict;
-use warnings;
-use Data::Dumper;
-use SDK::Vcenter;
-use SDK::Misc;
-use SDK::GuestManagement;
-use SDK::Error;
-
-BEGIN {
-	use Exporter;
-	our @ISA = qw( Exporter );
-	our @EXPORT = qw( &test %template_hash %agents_hash &linked_clone_template_folder_path &generate_network_setup_for_clone &win_VirtualMachineCloneSpec &lin_VirtualMachineCloneSpec &oth_VirtualMachineCloneSpec );
-}
-
 
 sub linked_clone_template_folder_path {
 	my ( $name ) = @_;

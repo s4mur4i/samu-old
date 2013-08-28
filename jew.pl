@@ -16,6 +16,10 @@ use 5.14.0;
 
 my $help = 0;
 my $man = 0;
+# To mitigate SSL warnings by default
+BEGIN {
+    $ENV{PERL_LWP_SSL_VERIFY_HOSTNAME} = 0;
+}
 
 my $jew_opts = {
     helper => [ qw(SYNOPSIS OPTIONS FUNCTIONS) ],

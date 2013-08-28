@@ -9,7 +9,7 @@ use BB::Support;
 BEGIN {
     use Exporter;
     our @ISA = qw( Exporter );
-    our @EXPORT = qw( &array_longest &random_3digit &generate_mac &increment_mac &vmname_splitter &increment_disk_name &filename_splitter );
+    our @EXPORT = qw( &array_longest &random_3digit &generate_mac &increment_mac &vmname_splitter &increment_disk_name &filename_splitter &generate_vmname );
 }
 
 sub array_longest($) {
@@ -107,6 +107,12 @@ sub filename_splitter {
     }
     &Log::debug("Finished Misc::filename_splitter sub, datastore=>'$datas', folder=>'$folder', image=>'$image'");
     return [ $datas, $folder, $image ];
+}
+
+sub generate_vmname {
+    my ( $ticket, $username, $os_temp ) = @_;
+    &Log::debug("Starting Misc::generate_vmname sub, ticket=>'$ticket', username=>'$username', os_temp=>'$os_temp'");
+    return $ticket . "-" . $username . "-" . $os_temp . "-" . &random_3digit;
 }
 
 1
