@@ -31,7 +31,7 @@ sub option_parser($$) {
         GetOptions(
                 'help|h' => \$help,
                 );
-        $help and &call_pod2usage($opts->{helper});
+        $help && &call_pod2usage($opts->{helper});
     }
     if (exists $opts->{module}) {
         my $module = 'Base::'.$opts->{module};
@@ -51,18 +51,17 @@ sub option_parser($$) {
         }
         &Log::debug("Invoking handler function of $module_name");
         &{$opts->{function}};
-        &Log::debug("Disconnecting to Vcenter");
+        &Log::debug("Disconnecting from Vcenter");
         &VCenter::disconnect_vcenter();
-        exit;
-    }
-
-    my $arg = shift @ARGV;
-    if (defined $arg and exists $opts->{functions}->{$arg}) {
-	    &Log::debug("Forwarding parsing to subfunction parser $arg");
-	    &option_parser($opts->{functions}->{$arg},$arg);
     } else {
-        &Log::debug("Calling helper");
-	    call_pod2usage($opts->{helper});
+        my $arg = shift @ARGV;
+        if (defined $arg and exists $opts->{functions}->{$arg}) {
+            &Log::debug("Forwarding parsing to subfunction parser $arg");
+            &option_parser($opts->{functions}->{$arg},$arg);
+        } else {
+            &Log::debug("Calling helper");
+            call_pod2usage($opts->{helper});
+        }
     }
 }
 

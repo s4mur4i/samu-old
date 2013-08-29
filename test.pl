@@ -27,6 +27,7 @@ BEGIN {
     use_ok('BB::Support');
     use_ok('BB::Misc');
     use_ok('BB::VCenter');
+    use_ok('BB::SDK');
 
     diag('Test Pod2wiki module');
 

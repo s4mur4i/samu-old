@@ -52,9 +52,7 @@ GetOptions(
     'man|m' => \&podman,
     );
 
-eval {
-&misc::option_parser($jew_opts,"jew_main");
-};
+eval { &misc::option_parser($jew_opts,"jew_main"); };
 if ( $@ ) {
     &Error::catch_ex($@);
 }
