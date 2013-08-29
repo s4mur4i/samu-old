@@ -26,7 +26,7 @@ sub num_check($$) {
 sub exists_entity($$) {
     my ( $name, $type ) = @_;
     &Log::debug("Starting Vcenter::exists_entity sub, name=>'$name', type=>'$type'");
-    my $view = Vim::find_entity_view( view_type => $type, properties => [ 'name' ], filter => { name => $name } );
+    my $view = &SDK::single_entity_name( $name, $type );
     if ( defined( $view ) ) {
         return 1;
     }else {

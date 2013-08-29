@@ -93,9 +93,16 @@ like( &Misc::generate_vmname("ticket", "joe", "os_temp"), qr/^ticket-joe-os_temp
 diag('VCenter sub tests');
 ###
 #{
-#use VMware::VICommon;
-#my $module = new Test::MockModule('VMware::VICommon');
-#$module->mock( 'Vim::find_entity_views' => sub{ return [ "test" ] });
+#print "DEBUG: ",Dumper(\%VCenter::),"\n";
+
+#*{SDK::multiple_entity_view} = sub { print "anyad\n\n"; return 1; };
+
+#my $module = Test::MockModule->new('BB::SDK');
+#$module->mock( 'multiple_entity_view' => sub{ return [ "test" ] });
+#print "DEBUG: ",ref \*{SDK::multiple_entity_view},"\n";
+#print "DEBUG: ",Dumper(\%SDK::),"\n";
+#print "is mocked: " . $module->is_mocked(\&SDK::multiple_entity_view);
+#&SDK::multiple_entity_view;
 #ok( &VCenter::num_check("test","test") , 'num_check sub succesfuly run');
 #}
 ###

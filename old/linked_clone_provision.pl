@@ -30,46 +30,6 @@ sub get_config_spec() {
    }
 }
 
-my %opts = (
-	ticket => {
-		type => "=s",
-		help => "The ticket id the machine is going to be created for",
-		required => 1,
-	},
-	os_temp => {
-		type => "=s",
-		help => "The machine tempalte we want to use",
-		required => 1,
-	},
-	parent_pool => {
-		type => "=s",
-		help => "Parent resource pool. Defaults to users pool.",
-		default => 'Resources',
-		required => 0,
-	},
-	memory => {
-                type => "=s",
-                help => "Requested memory in MB",
-                required => 0,
-        },
-	cpu => {
-                type => "=s",
-                help => "Requested Core count for machine",
-                required => 0,
-        },
-);
-Opts::add_options(%opts);
-Opts::parse();
-Opts::validate();
-my $username = Opts::get_option('username');
-my $password = Opts::get_option('password');
-my $datacenter = Opts::get_option('datacenter');
-my $url = Opts::get_option('url');
-Util::connect( $url, $username, $password );
-my $vim=Vim::get_vim;
-my $ticket = Opts::get_option('ticket');
-my $os_temp = Opts::get_option('os_temp');
-my $parent_pool = Opts::get_option('parent_pool');
 eval {
 if (!&Vcenter::exists_resource_pool($parent_pool)) {
 	Util::trace( 0, "Parent pool does not exist.\n" );
