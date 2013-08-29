@@ -29,43 +29,77 @@ BEGIN() {
 our $module_opts = {
     helper => 'VM',
     functions => {
-        clone => { helper => 'VM_functions/VM_clone_function', function => \&clone_vm, },
+        clone => {
+            function => \&clone_vm,
+            opts => {
+                ticket => {
+                    type => "=s",
+                    help => "The ticket id the machine is going to be created for",
+                    required => 1,
+                },
+                os_temp => {
+                    type => "=s",
+                    help => "The machine tempalte we want to use",
+                    required => 1,
+                },
+                parent_pool => {
+                    type => "=s",
+                    help => "Parent resource pool. Defaults to users pool.",
+                    default => 'Resources',
+                    required => 0,
+                },
+                memory => {
+                    type => "=s",
+                    help => "Requested memory in MB",
+                    required => 0,
+                },
+                cpu => {
+                    type => "=s",
+                    help => "Requested Core count for machine",
+                    required => 0,
+                },
+                domain => {
+                    type => "",
+                    help => "Should the requested machine be added to support.ittest.domain",
+                    required => 0,
+                },
+            },
+        },
         info => {
-            helper => 'VM_functions/VM_info_function',
             functions => {
                 dumper => { helper => 'AUTHOR', function => \&info_dumper },
                 runtime => { helper => 'AUTHOR', function => \&info_runtime },
-            }
+            },
+            opts => {},
         },
         add => {
-            helper => 'VM_functions/VM_add_function',
             functions => {
                 cdrom => { helper => 'AUTHOR', function => \&add_cdrom },
                 network => { helper => 'AUTHOR', function => \&add_network },
                 disk => { helper => 'AUTHOR', function => \&add_disk },
                 snapshot => { helper => 'AUTHOR', function => \&add_snapshot },
             },
+            opts => {},
         },
         delete => {
-            helper => 'VM_functions/VM_delete_function',
             functions => {
                 cdrom => { helper => 'AUTHOR', function => \&delete_cdrom },
                 network => { helper => 'AUTHOR', function => \&delete_network },
                 disk => { helper => 'AUTHOR', function => \&delete_disk },
                 snapshot => { helper => 'AUTHOR', function => \&delete_snapshot },
             },
+            opts => {},
         },
         list => {
-            helper => 'VM_functions/VM_list_function',
             functions => {
                 cdrom => { helper => 'AUTHOR', function => \&list_cdrom },
                 network => { helper => 'AUTHOR', function => \&list_network },
                 disk => { helper => 'AUTHOR', function => \&list_disk },
                 snapshopt => { helper => 'AUTHOR', function => \&list_snapshot },
             },
+            opts => {},
         },
         change => {
-            helper => 'VM_functions/VM_change_function',
             functions => {
                 cdrom => { helper => 'AUTHOR', function => \&change_cdrom },
                 network => { helper => 'AUTHOR', function => \&change_network },
@@ -73,6 +107,7 @@ our $module_opts = {
                 snapshot => { helper => 'AUTHOR', function => \&change_snapshot },
                 power => { helper => 'AUTHOR', function => \&change_power },
             },
+            opts => {},
         },
     },
 };

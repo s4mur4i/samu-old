@@ -6,6 +6,7 @@ use BB::Log;
 use Getopt::Long qw(:config bundling pass_through require_order);
 use Pod::Usage;
 use FindBin;
+use BB::VCenter;
 
 BEGIN() {
     use Exporter();
@@ -26,10 +27,12 @@ sub option_parser($$) {
     &Log::debug("Misc::option_parser sub starting");
     my $opts = shift;
     my $module_name = shift;
-    GetOptions(
-            'help|h' => \$help,
-            );
-    $help and &call_pod2usage($opts->{helper});
+    if ( exists( $opts->{helper} ) ) {
+        GetOptions(
+                'help|h' => \$help,
+                );
+        $help and &call_pod2usage($opts->{helper});
+    }
     if (exists $opts->{module}) {
         my $module = 'Base::'.$opts->{module};
         &Log::debug("loading module $module");
@@ -37,8 +40,19 @@ sub option_parser($$) {
         $module->import();
     }
     if (exists $opts->{function}) {
+        if ( exists $opts->{opts} ) {
+            &Log::debug("Parsing options to VMware SDK");
+            &VCenter::SDK_options( $opts->{opts} );
+            eval {
+                &Log::debug("Connecting to Vcenter");
+                &VCenter::connect_vcenter();
+            };
+            if ($@) { &Error::catch_ex($@)};
+        }
         &Log::debug("Invoking handler function of $module_name");
         &{$opts->{function}};
+        &Log::debug("Disconnecting to Vcenter");
+        &VCenter::disconnect_vcenter();
         exit;
     }
 

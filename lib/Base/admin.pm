@@ -33,16 +33,16 @@ our $module_opts = {
     helper => 'ADMIN',
     functions => {
         cleanup => {
-            helper => 'ADMIN_functions/ADMIN_cleanup_function',
             function => \&cleanup,
+            opts => {},
             },
         templates => {
-            helper => 'ADMIN_functions/ADMIN_templates_function',
             function => \&templates,
+            opts => {},
         },
         test => {
-            helper => 'ADMIN_functions/ADMIN_test_function',
             function => \&test,
+            opts => {},
         },
     },
 };
@@ -69,13 +69,10 @@ sub templates {
 }
 
 sub test {
-    my %opt = ();
-    &VCenter::SDK_options(%opt);
-    &VCenter::connect_vcenter();
     my $si_moref = ManagedObjectReference->new(type => 'ServiceInstance',value => 'ServiceInstance');
     my $si_view = Vim::get_view(mo_ref => $si_moref);
     &Log::normal("Server Time : ". $si_view->CurrentTime());
-    &VCenter::disconnect_vcenter();
 }
+
 1
 __END__

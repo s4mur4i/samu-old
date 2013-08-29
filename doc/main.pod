@@ -131,10 +131,6 @@
 
 =over
 
-=item --help|-h
-
-    Print the help page
-
 =back
 
 =head2 VM_list_function
@@ -146,10 +142,6 @@
 =head3 OPTIONS
 
 =over
-
-=item --help|-h
-
-    Print the help page
 
 =back
 
@@ -185,10 +177,6 @@
 
 =over
 
-=item --help|-h
-
-    Print the help page
-
 =back
 
 =head3 FUNCTIONS
@@ -223,10 +211,6 @@
 
 =over
 
-=item --help|-h
-
-    Print the help page
-
 =back
 
 =head3 FUNCTIONS
@@ -260,10 +244,6 @@
 =head3 OPTIONS
 
 =over
-
-=item --help|-h
-
-    Print the help page
 
 =back
 
@@ -302,10 +282,6 @@
 =head3 OPTIONS
 
 =over
-
-=item --help|-h
-
-    Print the help page
 
 =back
 
@@ -374,10 +350,6 @@
 
 =over
 
-=item --help|-h
-
-    Print the help page
-
 =back
 
 =head2 TICKET_info_function
@@ -389,10 +361,6 @@
 =head3 OPTIONS
 
 =over
-
-=item --help|-h
-
-    Print the help page
 
 =back
 
@@ -422,10 +390,6 @@
 
 =over
 
-=item --help|-h
-
-    Print the help page
-
 =back
 
 =head1 DATASTORE
@@ -437,10 +401,6 @@
 =head3 OPTIONS
 
 =over
-
-=item --help|-h
-
-    Print the help page
 
 =back
 
@@ -478,10 +438,6 @@
 
 =over
 
-=item -help
-
-    Prints the help page
-
 =back
 
 =head2 DATASTORE_add_function
@@ -493,10 +449,6 @@
 =head3 OPTIONS
 
 =over
-
-=item -help
-
-    Prints the help page
 
 =back
 
@@ -510,10 +462,6 @@
 
 =over
 
-=item -help
-
-    Prints the help page
-
 =back
 
 =head2 DATASTORE_info_function
@@ -525,10 +473,6 @@
 =head3 OPTIONS
 
 =over
-
-=item --help|-h
-
-    Prints the help page
 
 =back
 
@@ -592,7 +536,7 @@
 
 =head3 SYSNOPSIS
 
-    jew.pl admin [options] [functions]
+    jew.pl admin [functions] [options]
 
 =head3 OPTIONS
 
@@ -634,10 +578,6 @@
 
 =over
 
-=item --help|-h
-
-    Print the help page
-
 =back
 
 =head2 ADMIN_templates_function
@@ -649,10 +589,6 @@
 =head3 OPTIONS
 
 =over
-
-=item --help|-h
-
-    Print the help page
 
 =back
 
@@ -666,9 +602,79 @@
 
 =over
 
-=item --help|-h
+=back
 
-    Print the help page
+=head1 Common_VI_options
+
+=over
+
+=item --config (variable VI_CONFIG)
+
+    Location of the VI Perl configuration file
+
+=item --credstore (variable VI_CREDSTORE)
+
+    Name of the credential store file defaults to <HOME>/.vmware/credstore/vicredentials.xml on Linux and <APPDATA>/VMware/credstore/vicredentials.xml on Windows
+
+=item --encoding (variable VI_ENCODING, default 'utf8')
+
+    Encoding: utf8, cp936 (Simplified Chinese), iso-8859-1 (German), shiftjis (Japanese)
+
+=item --help
+
+    Display usage information for the script
+
+=item --passthroughauth (variable VI_PASSTHROUGHAUTH)
+
+    Attempt to use pass-through authentication
+
+=item --passthroughauthpackage (variable VI_PASSTHROUGHAUTHPACKAGE, default 'Negotiate')
+
+    Pass-through authentication negotiation package
+
+=item --password (variable VI_PASSWORD)
+
+    Password
+
+=item --portnumber (variable VI_PORTNUMBER)
+
+    Port used to connect to server
+
+=item --protocol (variable VI_PROTOCOL, default 'https')
+
+    Protocol used to connect to server
+
+=item --savesessionfile (variable VI_SAVESESSIONFILE)
+
+    File to save session ID/cookie to utilize
+
+=item --server (variable VI_SERVER, default 'localhost')
+
+    VI server to connect to. Required if url is not present
+
+=item --servicepath (variable VI_SERVICEPATH, default '/sdk/webService')
+
+    Service path used to connect to server
+
+=item --sessionfile (variable VI_SESSIONFILE)
+
+    File containing session ID/cookie to utilize
+
+=item --url (variable VI_URL)
+
+    VI SDK URL to connect to. Required if server is not present
+
+=item --username (variable VI_USERNAME)
+
+    Username
+
+=item --verbose (variable VI_VERBOSE)
+
+    Display additional debugging information
+
+=item --version
+
+    Display version information for the script
 
 =back
 

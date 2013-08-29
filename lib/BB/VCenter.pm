@@ -5,7 +5,6 @@ use warnings;
 use BB::Error;
 use BB::Log;
 use VMware::VIRuntime;
-use Data::Dumper;
 
 BEGIN {
     use Exporter;
@@ -25,12 +24,13 @@ sub num_check($$) {
     }
 }
 
-sub SDK_options(%) {
-    my ( %opts ) = @_;
+sub SDK_options {
+    my $opts = shift ;
+    my %opts = %{$opts};
     &Log::debug("Starting VCenter::SDK_options");
     Opts::add_options(%opts);
     Opts::parse();
-#    Opts::validate();
+    Opts::validate();
 }
 
 sub connect_vcenter {
