@@ -13,7 +13,7 @@ use Pod::Usage;
 use Base::misc;
 use Switch;
 use 5.14.0;
-use BB::Error;
+use BB::Common;
 
 my $help = 0;
 my $man = 0;

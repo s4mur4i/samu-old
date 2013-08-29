@@ -2,11 +2,7 @@ package admin;
 
 use strict;
 use warnings;
-use BB::Log;
 use Base::misc;
-use BB::Misc;
-use BB::Support;
-use BB::VCenter;
 
 my $help = 0;
 BEGIN() {

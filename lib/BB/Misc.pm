@@ -2,9 +2,6 @@ package Misc;
 
 use strict;
 use warnings;
-use BB::Error;
-use BB::Log;
-use BB::Support;
 
 BEGIN {
     use Exporter;

@@ -2,11 +2,9 @@ package misc;
 
 use strict;
 use warnings;
-use BB::Log;
 use Getopt::Long qw(:config bundling pass_through require_order);
 use Pod::Usage;
 use FindBin;
-use BB::VCenter;
 
 BEGIN() {
     use Exporter();

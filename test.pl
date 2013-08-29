@@ -22,12 +22,13 @@ BEGIN {
 
     diag('Test BB modules');
 
-    use_ok('BB::Log');
-    use_ok('BB::Error');
-    use_ok('BB::Support');
-    use_ok('BB::Misc');
-    use_ok('BB::VCenter');
-    use_ok('BB::SDK');
+    use_ok('BB::Common');
+#    use_ok('BB::Log');
+#    use_ok('BB::Error');
+#    use_ok('BB::Support');
+#    use_ok('BB::Misc');
+#    use_ok('BB::VCenter');
+#    use_ok('BB::SDK');
 
     diag('Test Pod2wiki module');
 
@@ -93,7 +94,7 @@ like( &Misc::generate_vmname("ticket", "joe", "os_temp"), qr/^ticket-joe-os_temp
 diag('VCenter sub tests');
 ###
 #{
-#print "DEBUG: ",Dumper(\%VCenter::),"\n";
+#print "DEBUG: ",Dumper(\%BB::{"/"}),"\n";
 
 #*{SDK::multiple_entity_view} = sub { print "anyad\n\n"; return 1; };
 

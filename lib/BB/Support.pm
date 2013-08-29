@@ -2,7 +2,6 @@ package Support;
 
 use strict;
 use warnings;
-use BB::Error;
 
 BEGIN {
     use Exporter;

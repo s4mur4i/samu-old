@@ -2,8 +2,6 @@ package SDK;
 
 use strict;
 use warnings;
-use BB::Error;
-use BB::Log;
 use VMware::VIRuntime;
 
 BEGIN {

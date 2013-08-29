@@ -2,7 +2,6 @@ package ticket;
 
 use strict;
 use warnings;
-use BB::Log;
 use Base::misc;
 
 my $help = 0;

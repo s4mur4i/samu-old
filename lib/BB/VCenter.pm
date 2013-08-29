@@ -2,9 +2,6 @@ package VCenter;
 
 use strict;
 use warnings;
-use BB::Error;
-use BB::Log;
-use BB::SDK;
 
 BEGIN {
     use Exporter;

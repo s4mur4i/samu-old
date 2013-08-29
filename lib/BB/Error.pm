@@ -3,9 +3,7 @@ package Error;
 use strict;
 use warnings;
 use lib "$FindBin::Bin";
-use BB::Log;
 use Data::Dumper;
-use Switch;
 use Exception::Class (
 	'BaseException',
 
