@@ -7,9 +7,9 @@ use BB::Error;
 use BB::VCenter;
 use BB::Support;
 use BB::Misc;
-use BB::SDK;
-use Data::Dumper;
+use BB::Guest;
+
+use VMware::VIRuntime;
 our $VERSION = '1.0.0';
 
-print Dumper(\%main::);
 1

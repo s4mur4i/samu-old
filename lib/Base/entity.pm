@@ -60,6 +60,7 @@ our $module_opts = {
                 domain => {
                     type => "",
                     help => "Should the requested machine be added to support.ittest.domain",
+                    default => 0,
                     required => 0,
                 },
             },
@@ -134,6 +135,66 @@ sub list_snapshot {
 
 sub clone_vm {
     &Log::debug("Entity::clone sub started");
+    my $parent_pool = Opts::get_option('parent_pool');
+    my $ticket = Opts::get_option( 'ticket' );
+    my $os_temp = Opts::get_option( 'os_temp' );
+    &Support::get_key_info( 'template', $os_temp );
+    my $domain = Opts::get_option( 'domain' );
+    &Log::info("Arguments: parent_pool=>'$parent_pool', ticket=>'$ticket', os_temp=>'$os_temp', domain=>'$domain'");
+    &Log::debug("Get os_temp object for cloning and information");
+    my $os_temp_path = &Support::get_key_value( 'template', $os_temp, 'path' );
+    my $os_temp_view = &VCenter::moref2view( &VCenter::path2moref( $os_temp_path ) );
+    &Log::debug("Gathering hw information for cloneing");
+    my ( $memory, $cpu );
+    if ( defined( Opts::get_option( 'memory' ) ) ) {
+        $memory = Opts::get_option( 'memory' );
+    } else {
+        $memory = &Guest::vm_memory( $os_temp_view->name );
+    }
+    if ( defined( Opts::get_option( 'cpu' ) ) ) {
+        $cpu = Opts::get_option('cpu');
+    } else {
+        $cpu = &Guest::vm_numcpu( $os_temp_view->name );
+    }
+    &Log::info("Memory and cpu, memory=>'$memory', cpu=>'$cpu'");
+    &Log::debug("Checking if parent resource pool exists");
+    &VCenter::num_check( $parent_pool, 'ResourcePool' );
+    my $ticket_resource_pool;
+    if ( !&VCenter::exists_entity( $ticket, 'ResourcePool' ) ) {
+        &Log::info("Ticket resource pool does not exist. Creating");
+        $ticket_resource_pool = &VCenter::create_resource_pool( $ticket, $parent_pool );
+    } else {
+        $ticket_resource_pool = &Guest::entity_name_view( $ticket, 'ResourcePool' );
+    }
+    my $linked_folder_view;
+    if ( !&VCenter::exists_entity( $os_temp, 'Folder' ) ) {
+        &Log::info("Linked clone folder does not exist. Creating");
+        $linked_folder_view = &linked_clone_folder( $os_temp );
+    } else {
+        &Log::info("Linked clone folder exists.");
+        $linked_folder_view = &Guest::entity_name_view( $os_temp, 'Folder' );
+    }
+    &Log::debug("Retrieving last snapshot to attach to");
+    my $snapshot_view;
+    if ( defined( $os_temp_view->snapshot) && defined( $os_temp_view->snapshot->rootSnapshotList ) ) {
+        $snapshot_view = $os_temp_view->snapshot->rootSnapshotList;
+    } else {
+        Entity::Snapshot->throw( error => 'Template has no snapshots defined', entity => $os_temp, snapshot => 'none' );
+    }
+    if (defined($snapshot_view->[0]->{'childSnapshotList'})) {
+        &Log::debug("Recursion for last snapshot");
+        $snapshot_view= &Guest::find_last_snapshot($snapshot_view->[0]->{'childSnapshotList'});
+        &Log::debug("End of recursion");
+    }
+    $snapshot_view = &VCenter::moref2view( $snapshot_view->[0]->{'snapshot'} );
+    &Log::debug("Generating uniq vmname");
+    my $vmname = &Misc::uniq_vmname( $ticket, Opts::get_option('username') , $os_temp );
+    my $host_view = &Guest::entity_name_view( 'vmware-it1.balabit', 'HostSystem' );
+    &Log::debug("Generating Relocate spec");
+    my $relocate_spec = VirtualMachineRelocateSpec->new( host => $host_view, diskMoveType => "createNewChildDiskBacking", pool => $ticket_resource_pool);
+    &Log::debug("Generating Config spec");
+    my $config_spec = VirtualMachineConfigSpec->new( memoryMB => $memory, numCPUs => $cpu, deviceChange=>&Support::generate_network_setup_for_clone( $os_temp ) );
 }
+
 1;
 __END__

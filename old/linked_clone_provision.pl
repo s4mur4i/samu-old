@@ -30,45 +30,6 @@ sub get_config_spec() {
    }
 }
 
-eval {
-if (!&Vcenter::exists_resource_pool($parent_pool)) {
-	Util::trace( 0, "Parent pool does not exist.\n" );
-	exit 3;
-}
-&Vcenter::create_resource_pool($ticket,$parent_pool);
-my $resource_pool = Vim::find_entity_view(view_type => 'ResourcePool', filter =>{name=>$ticket} );
-## Find template to use
-my $os = Opts::get_option('os_temp');
-my $source_temp;
-if ( defined($Support::template_hash{$os})) {
-	$source_temp = $Support::template_hash{$os}{'path'};
-} else {
-	die "No template to $source_temp.\n";
-}
-my $sc = Vim::get_service_content();
-my $searchindex = Vim::get_view( mo_ref => $sc->searchIndex);
-my $view = $searchindex->FindByInventoryPath(inventoryPath => $source_temp);
-my $template_mo_ref = Vim::get_view( mo_ref => $view);
-
-## Tempalte folder linked to
-&Support::linked_clone_template_folder_path(Opts::get_option('os_temp'));
-my $dest_folder_view = Vim::find_entity_view(view_type => 'Folder', filter =>{name=>$os} );
-
-## Get snapshot to link to
-my $template_view = &Vcenter::path_to_moref($source_temp);
-my $snapshot_view = $template_view->snapshot->rootSnapshotList;
-if (defined($snapshot_view->[0]->{'childSnapshotList'})) {
-	$snapshot_view= &GuestInternal::find_root_snapshot($snapshot_view->[0]->{'childSnapshotList'});
-	$snapshot_view = Vim::get_view (mo_ref =>$snapshot_view->[0]->{'snapshot'});
-} else {
-	$snapshot_view = Vim::get_view (mo_ref =>$snapshot_view->[0]->{'snapshot'});
-}
-my $template_folder = Vim::find_entity_view(view_type => 'Folder', filter =>{name=>$os_temp} );
-my $vmname = &Misc::generate_vmname($ticket,$username,$os);
-my $host_view = Vim::find_entity_view(view_type => 'HostSystem', filter => { name => 'vmware-it1.balabit'});
-my $relocate_spec = VirtualMachineRelocateSpec->new( host => $host_view, diskMoveType => "createNewChildDiskBacking", pool => $resource_pool);
-#my $fileinfo = VirtualMachineFileInfo->new();
-#my $config_spec = VirtualMachineConfigSpec->new( files => $fileinfo);
 my $config_spec = &get_config_spec();
 my $clone_spec;
 if ( $Support::template_hash{$os}{'os'} =~ /win/) {

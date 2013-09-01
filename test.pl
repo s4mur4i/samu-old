@@ -23,12 +23,12 @@ BEGIN {
     diag('Test BB modules');
 
     use_ok('BB::Common');
-#    use_ok('BB::Log');
-#    use_ok('BB::Error');
-#    use_ok('BB::Support');
-#    use_ok('BB::Misc');
-#    use_ok('BB::VCenter');
-#    use_ok('BB::SDK');
+    use_ok('BB::Log');
+    use_ok('BB::Error');
+    use_ok('BB::Support');
+    use_ok('BB::Misc');
+    use_ok('BB::VCenter');
+    use_ok('BB::Guest');
 
     diag('Test Pod2wiki module');
 

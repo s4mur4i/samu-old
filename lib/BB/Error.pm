@@ -110,50 +110,40 @@ sub catch_ex {
 	&Log::debug("Invoking Error:catch_ex sub");
     ## Entity Exceptions
 	if ( $ex->isa( 'Entity::NumException' ) ) {
-		&Log::warning("Desc=>'" . $ex->error . "',entity=>'" . $ex->entity ."',count=>'" . $ex->count);
+		&Log::critical("Desc=>'" . $ex->error . "',entity=>'" . $ex->entity ."',count=>'" . $ex->count);
 	} elsif ( $ex->isa( 'Entity::Status' ) ) {
-		&Log::warning("Desc=>'" . $ex->error . "',entity=>'" . $ex->entity);
+		&Log::critical("Desc=>'" . $ex->error . "',entity=>'" . $ex->entity);
 	} elsif ( $ex->isa( 'Entity::Auth' ) ) {
-		&Log::warning("Desc=>" . $ex->error . ",entity=>" . $ex->entity . ",user=>" . $ex->username . ",pass=>" . $ex->password);
+		&Log::critical("Desc=>" . $ex->error . ",entity=>" . $ex->entity . ",user=>" . $ex->username . ",pass=>" . $ex->password);
 	} elsif ( $ex->isa( 'Entity::TransferError' ) ) {
-		&Log::warning("Desc=>" . $ex->error);
+		&Log::critical("Desc=>" . $ex->error);
 	} elsif ( $ex->isa( 'Entity::HWError' ) ) {
-		&Log::warning("Desc=>" . $ex->error . ",entity=>" . $ex->entity . ",hw=>" . $ex->hw);
+		&Log::critical("Desc=>" . $ex->error . ",entity=>" . $ex->entity . ",hw=>" . $ex->hw);
 	} elsif ( $ex->isa( 'Entity::Snapshot' ) ) {
-		&Log::warning("Desc=>" . $ex->error);
+		&Log::critical("Desc=>" . $ex->error);
     } elsif ( $ex->isa( 'Entity::Mac' ) ) {
-        &Log::warning("Desc=>" . $ex->error . ",mac=>" . $ex->mac );
-    }
-    ## Vcenter Exceptions
-	if ( $ex->isa( 'Vcenter::ServiceContent' ) ) {
-        &Log::warning("Desc=>" . $ex->error);
+        &Log::critical("Desc=>" . $ex->error . ",mac=>" . $ex->mac );
+    } elsif ( $ex->isa( 'Vcenter::ServiceContent' ) ) {
+        &Log::critical("Desc=>" . $ex->error);
     } elsif ( $ex->isa( 'Vcenter::Path' ) ) {
-        &Log::warning("Desc=>" . $ex->error . ",path=>" . $ex->path);
-    }
-    ## Template Exceptions
-	if ( $ex->isa( 'Connection::Connect' ) ) {
-        &Log::warning("Desc=>" . $ex->error . ",type=>" . $ex->type . ",dest=>" . $ex->dest );
-	}
-    ## Connection Exceptions
-	if ( $ex->isa( 'Template::Status' ) ) {
-        &Log::warning("Desc=>" . $ex->error . ",template=>" . $ex->template);
+        &Log::critical("Desc=>" . $ex->error . ",path=>" . $ex->path);
+    } elsif ( $ex->isa( 'Connection::Connect' ) ) {
+        &Log::critical("Desc=>" . $ex->error . ",type=>" . $ex->type . ",dest=>" . $ex->dest );
+	} elsif ( $ex->isa( 'Template::Status' ) ) {
+        &Log::critical("Desc=>" . $ex->error . ",template=>" . $ex->template);
     } elsif ( $ex->isa( 'Template::Error' ) ) {
-        &Log::warning("Desc=>" . $ex->error . ",template=>" . $ex->template);
-    }
-    ## Task Exceptions
-    if ( $ex->isa( 'Task::NotDefined' ) ) {
-		&Log::warning("Desc=>'" . $ex->error);
+        &Log::critical("Desc=>" . $ex->error . ",template=>" . $ex->template);
+    } elsif ( $ex->isa( 'Task::NotDefined' ) ) {
+		&Log::critical("Desc=>'" . $ex->error);
     } elsif ( $ex->isa( 'Task::Error' ) ) {
-		&Log::warning("Desc=>'" . $ex->error . ",detail=>" . $ex->detail . ",fault=>" . $ex->fault);
-    }
-	if ( $ex->isa( 'Exception::Class' ) ) {
+		&Log::critical("Desc=>'" . $ex->error . ",detail=>" . $ex->detail . ",fault=>" . $ex->fault);
+    } elsif ( $ex->isa( 'Exception::Class' ) ) {
 		print Dumper($ex);
-		&Log::warning("Cannot understand the object, throwing dump");
+		&Log::critical("Cannot understand the object, throwing dump");
 	} else {
 		print Dumper($ex);
-		&Log::warning("I'm blue and I'm a WTF.....");
+		&Log::critical("I'm blue and I'm a WTF.....");
 	}
-	&Log::critical("If this point has been reached the exception could not be understood, but there was some problem. Please consult local wizard for further information or try debug level");
 }
 
 ## Functionality test sub

@@ -162,44 +162,6 @@ sub delete_resource_pool {
 	Util::trace( 4, "Finished Vcenter::delete_resource_pool sub\n" );
 }
 
-sub exists_resource_pool {
-	my ( $name ) = @_;
-	Util::trace( 4, "Starting Vcenter::exists_resource_pool sub, name=>'$name'\n" );
-	my $view = Vim::find_entity_view( view_type => 'ResourcePool', properties => [ 'name' ], filter => { name => $name } );
-	if ( defined( $view ) ) {
-		Util::trace( 4, "Finished Vcenter::exists_resource_pool sub, exists=>'true'\n" );
-		return 1;
-	}else {
-		Util::trace( 4, "Finished Vcenter::exists_resource_pool sub, exists=>'false'\n" );
-		return 0;
-	}
-}
-
-sub exists_vm {
-	my ( $name ) = @_;
-	Util::trace( 4, "Starting Vcenter::exists_vm sub, name=>'$name'\n" );
-	my $view = Vim::find_entity_view( view_type => 'VirtualMachine', properties => [ 'name' ], filter => { name => $name } );
-	if ( defined( $view ) ) {
-		Util::trace( 4, "Finished Vcenter::exists_vm sub, return=>'true'\n" );
-		return 1;
-	}else {
-		Util::trace( 4, "Finished Vcenter::exists_vm sub, return=>'false'\n" );
-		return 0;
-	}
-}
-
-sub exists_folder {
-	my ( $name ) = @_;
-	Util::trace( 4, "Starting Vcenter::exists_folder sub, name=>'$name'\n" );
-	my $view = Vim::find_entity_view( view_type => 'Folder', properties => [ 'name' ], filter => { name => $name } );
-	if ( defined( $view ) ) {
-		Util::trace( 4, "Finished Vcenter::exists_folder sub, return=>'true'\n" );
-		return 1;
-	}else {
-		Util::trace( 4, "Finished Vcenter::exist_folder sub, return=>'false'\n" );
-		return 0;
-	}
-}
 
 sub get_name_from_moref {
 	my ( $name ) = @_;
@@ -350,66 +312,6 @@ sub print_folder_content {
 	Util::trace( 4, "Finished Vcenter::print_folder_content sub\n" );
 }
 
-sub create_resource_pool {
-	my ( $name, $parent ) = @_;
-	Util::trace( 4, "Starting Vcenter::create_resource_pool sub, name=>'$name', parent=>'$parent'\n" );
-	if ( &exists_resource_pool( $name ) ) {
-		Util::trace( 3, "Resource pool already exists\n" );
-		return 0;
-	}
-	$parent = Vim::find_entity_view( view_type => 'ResourcePool', properties => [ 'name' ], filter => { name => $parent } );
-	my $shareslevel = SharesLevel->new( 'normal' );
-	my $cpushares = SharesInfo->new( shares => 4000 , level => $shareslevel );
-	my $memshares = SharesInfo->new( shares => 32928, level => $shareslevel );
-	my $cpuallocation = ResourceAllocationInfo->new( expandableReservation => 'true', limit => -1, reservation => 0, shares => $cpushares );
-	my $memoryallocation = ResourceAllocationInfo->new( expandableReservation => 'true', limit => -1, reservation => 0, shares => $memshares );
-	my $rp_spec = ResourceConfigSpec->new( cpuAllocation => $cpuallocation, memoryAllocation => $memoryallocation );
-	my $name_view = $parent->CreateResourcePool( name => $name, spec => $rp_spec );
-	if( $name_view->type eq 'ResourcePool' ) {
-		Util::trace( 4, "Successfully created new ResourcePool:'$name'\n" );
-		return 1;
-	} else {
-		SDK::Error::Entity::NumException->throw( error => 'Could not create resource pool', entity => $name, count => '0' );
-	}
-}
-
-sub create_folder {
-	my ( $name, $parent ) = @_;
-	Util::trace( 4, "Starting Vcenter::create_folder sub, name=>'$name', parent=>'$parent'\n" );
-	my $view;
-	if ( &exists_folder( $parent ) ) {
-		$view = Vim::find_entity_view( view_type => 'Folder', properties => [ 'name' ], filter => { name => $parent } );
-	}
-	if ( &exists_folder( $name ) ) {
-		Util::trace( 4, "Folder already exists\n" );
-		return 0;
-	}
-	my $new_folder = $view->CreateFolder( name => $name );
-	if( $new_folder->type eq 'Folder' ) {
-		Util::trace( 4, "Successfully created new Folder:'$name'\n" );
-		return 1;
-	} else {
-		SDK::Error::Entity::NumException->throw( error => 'Could not create folder', entity => $name, count => '0' );
-	}
-}
-
-sub path_to_moref {
-	my ( $path ) = @_;
-	Util::trace( 4, "Starting Vcenter::path_to_moref sub, path=>'$path'\n" );
-	my $sc = Vim::get_service_content( );
-	if ( !defined( $sc ) ) {
-		SDK::Error::Entity::ServiceContent->throw( error => 'Could not retrieve Service Content' );
-	}
-	my $searchindex = Vim::get_view( mo_ref => $sc->searchIndex );
-	my $template_mo_ref = $searchindex->FindByInventoryPath( inventoryPath => $path );
-	if ( !defined( $template_mo_ref ) ) {
-		SDK::Error::Entity::NumException->throw( error => 'No template found to path', entity => $path, count => '0' );
-	}
-	$template_mo_ref = Vim::get_view( mo_ref => $template_mo_ref );
-	Util::trace( 4, "Finished Vcenter::path_to_moref sub\n" );
-	return $template_mo_ref;
-}
-
 sub print_vm_info {
 	my ( $name ) = @_;
 	Util::trace( 4, "Starting Vcenter::print_vm_info sub, name=>'$name'\n" );
@@ -483,54 +385,4 @@ sub datastore_file_exists {
 
 }
 
-sub entity_exists {
-	my ( $type, $name ) =@_;
-	Util::trace( 4, "Starting Vcenter::entity_exists sub\n" );
-	my $views = Vim::find_entity_views( view_type => $type, properties => [ 'name' ], filter => { name => $name } );
-	if ( defined( $views ) ) {
-		Util::trace( 4, "Finished Vcenter::entity_exists sub, entity_exists=>1\n" );
-		return 1;
-	} else {
-		Util::trace( 4, "Finished Vcenter::entity_exists sub, entity_exists=>0\n" );
-		return 0;
-	}
-}
-
-sub get_names {
-	my ( $type, $name ) =@_;
-	Util::trace( 4, "Starting Vcenter::get_names sub, type=>'$type', name=>'$name'\n" );
-	my @names;
-	my $views = Vim::find_entity_views( view_type => $type, properties => [ 'name' ], filter => { name => qr/*$name*/ } );
-	if ( &entity_exists( $type, $name ) ) {
-		foreach ( @$views ) {
-			push( @names, $_->name );
-		}
-		Util::trace( 4, "Finished Vcenter::get_names sub\n" );
-		return @names;
-	} else {
-		Util::trace( 4, "Finished Vcenter::get_names sub, no entities with name=>'$name'\n" );
-		return 0;
-	}
-}
-
-sub num_check {
-	my ( $vmname, $type ) = @_;
-	Util::trace( 4, "Starting Vcenter::num_check sub, vmname=>'$vmname', type=>'$type'\n" );
-	my $views = Vim::find_entity_views( view_type => $type, properties => [ 'name' ], filter => { name => $vmname } );
-	if ( scalar(@$views) ne 1 ) {
-		SDK::Error::Entity::NumException->throw( error => 'Entity count not expected', entity => $vmname, count => scalar(@$views) );
-	} else {
-		Util::trace( 4, "Finished Vcenter::num_check sub\n" );
-		return 0;
-	}
-}
-
-## Functionality test sub
-sub test( ) {
-	Util::trace( 4, "Starting Vcenter::test sub\n" );
-	Util::trace( 0, "Vcenter module test sub\n" );
-	Util::trace( 4, "Finished Vcenter::test sub\n" );
-}
-
-#### We need to end with success
 1

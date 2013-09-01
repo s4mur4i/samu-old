@@ -37,6 +37,39 @@ sub generate_mac($) {
     return "$mac_base$mac";
 }
 
+sub generate_uniq_mac {
+    my ( $username ) = @_;
+    &Log::debug("Starting Misc::generate_uniq_mac sub, username=>'$username'");
+    my $mac = &generate_mac( $username );
+    while ( &mac_compare( $mac ) ) {
+        &Log::debug("Generationing new mac and testing");
+        $mac = &generate_mac( $username );
+    }
+    &Log::debug("Mac is uniq, mac=>'$mac'");
+    return $mac;
+}
+
+sub mac_compare {
+    my ( $mac ) = @_;
+    &Log::debug("Starting Misc::mac_compare sub, mac=>'$mac'");
+    my $vm_view = Vim::find_entity_views( view_type => 'VirtualMachine', properties => [ 'config.hardware.device', 'summary.config.name' ] );
+    foreach( @$vm_view ) {
+        my $vm_name = $_->get_property( 'summary.config.name' );
+        my $devices =$_->get_property( 'config.hardware.device' );
+        &Log::debug("Inspecting vm=>'" . $vm_name . "'");
+        foreach( @$devices ) {
+            if( $_->isa( "VirtualEthernetCard" ) ) {
+                if ( $mac eq $_->macAddress ) {
+                    &Log::info("Found VM with same MAC");
+                    return 1;
+                }
+            }
+        }
+        &Log::debug("Inspection finished on VM");
+    }
+    &Log::info("No VM found with same mac");
+    return 0;
+}
 
 # increment 1 on the last 3 bytes of the MAC. if overflow occurrs, then throw error
 sub increment_mac($) {
@@ -95,7 +128,7 @@ sub increment_disk_name($) {
     return "${pre}_$num$post";
 }
 
-sub filename_splitter {
+sub filename_splitter($) {
     my ( $filename ) = @_;
     &Log::debug("Starting Misc::filename_splitter sub, filename=>'$filename'");
     my ( $datas, $folder, $image ) = $filename =~ qr@^\s*\[([^\]]*)\]\s*(.*)/([^/]*)$@;
@@ -106,10 +139,21 @@ sub filename_splitter {
     return [ $datas, $folder, $image ];
 }
 
-sub generate_vmname {
+sub generate_vmname($$$) {
     my ( $ticket, $username, $os_temp ) = @_;
     &Log::debug("Starting Misc::generate_vmname sub, ticket=>'$ticket', username=>'$username', os_temp=>'$os_temp'");
     return $ticket . "-" . $username . "-" . $os_temp . "-" . &random_3digit;
+}
+
+sub uniq_vmname($) {
+    my ( $ticket, $username, $os_temp ) = @_;
+    &Log::debug("Starting Misc::uniq_vmname sub, ticket=>'$ticket', username=>'$username', os_temp=>'$os_temp'");
+    my $vmname = &generate_vmname( $ticket, $username, $os_temp );
+    while ( &VCenter::exists_entity( $vmname, 'VirtualMachine' ) ) {
+        &Log::debug("Generated name not uniq, regenerating");
+         $vmname = &generate_vmname( $ticket, $username, $os_temp );
+    }
+    return $vmname;
 }
 
 1

@@ -3,6 +3,7 @@ package admin;
 use strict;
 use warnings;
 use Base::misc;
+use BB::Common;
 
 my $help = 0;
 BEGIN() {
