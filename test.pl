@@ -127,7 +127,7 @@ throws_ok { Task::Error->throw( error => 'test', detail => 'test', fault => 'tes
 ### Summary
 ## Until we know how many tests we are going to run, there should be no number reported
 #done_testing(11);
-
+done_testing;
 __END__
 
 =head1 Name

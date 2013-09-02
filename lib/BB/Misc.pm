@@ -6,7 +6,7 @@ use warnings;
 BEGIN {
     use Exporter;
     our @ISA = qw( Exporter );
-    our @EXPORT = qw( &array_longest &random_3digit &generate_mac &increment_mac &vmname_splitter &increment_disk_name &filename_splitter &generate_vmname );
+    our @EXPORT = qw( );
 }
 
 sub array_longest($) {
@@ -27,7 +27,7 @@ sub random_3digit {
     return int( rand( 999 ) );
 }
 
-sub generate_mac($) {
+sub generate_mac {
     my ( $username ) = @_;
     &Log::debug("Starting Misc::generate_mac sub, username=>'$username'");
     my $mac_base = &Support::get_key_value('agents',$username,'mac');
@@ -38,15 +38,43 @@ sub generate_mac($) {
 }
 
 sub generate_uniq_mac {
-    my ( $username ) = @_;
-    &Log::debug("Starting Misc::generate_uniq_mac sub, username=>'$username'");
-    my $mac = &generate_mac( $username );
+    &Log::debug("Starting Misc::generate_uniq_mac sub");
+    my $mac = &generate_mac( Opts::get_option('username') );
     while ( &mac_compare( $mac ) ) {
         &Log::debug("Generationing new mac and testing");
-        $mac = &generate_mac( $username );
+        $mac = &generate_mac( Opts::get_option('username') );
     }
     &Log::debug("Mac is uniq, mac=>'$mac'");
     return $mac;
+}
+
+sub generate_macs {
+    my ( $count ) = @_;
+    &Log::debug("Starting Misc::generate_macs sub, count=>'$count'");
+    my @mac = ();
+    while ( @mac != $count ) {
+        if ( @mac == 0 ) {
+            &Log::debug("First mac needs to be generated");
+            push( @mac, &Misc::generate_uniq_mac );
+        } else {
+            &Log::debug("Need to increment last mac");
+            my $last =$mac[ -1 ];
+            my $new_mac;
+            eval { $new_mac = &Misc::increment_mac( $last ); };
+            if ( $@ ) {
+                &Log::debug("Increment is not possible, need to regenerate all macs");
+                @mac = ();
+            } else {
+                &Log::debug("Need to investigate if mac is already used");
+                if ( !&Misc::mac_compare( $new_mac ) ) {
+                    &Log::debug("Pushing to array the mac=>'$new_mac'");
+                    push( @mac, $new_mac );
+                }
+            }
+        }
+    }
+    &Log::debug("Returning mac array");
+    return @mac;
 }
 
 sub mac_compare {
@@ -56,16 +84,14 @@ sub mac_compare {
     foreach( @$vm_view ) {
         my $vm_name = $_->get_property( 'summary.config.name' );
         my $devices =$_->get_property( 'config.hardware.device' );
-        &Log::debug("Inspecting vm=>'" . $vm_name . "'");
         foreach( @$devices ) {
             if( $_->isa( "VirtualEthernetCard" ) ) {
                 if ( $mac eq $_->macAddress ) {
-                    &Log::info("Found VM with same MAC");
+                    &Log::info("Found VM with same MAC, name=>'$vm_name'");
                     return 1;
                 }
             }
         }
-        &Log::debug("Inspection finished on VM");
     }
     &Log::info("No VM found with same mac");
     return 0;
@@ -77,7 +103,7 @@ sub increment_mac($) {
     &Log::debug("Starting Misc::increment_mac, mac=>'$mac'");
     ( my $mac_hex = $mac ) =~ s/://g;
     my ( $mac_hi, $mac_lo ) = unpack( "nN", pack( 'H*', $mac_hex ) );
-    if ( $mac_lo & 0x00FFFFFF == 0x00FFFFFF ) {
+    if ( $mac_lo == 0x00FFFFFF ) {
         &Log::warning("Mac addressed reached end of pool");
         Entity::Mac->throw( error => "Mac addressed reached end of pool", mac => $mac );
     } else {

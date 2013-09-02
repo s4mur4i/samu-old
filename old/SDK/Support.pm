@@ -1,46 +1,4 @@
 
-sub generate_network_setup_for_clone {
-	my ( $os ) = @_;
-	if ( defined( $template_hash{$os} ) ) {
-		my @return;
-		my $path = $template_hash{$os}{'path'};
-		my $sc = Vim::get_service_content();
-		if ( !defined( $sc ) ) {
-		}
-		my $searchindex = Vim::get_view( mo_ref => $sc->searchIndex );
-		my $view = $searchindex->FindByInventoryPath( inventoryPath => $path );
-		if ( !defined( $view ) ) {
-		}
-		my $template_mo_ref = Vim::get_view( mo_ref => $view );
-		my @keys;
-		foreach ( @{$template_mo_ref->config->hardware->device} ) {
-			my $interface = $_;
-			if ( !$interface->isa( 'VirtualE1000' ) ) {
-				next;
-			}
-			push( @keys, $interface->key )
-		}
-		my @mac;
-		while ( @mac != @keys ) {
-			push( @mac, &Misc::generate_uniq_mac );
-			for ( my $i =1;$i<@keys;$i++ ) {
-				my $last =$mac[ -1 ];
-				my $new_mac = &Misc::increment_mac( $last );
-				push( @mac, $new_mac );
-			}
-		}
-		for ( my $i =0;$i<@keys;$i++ ) {
-			my $ethernetcard =VirtualE1000->new( addressType => 'Manual', macAddress => $mac[ $i ], wakeOnLanEnabled => 1, key => $keys[ $i ] );
-			my $operation = VirtualDeviceConfigSpecOperation->new( 'edit' );
-			my $deviceconfigspec = VirtualDeviceConfigSpec->new( device => $ethernetcard, operation => $operation );
-			push( @return, $deviceconfigspec );
-		}
-		return \@return;
-	} else {
-		SDK::Error::Template::Exists->throw( error => 'Template does not exists', template => $os );
-	}
-}
-
 sub win_VirtualMachineCloneSpec {
 	my ( $os, $snapshot, $location, $config ) = @_;
 	Util::trace( 4, "Started Support::win_VirtualMachineCloneSpec sub\n" );
@@ -92,11 +50,3 @@ sub oth_VirtualMachineCloneSpec {
 }
 
 ## Functionality test sub
-sub test( ) {
-	Util::trace( 4, "Started Support::test sub\n" );
-	Util::trace( 0, "Support module test sub\n" );
-	Util::trace( 4, "Finished Support::test \n" );
-}
-
-#### We need to end with success
-1

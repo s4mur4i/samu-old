@@ -159,20 +159,13 @@ sub clone_vm {
     &Log::info("Memory and cpu, memory=>'$memory', cpu=>'$cpu'");
     &Log::debug("Checking if parent resource pool exists");
     &VCenter::num_check( $parent_pool, 'ResourcePool' );
-    my $ticket_resource_pool;
     if ( !&VCenter::exists_entity( $ticket, 'ResourcePool' ) ) {
         &Log::info("Ticket resource pool does not exist. Creating");
-        $ticket_resource_pool = &VCenter::create_resource_pool( $ticket, $parent_pool );
-    } else {
-        $ticket_resource_pool = &Guest::entity_name_view( $ticket, 'ResourcePool' );
+        &VCenter::create_resource_pool( $ticket, $parent_pool );
     }
-    my $linked_folder_view;
     if ( !&VCenter::exists_entity( $os_temp, 'Folder' ) ) {
         &Log::info("Linked clone folder does not exist. Creating");
-        $linked_folder_view = &linked_clone_folder( $os_temp );
-    } else {
-        &Log::info("Linked clone folder exists.");
-        $linked_folder_view = &Guest::entity_name_view( $os_temp, 'Folder' );
+        &VCenter::linked_clone_folder( $os_temp );
     }
     &Log::debug("Retrieving last snapshot to attach to");
     my $snapshot_view;
@@ -181,7 +174,7 @@ sub clone_vm {
     } else {
         Entity::Snapshot->throw( error => 'Template has no snapshots defined', entity => $os_temp, snapshot => 'none' );
     }
-    if (defined($snapshot_view->[0]->{'childSnapshotList'})) {
+    if ( defined($snapshot_view->[0]->{'childSnapshotList'} ) ) {
         &Log::debug("Recursion for last snapshot");
         $snapshot_view= &Guest::find_last_snapshot($snapshot_view->[0]->{'childSnapshotList'});
         &Log::debug("End of recursion");
@@ -189,11 +182,23 @@ sub clone_vm {
     $snapshot_view = &VCenter::moref2view( $snapshot_view->[0]->{'snapshot'} );
     &Log::debug("Generating uniq vmname");
     my $vmname = &Misc::uniq_vmname( $ticket, Opts::get_option('username') , $os_temp );
-    my $host_view = &Guest::entity_name_view( 'vmware-it1.balabit', 'HostSystem' );
     &Log::debug("Generating Relocate spec");
-    my $relocate_spec = VirtualMachineRelocateSpec->new( host => $host_view, diskMoveType => "createNewChildDiskBacking", pool => $ticket_resource_pool);
+    my $relocate_spec = &Support::RelocateSpec( $ticket );
     &Log::debug("Generating Config spec");
-    my $config_spec = VirtualMachineConfigSpec->new( memoryMB => $memory, numCPUs => $cpu, deviceChange=>&Support::generate_network_setup_for_clone( $os_temp ) );
+    my $config_spec = &Support::ConfigSpec( $memory, $cpu, $os_temp );
+    &Log::debug("Generating Clone spec");
+    my $clone_spec;
+    if ( &Support::get_key_value( 'template', $os_temp, 'os' ) =~ /win/) {
+        &Log::debug("Generating Clone spec for Windows");
+        $clone_spec = &Support::win_CloneSpec( $os_temp_view->name, $snapshot_view, $relocate_spec, $config_spec, $domain, &Support::get_key_value( 'template', $os_temp, 'key' ) );
+    } elsif ( &Support::get_key_value( 'template', $os_temp, 'os' ) =~ /lin/) {
+        &Log::debug("Generating Clone spec for SDK supported linux machines");
+        $clone_spec = &Support::lin_CloneSpec( $os_temp_view->name, $snapshot_view, $relocate_spec, $config_spec );
+    } else {
+        &Log::debug("Generating Clone spec for other");
+        $clone_spec = &Support::oth_CloneSpec( $snapshot_view, $relocate_spec, $config_spec );
+    }
+    &VCenter::clonevm( $os_temp_view->name, $vmname, $os_temp, $clone_spec);
 }
 
 1;

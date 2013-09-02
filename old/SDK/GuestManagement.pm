@@ -565,30 +565,6 @@ sub list_dvportgroup {
 	Util::trace( 4, "Finishing GuestManagement::list_dvportgroup sub\n" );
 }
 
-sub CustomizationAdapterMapping_generator {
-	my ( $os ) = @_;
-	Util::trace( 4, "Starting GuestManagement::CustomizationAdapterMapping_generator sub, os=>'$os'\n\n" );
-	my @return;
-	if ( defined( $Support::template_hash{ $os } ) ) {
-		my $source_temp = $Support::template_hash{ $os }{ 'path' };
-		$source_temp = &Vcenter::path_to_moref( $source_temp );
-		foreach ( @{ $source_temp->config->hardware->device } ) {
-			if ( !$_->isa( 'VirtualE1000' ) ) {
-				next;
-			}
-			my $ip = CustomizationDhcpIpGenerator->new( );
-			my $adapter = CustomizationIPSettings->new( dnsDomain => 'support.balabit', dnsServerList => [ '10.10.0.1' ], gateway => [ '10.21.255.254' ], subnetMask => '255.255.0.0', ip => $ip, netBIOS => CustomizationNetBIOSMode->new( 'disableNetBIOS' ) );
-			my $nicsetting = CustomizationAdapterMapping->new( adapter => $adapter );
-			push( @return, $nicsetting );
-		}
-
-	} else {
-		SDK::Error::Template::Error->throw( error => 'Cannot find template', template => $os );
-	}
-	Util::trace( 4, "Finishing GuestManagement::CustomizationAdapterMapping_generator sub\n" );
-	return \@return;
-}
-
 sub get_scsi_controller {
 	my ( $name ) = @_;
 	Util::trace( 4, "Starting GuestManagement::get_scsi_controller sub, name=>'$name'\n" );

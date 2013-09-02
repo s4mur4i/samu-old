@@ -6,7 +6,17 @@ use warnings;
 BEGIN {
     use Exporter;
     our @ISA = qw( Exporter );
-    our @EXPORT = qw( &num_check &exists_entity &SDK_options &connet_vcenter &disconnect_vcenter &create_resource_pool &service_content &path2moref &moref2view &linked_clone_folder );
+    our @EXPORT = qw( );
+}
+### Methods
+sub clonevm {
+    my ( $template, $vmname, $folder, $clone_spec ) = @_;
+    &Log::debug("Starting VCenter::clonevm sub, vmname=>'$vmname', folder=>'$folder'");
+    my $template_view = &Guest::entity_name_view( $template, 'VirtualMachine' );
+    my $folder_view = &Guest::entity_name_view( $folder, 'Folder' );
+    &Log::info("Starting Clone task");
+    my $task = $template_view->CloneVM_Task(  folder => $folder_view, name => $vmname, spec => $clone_spec );
+    #&Vcenter::Task_getStatus($task);
 }
 
 ### Helper subs to query information
@@ -33,6 +43,20 @@ sub exists_entity($$) {
     }
 }
 
+sub path2name {
+    my ( $path ) = @_;
+    &Log::debug("Starting VCenter::path2name sub, path=>'$path'");
+    my $sc = &service_content;
+    my $searchindex = Vim::get_view( mo_ref => $sc->searchIndex );
+    my $moref = $searchindex->FindByInventoryPath( inventoryPath => $path );
+    if ( !defined( $moref ) ) {
+        Vcenter::Path->throw( error => "Could not retrieve moref from path", path => $path );
+    }
+    my $view = &moref2view( $moref );
+    return $view->name;
+
+}
+
 sub path2moref {
     my ( $path ) = @_;
     &Log::debug("Starting VCenter::path2moref sub, path=>'$path'");
@@ -40,7 +64,7 @@ sub path2moref {
     my $searchindex = Vim::get_view( mo_ref => $sc->searchIndex );
     my $moref = $searchindex->FindByInventoryPath( inventoryPath => $path );
     if ( !defined( $moref ) ) {
-        Entity::NumException->throw( error => "Could not retrieve moref from path" );
+        Vcenter::Path->throw( error => "Could not retrieve moref from path", path => $path );
     }
     &Log::debug("Returning moref");
     return $moref;
@@ -51,7 +75,7 @@ sub moref2view {
     &Log::debug("Starting VCenter::moref2view sub");
     my $view = Vim::get_view( mo_ref => $moref );
     if ( !defined( $view ) ) {
-        Entity::NumException->throw( error => "Could not retrieve view from moref" );
+        Entity::Status->throw( error => "Could not retrieve view from moref" );
     }
     &Log::debug("Returning view");
     return $view;
@@ -66,12 +90,13 @@ sub linked_clone_folder {
         $temp_fol = &Guest::entity_name_view( $temp_name, 'Folder' );
     } else {
         &Log::info("Need to create the linked folder");
-        my $temp_view = Vim::find_entity_view( view_type => 'VirtualMachine', properties => [ 'parent' ], filter => { name => $temp_name } );
+        my $temp_view = Vim::find_entity_view( view_type => 'VirtualMachine', properties => [ 'parent' ], filter => { name => qr/$temp_name$/ } );
         my $parent_view = &moref2view( $temp_view->parent );
         $temp_fol = &create_folder( $temp_name, $parent_view->name );
     }
     return $temp_fol;
 }
+
 ### Subs for creation/deletion
 
 sub create_resource_pool {

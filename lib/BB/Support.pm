@@ -6,7 +6,7 @@ use warnings;
 BEGIN {
     use Exporter;
     our @ISA = qw( Exporter );
-    our @EXPORT = qw( &get_keys &get_key_info &get_key_value );
+    our @EXPORT = qw( );
 }
 
 =pod
@@ -72,12 +72,12 @@ my %map_hash = (
 
 sub get_keys($) {
     my ( $hash ) = @_;
-    if ( defined $map_hash{$hash} ) {
-        my $req_hash = $map_hash{$hash};
-        return [keys %$req_hash];
-    } else {
+    &Log::debug("Starting Support::get_keys sub, hash=>'$hash'");
+    if ( !defined( $map_hash{$hash} ) ) {
         Template::Status->throw( error => 'Requested hash_map was not found', template => $hash );
     }
+    my $req_hash = $map_hash{$hash};
+    return [keys %$req_hash];
 }
 
 =pod
@@ -96,6 +96,7 @@ sub get_keys($) {
 
 sub get_key_info($$) {
     my ( $hash, $key ) =@_;
+    &Log::debug("Starting Support::get_key_info sub, hash=>'$hash', key=>'$key'");
     if ( grep/^$key$/, @{&get_keys($hash)} ) {
         return $map_hash{$hash}->{$key};
     } else {
@@ -105,6 +106,7 @@ sub get_key_info($$) {
 
 sub get_key_value($$$) {
     my ( $hash, $key, $value ) = @_;
+    &Log::debug("Starting Support::get_key_value sub, hash=>'$hash', key=>'$key', value=>'$value'");
     my $key_hash = &get_key_info( $hash, $key );
     if ( defined($$key_hash{$value}) ) {
         return $$key_hash{$value};
@@ -112,5 +114,90 @@ sub get_key_value($$$) {
         Template::Status->throw( error => 'Requested key value was not found', template => $value );
     }
 }
+
+### Installation helper objects
+
+sub RelocateSpec($) {
+    my ( $ticket ) = @_;
+    &Log::debug("Starting Support::RelocateSpec sub, ticket=>'$ticket'");
+    my $host_view = &Guest::entity_name_view( 'vmware-it1.balabit', 'HostSystem' );
+    my $ticket_resource_pool = &Guest::entity_name_view( $ticket, 'ResourcePool' );
+    my $relocate_spec = VirtualMachineRelocateSpec->new( host => $host_view, diskMoveType => "createNewChildDiskBacking", pool => $ticket_resource_pool);
+    return $relocate_spec;
+}
+
+sub ConfigSpec($$$) {
+    my ( $memory, $cpu, $os_temp ) = @_;
+    &Log::debug("Starting Support::ConfigSpec sub, memory=>'$memory', cpu=>'$cpu', os_temp=>'$os_temp'");
+    my $config_spec = VirtualMachineConfigSpec->new( memoryMB => $memory, numCPUs => $cpu, deviceChange => [ &Guest::generate_network_setup( $os_temp ) ] );
+    return $config_spec;
+}
+
+sub CustomizationPassword {
+    &Log::debug("Starting Support::CustomizationPassword sub");
+    return CustomizationPassword->new( plainText => 1, value => 'titkos' );
+}
+
+sub identification_domain {
+    &Log::debug("Starting Support::identification_domain sub");
+    return CustomizationIdentification->new( domainAdmin => 'Administrator@support.balabit', domainAdminPassword => &CustomizationPassword, joinDomain => 'support.balabit' );
+}
+
+sub identification_workgroup {
+    &Log::debug("Starting Support::identification_workgroup sub");
+    return CustomizationIdentification->new( domainAdmin => 'Administrator@support.balabit', domainAdminPassword => &CustomizationPassword, joinWorkgroup => 'SUPPORT' );
+}
+
+sub win_CloneSpec {
+    my ( $os_temp, $snapshot_view, $relocate_spec, $config_spec, $domain, $key ) = @_;
+    &Log::debug("Starting Support::win_CloneSpec sub, os_temp=>'$os_temp', domain=>'$domain', key=>'$key'");
+    my @nicsetting = &Guest::CustomizationAdapterMapping_generator( $os_temp );
+    my $globalipsettings = CustomizationGlobalIPSettings->new( dnsServerList => [ '10.10.0.1' ] , dnsSuffixList => [ 'support.balabit' ] );
+    my $customoptions = CustomizationWinOptions->new( changeSID => 1, deleteAccounts => 0 );
+    my $guiunattend = CustomizationGuiUnattended->new( autoLogon => 1, autoLogonCount => 1, password => &CustomizationPassword, timeZone => '095' );
+    my $customname = CustomizationPrefixName->new( base => 'winguest' );
+    my $userdata = CustomizationUserData->new( productId => $key, orgName => 'support' , fullName => 'admin' , computerName => $customname );
+    my $identification;
+    if ( $domain ) {
+        $identification = &identification_domain;
+    } else {
+        $identification = &identification_workgroup;
+    }
+    my $runonce = CustomizationGuiRunOnce->new( commandList => [ "w32tm /resync", "cscript c:/windows/system32/slmgr.vbs /skms prod-dev-winsrv.balabit", "cscript c:/windows/system32/slmgr.vbs /ato" ] );
+    my $identity;
+    if ( $os_temp =~ /^T_win_200[03]/ ) {
+        &Log::debug("Need to use the win2k3/2k license method");
+        my $licenseprintdata =  CustomizationLicenseFilePrintData->new( autoMode => CustomizationLicenseDataMode->new( 'perSeat' ) );
+        $identity = CustomizationSysprep->new( guiRunOnce => $runonce, guiUnattended => $guiunattend, identification => $identification , userData => $userdata, licenseFilePrintData => $licenseprintdata );
+    } else {
+        $identity = CustomizationSysprep->new( guiRunOnce => $runonce, guiUnattended => $guiunattend, identification => $identification , userData => $userdata );
+    }
+    my $customization_spec = CustomizationSpec->new( globalIPSettings => $globalipsettings, identity => $identity, options => $customoptions, nicSettingMap => [ @nicsetting ] );
+    my $clone_spec = VirtualMachineCloneSpec->new( powerOn => 1, template => 0, snapshot => $snapshot_view, location => $relocate_spec, config => $config_spec, customization => $customization_spec );
+    &Log::debug("Returning win Clone Spec");
+    return $clone_spec;
+}
+
+sub lin_CloneSpec {
+    my ( $os_temp, $snapshot_view, $relocate_spec, $config_spec ) = @_;
+    &Log::debug("Starting Support::lin_CloneSpec sub, os_temp=>'$os_temp'");
+    my @nicsetting = &Guest::CustomizationAdapterMapping_generator( $os_temp );
+    my $hostname = CustomizationPrefixName->new( base => 'linuxguest' );
+    my $globalipsettings = CustomizationGlobalIPSettings->new( dnsServerList => [ '10.10.0.1' ] , dnsSuffixList => [ 'support.balabit' ] );
+    my $linuxprep = CustomizationLinuxPrep->new( domain => 'support.balabit', hostName => $hostname, timeZone => 'Europe/Budapest', hwClockUTC => 1 );
+    my $customization_spec = CustomizationSpec->new( identity => $linuxprep, globalIPSettings => $globalipsettings, nicSettingMap => @nicsetting );
+    my $clone_spec = VirtualMachineCloneSpec->new( powerOn => 1, template => 0, snapshot => $snapshot_view, location => $relocate_spec, config => $config_spec, customization => $customization_spec );
+    &Log::debug("Returning lin Clone Spec");
+    return $clone_spec;
+}
+
+sub oth_CloneSpec {
+    my ( $snapshot_view, $relocate_spec, $config_spec ) = @_;
+    &Log::debug("Starting Support::oth_CloneSpec sub");
+    my $clone_spec = VirtualMachineCloneSpec->new( powerOn => 1, template => 0, snapshot => $snapshot_view, location => $relocate_spec, config => $config_spec );
+    &Log::debug("Returning oth Clone Spec");
+    return $clone_spec;
+}
+
 
 __END__
