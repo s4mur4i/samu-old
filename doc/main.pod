@@ -1,6 +1,6 @@
 =head1 NAME
 
-    jew.pl -- Support automatisation script
+    herring.pl -- Support automatisation script
 
 =head1 DESCRIPTION
 
@@ -10,7 +10,7 @@
 
 =head1 SYNOPSIS
 
-    jew.pl [options] [function]
+    herring.pl [options] [function]
 
 =head1 OPTIONS
 
@@ -77,7 +77,7 @@
 
 =head3 SYNOPSIS
 
-    jew.pl vm [options] [function]
+    herring.pl vm [options] [function]
 
 =head3 OPTIONS
 
@@ -125,7 +125,7 @@
 
 =head3 SYNOPSIS
 
-    jew.pl vm clone [options]
+    herring.pl vm clone [options]
 
 =head3 OPTIONS
 
@@ -137,7 +137,7 @@
 
 =head3 SYNOPSIS
 
-    jew.pl vm list [options] [function]
+    herring.pl vm list [options] [function]
 
 =head3 OPTIONS
 
@@ -171,7 +171,7 @@
 
 =head3 SYNOPSIS
 
-    jew.pl vm add [options] [function]
+    herring.pl vm add [options] [function]
 
 =head3 OPTIONS
 
@@ -205,7 +205,7 @@
 
 =head3 SYNOPSIS
 
-    jew.pl vm delete [options] [function]
+    herring.pl vm delete [options] [function]
 
 =head3 OPTIONS
 
@@ -239,7 +239,7 @@
 
 =head3 SYNOPSIS
 
-    jew.pl vm change [options] [function]
+    herring.pl vm change [options] [function]
 
 =head3 OPTIONS
 
@@ -277,7 +277,7 @@
 
 =head3 SYNOPSIS
 
-    jew.pl vm info [options] [function]
+    herring.pl vm info [options] [function]
 
 =head3 OPTIONS
 
@@ -303,7 +303,7 @@
 
 =head3 SYNOPSIS
 
-    jew.pl ticket [options] [function]
+    herring.pl ticket [options] [function]
 
 
 =head3 OPTIONS
@@ -344,7 +344,7 @@
 
 =head3 SYNOPSIS
 
-    jew.pl ticket list [options]
+    herring.pl ticket list [options]
 
 =head3 OPTIONS
 
@@ -356,7 +356,7 @@
 
 =head3 SYNOPSIS
 
-    jew.pl ticket info [options]
+    herring.pl ticket info [options]
 
 =head3 OPTIONS
 
@@ -368,7 +368,7 @@
 
 =head3 SYNOPSIS
 
-    jew.pl ticket on [options]
+    herring.pl ticket on [options]
 
 =head3 OPTIONS
 
@@ -384,7 +384,7 @@
 
 =head3 SYNOPSIS
 
-    jew.pl ticket off [options]
+    herring.pl ticket off [options]
 
 =head3 OPTIONS
 
@@ -396,7 +396,7 @@
 
 =head3 SYNOPSIS
 
-    jew.pl datastore [options] [function]
+    herring.pl datastore [options] [function]
 
 =head3 OPTIONS
 
@@ -432,7 +432,7 @@
 
 =head3 SYNOPSIS
 
-    jew.pl datastore list [options]
+    herring.pl datastore list [options]
 
 =head3 OPTIONS
 
@@ -444,7 +444,7 @@
 
 =head3 SYNOPSIS
 
-    jew.pl datastore add [options]
+    herring.pl datastore add [options]
 
 =head3 OPTIONS
 
@@ -456,7 +456,7 @@
 
 =head3 SYNOPSIS
 
-    jew.pl datastore delete [options]
+    herring.pl datastore delete [options]
 
 =head3 OPTIONS
 
@@ -468,7 +468,7 @@
 
 =head3 SYNOPSIS
 
-    jew.pl datastore info [options]
+    herring.pl datastore info [options]
 
 =head3 OPTIONS
 
@@ -480,7 +480,7 @@
 
 =head3 SYNOPSIS
 
-    jew.pl kayako [options] [functions]
+    herring.pl kayako [options] [functions]
 
 =head3 OPTIONS
 
@@ -508,7 +508,7 @@
 
 =head3 SYNOPSIS
 
-    jew.pl bugzilla [options] [functions]
+    herring.pl bugzilla [options] [functions]
 
 =head3 OPTIONS
 
@@ -536,7 +536,7 @@
 
 =head3 SYSNOPSIS
 
-    jew.pl admin [functions] [options]
+    herring.pl admin [functions] [options]
 
 =head3 OPTIONS
 
@@ -572,7 +572,7 @@
 
 =head3 SYSNOPSIS
 
-    jew.pl admin cleanup [options]
+    herring.pl admin cleanup [options]
 
 =head3 OPTIONS
 
@@ -584,7 +584,7 @@
 
 =head3 SYNOPSIS
 
-    jew.pl admin templates [options]
+    herring.pl admin templates [options]
 
 =head3 OPTIONS
 
@@ -596,7 +596,7 @@
 
 =head3 SYSNOPSIS
 
-    jew.pl admin test [options]
+    herring.pl admin test [options]
 
 =head3 OPTIONS
 

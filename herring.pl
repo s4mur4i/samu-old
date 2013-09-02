@@ -22,7 +22,7 @@ BEGIN {
     $ENV{PERL_LWP_SSL_VERIFY_HOSTNAME} = 0;
 }
 
-my $jew_opts = {
+my $herring_opts = {
     helper => [ qw(SYNOPSIS OPTIONS FUNCTIONS) ],
     functions => {
         vm => { helper => 'VM', module => 'entity', function => \&entity::main },
@@ -52,7 +52,7 @@ GetOptions(
     'man|m' => \&podman,
     );
 
-eval { &misc::option_parser($jew_opts,"jew_main"); };
+eval { &misc::option_parser($herring_opts,"jew_main"); };
 if ( $@ ) {
     &Error::catch_ex($@);
 }
