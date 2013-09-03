@@ -13,7 +13,6 @@ package Pod::Simple::Wiki::Dokuwiki;
 #     Consistency.
 #
 
-
 ###############################################################################
 #
 # Pod::Simple::Wiki::Dokuwiki - A class for creating Pod to Dokuwiki filters.
@@ -29,7 +28,6 @@ use Pod::Simple::Wiki;
 use strict;
 use vars qw(@ISA $VERSION);
 
-
 @ISA     = qw(Pod::Simple::Wiki);
 $VERSION = '0.08';
 
@@ -40,24 +38,24 @@ $VERSION = '0.08';
 # The tag to wiki mappings.
 #
 my $tags = {
-            '<b>'    => '** ',
-            '</b>'   => ' **',
-            '<i>'    => '// ',
-            '</i>'   => ' //',
-            '<tt>'   => "''",
-            '</tt>'  => "''",
-            '<pre>'  => '   ',
-            '</pre>' => "   \n\n",
+    '<b>'    => '** ',
+    '</b>'   => ' **',
+    '<i>'    => '// ',
+    '</i>'   => ' //',
+    '<tt>'   => "''",
+    '</tt>'  => "''",
+    '<pre>'  => '   ',
+    '</pre>' => "   \n\n",
 
-            '<h1>'   => "\n===== ",
-            '</h1>'  => " =====\n\n",
-            '<h2>'   => "\n==== ",
-            '</h2>'  => " ====\n\n",
-            '<h3>'   => "\n=== ",
-            '</h3>'  => " ===\n\n",
-            '<h4>'   => "\n== ",
-            '</h4>'  => " ==\n\n",
-           };
+    '<h1>'  => "\n===== ",
+    '</h1>' => " =====\n\n",
+    '<h2>'  => "\n==== ",
+    '</h2>' => " ====\n\n",
+    '<h3>'  => "\n=== ",
+    '</h3>' => " ===\n\n",
+    '<h4>'  => "\n== ",
+    '</h4>' => " ==\n\n",
+};
 
 # Portme. You can leave new() as it is.
 
@@ -69,12 +67,13 @@ my $tags = {
 #
 sub new {
 
-    my $class                   = shift;
-    my $self                    = Pod::Simple::Wiki->new('wiki', @_);
-       $self->{_tags}           = $tags;
-#   $self->{_debug}         = 1;
+    my $class = shift;
+    my $self = Pod::Simple::Wiki->new( 'wiki', @_ );
+    $self->{_tags} = $tags;
 
-    bless  $self, $class;
+    #   $self->{_debug}         = 1;
+
+    bless $self, $class;
     return $self;
 }
 
@@ -93,14 +92,14 @@ sub _indent_item {
     my $item_param   = $_[1];
     my $indent_level = $self->{_item_indent};
 
-    if    ($item_type eq 'bullet') {
-         $self->_append('  *' x $indent_level . ' ');
+    if ( $item_type eq 'bullet' ) {
+        $self->_append( '  *' x $indent_level . ' ' );
     }
-    elsif ($item_type eq 'number') {
-         $self->_append('  - ' x $indent_level . ' ');
+    elsif ( $item_type eq 'number' ) {
+        $self->_append( '  - ' x $indent_level . ' ' );
     }
-    elsif ($item_type eq 'text') {
-         $self->_append('  * ' x $indent_level . ' ');
+    elsif ( $item_type eq 'text' ) {
+        $self->_append( '  * ' x $indent_level . ' ' );
     }
 }
 
@@ -119,7 +118,7 @@ sub _handle_text {
     my $text = $_[0];
 
     # Only escape words in paragraphs
-    if (not $self->{_in_Para}) {
+    if ( not $self->{_in_Para} ) {
         $self->{_wiki_text} .= $text;
         return;
     }
@@ -134,7 +133,6 @@ sub _handle_text {
     $self->{_wiki_text} .= join '', @tokens;
 }
 
-
 # Portme. How Pod "=over" blocks are converted to Dokuwiki wiki lists.
 
 ###############################################################################
@@ -146,8 +144,7 @@ sub _handle_text {
 # Text     lists
 # Block    lists
 #
-sub _end_item_text     {$_[0]->_output("\n\n")}
-
+sub _end_item_text { $_[0]->_output("\n\n") }
 
 # Portme: Probably won't have to change this.
 
@@ -162,14 +159,13 @@ sub _start_Para {
     my $self         = shift;
     my $indent_level = $self->{_item_indent};
 
-    if ($self->{_in_over_block}) {
+    if ( $self->{_in_over_block} ) {
+
         # Do something here is necessary
     }
 }
 
-
 1;
-
 
 __END__
 
