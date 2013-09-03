@@ -5,12 +5,13 @@ use warnings;
 use Base::misc;
 
 my $help = 0;
+
 BEGIN() {
     use Exporter();
-    our (@ISA, @EXPORT);
+    our ( @ISA, @EXPORT );
 
-    @ISA         = qw(Exporter);
-    @EXPORT      = qw(&main);
+    @ISA    = qw(Exporter);
+    @EXPORT = qw(&main);
 }
 
 ### subs
@@ -26,18 +27,18 @@ BEGIN() {
 =cut
 
 our $module_opts = {
-    helper => 'BUGZILLA',
+    helper    => 'BUGZILLA',
     functions => {
         info => {
-            helper => 'BUGZILLA_info_function',
+            helper   => 'BUGZILLA_info_function',
             function => \&info,
-            },
         },
+    },
 };
 
 sub main {
     &Log::debug("Bugzilla::main sub started");
-    &misc::option_parser($module_opts,"main");
+    &misc::option_parser( $module_opts, "main" );
 }
 
 1;

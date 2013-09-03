@@ -5,42 +5,45 @@ use warnings;
 use Data::Dumper;
 
 my @error;
-my $count=0;
+my $count = 0;
+
 sub test {
-	my ( $var, $name) = @_;
-	if ( $var ) {
-		print "$name error\n";
-		print Dumper( $var );
+    my ( $var, $name ) = @_;
+    if ($var) {
+        print "$name error\n";
+        print Dumper($var);
         push( @error, $name );
-	} else {
-		print "$name loaded succesfully\n";
-	}
+    }
+    else {
+        print "$name loaded succesfully\n";
+    }
 }
 
 sub req {
-	my ( $name ) = @_;
+    my ($name) = @_;
     $count++;
-	eval "require $name";
-	&test( $@, $name );
+    eval "require $name";
+    &test( $@, $name );
 }
 
-open ( my $fh, "<", "PERL_MODULES") || die "Can't open file: $!\n";
+open( my $fh, "<", "PERL_MODULES" ) || die "Can't open file: $!\n";
 my @modules;
-while (  <$fh> ) {
-	chomp $_;
-	push( @modules, $_);
+while (<$fh>) {
+    chomp $_;
+    push( @modules, $_ );
 }
 close $fh;
-foreach ( @modules) {
-	print "Testing module: $_\n";
-	&req($_);
+foreach (@modules) {
+    print "Testing module: $_\n";
+    &req($_);
 }
 print "#### Summary BEGIN ####\n";
 print "Tested $count perl modules\n";
 if ( @error ne 0 ) {
     print "There were " . @error . " errors\n";
     print "Need to fix problems with: " . join( ", ", @error ) . "\n";
-} else {
+}
+else {
     print "Everything ok.\n";
 }
 print "#### Summary END ####\n";

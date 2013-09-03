@@ -5,12 +5,13 @@ use warnings;
 use Base::misc;
 
 my $help = 0;
+
 BEGIN() {
     use Exporter();
-    our (@ISA, @EXPORT);
+    our ( @ISA, @EXPORT );
 
-    @ISA         = qw(Exporter);
-    @EXPORT      = qw(&main);
+    @ISA    = qw(Exporter);
+    @EXPORT = qw(&main);
 }
 
 ### subs
@@ -26,25 +27,26 @@ BEGIN() {
 =cut
 
 our $module_opts = {
-    helper => 'DATASTORE',
+    helper    => 'DATASTORE',
     functions => {
         add => {
-            helper => 'DATASTORE_add_function',
-            function => \&datastore_add, },
-        delete => {
-            helper => 'DATASTORE_delete_function',
-            function => \&datastore_delete,
-            },
-        list => {
-            helper => 'DATASTORE_list_function',
-            function => \&datastore_list
-            },
+            helper   => 'DATASTORE_add_function',
+            function => \&datastore_add,
         },
+        delete => {
+            helper   => 'DATASTORE_delete_function',
+            function => \&datastore_delete,
+        },
+        list => {
+            helper   => 'DATASTORE_list_function',
+            function => \&datastore_list
+        },
+    },
 };
 
 sub main {
     &Log::debug("Datastore::main sub started");
-    &misc::option_parser($module_opts,"main");
+    &misc::option_parser( $module_opts, "main" );
 }
 
 sub datastore_add {

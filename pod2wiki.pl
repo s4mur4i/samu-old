@@ -6,7 +6,6 @@ use FindBin;
 use lib "$FindBin::Bin/lib";
 use Pod::Simple::Wiki::Dokuwiki;
 
-
 my $parser = Pod::Simple::Wiki->new('dokuwiki');
 
 if ( defined $ARGV[0] ) {
@@ -23,7 +22,7 @@ else {
     *OUT = *STDOUT;
 }
 
-$parser->output_fh( *OUT );
-$parser->parse_file( *IN );
+$parser->output_fh(*OUT);
+$parser->parse_file(*IN);
 
 __END__

@@ -5,12 +5,13 @@ use warnings;
 use Base::misc;
 
 my $help = 0;
+
 BEGIN() {
     use Exporter();
-    our (@ISA, @EXPORT);
+    our ( @ISA, @EXPORT );
 
-    @ISA         = qw(Exporter);
-    @EXPORT      = qw(&main);
+    @ISA    = qw(Exporter);
+    @EXPORT = qw(&main);
 }
 
 ### subs
@@ -26,18 +27,18 @@ BEGIN() {
 =cut
 
 our $module_opts = {
-    helper => 'KAYAKO',
+    helper    => 'KAYAKO',
     functions => {
         info => {
-            helper => 'KAYAKO_info_function',
+            helper   => 'KAYAKO_info_function',
             function => \&info,
-            },
+        },
     },
 };
 
 sub main {
     &Log::debug("Kayako::main sub started");
-    &misc::option_parser($module_opts,"main");
+    &misc::option_parser( $module_opts, "main" );
 }
 
 1;

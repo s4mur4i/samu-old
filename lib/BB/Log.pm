@@ -21,16 +21,20 @@ sub verbosity() {
 # example: $l = log2line('Incoming connection', ip => '1.2.3.4', local_port => 1234, remote_port => $rport);
 sub log2line {
     my $level = shift;
-    my $msg = shift;
-    my %args = @_;
-    my $sep = '';
-    my ($package, $filename, $line, $subroutine, $hasargs, $wantarray, $evaltext, $is_require) = caller(1);
-    my $prefix = basename($filename) . " " . getpwuid($<) . " [$level] [".$$."]";
+    my $msg   = shift;
+    my %args  = @_;
+    my $sep   = '';
+    my (
+        $package, $filename,  $line,     $subroutine,
+        $hasargs, $wantarray, $evaltext, $is_require
+    ) = caller(1);
+    my $prefix =
+      basename($filename) . " " . getpwuid($<) . " [$level] [" . $$ . "]";
 
     closelog();
-    openlog($prefix, "", LOG_USER);
+    openlog( $prefix, "", LOG_USER );
     $msg .= ';';
-    for my $k (sort keys %args) {
+    for my $k ( sort keys %args ) {
         my $v = $args{$k};
 
         defined($v) or $v = '(undef)';
@@ -49,45 +53,47 @@ sub log2line {
 
 # Report a critical error and terminate the script
 sub critical {
-    syslog(LOG_ERR, log2line('ERROR', @_));
-#    exit 1;
+    syslog( LOG_ERR, log2line( 'ERROR', @_ ) );
+
+    #    exit 1;
 }
 
 sub normal {
-    syslog(LOG_INFO, log2line('INFO', @_));
+    syslog( LOG_INFO, log2line( 'INFO', @_ ) );
 }
 
 # Report a warning but continue
 sub warning {
-    (verbosity() >= 1) and syslog(LOG_WARNING, log2line('WARNING', @_));
-    return -1; # failure
+    ( verbosity() >= 1 ) and syslog( LOG_WARNING, log2line( 'WARNING', @_ ) );
+    return -1;    # failure
 }
 
 # Send an info message
 sub info {
-    (verbosity() >= 2) and syslog(LOG_INFO, log2line('INFO', @_));
+    ( verbosity() >= 2 ) and syslog( LOG_INFO, log2line( 'INFO', @_ ) );
 }
 
 # Send a debug message
 sub debug {
-    (verbosity() >= 3) and syslog(LOG_DEBUG, log2line('DEBUG', @_));
+    ( verbosity() >= 3 ) and syslog( LOG_DEBUG, log2line( 'DEBUG', @_ ) );
 }
 
-BEGIN() {
+BEGIN {
     use Exporter();
-    our (@ISA, @EXPORT);
+    our ( @ISA, @EXPORT );
 
-    @ISA         = qw(Exporter);
-    @EXPORT      = qw(&verbosity &critical &warning &info &debug &normal);
+    @ISA    = qw(Exporter);
+    @EXPORT = qw(&verbosity &critical &warning &info &debug &normal);
 
     GetOptions(
-        "verbose|v+"    => \$verbosity, # occurence counter
+        "verbose|v+" => \$verbosity,    # occurence counter
     );
-    $verbosity  ||= 0;
+    $verbosity ||= 0;
 
     debug("==== Log started");
     debug("Verbosity level verbosity=>'$verbosity'");
 }
 
 1;
+
 # vim:ft=perl:ai:si:ts=4:sw=4:et
