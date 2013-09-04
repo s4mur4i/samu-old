@@ -1,17 +1,22 @@
 #!/usr/bin/perl
 
-BEGIN {
-    if ( $ENV{NO_DNS} ) {
-        require Test::More;
-        Test::More::plan( skip_all => 'these tests are for testing with DNS' );
-    }
-}
-
 use strict;
 use warnings;
 use 5.14.0;
 use Test::More;
-use Test::DNS;
+use English qw(-no_match_vars);
+
+if ( not $ENV{DNS} ) {
+        my $msg = 'Author test.  Set $ENV{DNS} to a true value to run.';
+            plan( skip_all => $msg );
+}
+
+eval { require Test::DNS; };
+
+if ( $EVAL_ERROR ) {
+        my $msg = 'Test::DNS required to test DNS';
+            plan( skip_all => $msg );
+}
 
 my $dns_core    = Test::DNS->new( nameservers => ['10.10.0.1'] );
 my $dns_support = Test::DNS->new( nameservers => ['10.10.0.1'] );

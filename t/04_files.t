@@ -3,8 +3,20 @@ use strict;
 use warnings;
 use 5.14.0;
 use Test::More;
-use Test::Files;
 use FindBin;
+use English qw(-no_match_vars);
+
+if ( not $ENV{AUTHOR} ) {
+    my $msg = 'Author test.  Set $ENV{AUTHOR} to a true value to run.';
+    plan( skip_all => $msg );
+}
+
+eval { require Test::Files; };
+
+if ( $EVAL_ERROR ) {
+    my $msg = 'Test::Files required to criticise code';
+    plan( skip_all => $msg );
+}
 
 dir_only_contains_ok(
     "$FindBin::Bin/../lib/VMware",
