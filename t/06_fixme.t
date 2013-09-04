@@ -17,5 +17,5 @@ if ( $EVAL_ERROR ) {
         my $msg = 'Test::Fixme required to criticise code';
             plan( skip_all => $msg );
 }
-
+Test::Fixme->import;
 run_tests( where => "$FindBin::Bin/../" );

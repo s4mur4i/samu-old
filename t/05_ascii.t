@@ -17,7 +17,7 @@ if ( $EVAL_ERROR ) {
     my $msg = 'Test::PureASCII required to criticise code';
     plan( skip_all => $msg );
 }
-
+Test::PureASCII->import;
 all_perl_files_are_pure_ascii(
     { forbid_control => 1, forbid_tab => 1 },
     "$FindBin::Bin/..",

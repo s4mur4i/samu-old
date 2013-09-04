@@ -17,6 +17,7 @@ if ( $EVAL_ERROR ) {
     my $msg = 'Test::Files required to criticise code';
     plan( skip_all => $msg );
 }
+Test::Files->import;
 
 dir_only_contains_ok(
     "$FindBin::Bin/../lib/VMware",
