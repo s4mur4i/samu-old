@@ -3,13 +3,21 @@ use strict;
 use warnings;
 use 5.14.0;
 use FindBin;
+use Test::More;
+use English qw(-no_match_vars);
 
-if ( $ENV{CRITIC}) {
-    require Test::Perl::Critic;
-    all_critic_ok("$FindBin::Bin/../lib/BB", "$FindBin::Bin/../lib/Base", "$FindBin::Bin/../lib/Pod");
-} else {
-    require Test::More;
-    Test::More::plan( skip_all => 'these tests are only run if we need a very good critic');
+if ( not $ENV{CRITIC} ) {
+    my $msg = 'Author test.  Set $ENV{CRITIC} to a true value to run.';
+    plan( skip_all => $msg );
 }
 
+eval { require Test::Perl::Critic; };
+
+if ( $EVAL_ERROR ) {
+    my $msg = 'Test::Perl::Critic required to criticise code';
+    plan( skip_all => $msg );
+}
+
+Test::Perl::Critic->import();
+all_critic_ok("$FindBin::Bin/../lib/BB", "$FindBin::Bin/../lib/Base", "$FindBin::Bin/../lib/Pod");
 ### Who the fuck is Vijayakrishnan? http://en.wikipedia.org/wiki/Vijayakrishnan
