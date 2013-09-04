@@ -6,6 +6,6 @@ use Test::More;
 use FindBin;
 use lib "$FindBin::Bin/../../lib";
 
-BEGIN{ use_ok('BB::Log'); }
+BEGIN { use_ok('BB::Log'); }
 
 done_testing;

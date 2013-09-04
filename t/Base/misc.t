@@ -6,5 +6,5 @@ use Test::More;
 use FindBin;
 use lib "$FindBin::Bin/../../lib";
 
-BEGIN{ use_ok('Base::misc'); }
+BEGIN { use_ok('Base::misc'); }
 done_testing;

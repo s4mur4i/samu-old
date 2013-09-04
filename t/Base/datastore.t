@@ -6,5 +6,5 @@ use Test::More;
 use FindBin;
 use lib "$FindBin::Bin/../../lib";
 
-BEGIN{ use_ok('Base::datastore'); }
+BEGIN { use_ok('Base::datastore'); }
 done_testing;
