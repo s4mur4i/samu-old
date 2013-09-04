@@ -14,8 +14,15 @@ Pod::Simple
 Pod::Usage
 Scalar::Util
 Sys::Syslog
+Test::DNS
+Test::EOL
 Test::Exception
+Test::Files
 Test::More
+Test::PerlTidy
+Test::Pod
+Test::Spelling
+Test::Whitespaces{
 URI::Escape
 URI::URL
 XML::LibXML
