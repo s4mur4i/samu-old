@@ -1,4 +1,4 @@
-#!perl
+#!/usr/bin/perl
 
 BEGIN {
   if ($ENV{NO_DNS}) {
