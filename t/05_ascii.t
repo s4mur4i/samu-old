@@ -2,7 +2,6 @@
 use strict;
 use warnings;
 use 5.14.0;
-use Test::More;
 use Test::PureASCII;
 use FindBin;
 all_perl_files_are_pure_ascii(
@@ -10,4 +9,3 @@ all_perl_files_are_pure_ascii(
     "$FindBin::Bin/..",
     "Only ASCII characters in files"
 );
-done_testing;

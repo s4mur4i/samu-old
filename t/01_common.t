@@ -2,10 +2,8 @@
 use strict;
 use warnings;
 use 5.14.0;
-use Test::More;
 use Test::EOL;
 use FindBin;
-use lib "$FindBin::Bin/../lib";
 
 all_perl_files_ok( { all_reasons => 1, trailing_whitespace => 1 },
     "$FindBin::Bin/../lib/BB" );
