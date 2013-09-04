@@ -21,8 +21,8 @@ Test::Files
 Test::More
 Test::PerlTidy
 Test::Pod
+Test::PureASCII
 Test::Spelling
-Test::Whitespaces{
 URI::Escape
 URI::URL
 XML::LibXML
