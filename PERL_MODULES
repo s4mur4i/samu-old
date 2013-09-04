@@ -8,16 +8,15 @@ HTTP::Headers
 HTTP::Request
 HTTP::Response
 LWP::ConnCache
-LWP::Simple
 LWP::UserAgent
 Pod::Simple
 Pod::Usage
-Scalar::Util
 Sys::Syslog
 Test::DNS
 Test::EOL
 Test::Exception
 Test::Files
+Test::Fixme
 Test::More
 Test::PerlTidy
 Test::Pod
@@ -29,7 +28,6 @@ XML::LibXML
 5.006001
 5.14.0
 Carp
-DBI
 Encode
 Exporter
 FindBin
