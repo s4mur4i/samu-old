@@ -300,7 +300,7 @@ sub get_inventory_path {
       $current = $entityMap{$parent->value};
       $parent = $current->{parent};
       if (! defined $parent) {
-	 last;
+          last;
       }
    }
    return join "/", @path

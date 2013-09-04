@@ -9,15 +9,17 @@ my $count = 0;
 
 sub test {
     my ( $var, $name ) = @_;
-    if ($var && $name !~ /^Test/) {
+    if ( $var && $name !~ /^Test/ ) {
         print "$name error\n";
         print Dumper($var);
         push( @error, $name );
-    } elsif ( $var && $name =~ /^Test/ && $ENV{TEST}) {
+    }
+    elsif ( $var && $name =~ /^Test/ && $ENV{TEST} ) {
         print "Test Module found: $name\n";
         print Dumper($var);
         push( @error, $name );
-    } else {
+    }
+    else {
         print "$name loaded succesfully\n";
     }
 }

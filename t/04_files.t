@@ -4,9 +4,7 @@ use warnings;
 use 5.14.0;
 use Test::More;
 use Test::Files;
-use Test::PureASCII;
 use FindBin;
-use lib "$FindBin::Bin/../lib";
 
 dir_only_contains_ok(
     "$FindBin::Bin/../lib/VMware",
@@ -33,9 +31,4 @@ dir_contains_ok(
     "Base only contains the default modules"
 );
 
-all_perl_files_are_pure_ascii(
-    { forbid_control => 1, forbid_tab => 1, forbid_cr => 1, require_crlf => 1 },
-    "$FindBin::Bin/..",
-    "Only ASCII characters in files"
-);
 done_testing;

@@ -8,7 +8,9 @@ BEGIN {
     our @ISA    = qw( Exporter );
     our @EXPORT = qw( );
 }
+
 ### Methods
+
 sub clonevm {
     my ( $template, $vmname, $folder, $clone_spec ) = @_;
     &Log::debug(

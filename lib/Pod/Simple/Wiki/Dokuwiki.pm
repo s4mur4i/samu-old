@@ -320,6 +320,6 @@ Portme McPortme portme@portme.org
 
 =head1 COPYRIGHT
 
-© MMIII-MMVII, John McNamara.
+MMIII-MMVII, John McNamara.
 
 All Rights Reserved. This module is free software. It may be used, redistributed and/or modified under the same terms as Perl itself.
