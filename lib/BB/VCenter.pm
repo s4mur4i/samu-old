@@ -29,7 +29,7 @@ sub clonevm {
 
 ### Helper subs to query information
 
-sub num_check($$) {
+sub num_check {
     my ( $name, $type ) = @_;
     &Log::debug(
         "Starting VCenter::num_check sub, name=>'$name', type=>'$type'");
@@ -49,7 +49,7 @@ sub num_check($$) {
     return 0;
 }
 
-sub exists_entity($$) {
+sub exists_entity {
     my ( $name, $type ) = @_;
     &Log::debug(
         "Starting Vcenter::exists_entity sub, name=>'$name', type=>'$type'");

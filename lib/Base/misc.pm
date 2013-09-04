@@ -6,7 +6,7 @@ use Getopt::Long qw(:config bundling pass_through require_order);
 use Pod::Usage;
 use FindBin;
 
-BEGIN() {
+BEGIN {
     use Exporter();
     our ( @ISA, @EXPORT );
 
@@ -16,7 +16,7 @@ BEGIN() {
 
 our $help;
 
-sub call_pod2usage($) {
+sub call_pod2usage {
     my $helper = shift;
     pod2usage(
         -verbose   => 99,
@@ -27,7 +27,7 @@ sub call_pod2usage($) {
     );
 }
 
-sub option_parser($$) {
+sub option_parser {
     &Log::debug("Misc::option_parser sub starting");
     my $opts        = shift;
     my $module_name = shift;
@@ -38,7 +38,7 @@ sub option_parser($$) {
     if ( exists $opts->{module} ) {
         my $module = 'Base::' . $opts->{module};
         &Log::debug("loading module $module");
-        eval "use $module;";
+        eval "use $module";
         $module->import();
     }
     if ( exists $opts->{function} ) {

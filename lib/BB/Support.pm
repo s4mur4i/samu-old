@@ -178,7 +178,7 @@ my %map_hash = (
 
 =cut
 
-sub get_keys($) {
+sub get_keys {
     my ($hash) = @_;
     &Log::debug("Starting Support::get_keys sub, hash=>'$hash'");
     if ( !defined( $map_hash{$hash} ) ) {
@@ -205,7 +205,7 @@ sub get_keys($) {
 
 =cut
 
-sub get_key_info($$) {
+sub get_key_info {
     my ( $hash, $key ) = @_;
     &Log::debug(
         "Starting Support::get_key_info sub, hash=>'$hash', key=>'$key'");
@@ -220,7 +220,7 @@ sub get_key_info($$) {
     }
 }
 
-sub get_key_value($$$) {
+sub get_key_value {
     my ( $hash, $key, $value ) = @_;
     &Log::debug(
 "Starting Support::get_key_value sub, hash=>'$hash', key=>'$key', value=>'$value'"
@@ -239,7 +239,7 @@ sub get_key_value($$$) {
 
 ### Installation helper objects
 
-sub RelocateSpec($) {
+sub RelocateSpec {
     my ($ticket) = @_;
     &Log::debug("Starting Support::RelocateSpec sub, ticket=>'$ticket'");
     my $host_view =
@@ -254,7 +254,7 @@ sub RelocateSpec($) {
     return $relocate_spec;
 }
 
-sub ConfigSpec($$$) {
+sub ConfigSpec {
     my ( $memory, $cpu, $os_temp ) = @_;
     &Log::debug(
 "Starting Support::ConfigSpec sub, memory=>'$memory', cpu=>'$cpu', os_temp=>'$os_temp'"

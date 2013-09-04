@@ -12,7 +12,7 @@ use File::Basename;
 
 my $verbosity;
 
-sub verbosity() {
+sub verbosity {
     return $verbosity;
 }
 

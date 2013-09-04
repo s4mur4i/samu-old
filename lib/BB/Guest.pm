@@ -9,7 +9,7 @@ BEGIN {
     our @EXPORT = qw( );
 }
 
-sub entity_name_view($$) {
+sub entity_name_view {
     my ( $name, $type ) = @_;
     &Log::debug("Retrieving entity name view, name=>'$name', type=>'$type'");
     my $view = Vim::find_entity_view(
@@ -20,7 +20,7 @@ sub entity_name_view($$) {
     return $view;
 }
 
-sub vm_memory($$) {
+sub vm_memory {
     my ($name) = @_;
     &Log::debug("Retrieving VirtualMachine memory size in MB, name=>'$name'");
     my $view = Vim::find_entity_view(
@@ -31,7 +31,7 @@ sub vm_memory($$) {
     return $view->get_property('summary.config.memorySizeMB');
 }
 
-sub vm_numcpu($) {
+sub vm_numcpu {
     my ($name) = @_;
     &Log::debug("Retrieving VirtualMachine Cpu count, name=>'$name'");
     my $view = Vim::find_entity_view(
@@ -42,7 +42,7 @@ sub vm_numcpu($) {
     return $view->get_property('summary.config.numCpu');
 }
 
-sub find_last_snapshot($) {
+sub find_last_snapshot {
     my ($snapshot_view) = @_;
     &Log::debug( "Starting Guest::find_last_snapshot sub, name=>'"
           . $snapshot_view->name
@@ -59,7 +59,7 @@ sub find_last_snapshot($) {
     }
 }
 
-sub network_interfaces($) {
+sub network_interfaces {
     my ($vmname) = @_;
     &Log::debug("Starting Guest::network_interfaces sub, vmname=>'$vmname'");
     my %interfaces = ();

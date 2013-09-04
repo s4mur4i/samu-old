@@ -9,7 +9,7 @@ BEGIN {
     our @EXPORT = qw( );
 }
 
-sub array_longest($) {
+sub array_longest {
     my ($array) = @_;
     &Log::debug("Starting Misc::array_longest sub");
     my $max = -1;
@@ -104,7 +104,7 @@ sub mac_compare {
 }
 
 # increment 1 on the last 3 bytes of the MAC. if overflow occurrs, then throw error
-sub increment_mac($) {
+sub increment_mac {
     my ($mac) = @_;
     &Log::debug("Starting Misc::increment_mac, mac=>'$mac'");
     ( my $mac_hex = $mac ) =~ s/://g;
@@ -125,7 +125,7 @@ sub increment_mac($) {
     return $new_mac;
 }
 
-sub vmname_splitter($) {
+sub vmname_splitter {
     my ($vmname) = @_;
     my %return = ();
     &Log::debug("Starting Misc::vmname_splitter sub, vmname=>'$vmname'");
@@ -173,7 +173,7 @@ sub vmname_splitter($) {
     return \%return;
 }
 
-sub increment_disk_name($) {
+sub increment_disk_name {
     my ($name) = @_;
     &Log::debug("Starting Misc::increment_disk_name sub, name=>'$name'");
     my ( $pre, $num, $post );
@@ -202,7 +202,7 @@ sub increment_disk_name($) {
     return "${pre}_$num$post";
 }
 
-sub filename_splitter($) {
+sub filename_splitter {
     my ($filename) = @_;
     &Log::debug("Starting Misc::filename_splitter sub, filename=>'$filename'");
     my ( $datas, $folder, $image ) =
@@ -219,7 +219,7 @@ sub filename_splitter($) {
     return [ $datas, $folder, $image ];
 }
 
-sub generate_vmname($$$) {
+sub generate_vmname {
     my ( $ticket, $username, $os_temp ) = @_;
     &Log::debug(
 "Starting Misc::generate_vmname sub, ticket=>'$ticket', username=>'$username', os_temp=>'$os_temp'"
@@ -227,7 +227,7 @@ sub generate_vmname($$$) {
     return $ticket . "-" . $username . "-" . $os_temp . "-" . &random_3digit;
 }
 
-sub uniq_vmname($) {
+sub uniq_vmname {
     my ( $ticket, $username, $os_temp ) = @_;
     &Log::debug(
 "Starting Misc::uniq_vmname sub, ticket=>'$ticket', username=>'$username', os_temp=>'$os_temp'"

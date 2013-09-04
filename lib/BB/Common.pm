@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-package SDK::Common;
+package Common;
 
 use BB::Log;
 use BB::Error;
