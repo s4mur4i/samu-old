@@ -534,7 +534,7 @@
 
 =head1 ADMIN
 
-=head3 SYSNOPSIS
+=head3 SYNOPSIS
 
     herring.pl admin [functions] [options]
 
@@ -570,7 +570,7 @@
 
 =head2 ADMIN_cleanup_function
 
-=head3 SYSNOPSIS
+=head3 SYNOPSIS
 
     herring.pl admin cleanup [options]
 
@@ -594,7 +594,7 @@
 
 =head2 ADMIN_test_function
 
-=head3 SYSNOPSIS
+=head3 SYNOPSIS
 
     herring.pl admin test [options]
 
