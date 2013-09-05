@@ -6,13 +6,11 @@ use warnings;
 use Data::Dumper;
 use FindBin;
 use lib "$FindBin::Bin/lib";
+use lib "$FindBin::Bin/lib2";
 use BB::Log;
 use Getopt::Long qw(:config bundling pass_through require_order);
-
-#use VMware::VIRuntime;
 use Pod::Usage;
 use Base::misc;
-use Switch;
 use 5.14.0;
 use BB::Common;
 

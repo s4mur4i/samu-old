@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 use 5.14.0;
-use FindBin;
+#use FindBin;
 use Test::More;
 use English qw(-no_match_vars);
 
@@ -18,4 +18,5 @@ if ( $EVAL_ERROR ) {
             plan( skip_all => $msg );
 }
 Test::Fixme->import;
-run_tests( where => "$FindBin::Bin/../" );
+#run_tests( where => "$FindBin::Bin/../" );
+run_tests( );

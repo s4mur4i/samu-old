@@ -20,7 +20,7 @@ if ( $EVAL_ERROR ) {
 Test::Files->import;
 
 dir_only_contains_ok(
-    "$FindBin::Bin/../lib/VMware",
+    "$FindBin::Bin/../lib2/VMware",
     [
         qw(VICommon.pm VICredStore.pm VIExt.pm VILib.pm VIM25Runtime.pm VIM25Stub.pm VIM2Runtime.pm VIM2Stub.pm VIMRuntime.pm VIRuntime.pm)
     ],

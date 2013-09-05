@@ -16,16 +16,6 @@ lib/BB/Misc.pm
 lib/BB/Support.pm
 lib/BB/VCenter.pm
 lib/Pod/Simple/Wiki/Dokuwiki.pm
-lib/VMware/VICommon.pm
-lib/VMware/VICredStore.pm
-lib/VMware/VIExt.pm
-lib/VMware/VILib.pm
-lib/VMware/VIM25Runtime.pm
-lib/VMware/VIM25Stub.pm
-lib/VMware/VIM2Runtime.pm
-lib/VMware/VIM2Stub.pm
-lib/VMware/VIMRuntime.pm
-lib/VMware/VIRuntime.pm
 MANIFEST			This list of files
 PERL_MODULES
 pod2wiki.pl

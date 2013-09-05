@@ -2,7 +2,8 @@ package Error;
 
 use strict;
 use warnings;
-use lib "$FindBin::Bin";
+
+#use lib "$FindBin::Bin";
 use Data::Dumper;
 use Exception::Class (
     'BaseException',

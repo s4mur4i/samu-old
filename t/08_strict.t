@@ -4,7 +4,7 @@ use warnings;
 use 5.14.0;
 use FindBin;
 use Test::More;
-use lib "$FindBin::Bin/../lib";
+#use lib "$FindBin::Bin/../lib";
 use English qw(-no_match_vars);
 
 if ( not $ENV{AUTHOR} ) {
@@ -19,6 +19,6 @@ if ( $EVAL_ERROR ) {
     plan( skip_all => $msg );
 }
 
-my @dirs = ( "$FindBin::Bin/../lib/BB", "$FindBin::Bin/../lib/Base" );
+my @dirs = ( "$FindBin::Bin/../blib" );
 Test::Strict->import;
 all_perl_files_ok(@dirs);
