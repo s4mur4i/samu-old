@@ -7,15 +7,15 @@ use Test::More;
 use English qw(-no_match_vars);
 
 if ( not $ENV{DNS} ) {
-        my $msg = 'Author test.  Set $ENV{DNS} to a true value to run.';
-            plan( skip_all => $msg );
+    my $msg = 'Author test.  Set $ENV{DNS} to a true value to run.';
+    plan( skip_all => $msg );
 }
 
 eval { require Test::DNS; };
 
 if ( $EVAL_ERROR ) {
-        my $msg = 'Test::DNS required to test DNS';
-            plan( skip_all => $msg );
+    my $msg = 'Test::DNS required to test DNS';
+    plan( skip_all => $msg );
 }
 
 my $dns_core    = Test::DNS->new( nameservers => ['10.10.0.1'] );
