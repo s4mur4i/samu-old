@@ -2,7 +2,9 @@ Archive::Zip
 Data::Dumper
 Exception::Class
 ExtUtils::MakeMaker
+File::HomeDir
 File::Path
+File::Spec
 Getopt::Long
 HTTP::Cookies
 HTTP::Headers
@@ -14,11 +16,14 @@ Module::Load
 Pod::Simple
 Pod::Usage
 Sys::Syslog
+Test::Cmd
 Test::EOL
 Test::Exception
+Test::Files
 Test::More
 Test::Pod
 Test::Spelling
+Test::Trap
 URI::Escape
 URI::URL
 XML::LibXML
