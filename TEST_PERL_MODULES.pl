@@ -3,6 +3,7 @@
 use strict;
 use warnings;
 use Data::Dumper;
+use Module::Load;
 
 my @error;
 my $count = 0;
@@ -27,7 +28,7 @@ sub test {
 sub req {
     my ($name) = @_;
     $count++;
-    eval "require $name";
+    eval { load $name; };
     &test( $@, $name );
 }
 

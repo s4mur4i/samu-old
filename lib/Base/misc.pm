@@ -5,6 +5,7 @@ use warnings;
 use Getopt::Long qw(:config bundling pass_through require_order);
 use Pod::Usage;
 use FindBin;
+use Module::Load;
 
 BEGIN {
     use Exporter();
@@ -38,7 +39,9 @@ sub option_parser {
     if ( exists $opts->{module} ) {
         my $module = 'Base::' . $opts->{module};
         &Log::debug("loading module $module");
-        eval "use $module";
+
+        #eval "use $module";
+        eval { load $module; };
         $module->import();
     }
     if ( exists $opts->{function} ) {

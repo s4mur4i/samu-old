@@ -47,6 +47,7 @@ WriteMakefile(
         'FindBin'          => 0,
         'Switch'           => 0,
         'DBD::mysql'       => 0,
+        'Module::Load'     => 0,
     },
     PREREQ_FATAL => 1,
 );
