@@ -10,7 +10,6 @@ use File::HomeDir qw(home);
 use FindBin;
 use lib "$FindBin::Bin/../../lib2/";
 use VMware::VIRuntime;
-use Data::Dumper;
 
 sub filter_username {
     my $line = shift;

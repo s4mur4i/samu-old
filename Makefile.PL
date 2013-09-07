@@ -17,6 +17,7 @@ WriteMakefile(
         'Test::Exception'     => 0.32,
         'Test::Files'         => 0.14,
         'Test::Fixme'         => 0.10,
+        'Test::Output'        => 1.12,
         'Test::More'          => 0.98,
         'Test::PerlTidy'      => 20130104,
         'Test::Pod'           => 1.48,
