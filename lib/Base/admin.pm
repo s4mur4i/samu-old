@@ -51,7 +51,16 @@ sub main {
 }
 
 sub cleanup {
-
+    &Log::debug("Starting Admin::cleanup sub");
+    my @types = ('ResourcePool', 'Folder', 'DistributedVirtualSwitch');
+    for my $type ( @types ) {
+        my $entities = Vim::find_entity_views( view_type => $type, properties => [ 'name' ] );
+        foreach my $entity (@$entities) {
+            if ( &VCenter::check_if_empty_entity( $entity->name, $type ) ) {
+                &VCenter::destroy_entity( $entity->name, $type );
+            }
+        }
+    }
 }
 
 sub templates {
