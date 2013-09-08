@@ -119,67 +119,69 @@ sub catch_ex {
               . "',entity=>'"
               . $ex->entity
               . "',count=>'"
-              . $ex->count );
+              . $ex->count ."'" );
     }
     elsif ( $ex->isa('Entity::Status') ) {
-        &Log::critical( "Desc=>'" . $ex->error . "',entity=>'" . $ex->entity );
+        &Log::critical( "Desc=>'" . $ex->error . "',entity=>'" . $ex->entity . "'" );
     }
     elsif ( $ex->isa('Entity::Auth') ) {
-        &Log::critical( "Desc=>"
+        &Log::critical( "Desc=>'"
               . $ex->error
-              . ",entity=>"
+              . "',entity=>'"
               . $ex->entity
-              . ",user=>"
+              . "',user=>'"
               . $ex->username
-              . ",pass=>"
-              . $ex->password );
+              . "',pass=>'"
+              . $ex->password . "'");
     }
     elsif ( $ex->isa('Entity::TransferError') ) {
-        &Log::critical( "Desc=>" . $ex->error );
+        &Log::critical( "Desc=>'" . $ex->error . "',entity=>'" . $ex->entity . "'");
     }
     elsif ( $ex->isa('Entity::HWError') ) {
-        &Log::critical( "Desc=>"
+        &Log::critical( "Desc=>'"
               . $ex->error
-              . ",entity=>"
-              . $ex->entity . ",hw=>"
-              . $ex->hw );
+              . "',entity=>'"
+              . $ex->entity
+              . "',hw=>'"
+              . $ex->hw . "'");
     }
     elsif ( $ex->isa('Entity::Snapshot') ) {
-        &Log::critical( "Desc=>" . $ex->error );
+        &Log::critical( "Desc=>'"
+                . $ex->error . "',entity=>'" . $ex->error . "',snapshot=>'" . $ex->snapshot . "'");
     }
     elsif ( $ex->isa('Entity::Mac') ) {
-        &Log::critical( "Desc=>" . $ex->error . ",mac=>" . $ex->mac );
+        &Log::critical( "Desc=>'" . $ex->error . "',entity=>'" . $ex->entity . "',mac=>'" . $ex->mac . "'");
     }
     elsif ( $ex->isa('Vcenter::ServiceContent') ) {
-        &Log::critical( "Desc=>" . $ex->error );
+        &Log::critical( "Desc=>'" . $ex->error . "'");
     }
     elsif ( $ex->isa('Vcenter::Path') ) {
-        &Log::critical( "Desc=>" . $ex->error . ",path=>" . $ex->path );
+        &Log::critical( "Desc=>'" . $ex->error . "',path=>'" . $ex->path . "'");
     }
     elsif ( $ex->isa('Connection::Connect') ) {
-        &Log::critical( "Desc=>"
+        &Log::critical( "Desc=>'"
               . $ex->error
-              . ",type=>"
+              . "',type=>'"
               . $ex->type
-              . ",dest=>"
-              . $ex->dest );
+              . "',dest=>'"
+              . $ex->dest . "'");
     }
     elsif ( $ex->isa('Template::Status') ) {
-        &Log::critical( "Desc=>" . $ex->error . ",template=>" . $ex->template );
+        &Log::critical( "Desc=>'" . $ex->error . "',template=>'" . $ex->template . "'");
     }
     elsif ( $ex->isa('Template::Error') ) {
-        &Log::critical( "Desc=>" . $ex->error . ",template=>" . $ex->template );
+        &Log::critical( "Desc=>'" . $ex->error . "',template=>'" . $ex->template . "'");
     }
     elsif ( $ex->isa('Task::NotDefined') ) {
-        &Log::critical( "Desc=>'" . $ex->error );
+        &Log::critical( "Desc=>'" . $ex->error . "'");
     }
     elsif ( $ex->isa('Task::Error') ) {
         &Log::critical( "Desc=>'"
               . $ex->error
-              . ",detail=>"
+              . "',detail=>'"
               . $ex->detail
-              . ",fault=>"
-              . $ex->fault );
+              . "',fault=>'"
+              . $ex->fault . "'");
     }
     elsif ( $ex->isa('Exception::Class') ) {
         print Dumper($ex);
