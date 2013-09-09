@@ -132,6 +132,70 @@ sub linked_clone_folder {
     return $temp_fol;
 }
 
+sub check_if_empty_entity {
+    my ( $name ,$type ) = @_;
+    &Log::debug("Starting Vcenter::check_if_empty_entity sub, name=>'$name', type=>'$type'");
+    my $view;
+    if ( $type eq 'DistributedVirtualSwitch' ) {
+        $view = Vim::find_entity_view( view_type => $type, properties => [ 'summary.portgroupName', 'name' ], filter => { name => $name } );
+    } elsif ( $type eq 'ResourcePool' ) {
+        $view = Vim::find_entity_view( view_type => $type, properties => [ 'name', 'vm', 'resourcePool' ], filter => { name => $name } );
+    } elsif ( $type eq 'Folder' ) {
+        $view = Vim::find_entity_view( view_type => $type, properties => [ 'name', 'childEntity' ], filter => { name => $name } );
+    }
+    if ( !defined( $view ) ) {
+        Entity::NumException->throw( error => 'Switch does not exist', entity => $name, count => '0' );
+    }
+    if ( $type eq 'DistributedVirtualSwitch' ) {
+        my $count = $view->get_property('summary.portgroupName');
+        if ( @$count < 2 ) {
+            &Log::debug("Switch is empty");
+            return 1;
+        }
+    } elsif ( $type eq 'ResourcePool' ) {
+        if ( !defined( $view->vm ) and !defined( $view->resourcePool ) ) {
+            &Log::debug("Resorcepool pool is empty");
+            return 1;
+        }
+    } elsif ( $type eq 'Folder' ) {
+        if ( !defined( $view->childEntity ) ) {
+            &Log::debug("Folder is empty");
+            return 1;
+        }
+    }
+    &Log::debug("Entity has child entities");
+    return 0;
+}
+
+sub Task_Status {
+    my ( $taskRef ) = @_;
+    &Log::debug("Starting VCenter::Task_Status sub");
+    my $task_view = Vim::get_view( mo_ref => $taskRef, type => 'Task' );
+    if ( !defined( $task_view ) ) {
+        TaskEr::NotDefined->throw( error => 'No task_view found for reference' );
+    }
+    my $continue = 1;
+    my $progress = 0;
+    while ( $continue ) {
+        &Log::debug("Looping through Task query");
+        if ( defined( $task_view->info->progress ) and $progress ne $task_view->info->progress ) {
+            &Log::normal("Currently at " . $task_view->info->progress ."%");
+            $progress = $task_view->info->progress;
+        } elsif ( $task_view->info->state->val eq 'success' ) {
+            &Log::debug("Task was successful");
+            $continue = 0;
+        } elsif ( $task_view->info->state->val eq 'error' ) {
+            TaskEr::Error->throw( error=> 'Error happened during task', detail => $task_view->info->error->fault, fault => $task_view->info->error->localizedMessage );
+        }
+        &Log::debug("Sleeping and updating view");
+        sleep 5;
+        $task_view->ViewBase::update_view_data( );
+    }
+    &Log::debug("Finishing VCenter::Task_status sub");
+    return;
+}
+
+
 ### Subs for creation/deletion
 
 sub create_resource_pool {
@@ -230,6 +294,21 @@ sub create_folder {
     }
     &Log::debug("Folder creation was succesful");
     return $fol_name_view;
+}
+
+sub destroy_entity {
+    my ( $name, $type ) = @_;
+    &Log::debug("Starting VCenter::destroy_entity sub, name=>'$name', type=>'$type'");
+    &num_check( $name, $type );
+    my $view = &Guest::entity_name_view( $name, $type );
+    my $task = $view->Destroy_Task;
+    &Task_Status($task);
+    $view = &Guest::entity_name_view( $name, $type );
+    if ( defined($view) ) {
+        Entity::NumException->throw( error => 'Could not delete entity', entity => $name, count => '1' );
+    }
+    &Log::debug("Entity delete succesful");
+    return 1;
 }
 
 ### Subs for connection and buildup to VCenter
