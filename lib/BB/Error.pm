@@ -17,7 +17,7 @@ use Exception::Class (
         isa    => 'BaseException',
         fields => ['template'],
     },
-    'Task'       => { isa => 'BaseException', },
+    'TaskEr'       => { isa => 'BaseException', },
     'Connection' => { isa => 'BaseException', },
     'Vcenter'    => { isa => 'BaseException', },
 
@@ -87,12 +87,12 @@ use Exception::Class (
     },
 
     ## Task Exceptions
-    'Task::NotDefined' => {
-        isa         => 'Task',
+    'TaskEr::NotDefined' => {
+        isa         => 'TaskEr',
         description => 'No task reference returned',
     },
-    'Task::Error' => {
-        isa         => 'Task',
+    'TaskEr::Error' => {
+        isa         => 'TaskEr',
         description => 'Task had an error',
         fields      => [ 'detail', 'fault' ],
     },
@@ -172,10 +172,10 @@ sub catch_ex {
     elsif ( $ex->isa('Template::Error') ) {
         &Log::critical( "Desc=>'" . $ex->error . "',template=>'" . $ex->template . "'");
     }
-    elsif ( $ex->isa('Task::NotDefined') ) {
+    elsif ( $ex->isa('TaskEr::NotDefined') ) {
         &Log::critical( "Desc=>'" . $ex->error . "'");
     }
-    elsif ( $ex->isa('Task::Error') ) {
+    elsif ( $ex->isa('TaskEr::Error') ) {
         &Log::critical( "Desc=>'"
               . $ex->error
               . "',detail=>'"

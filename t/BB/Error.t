@@ -77,12 +77,12 @@ throws_ok {
     );
 }
 'Connection', 'Connection Connect Exception';
-throws_ok { Task::NotDefined->throw( error => 'test' ) } 'Task',
+throws_ok { TaskEr::NotDefined->throw( error => 'test' ) } 'TaskEr',
   'Task NotDefined Exception';
 throws_ok {
-    Task::Error->throw( error => 'test', detail => 'test', fault => 'test' );
+    TaskEr::Error->throw( error => 'test', detail => 'test', fault => 'test' );
 }
-'Task', 'Task Error Exception';
+'TaskEr', 'Task Error Exception';
 diag("Testing Catch");
 eval { Entity->throw( error => 'test', entity => 'test' ); };
 my $ex = $@;
@@ -100,12 +100,12 @@ combined_like(
     qr/Error.pm\s[^ ]*\s\[ERROR\]\s\[\d*\]:\sI'm blue and I'm a WTF.....;/,
     "Template Base exception"
 );
-eval { Task->throw( error => 'test' ); };
+eval { TaskEr->throw( error => 'test' ); };
 $ex = $@;
 combined_like(
     sub { &Error::catch_ex($ex) },
     qr/Error.pm\s[^ ]*\s\[ERROR\]\s\[\d*\]:\sI'm blue and I'm a WTF.....;/,
-    "Task Base exception"
+    "TaskEr Base exception"
 );
 eval { Connection->throw( error => 'test' ); };
 $ex = $@;
@@ -232,21 +232,21 @@ stderr_like(
 qr@Error.pm\s[^ ]*\s\[ERROR\]\s\[\d*\]:\sDesc=>'test',template=>'template';@,
     "Template Error exception output"
 );
-eval { Task::NotDefined->throw( error => 'test' ); };
+eval { TaskEr::NotDefined->throw( error => 'test' ); };
 $ex = $@;
 stderr_like(
     sub { &Error::catch_ex($ex) },
     qr/Error.pm\s[^ ]*\s\[ERROR\]\s\[\d*\]:\sDesc=>'test';/,
-    "Task NotDefined exception output"
+    "TaskEr NotDefined exception output"
 );
 eval {
-    Task::Error->throw( error => 'test', fault => 'test', detail => 'test' );
+    TaskEr::Error->throw( error => 'test', fault => 'test', detail => 'test' );
 };
 $ex = $@;
 stderr_like(
     sub { &Error::catch_ex($ex) },
 qr@Error.pm\s[^ ]*\s\[ERROR\]\s\[\d*\]:\sDesc=>'test',detail=>'test',fault=>'test';@,
-    "Task Error exception output"
+    "TaskEr Error exception output"
 );
 eval { BaseException->throw(); };
 $ex = $@;
