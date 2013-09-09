@@ -15,7 +15,7 @@ use Base::admin;
 &Opts::validate();
 &Util::connect();
 
-ok( \&admin::test, "Admin test sub ran succesfully" );
+ok( &admin::test, "Admin test sub ran succesfully" );
 stderr_like( \&admin::test, qr/^admin.pm\s[^ ]*\s\[INFO\]\s\[\d*\]:\sServer\sTime\s:\s\d{4}(-\d{2}){2}T\d{2}(:\d{2}){2}\.\d+Z;/, "Output is a valid server time" );
 &Util::disconnect();
 done_testing;
