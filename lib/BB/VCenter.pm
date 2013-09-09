@@ -23,10 +23,19 @@ sub clonevm {
         name   => $vmname,
         spec   => $clone_spec
     );
-
-    #&Vcenter::Task_getStatus($task);
+    &Task_Status($task);
+    &Log::debug("Finished cloning vm");
 }
 
+sub create_test_vm {
+    my ( $name ) = @_;
+    &Log::debug("Starting VCenter::create_test_vm");
+    my $resource_pool = &Guest::entity_name_view( 'test_1337', 'ResourcePool' );
+    my $folder = &Guest::entity_name_view( 'test_1337', 'Folder' );
+    my $config_spec = VirtualMachineConfigSpec->new( name => $name );
+    my $task = $folder->CreateVM_task( pool => $resource_pool, config => $config_spec );
+    &Task_Status( $task );
+}
 ### Helper subs to query information
 
 sub num_check {
@@ -294,6 +303,32 @@ sub create_folder {
     }
     &Log::debug("Folder creation was succesful");
     return $fol_name_view;
+}
+
+sub create_switch {
+    my ( $name ) = @_;
+    &Log::debug("Starting VCenter::create_switch sub, name=>'$name'");
+    &num_check( 'network', 'Folder' );
+    my $network_folder = &Guest::entity_name_view( 'network', 'Folder' );
+    my $host_view = &Guest::entity_name_view( 'vmware-it1.balabit', 'HostSystem' );
+    &num_check( 'vmware-it1.balabit', 'HostSystem' );
+    my $hostspec = DistributedVirtualSwitchHostMemberConfigSpec->new( operation => 'add', maxProxySwitchPorts => 99, host => $host_view );
+    my $dvsconfigspec = DVSConfigSpec->new( name => $name, maxPorts => 300, description => "DVS for ticket $name", host => [$hostspec] );
+    my $spec = DVSCreateSpec->new( configSpec => $dvsconfigspec );
+    my $task = $network_folder->CreateDVS_Task( spec => $spec );
+    &Task_Status( $task );
+    &Log::debug("Finished creating switch");
+}
+
+sub create_dvportgroup {
+    my ( $name, $switch ) = @_;
+    &Log::debug("Starting VCenter::create_dvportgroup sub, name=>'$name', switch=>'$switch'");
+    &num_check( $switch, 'DistributedVirtualSwitch' );
+    my $switch_view = &Guest::entity_name_view( $switch, 'DistributedVirtualSwitch' );
+    my $spec = DVPortgroupConfigSpec->new( name => $name, type => 'earlyBinding', numPorts => 20, description => "Port group" );
+    my $task = $switch_view->AddDVPortgroup_Task( spec => $spec );
+    &Task_Status( $task );
+    &Log::debug("Finished creating dv port group");
 }
 
 sub destroy_entity {

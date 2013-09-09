@@ -12,12 +12,11 @@ use Base::admin;
 sub create_entities {
     ok( \&VCenter::create_resource_pool( 'test_1337', 'Resources' ), "Creating test_1337 resourcepool" );
     ok( \&VCenter::create_folder( 'test_1337', 'vm' ), "Creating test_1337 folder" );
-    #ok( \&VCenter::create_resource_pool( 'test_1337', 'Resources' ), "Creating test_1337 DVS" );
+    ok( \&VCenter::create_switch( 'test_1337', 'DistributedVirtualSwitch' ), "Creating test_1337 DVS" );
 }
 
 diag("Check if any entity exists for our test_1337 ticket");
-#my @types = ( 'ResourcePool', 'Folder', 'DistributedVirtualSwitch' );
-my @types = ( 'ResourcePool', 'Folder');
+my @types = ( 'ResourcePool', 'Folder', 'DistributedVirtualSwitch' );
 &Opts::parse();
 &Opts::validate();
 &Util::connect();
@@ -38,6 +37,19 @@ for my $type ( @types ) {
 }
 &create_entities;
 is( &admin::cleanup, '' ,"Admin cleanup sub deletes resource Pool" );
+for my $type ( @types ) {
+    is( Vim::find_entity_view( view_type =>$type, properties => [ 'name' ], filter => { name => 'test_1337' } ), undef, "test_1337 $type doesn't exist after cleanup" );
+}
+&create_entities;
+&VCenter::create_test_vm( 'test_1337' );
+&admin::cleanup;
+for my $type ( @types ) {
+    is( &VCenter::exists_entity( 'test_1337', $type ), 1, "Entity Exists $type" );
+}
+my $view = &Guest::entity_name_view( 'test_1337', 'VirtualMachine' );
+my $task = $view->Destroy_Task;
+&VCenter::Task_Status( $task );
+&admin::cleanup;
 for my $type ( @types ) {
     is( Vim::find_entity_view( view_type =>$type, properties => [ 'name' ], filter => { name => 'test_1337' } ), undef, "test_1337 $type doesn't exist after cleanup" );
 }
