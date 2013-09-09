@@ -54,7 +54,6 @@ sub log2line {
 # Report a critical error and terminate the script
 sub critical {
     syslog( LOG_ERR, log2line( 'ERROR', @_ ) );
-
     #    exit 1;
 }
 
