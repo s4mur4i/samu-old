@@ -6,7 +6,7 @@ use Test::More;
 use Test::More;
 use FindBin;
 use lib "$FindBin::Bin/../../lib/";
-use lib "$FindBin::Bin/../../lib2/";
+use lib "$FindBin::Bin/../../vmware_lib/";
 use BB::Common;
 use Base::admin;
 

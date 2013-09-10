@@ -6,7 +6,7 @@ use warnings;
 use Data::Dumper;
 use FindBin;
 use lib "$FindBin::Bin/lib";
-use lib "$FindBin::Bin/lib2";
+use lib "$FindBin::Bin/vmware_lib";
 use BB::Log;
 use Getopt::Long qw(:config bundling pass_through require_order);
 use Pod::Usage;

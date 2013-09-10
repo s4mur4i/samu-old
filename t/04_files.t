@@ -21,7 +21,7 @@ Test::Files->import;
 
 diag("Testing directory contents");
 dir_only_contains_ok(
-    "$FindBin::Bin/../lib2/VMware",
+    "$FindBin::Bin/../vmware_lib/VMware",
     [
         qw(VICommon.pm VICredStore.pm VIExt.pm VILib.pm VIM25Runtime.pm VIM25Stub.pm VIM2Runtime.pm VIM2Stub.pm VIMRuntime.pm VIRuntime.pm)
     ],

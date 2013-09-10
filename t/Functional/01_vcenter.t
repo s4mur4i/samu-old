@@ -8,7 +8,7 @@ use Test::Trap;
 use File::Spec::Functions qw(catfile);
 use File::HomeDir qw(home);
 use FindBin;
-use lib "$FindBin::Bin/../../lib2/";
+use lib "$FindBin::Bin/../../vmware_lib/";
 use VMware::VIRuntime;
 
 BEGIN {
