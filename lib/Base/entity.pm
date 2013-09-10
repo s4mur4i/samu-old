@@ -239,6 +239,7 @@ sub clone_vm {
           . &Support::get_key_value( 'template', $os_temp, 'password' )
           . "'" );
     &Log::normal("Unique name of vm: $vmname");
+    return 1;
 }
 
 1;
