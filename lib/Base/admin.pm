@@ -7,7 +7,7 @@ use BB::Common;
 
 my $help = 0;
 
-BEGIN() {
+BEGIN {
     use Exporter();
     our ( @ISA, @EXPORT );
 
@@ -52,12 +52,19 @@ sub main {
 
 sub cleanup {
     &Log::debug("Starting Admin::cleanup sub");
-    my @types = ('ResourcePool', 'Folder', 'DistributedVirtualSwitch');
-    for my $type ( @types ) {
-        my $entities = Vim::find_entity_views( view_type => $type, properties => [ 'name' ] );
+    my @types = ( 'ResourcePool', 'Folder', 'DistributedVirtualSwitch' );
+    for my $type (@types) {
+        &Log::normal("Looping through $type");
+        my $entities =
+          Vim::find_entity_views( view_type => $type, properties => ['name'] );
         foreach my $entity (@$entities) {
+            &Log::debug("Checking $entity in $type");
             if ( &VCenter::check_if_empty_entity( $entity->name, $type ) ) {
-                &Log::normal("Deleting entity=>'" . $entity->name . "',type=>'" . $type . "'");
+                &Log::normal( "Deleting entity=>'"
+                      . $entity->name
+                      . "',type=>'"
+                      . $type
+                      . "'" );
                 &VCenter::destroy_entity( $entity->name, $type );
             }
         }
@@ -77,6 +84,7 @@ sub templates {
 }
 
 sub test {
+    &Log::debug("Admin::test started");
     my $si_moref = ManagedObjectReference->new(
         type  => 'ServiceInstance',
         value => 'ServiceInstance'

@@ -28,13 +28,61 @@ sub clonevm {
 }
 
 sub create_test_vm {
-    my ( $name ) = @_;
+    my ($name) = @_;
     &Log::debug("Starting VCenter::create_test_vm");
+    &num_check( 'test_1337', 'ResourcePool' );
     my $resource_pool = &Guest::entity_name_view( 'test_1337', 'ResourcePool' );
+    &num_check( 'test_1337', 'Folder' );
     my $folder = &Guest::entity_name_view( 'test_1337', 'Folder' );
-    my $config_spec = VirtualMachineConfigSpec->new( name => $name );
-    my $task = $folder->CreateVM_task( pool => $resource_pool, config => $config_spec );
-    &Task_Status( $task );
+    &num_check( 'test_1337', 'DistributedVirtualSwitch' );
+    my $host_view = Vim::find_entity_view(
+        view_type  => 'HostSystem',
+        properties => ['network'],
+        filter     => { name => 'vmware-it1.balabit' }
+    );
+    my $network_list = Vim::get_views( mo_ref_array => $host_view->network );
+    my @vm_devices;
+    my $files = VirtualMachineFileInfo->new(
+        logDirectory      => undef,
+        snapshotDirectory => undef,
+        suspendDirectory  => undef,
+        vmPathName        => '[support] test_1337'
+    );
+
+    foreach (@$network_list) {
+        if ( $_->name =~ /^test_1337_dvg/ ) {
+            my $network          = $_;
+            my $nic_backing_info = VirtualEthernetCardNetworkBackingInfo->new(
+                deviceName    => 'test_1337_dvg',
+                useAutoDetect => 1,
+                network       => $network
+            );
+            my $vd_connect_info = VirtualDeviceConnectInfo->new(
+                allowGuestControl => 1,
+                connected         => 0,
+                startConnected    => 1
+            );
+            my $nic = VirtualPCNet32->new(
+                backing     => $nic_backing_info,
+                key         => 0,
+                addressType => 'generated',
+                connectable => $vd_connect_info
+            );
+            my $nic_vm_dev_conf_spec = VirtualDeviceConfigSpec->new(
+                device    => $nic,
+                operation => VirtualDeviceConfigSpecOperation->new('add')
+            );
+            push( @vm_devices, $nic_vm_dev_conf_spec );
+        }
+    }
+    my $config_spec = VirtualMachineConfigSpec->new(
+        name         => $name,
+        memoryMB     => '512',
+        files        => $files,
+        numCPUs      => 1,
+        deviceChange => \@vm_devices
+    );
+    $folder->CreateVM( pool => $resource_pool, config => $config_spec );
 }
 ### Helper subs to query information
 
@@ -142,18 +190,38 @@ sub linked_clone_folder {
 }
 
 sub check_if_empty_entity {
-    my ( $name ,$type ) = @_;
-    &Log::debug("Starting Vcenter::check_if_empty_entity sub, name=>'$name', type=>'$type'");
+    my ( $name, $type ) = @_;
+    &Log::debug(
+"Starting Vcenter::check_if_empty_entity sub, name=>'$name', type=>'$type'"
+    );
     my $view;
     if ( $type eq 'DistributedVirtualSwitch' ) {
-        $view = Vim::find_entity_view( view_type => $type, properties => [ 'summary.portgroupName', 'name' ], filter => { name => $name } );
-    } elsif ( $type eq 'ResourcePool' ) {
-        $view = Vim::find_entity_view( view_type => $type, properties => [ 'name', 'vm', 'resourcePool' ], filter => { name => $name } );
-    } elsif ( $type eq 'Folder' ) {
-        $view = Vim::find_entity_view( view_type => $type, properties => [ 'name', 'childEntity' ], filter => { name => $name } );
+        $view = Vim::find_entity_view(
+            view_type  => $type,
+            properties => [ 'summary.portgroupName', 'name' ],
+            filter     => { name => $name }
+        );
     }
-    if ( !defined( $view ) ) {
-        Entity::NumException->throw( error => 'Switch does not exist', entity => $name, count => '0' );
+    elsif ( $type eq 'ResourcePool' ) {
+        $view = Vim::find_entity_view(
+            view_type  => $type,
+            properties => [ 'name', 'vm', 'resourcePool' ],
+            filter => { name => $name }
+        );
+    }
+    elsif ( $type eq 'Folder' ) {
+        $view = Vim::find_entity_view(
+            view_type  => $type,
+            properties => [ 'name', 'childEntity' ],
+            filter     => { name => $name }
+        );
+    }
+    if ( !defined($view) ) {
+        Entity::NumException->throw(
+            error  => 'Switch does not exist',
+            entity => $name,
+            count  => '0'
+        );
     }
     if ( $type eq 'DistributedVirtualSwitch' ) {
         my $count = $view->get_property('summary.portgroupName');
@@ -161,12 +229,14 @@ sub check_if_empty_entity {
             &Log::debug("Switch is empty");
             return 1;
         }
-    } elsif ( $type eq 'ResourcePool' ) {
+    }
+    elsif ( $type eq 'ResourcePool' ) {
         if ( !defined( $view->vm ) and !defined( $view->resourcePool ) ) {
             &Log::debug("Resorcepool pool is empty");
             return 1;
         }
-    } elsif ( $type eq 'Folder' ) {
+    }
+    elsif ( $type eq 'Folder' ) {
         if ( !defined( $view->childEntity ) ) {
             &Log::debug("Folder is empty");
             return 1;
@@ -177,33 +247,41 @@ sub check_if_empty_entity {
 }
 
 sub Task_Status {
-    my ( $taskRef ) = @_;
+    my ($taskRef) = @_;
     &Log::debug("Starting VCenter::Task_Status sub");
     my $task_view = Vim::get_view( mo_ref => $taskRef, type => 'Task' );
-    if ( !defined( $task_view ) ) {
-        TaskEr::NotDefined->throw( error => 'No task_view found for reference' );
+    if ( !defined($task_view) ) {
+        TaskEr::NotDefined->throw(
+            error => 'No task_view found for reference' );
     }
     my $continue = 1;
     my $progress = 0;
-    while ( $continue ) {
+    while ($continue) {
         &Log::debug("Looping through Task query");
-        if ( defined( $task_view->info->progress ) and $progress ne $task_view->info->progress ) {
-            &Log::normal("Currently at " . $task_view->info->progress ."%");
+        if ( defined( $task_view->info->progress )
+            and $progress ne $task_view->info->progress )
+        {
+            &Log::normal( "Currently at " . $task_view->info->progress . "%" );
             $progress = $task_view->info->progress;
-        } elsif ( $task_view->info->state->val eq 'success' ) {
+        }
+        elsif ( $task_view->info->state->val eq 'success' ) {
             &Log::debug("Task was successful");
             $continue = 0;
-        } elsif ( $task_view->info->state->val eq 'error' ) {
-            TaskEr::Error->throw( error=> 'Error happened during task', detail => $task_view->info->error->fault, fault => $task_view->info->error->localizedMessage );
+        }
+        elsif ( $task_view->info->state->val eq 'error' ) {
+            TaskEr::Error->throw(
+                error  => 'Error happened during task',
+                detail => $task_view->info->error->fault,
+                fault  => $task_view->info->error->localizedMessage
+            );
         }
         &Log::debug("Sleeping and updating view");
         sleep 5;
-        $task_view->ViewBase::update_view_data( );
+        $task_view->ViewBase::update_view_data();
     }
     &Log::debug("Finishing VCenter::Task_status sub");
     return;
 }
-
 
 ### Subs for creation/deletion
 
@@ -306,41 +384,64 @@ sub create_folder {
 }
 
 sub create_switch {
-    my ( $name ) = @_;
+    my ($name) = @_;
     &Log::debug("Starting VCenter::create_switch sub, name=>'$name'");
     &num_check( 'network', 'Folder' );
     my $network_folder = &Guest::entity_name_view( 'network', 'Folder' );
-    my $host_view = &Guest::entity_name_view( 'vmware-it1.balabit', 'HostSystem' );
+    my $host_view =
+      &Guest::entity_name_view( 'vmware-it1.balabit', 'HostSystem' );
     &num_check( 'vmware-it1.balabit', 'HostSystem' );
-    my $hostspec = DistributedVirtualSwitchHostMemberConfigSpec->new( operation => 'add', maxProxySwitchPorts => 99, host => $host_view );
-    my $dvsconfigspec = DVSConfigSpec->new( name => $name, maxPorts => 300, description => "DVS for ticket $name", host => [$hostspec] );
+    my $hostspec = DistributedVirtualSwitchHostMemberConfigSpec->new(
+        operation           => 'add',
+        maxProxySwitchPorts => 99,
+        host                => $host_view
+    );
+    my $dvsconfigspec = DVSConfigSpec->new(
+        name        => $name,
+        maxPorts    => 300,
+        description => "DVS for ticket $name",
+        host        => [$hostspec]
+    );
     my $spec = DVSCreateSpec->new( configSpec => $dvsconfigspec );
     my $task = $network_folder->CreateDVS_Task( spec => $spec );
-    &Task_Status( $task );
+    &Task_Status($task);
     &Log::debug("Finished creating switch");
 }
 
 sub create_dvportgroup {
     my ( $name, $switch ) = @_;
-    &Log::debug("Starting VCenter::create_dvportgroup sub, name=>'$name', switch=>'$switch'");
+    &Log::debug(
+"Starting VCenter::create_dvportgroup sub, name=>'$name', switch=>'$switch'"
+    );
     &num_check( $switch, 'DistributedVirtualSwitch' );
-    my $switch_view = &Guest::entity_name_view( $switch, 'DistributedVirtualSwitch' );
-    my $spec = DVPortgroupConfigSpec->new( name => $name, type => 'earlyBinding', numPorts => 20, description => "Port group" );
+    my $switch_view =
+      &Guest::entity_name_view( $switch, 'DistributedVirtualSwitch' );
+    my $spec = DVPortgroupConfigSpec->new(
+        name        => $name,
+        type        => 'earlyBinding',
+        numPorts    => 20,
+        description => "Port group"
+    );
     my $task = $switch_view->AddDVPortgroup_Task( spec => $spec );
-    &Task_Status( $task );
+    &Task_Status($task);
     &Log::debug("Finished creating dv port group");
 }
 
 sub destroy_entity {
     my ( $name, $type ) = @_;
-    &Log::debug("Starting VCenter::destroy_entity sub, name=>'$name', type=>'$type'");
+    &Log::debug(
+        "Starting VCenter::destroy_entity sub, name=>'$name', type=>'$type'");
     &num_check( $name, $type );
     my $view = &Guest::entity_name_view( $name, $type );
     my $task = $view->Destroy_Task;
     &Task_Status($task);
     $view = &Guest::entity_name_view( $name, $type );
     if ( defined($view) ) {
-        Entity::NumException->throw( error => 'Could not delete entity', entity => $name, count => '1' );
+        Entity::NumException->throw(
+            error  => 'Could not delete entity',
+            entity => $name,
+            count  => '1'
+        );
     }
     &Log::debug("Entity delete succesful");
     return 1;

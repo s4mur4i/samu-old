@@ -6,7 +6,7 @@ use Base::misc;
 
 my $help = 0;
 
-BEGIN() {
+BEGIN {
     use Exporter();
     our ( @ISA, @EXPORT );
 
@@ -232,6 +232,13 @@ sub clone_vm {
             $config_spec );
     }
     &VCenter::clonevm( $os_temp_view->name, $vmname, $os_temp, $clone_spec );
+    &Log::seperator;
+    &Log::normal("Machine is provisioned");
+    &Log::normal( "Login: '"
+          . &Support::get_key_value( 'template', $os_temp, 'username' ) . "'/'"
+          . &Support::get_key_value( 'template', $os_temp, 'password' )
+          . "'" );
+    &Log::normal("Unique name of vm: $vmname");
 }
 
 1;
