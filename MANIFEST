@@ -1,3 +1,4 @@
+Changes
 doc/main.pod
 generate_perl_modules.sh
 herring.pl
@@ -16,9 +17,21 @@ lib/BB/Misc.pm
 lib/BB/Support.pm
 lib/BB/VCenter.pm
 lib/Pod/Simple/Wiki/Dokuwiki.pm
+lib2/VMware/VICommon.pm
+lib2/VMware/VICredStore.pm
+lib2/VMware/VIExt.pm
+lib2/VMware/VILib.pm
+lib2/VMware/VIM25Runtime.pm
+lib2/VMware/VIM25Stub.pm
+lib2/VMware/VIM2Runtime.pm
+lib2/VMware/VIM2Stub.pm
+lib2/VMware/VIMRuntime.pm
+lib2/VMware/VIRuntime.pm
+Makefile.PL
 MANIFEST			This list of files
 PERL_MODULES
 pod2wiki.pl
+README
 t/01_common.t
 t/02_dns.t
 t/03_grammer_naci.t
@@ -38,9 +51,18 @@ t/BB/Common.t
 t/BB/Error.t
 t/BB/Guest.t
 t/BB/Log.t
+t/BB/Log_0.t
+t/BB/Log_1.t
+t/BB/Log_2.t
+t/BB/Log_3.t
 t/BB/Misc.t
 t/BB/Support.t
 t/BB/VCenter.t
+t/Functional/01_vcenter.t
+t/Functional/02_admin_test.t
+t/Functional/03_templates.t
+t/Functional/04_cleanup.t
+t/Functional/05_clone.t
 t/Pod/Pod.t
 t/Pod/Pod_coverage.t
 t/VMware/VIRuntime.t
