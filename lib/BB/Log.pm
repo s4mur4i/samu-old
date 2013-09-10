@@ -9,6 +9,7 @@ use warnings;
 use Getopt::Long qw(:config bundling pass_through);
 use Sys::Syslog qw(:standard :macros);
 use File::Basename;
+use Term::ReadKey;
 
 my $verbosity;
 
@@ -54,7 +55,6 @@ sub log2line {
 # Report a critical error and terminate the script
 sub critical {
     syslog( LOG_ERR, log2line( 'ERROR', @_ ) );
-    #    exit 1;
 }
 
 sub normal {
@@ -75,6 +75,15 @@ sub info {
 # Send a debug message
 sub debug {
     ( verbosity() >= 3 ) and syslog( LOG_DEBUG, log2line( 'DEBUG', @_ ) );
+}
+
+sub screen_info {
+    return GetTerminalSize();
+}
+
+sub seperator {
+    my ( $wchar, $hchar, $wpixels, $hpixels ) = &screen_info;
+    print "=" x $wchar . "\n";
 }
 
 BEGIN {
