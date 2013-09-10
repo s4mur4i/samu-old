@@ -7,5 +7,5 @@ use FindBin;
 use lib "$FindBin::Bin/../../lib";
 
 BEGIN { use_ok('BB::Guest'); }
-
+diag("Dummy test for using BB::Guest");
 done_testing;

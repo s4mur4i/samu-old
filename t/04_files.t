@@ -19,6 +19,7 @@ if ( $EVAL_ERROR ) {
 }
 Test::Files->import;
 
+diag("Testing directory contents");
 dir_only_contains_ok(
     "$FindBin::Bin/../lib2/VMware",
     [

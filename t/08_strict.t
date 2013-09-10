@@ -21,4 +21,5 @@ if ( $EVAL_ERROR ) {
 
 my @dirs = ( "$FindBin::Bin/../blib" );
 Test::Strict->import;
+diag("Testing presence of strict in perl files");
 all_perl_files_ok(@dirs);

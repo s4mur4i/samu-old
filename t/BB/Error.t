@@ -11,7 +11,7 @@ use BB::Log;
 use Data::Dumper;
 
 BEGIN { use_ok('BB::Error'); }
-
+diag("Throwing all exceptions");
 throws_ok {
     Entity::NumException->throw(
         error  => 'test',
@@ -83,7 +83,7 @@ throws_ok {
     TaskEr::Error->throw( error => 'test', detail => 'test', fault => 'test' );
 }
 'TaskEr', 'Task Error Exception';
-diag("Testing Catch");
+diag("Testing Catch and outputs");
 eval { Entity->throw( error => 'test', entity => 'test' ); };
 my $ex = $@;
 

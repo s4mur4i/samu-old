@@ -18,6 +18,7 @@ if ( $EVAL_ERROR ) {
     plan( skip_all => $msg );
 }
 Test::PureASCII->import;
+diag("Files only contain ASCII chars");
 all_perl_files_are_pure_ascii(
     { forbid_control => 1, forbid_tab => 1 },
     "$FindBin::Bin/..",

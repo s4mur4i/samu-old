@@ -18,6 +18,7 @@ if ( $EVAL_ERROR ) {
     plan( skip_all => $msg );
 }
 Test::PerlTidy->import();
+diag("Running PerlTidy");
 run_tests(
     path    => "$FindBin::Bin/../",
     debug   => 0,

@@ -7,5 +7,5 @@ use Test::More;
 #use lib "$FindBin::Bin/../../lib";
 
 BEGIN { use_ok('VMware::VIRuntime'); }
-
+diag("Dummy module for useing VMware::VIRuntime module");
 done_testing;

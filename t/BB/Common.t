@@ -7,5 +7,5 @@ use FindBin;
 use lib "$FindBin::Bin/../../lib";
 
 BEGIN { use_ok('BB::Common'); }
-
+diag("Testing if use works");
 done_testing;

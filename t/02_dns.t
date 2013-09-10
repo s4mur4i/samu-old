@@ -20,6 +20,7 @@ if ( $EVAL_ERROR ) {
 
 my $dns_core    = Test::DNS->new( nameservers => ['10.10.0.1'] );
 my $dns_support = Test::DNS->new( nameservers => ['10.10.0.1'] );
+diag("Testing A records");
 $dns_support->is_a(
     'support.balabit' => '10.21.0.23',
     'Support can resolve itself'
@@ -28,6 +29,7 @@ $dns_core->is_a(
     'support.balabit' => '10.21.0.23',
     'Support can be resolved by core'
 );
+diag("Testing NS records");
 $dns_core->is_ns(
     'support.balabit' => [ 'dc-dev.support.balabit', 'ns.balabit' ],
     'Support ns record working'

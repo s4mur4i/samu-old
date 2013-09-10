@@ -20,5 +20,6 @@ if ( $EVAL_ERROR ) {
 
 Test::Perl::Critic->import();
 #all_critic_ok("$FindBin::Bin/../lib/BB", "$FindBin::Bin/../lib/Base", "$FindBin::Bin/../lib/Pod");
+diag("Criticising code");
 all_critic_ok();
 ### Who the fuck is Vijayakrishnan? http://en.wikipedia.org/wiki/Vijayakrishnan

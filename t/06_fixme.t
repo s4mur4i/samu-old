@@ -18,5 +18,5 @@ if ( $EVAL_ERROR ) {
             plan( skip_all => $msg );
 }
 Test::Fixme->import;
-#run_tests( where => "$FindBin::Bin/../" );
-run_tests( );
+run_tests();
+done_testing;
