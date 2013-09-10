@@ -11,74 +11,32 @@ use FindBin;
 use lib "$FindBin::Bin/../../lib2/";
 use VMware::VIRuntime;
 
-sub filter_username {
-    my $line = shift;
-    if ($line =~ /^\s*(VI_USERNAME)=[^=]*$/) {
-        $line=$1;
-    } else {
-        $line = "";
-    }
-    return $line;
-}
+BEGIN {
+    ## Namespace mange is done here since only regex changes in each sub
+    my %m = (
+    username => qr /^\s*(VI_USERNAME)=[^=]*$/,
+    password => qr /^\s*(VI_PASSWORD)=[^=]*$/,
+    server => qr /^\s*(VI_SERVER)=[^=]*$/,
+    port => qr /^\s*(VI_PORTNUMBER)=[^=]*$/,
+    url => qr /^\s*(VI_URL)=[^=]*$/,
+    protocol => qr /^\s*(VI_PROTOCOL)=[^=]*$/,
+    service => qr /^\s*(VI_SERVICEPATH)=[^=]*$/,
+    );
 
-sub filter_password {
-    my $line = shift;
-    if ($line =~ /^\s*(VI_PASSWORD)=[^=]*$/) {
-        $line=$1;
-    } else {
-        $line = "";
+    for my $i (keys %m)
+    {
+        ## No strict refs is used since mangeling is done
+        no strict 'refs';
+        *{"filter_$i"} = sub {
+            my $line = shift;
+            if ($line =~ $m{$i}) {
+                $line=$1;
+            } else {
+                $line = "";
+            }
+            return $line;
+        }
     }
-    return $line;
-}
-
-sub filter_server {
-    my $line = shift;
-    if ($line =~ /^\s*(VI_SERVER)=[^=]*$/) {
-        $line=$1;
-    } else {
-        $line = "";
-    }
-    return $line;
-}
-
-sub filter_port {
-    my $line = shift;
-    if ($line =~ /^\s*(VI_PORTNUMBER)=[^=]*$/) {
-        $line=$1;
-    } else {
-        $line = "";
-    }
-    return $line;
-}
-
-sub filter_url {
-    my $line = shift;
-    if ($line =~ /^\s*(VI_URL)=[^=]*$/) {
-        $line=$1;
-    } else {
-        $line = "";
-    }
-    return $line;
-}
-
-sub filter_protocol {
-    my $line = shift;
-    if ($line =~ /^\s*(VI_PROTOCOL)=[^=]*$/) {
-        $line=$1;
-    } else {
-        $line = "";
-    }
-    return $line;
-}
-
-sub filter_service {
-    my $line = shift;
-    if ($line =~ /^\s*(VI_SERVICEPATH)=[^=]*$/) {
-        $line=$1;
-    } else {
-        $line = "";
-    }
-    return $line;
 }
 
 my $visdkrc = File::Spec->catfile( home(), '.visdkrc' );
