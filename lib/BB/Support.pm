@@ -43,13 +43,6 @@ my %template_hash = (
         password => 'titkos',
         os       => 'scb'
     },
-    'win_xpsp2_en_x64_pro' => {
-        path     => 'Support/vm/templates/Windows/xp/T_win_xpsp2_en_x64_pro',
-        username => 'admin',
-        password => 'titkos',
-        key      => 'T76MT-KCXJW-Y8J2V-PRQVQ-3B9WQ',
-        os       => 'win'
-    },
     'win_7_en_x64_pro' => {
         path     => 'Support/vm/templates/Windows/7/T_win_7_en_x64_pro',
         username => 'admin',
@@ -137,16 +130,10 @@ my %template_hash = (
         os       => 'other'
     },
     'oracle_5.6_en_x64_ent' => {
-        path     => 'Support/vm/templates/Linux/cent/T_oracle_5.6_en_x64_ent',
+        path     => 'Support/vm/templates/Linux/oracle/T_oracle_5.6_en_x64_ent',
         username => 'root',
         password => 'titkos',
         os       => 'other'
-    },
-    'ssb_302' => {
-        path     => 'Support/vm/templates/SSB/3.0/T_ssb_302',
-        username => 'root',
-        password => 'titkos',
-        os       => 'ssb'
     },
 );
 
