@@ -195,5 +195,74 @@ sub CustomizationAdapterMapping_generator {
     return @return;
 }
 
+### print functions
+
+sub short_vm_info {
+    my ($name) = @_;
+    &VCenter::num_check( $name, 'VirtualMachine' );
+    my $view = Vim::find_entity_view(
+        view_type  => 'VirtualMachine',
+        properties => [ 'name', 'guest' ],
+        filter     => { name => $name }
+    );
+    &Log::normal( "VMname:'" . $view->name );
+    &Log::normal( "\tPower State:'" . $view->guest->guestState );
+
+#    &Log::normal("\tAlternate name: '" . &Guest::get_altername( $view->name ));
+    if ( $view->guest->toolsStatus eq 'toolsNotInstalled' ) {
+        &Log::normal("\tTools not installed. Cannot extract some information");
+    }
+    else {
+        if ( defined( $view->guest->net ) ) {
+            foreach ( @{ $view->guest->net } ) {
+                if ( defined( $_->ipAddress ) ) {
+                    &Log::normal( "\tNetwork => '"
+                          . $_->network
+                          . "', with ipAddresses => [ "
+                          . join( ", ", @{ $_->ipAddress } )
+                          . " ]" );
+                }
+                else {
+                    &Log::normal( "\tNetwork => '" . $_->network . "'" );
+                }
+            }
+            if ( defined( $view->guest->hostName ) ) {
+                &Log::normal( "\tHostname: '" . $view->guest->hostName . "'" );
+            }
+        }
+        else {
+            &Log::normal("\tNo network information available");
+        }
+    }
+    my $vm_info = &Misc::vmname_splitter( $view->name );
+    my $os;
+    if ( $vm_info->{type} =~ /xcb/ ) {
+        &Log::debug("Product is an XCB product");
+        $os = "$vm_info->{family}_$vm_info->{version}";
+    }
+    elsif ( $vm_info->{type} ne 'unknown' ) {
+        &Log::debug("Product is known");
+        $os =
+"$vm_info->{family}_$vm_info->{version}_$vm_info->{lang}_$vm_info->{arch}_$vm_info->{type}";
+    }
+    if ( $vm_info->{uniq} ne 'unknown' ) {
+        if ( defined( &Support::get_key_info( 'template', $os ) ) ) {
+            &Log::normal( "\tDefault login : '"
+                  . &Support::get_key_value( 'template', $os, 'username' )
+                  . "' / '"
+                  . &Support::get_key_value( 'template', $os, 'password' )
+                  . "'" );
+        }
+        else {
+            &Log::normal(
+                "\tRegex matched an OS, but no template found to it os => '$os'"
+            );
+        }
+    }
+    else {
+        &Log::normal("\tVmname not standard name => '$name'");
+    }
+}
+
 1
 __END__
