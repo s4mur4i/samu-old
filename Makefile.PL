@@ -27,8 +27,8 @@ WriteMakefile(
         'File::Spec'          => 3.40,
         'File::HomeDir'       => 1.00,
         'ExtUtils::MakeMaker' => 6.74,
-        'Term::ReadKey' => 2.30,
-        'Test::Strict' => 0.22,
+        'Term::ReadKey'       => 2.30,
+        'Test::Strict'        => 0.22,
     },
     PREREQ_PM => {
         'Archive::Zip'     => 1.30,
@@ -54,8 +54,8 @@ WriteMakefile(
         'FindBin'          => 1.50,
         'DBD::mysql'       => 4.021,
         'Module::Load'     => 0.24,
-        'GSSAPI::Status' => 0,
-        'Crypt::SSLeay' => 0.58,
+        'GSSAPI::Status'   => 0,
+        'Crypt::SSLeay'    => 0.58,
     },
     PREREQ_FATAL => 1,
 );
