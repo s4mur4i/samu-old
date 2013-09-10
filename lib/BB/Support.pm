@@ -164,7 +164,7 @@ my %map_hash = (
 =head3 exception
 
 =cut
-
+#tested
 sub get_keys {
     my ($hash) = @_;
     &Log::debug("Starting Support::get_keys sub, hash=>'$hash'");
@@ -191,7 +191,7 @@ sub get_keys {
 =head3 exception
 
 =cut
-
+#tested
 sub get_key_info {
     my ( $hash, $key ) = @_;
     &Log::debug(
@@ -206,7 +206,7 @@ sub get_key_info {
         );
     }
 }
-
+#tested
 sub get_key_value {
     my ( $hash, $key, $value ) = @_;
     &Log::debug(
@@ -225,7 +225,7 @@ sub get_key_value {
 }
 
 ### Installation helper objects
-
+#tested
 sub RelocateSpec {
     my ($ticket) = @_;
     &Log::debug("Starting Support::RelocateSpec sub, ticket=>'$ticket'");
@@ -240,7 +240,7 @@ sub RelocateSpec {
     );
     return $relocate_spec;
 }
-
+#tested
 sub ConfigSpec {
     my ( $memory, $cpu, $os_temp ) = @_;
     &Log::debug(
@@ -253,12 +253,12 @@ sub ConfigSpec {
     );
     return $config_spec;
 }
-
+#tested
 sub CustomizationPassword {
     &Log::debug("Starting Support::CustomizationPassword sub");
     return CustomizationPassword->new( plainText => 1, value => 'titkos' );
 }
-
+#tested
 sub identification_domain {
     &Log::debug("Starting Support::identification_domain sub");
     return CustomizationIdentification->new(
@@ -267,7 +267,7 @@ sub identification_domain {
         joinDomain          => 'support.balabit'
     );
 }
-
+#tested
 sub identification_workgroup {
     &Log::debug("Starting Support::identification_workgroup sub");
     return CustomizationIdentification->new(
@@ -276,7 +276,7 @@ sub identification_workgroup {
         joinWorkgroup       => 'SUPPORT'
     );
 }
-
+#tested
 sub win_CloneSpec {
     my ( $os_temp, $snapshot_view, $relocate_spec, $config_spec, $domain, $key )
       = @_;
@@ -357,7 +357,7 @@ sub win_CloneSpec {
     &Log::debug("Returning win Clone Spec");
     return $clone_spec;
 }
-
+#tested
 sub lin_CloneSpec {
     my ( $os_temp, $snapshot_view, $relocate_spec, $config_spec ) = @_;
     &Log::debug("Starting Support::lin_CloneSpec sub, os_temp=>'$os_temp'");
@@ -389,7 +389,7 @@ sub lin_CloneSpec {
     &Log::debug("Returning lin Clone Spec");
     return $clone_spec;
 }
-
+#tested
 sub oth_CloneSpec {
     my ( $snapshot_view, $relocate_spec, $config_spec ) = @_;
     &Log::debug("Starting Support::oth_CloneSpec sub");

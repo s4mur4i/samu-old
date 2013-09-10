@@ -10,7 +10,7 @@ BEGIN {
 }
 
 ### Methods
-
+#tested
 sub clonevm {
     my ( $template, $vmname, $folder, $clone_spec ) = @_;
     &Log::debug(
@@ -26,7 +26,7 @@ sub clonevm {
     &Task_Status($task);
     &Log::debug("Finished cloning vm");
 }
-
+#tested
 sub create_test_vm {
     my ($name) = @_;
     &Log::debug("Starting VCenter::create_test_vm");
@@ -448,7 +448,7 @@ sub destroy_entity {
 }
 
 ### Subs for connection and buildup to VCenter
-
+#tested
 sub SDK_options {
     my $opts = shift;
     &Log::debug("Starting VCenter::SDK_options");
@@ -456,7 +456,7 @@ sub SDK_options {
     Opts::parse();
     Opts::validate();
 }
-
+#tested
 sub connect_vcenter {
     &Log::debug("Starting VCenter::connect_vcenter sub");
     eval {
@@ -474,7 +474,7 @@ sub connect_vcenter {
         );
     }
 }
-
+#tested
 sub disconnect_vcenter {
     &Log::debug("Starting VCenter::disconnect_vcenter sub");
     Util::disconnect();

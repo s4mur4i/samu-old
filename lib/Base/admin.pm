@@ -49,7 +49,7 @@ sub main {
     &Log::debug("Admin::main sub started");
     &misc::option_parser( $module_opts, "main" );
 }
-
+#tested
 sub cleanup {
     &Log::debug("Starting Admin::cleanup sub");
     my @types = ( 'ResourcePool', 'Folder', 'DistributedVirtualSwitch' );
@@ -70,7 +70,7 @@ sub cleanup {
         }
     }
 }
-
+#tested
 sub templates {
     &Log::debug("Admin::templates sub started");
     my $keys = &Support::get_keys('template');
@@ -82,7 +82,7 @@ sub templates {
         &Log::normal( "Name:'$template'" . " " x $length . "Path:'$path'" );
     }
 }
-
+#tested
 sub test {
     &Log::debug("Admin::test started");
     my $si_moref = ManagedObjectReference->new(

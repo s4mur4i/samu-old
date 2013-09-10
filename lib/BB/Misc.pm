@@ -8,7 +8,7 @@ BEGIN {
     our @ISA    = qw( Exporter );
     our @EXPORT = qw( );
 }
-
+#tested
 sub array_longest {
     my ($array) = @_;
     &Log::debug("Starting Misc::array_longest sub");
@@ -21,12 +21,12 @@ sub array_longest {
     &Log::debug("Longest element is $max");
     return $max;
 }
-
+#tested
 sub random_3digit {
     &Log::debug("Starting Misc::random_3digit sub");
     return int( rand(999) );
 }
-
+#tested
 sub generate_mac {
     my ($username) = @_;
     &Log::debug("Starting Misc::generate_mac sub, username=>'$username'");
@@ -102,7 +102,7 @@ sub mac_compare {
     &Log::info("No VM found with same mac");
     return 0;
 }
-
+#tested
 # increment 1 on the last 3 bytes of the MAC. if overflow occurrs, then throw error
 sub increment_mac {
     my ($mac) = @_;
@@ -124,7 +124,7 @@ sub increment_mac {
     &Log::debug("Incrementd mac, mac=>'$new_mac'");
     return $new_mac;
 }
-
+#tested
 sub vmname_splitter {
     my ($vmname) = @_;
     my %return = ();
@@ -172,7 +172,7 @@ sub vmname_splitter {
     }
     return \%return;
 }
-
+#tested
 sub increment_disk_name {
     my ($name) = @_;
     &Log::debug("Starting Misc::increment_disk_name sub, name=>'$name'");
@@ -201,7 +201,7 @@ sub increment_disk_name {
     &Log::debug("disk name has been incremented=>'${pre}_$num$post'");
     return "${pre}_$num$post";
 }
-
+#tested
 sub filename_splitter {
     my ($filename) = @_;
     &Log::debug("Starting Misc::filename_splitter sub, filename=>'$filename'");
@@ -218,7 +218,7 @@ sub filename_splitter {
     );
     return [ $datas, $folder, $image ];
 }
-
+#tested
 sub generate_vmname {
     my ( $ticket, $username, $os_temp ) = @_;
     &Log::debug(

@@ -108,7 +108,7 @@ use overload
   '""'     => sub { $_[0]->as_string },
   'bool'   => sub { 1 },
   fallback => 1;
-
+#tested
 sub catch_ex {
     my ($ex) = @_;
     &Log::debug("Invoking Error:catch_ex sub");
@@ -215,11 +215,11 @@ sub catch_ex {
 }
 
 ## Functionality test sub
-sub test {
-    &Log::debug("Starting Error:test sub");
-    &Log::normal("Error module test sub");
-    &Log::debug("Finished Error::test sub");
-}
+#sub test {
+#    &Log::debug("Starting Error:test sub");
+#    &Log::normal("Error module test sub");
+#    &Log::debug("Finished Error::test sub");
+#}
 
 #### We need to end with success
 1

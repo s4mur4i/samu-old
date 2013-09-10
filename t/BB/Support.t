@@ -9,6 +9,12 @@ use lib "$FindBin::Bin/../../lib";
 
 BEGIN { use_ok('BB::Support'); use_ok('BB::Common'); }
 
+my $view = Vim::find_entity_view( view_type => 'ResourcePool', properties => [ 'name' ], filter => { name => 'test_1337' } );
+if ( defined( $view ) ) {
+    diag("ResourcePool exists");
+    plan( skip_all => "test_1337 ResourcePool exists. Delete it before test can be run" );
+}
+
 ok( ref( &Support::get_keys("agents") ) eq 'ARRAY', 'get_keys returned array' );
 throws_ok { &Support::get_keys('TEST') } 'Template::Status',
   'get_keys throws exception';
@@ -28,5 +34,17 @@ throws_ok { &Support::get_key_value( 'agents', 'TEST', 'TEST' ) }
 'Template::Status', 'get_key_value throws exception for bad key';
 throws_ok { &Support::get_key_value( 'agents', 's4mur4i', 'TEST' ) }
 'Template::Status', 'get_key_value throws exception for bad value';
-
+my $os_temp = ${&Support::get_keys( 'template' )}[0];
+ok( \&VCenter::create_resource_pool( 'test_1337', 'Resources' ), "Creating test_1337 resourcepool" );
+isa_ok( &Support::RelocateSpec( 'test_1337' ), VirtualMachineRelocateSpec, "RelocateSpec returned VirtualMachineRelocateSpec object" );
+isa_ok( &Support::ConfigSpec( 512, 1, $os_temp ), VirtualMachineConfigSpec, "ConfigSpec returned VirtualMachineConfigSpec object" );
+isa_ok( &Support::CustomizationPassword , CustomizationPassword, "CustomizationPassword returned CustomizationPassword object" );
+isa_ok( &Support::identification_domain, CustomizationIdentification, "identification_domain returned CustomizationIdentification object" );
+isa_ok( &Support::identification_workgroup, CustomizationIdentification, "identification_workgroup returned CustomizationIdentification object" );
+isa_ok( &Support::win_CloneSpec( $os_temp, snapshot, &Support::RelocateSpec( 'test_1337' ),  &Support::ConfigSpec( 512, 1, $os_temp, 0, 1), VirtualMachineCloneSpec, "win_CloneSpec returned VirtualMachineCloneSpec object for Workgroup identification" );
+isa_ok( &Support::win_CloneSpec( $os_temp, snapshot, &Support::RelocateSpec( 'test_1337' ),  &Support::ConfigSpec( 512, 1, $os_temp), 1, 1), VirtualMachineCloneSpec, "win_CloneSpec returned VirtualMachineCloneSpec object for Domain identification" );
+isa_ok( &Support::lin_CloneSpec( ${&Support::get_keys( 'template' )}[0], snapshot, &Support::RelocateSpec( 'test_1337' ),  &Support::ConfigSpec( 512, 1, $os_temp), VirtualMachineCloneSpec, "lin_CloneSpec returned VirtualMachineCloneSpec object" );
+isa_ok( &Support::oth_CloneSpec( snapshot,  &Support::RelocateSpec( 'test_1337' ),  &Support::ConfigSpec( 512, 1, $os_temp)), VirtualMachineCloneSpec, "oth_CloneSpec returned VirtualMachineCloneSpec object" );
+my $view = &Guest::entity_name_view( 'test_1337', 'ResourcePool' );
+$view->Destroy;
 done_testing;
