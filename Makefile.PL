@@ -27,7 +27,6 @@ WriteMakefile(
         'File::Spec'          => 3.40,
         'File::HomeDir'       => 1.00,
         'ExtUtils::MakeMaker' => 6.74,
-        'Term::ReadKey'       => 2.30,
         'Test::Strict'        => 0.22,
     },
     PREREQ_PM => {

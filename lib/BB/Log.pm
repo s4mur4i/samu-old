@@ -9,10 +9,9 @@ use warnings;
 use Getopt::Long qw(:config bundling pass_through);
 use Sys::Syslog qw(:standard :macros);
 use File::Basename;
-use Term::ReadKey;
 
 my $verbosity;
-
+#tested
 sub verbosity {
     return $verbosity;
 }
@@ -51,39 +50,34 @@ sub log2line {
     print STDERR "$prefix: $msg\n";
     return "$msg\n";
 }
-
+#tested
 # Report a critical error and terminate the script
 sub critical {
     syslog( LOG_ERR, log2line( 'ERROR', @_ ) );
 }
-
+#tested
 sub normal {
     syslog( LOG_INFO, log2line( 'INFO', @_ ) );
 }
-
+#tested
 # Report a warning but continue
 sub warning {
     ( verbosity() >= 1 ) and syslog( LOG_WARNING, log2line( 'WARNING', @_ ) );
     return -1;    # failure
 }
-
+#tested
 # Send an info message
 sub info {
     ( verbosity() >= 2 ) and syslog( LOG_INFO, log2line( 'INFO', @_ ) );
 }
-
+#tested
 # Send a debug message
 sub debug {
     ( verbosity() >= 3 ) and syslog( LOG_DEBUG, log2line( 'DEBUG', @_ ) );
 }
 
-sub screen_info {
-    return GetTerminalSize();
-}
-
 sub seperator {
-    my ( $wchar, $hchar, $wpixels, $hpixels ) = &screen_info;
-    print "=" x $wchar . "\n";
+    print "=" x 20 . "\n";
 }
 
 BEGIN {
