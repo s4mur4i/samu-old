@@ -17,7 +17,7 @@ use Exception::Class (
         isa    => 'BaseException',
         fields => ['template'],
     },
-    'TaskEr'       => { isa => 'BaseException', },
+    'TaskEr'     => { isa => 'BaseException', },
     'Connection' => { isa => 'BaseException', },
     'Vcenter'    => { isa => 'BaseException', },
 
@@ -119,10 +119,12 @@ sub catch_ex {
               . "',entity=>'"
               . $ex->entity
               . "',count=>'"
-              . $ex->count ."'" );
+              . $ex->count
+              . "'" );
     }
     elsif ( $ex->isa('Entity::Status') ) {
-        &Log::critical( "Desc=>'" . $ex->error . "',entity=>'" . $ex->entity . "'" );
+        &Log::critical(
+            "Desc=>'" . $ex->error . "',entity=>'" . $ex->entity . "'" );
     }
     elsif ( $ex->isa('Entity::Auth') ) {
         &Log::critical( "Desc=>'"
@@ -132,10 +134,12 @@ sub catch_ex {
               . "',user=>'"
               . $ex->username
               . "',pass=>'"
-              . $ex->password . "'");
+              . $ex->password
+              . "'" );
     }
     elsif ( $ex->isa('Entity::TransferError') ) {
-        &Log::critical( "Desc=>'" . $ex->error . "',entity=>'" . $ex->entity . "'");
+        &Log::critical(
+            "Desc=>'" . $ex->error . "',entity=>'" . $ex->entity . "'" );
     }
     elsif ( $ex->isa('Entity::HWError') ) {
         &Log::critical( "Desc=>'"
@@ -143,20 +147,33 @@ sub catch_ex {
               . "',entity=>'"
               . $ex->entity
               . "',hw=>'"
-              . $ex->hw . "'");
+              . $ex->hw
+              . "'" );
     }
     elsif ( $ex->isa('Entity::Snapshot') ) {
         &Log::critical( "Desc=>'"
-                . $ex->error . "',entity=>'" . $ex->error . "',snapshot=>'" . $ex->snapshot . "'");
+              . $ex->error
+              . "',entity=>'"
+              . $ex->error
+              . "',snapshot=>'"
+              . $ex->snapshot
+              . "'" );
     }
     elsif ( $ex->isa('Entity::Mac') ) {
-        &Log::critical( "Desc=>'" . $ex->error . "',entity=>'" . $ex->entity . "',mac=>'" . $ex->mac . "'");
+        &Log::critical( "Desc=>'"
+              . $ex->error
+              . "',entity=>'"
+              . $ex->entity
+              . "',mac=>'"
+              . $ex->mac
+              . "'" );
     }
     elsif ( $ex->isa('Vcenter::ServiceContent') ) {
-        &Log::critical( "Desc=>'" . $ex->error . "'");
+        &Log::critical( "Desc=>'" . $ex->error . "'" );
     }
     elsif ( $ex->isa('Vcenter::Path') ) {
-        &Log::critical( "Desc=>'" . $ex->error . "',path=>'" . $ex->path . "'");
+        &Log::critical(
+            "Desc=>'" . $ex->error . "',path=>'" . $ex->path . "'" );
     }
     elsif ( $ex->isa('Connection::Connect') ) {
         &Log::critical( "Desc=>'"
@@ -164,16 +181,19 @@ sub catch_ex {
               . "',type=>'"
               . $ex->type
               . "',dest=>'"
-              . $ex->dest . "'");
+              . $ex->dest
+              . "'" );
     }
     elsif ( $ex->isa('Template::Status') ) {
-        &Log::critical( "Desc=>'" . $ex->error . "',template=>'" . $ex->template . "'");
+        &Log::critical(
+            "Desc=>'" . $ex->error . "',template=>'" . $ex->template . "'" );
     }
     elsif ( $ex->isa('Template::Error') ) {
-        &Log::critical( "Desc=>'" . $ex->error . "',template=>'" . $ex->template . "'");
+        &Log::critical(
+            "Desc=>'" . $ex->error . "',template=>'" . $ex->template . "'" );
     }
     elsif ( $ex->isa('TaskEr::NotDefined') ) {
-        &Log::critical( "Desc=>'" . $ex->error . "'");
+        &Log::critical( "Desc=>'" . $ex->error . "'" );
     }
     elsif ( $ex->isa('TaskEr::Error') ) {
         &Log::critical( "Desc=>'"
@@ -181,7 +201,8 @@ sub catch_ex {
               . "',detail=>'"
               . $ex->detail
               . "',fault=>'"
-              . $ex->fault . "'");
+              . $ex->fault
+              . "'" );
     }
     elsif ( $ex->isa('Exception::Class') ) {
         print Dumper($ex);
