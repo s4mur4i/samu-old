@@ -221,22 +221,24 @@ sub poweroff {
         return 0;
     }
     my $task = $view->PowerOffVM_Task;
-    &Vcenter::Task_getStatus( $task );
-    &Log::debu("Powered off VM");
+    &VCenter::Task_Status( $task );
+    &Log::debug("Powered off VM");
 }
 
 ### print functions
 
 sub short_vm_info {
     my ($name) = @_;
+    &Log::debug("Starting Guest::short_vm_info sub, name=>'$name'");
     &VCenter::num_check( $name, 'VirtualMachine' );
     my $view = Vim::find_entity_view(
         view_type  => 'VirtualMachine',
-        properties => [ 'name', 'guest' ],
+        properties => [ 'name', 'guest', 'summary.runtime.powerState' ],
         filter     => { name => $name }
     );
     &Log::normal( "VMname:'" . $view->name );
-    &Log::normal( "\tPower State:'" . $view->guest->guestState );
+    my $powerState = $view->get_property('summary.runtime.powerState');
+    &Log::normal( "\tPower State:'" . $powerState->val . "'");
 
 #    &Log::normal("\tAlternate name: '" . &Guest::get_altername( $view->name ));
     if ( $view->guest->toolsStatus eq 'toolsNotInstalled' ) {

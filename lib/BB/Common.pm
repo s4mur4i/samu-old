@@ -9,6 +9,8 @@ use BB::VCenter;
 use BB::Support;
 use BB::Misc;
 use BB::Guest;
+use BB::Bugzilla;
+use BB::Kayako;
 
 use VMware::VIRuntime;
 our $VERSION = '1.0.0';

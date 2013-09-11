@@ -283,6 +283,12 @@ sub Task_Status {
     return;
 }
 
+sub ticket_vms_name {
+    my ( $ticket ) = @_;
+    &Log::debug("Starting VCenter::ticket_vms_name sub, ticket=>'$ticket'");
+    return Vim::find_entity_views( view_type  => 'VirtualMachine', properties => ['name'], filter => { name => qr/^$ticket-/ });
+}
+
 ### Subs for creation/deletion
 
 sub create_resource_pool {
