@@ -29,7 +29,7 @@ dir_only_contains_ok(
 );
 dir_only_contains_ok(
     "$FindBin::Bin/../lib/BB",
-    [qw(Common.pm Error.pm Guest.pm Log.pm Misc.pm Support.pm VCenter.pm)],
+    [qw(Common.pm Error.pm Guest.pm Log.pm Misc.pm Support.pm VCenter.pm Kayako.pm Bugzilla.pm)],
     "BB only contains the default modules"
 );
 dir_only_contains_ok(
