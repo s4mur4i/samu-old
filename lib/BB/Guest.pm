@@ -195,6 +195,36 @@ sub CustomizationAdapterMapping_generator {
     return @return;
 }
 
+sub poweron {
+    my ( $vmname ) = @_;
+    &Log::debug("Starting Guest::poweron sub, vmname=>'$vmname'");
+    &VCenter::num_check( $vmname, 'VirtualMachine' );
+    my $view = Vim::find_entity_view( view_type => 'VirtualMachine', properties => [ 'runtime.powerState' ], filter => { name => $vmname } );
+    my $powerstate = $view->get_property('runtime.powerState');
+    if ( $powerstate->val ne "poweredOff" ) {
+        &Log::warning("Machine is already powered on");
+        return 0;
+    }
+    my $task = $view->PowerOnVM_Task;
+    &VCenter::Task_Status( $task );
+    &Log::debug("Powered on VM");
+}
+
+sub poweroff {
+    my ( $vmname ) = @_;
+    &Log::debug("Starting Guest::poweroff sub, vmname=>'$vmname'");
+    &VCenter::num_check( $vmname, 'VirtualMachine' );
+    my $view = Vim::find_entity_view( view_type => 'VirtualMachine', properties => [ 'runtime.powerState' ], filter => { name => $vmname } );
+    my $powerstate = $view->get_property('runtime.powerState');
+    if ( $powerstate->val eq "poweredOff" ) {
+        &Log::warning("Machine is already powered off");
+        return 0;
+    }
+    my $task = $view->PowerOffVM_Task;
+    &Vcenter::Task_getStatus( $task );
+    &Log::debu("Powered off VM");
+}
+
 ### print functions
 
 sub short_vm_info {
