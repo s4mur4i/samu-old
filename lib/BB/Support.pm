@@ -135,6 +135,12 @@ my %template_hash = (
         password => 'titkos',
         os       => 'other'
     },
+    'rhel_6.0_en_amd64_rhel60' => {
+        path     => 'Support/vm/templates/Linux/rhel/T_rhel_6.0_en_amd64_rhel60',
+        username => 'root',
+        password => 'titkos',
+        os       => 'other'
+    },
 );
 
 my %agents_hash = (
@@ -376,7 +382,7 @@ sub lin_CloneSpec {
     my $customization_spec = CustomizationSpec->new(
         identity         => $linuxprep,
         globalIPSettings => $globalipsettings,
-        nicSettingMap    => @nicsetting
+        nicSettingMap    => [@nicsetting]
     );
     my $clone_spec = VirtualMachineCloneSpec->new(
         powerOn       => 1,
