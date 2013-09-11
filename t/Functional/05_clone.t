@@ -9,7 +9,6 @@ use lib "$FindBin::Bin/../../lib/";
 use lib "$FindBin::Bin/../../vmware_lib/";
 use BB::Common;
 use Base::entity;
-use Data::Dumper;
 
 diag("Test cloning functions");
 &Opts::add_options(%{$entity::module_opts->{functions}->{clone}->{opts}});

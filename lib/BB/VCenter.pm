@@ -85,6 +85,12 @@ sub create_test_vm {
     );
     $folder->CreateVM( pool => $resource_pool, config => $config_spec );
 }
+
+sub create_entities {
+    &VCenter::create_resource_pool( 'test_1337', 'Resources' );
+    &VCenter::create_folder( 'test_1337', 'vm' );
+    &VCenter::create_switch( 'test_1337', 'DistributedVirtualSwitch' );
+}
 ### Helper subs to query information
 
 sub num_check {
@@ -283,7 +289,7 @@ sub Task_Status {
     &Log::debug("Finishing VCenter::Task_status sub");
     return;
 }
-
+#tested
 sub ticket_vms_name {
     my ($ticket) = @_;
     &Log::debug("Starting VCenter::ticket_vms_name sub, ticket=>'$ticket'");

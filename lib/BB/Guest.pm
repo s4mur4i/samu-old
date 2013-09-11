@@ -194,7 +194,7 @@ sub CustomizationAdapterMapping_generator {
     &Log::debug("Returning array of adapter mappings");
     return @return;
 }
-
+#tested
 sub poweron {
     my ($vmname) = @_;
     &Log::debug("Starting Guest::poweron sub, vmname=>'$vmname'");
@@ -213,7 +213,7 @@ sub poweron {
     &VCenter::Task_Status($task);
     &Log::debug("Powered on VM");
 }
-
+#tested
 sub poweroff {
     my ($vmname) = @_;
     &Log::debug("Starting Guest::poweroff sub, vmname=>'$vmname'");

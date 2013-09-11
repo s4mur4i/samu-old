@@ -3,18 +3,11 @@ use strict;
 use warnings;
 use 5.14.0;
 use Test::More;
-use Test::More;
 use FindBin;
 use lib "$FindBin::Bin/../../lib/";
 use lib "$FindBin::Bin/../../vmware_lib/";
 use BB::Common;
 use Base::admin;
-
-sub create_entities {
-    ok( \&VCenter::create_resource_pool( 'test_1337', 'Resources' ), "Creating test_1337 resourcepool" );
-    ok( \&VCenter::create_folder( 'test_1337', 'vm' ), "Creating test_1337 folder" );
-    ok( \&VCenter::create_switch( 'test_1337', 'DistributedVirtualSwitch' ), "Creating test_1337 DVS" );
-}
 
 diag("Check if any entity exists for our test_1337 ticket");
 my @types = ( 'ResourcePool', 'Folder', 'DistributedVirtualSwitch' );
@@ -30,7 +23,7 @@ for my $type ( @types ) {
     }
 }
 diag("Creating empty resources and calling backend subs");
-&create_entities;
+&VCenter::create_entities;
 for my $type ( @types ) {
     my $ret = &VCenter::check_if_empty_entity( 'test_1337', $type );
     is( $ret , 1, "Check if empty returned true for empty $type" );
@@ -38,13 +31,13 @@ for my $type ( @types ) {
     is( Vim::find_entity_view( view_type =>$type, properties => [ 'name' ], filter => { name => 'test_1337' } ), undef, "test_1337 $type doesn't exist after delete" );
 }
 diag("Creating resources and calling cleanup to see if deleted");
-&create_entities;
+&VCenter::create_entities;
 is( &admin::cleanup, '' ,"Admin cleanup sub deletes resource Pool" );
 for my $type ( @types ) {
     is( Vim::find_entity_view( view_type =>$type, properties => [ 'name' ], filter => { name => 'test_1337' } ), undef, "test_1337 $type doesn't exist after cleanup" );
 }
 diag("Creating resources with entity and see if they don't get deleted");
-&create_entities;
+&VCenter::create_entities;
 ok( \&VCenter::create_dvportgroup( 'test_1337_dvg', 'test_1337' ), "Creating test_1337_dvg DVPG");
 &VCenter::create_test_vm( 'test_1337' );
 &admin::cleanup;
