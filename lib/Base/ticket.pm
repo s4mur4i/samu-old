@@ -107,7 +107,49 @@ sub ticket_off {
 }
 
 sub ticket_list {
+    &Log::debug("Starting Ticket::ticket_list sub");
+    my %tickets = &Misc::ticket_list;
+    &Log::debug("Finished collecting ticket list");
+    my $dbh = &Kayako::connect_kayako();
+    for my $ticket ( sort (keys %tickets) ) {
+        &Log::debug("Collecting information about ticket=>'$ticket'");
+        if ( $ticket ne "" and $ticket ne "unknown" ) {
+            my $print = "";
+            $string = "Ticket: $ticket, owner: $tickets{$ticket}";
+            my $result = &Kayako::run_query( $dbh, "select ticketstatustitle from swtickets where ticketid = '$ticket'" );
+            ## FIXME need to implement multiple tickets in field seperated by space
+            if ( defined( $result ) ) {
+                $string .= ", ticket status: " . $$result{ticketstatustitle} ."";
+                $result = &Kayako::run_query( $dbh, "select fieldvalue from swcustomfieldvalues where typeid = '$ticket' and customfieldid = '25'" );
+                if ( defined($result) or $$result{fieldvalue} ne "" ) {
+                    my @result = split( " ", $$result{fieldvalue} );
+                    foreach ( @result ) {
+                        if ( $_ ne "" ) {
+                            my $id;
+                            if ($_ =~ /^\s*\d+\s*$/ ) {
+                                $id = $_;
+                            } elsif ($_ =~ /\?id=\d+/ ) {
+                                ( $id ) = $_ =~ /id=(\d+)\D?/ ;
+                            } else {
+                                $id = $_;
+                            }
+                            $string .= ", bugzilla: " . $id;
+                            my $content = &Bugzilla::bugzilla_status( $id );
+                            if ( defined( $content ) ) {
+                                $string .= ", bugzilla status: $content";
+                            }
 
+                        }
+                    }
+                }
+            }
+            &Log::normal($string);
+        } else {
+            &Log::debug("Ticket name is empty or unknown");
+        }
+    }
+    &Log::debug("Finished printing ticket information");
+    &Kayako::disconnect_kayako($dbh);
 }
 1;
 __END__

@@ -263,7 +263,8 @@ sub ticket_list {
             $tickets{ $hash->{ticket} } = $hash->{username};
         }
     }
-    return %tickets;
+    &Log::debug("Finished collecting ticket list");
+    return \%tickets;
 }
 
 1
