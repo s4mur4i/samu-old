@@ -108,6 +108,7 @@ use overload
   '""'     => sub { $_[0]->as_string },
   'bool'   => sub { 1 },
   fallback => 1;
+
 #tested
 sub catch_ex {
     my ($ex) = @_;

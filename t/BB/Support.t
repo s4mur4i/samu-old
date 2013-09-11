@@ -36,19 +36,21 @@ throws_ok { &Support::get_key_value( 'agents', 'TEST', 'TEST' ) }
 'Template::Status', 'get_key_value throws exception for bad key';
 throws_ok { &Support::get_key_value( 'agents', 's4mur4i', 'TEST' ) }
 'Template::Status', 'get_key_value throws exception for bad value';
-my $os_temp = ${&Support::get_keys( 'template' )}[0];
-my $snapshot_config = VirtualMachineConfigInfo->new( alternateGuestName => 'test', changeVersion => 'test', defaultPowerOps => VirtualMachineDefaultPowerOpInfo->new(), files => VirtualMachineFileInfo->new(), flags => VirtualMachineFlagInfo->new(), guestFullName => 'test', guestId => 'test', hardware => VirtualHardware->new( memoryMB => 512, numCPU => 1 ), name => 'test', modified => '1970-01-01T00:00:00Z', template => 1, uuid => '12345678-abcd-1234-cdef-123456789abc', version => '1' );
-my $snapshot_view = VirtualMachineSnapshot->new( config => $snapshot_config);
 ok( \&VCenter::create_resource_pool( 'test_1337', 'Resources' ), "Creating test_1337 resourcepool" );
-isa_ok( &Support::RelocateSpec( 'test_1337' ), 'VirtualMachineRelocateSpec', "RelocateSpec returned VirtualMachineRelocateSpec object" );
-isa_ok( &Support::ConfigSpec( 512, 1, $os_temp ), 'VirtualMachineConfigSpec', "ConfigSpec returned VirtualMachineConfigSpec object" );
-isa_ok( &Support::CustomizationPassword , 'CustomizationPassword', "CustomizationPassword returned CustomizationPassword object" );
-isa_ok( &Support::identification_domain, 'CustomizationIdentification', "identification_domain returned CustomizationIdentification object" );
-isa_ok( &Support::identification_workgroup, 'CustomizationIdentification', "identification_workgroup returned CustomizationIdentification object" );
-isa_ok( &Support::win_CloneSpec( $os_temp, $snapshot_view, &Support::RelocateSpec( 'test_1337' ),  &Support::ConfigSpec( 512, 1, $os_temp), 0, 1), 'VirtualMachineCloneSpec', "win_CloneSpec returns VirtualMachineCloneSpec object for workgroup" );
-isa_ok( &Support::win_CloneSpec( $os_temp, $snapshot_view, &Support::RelocateSpec( 'test_1337' ),  &Support::ConfigSpec( 512, 1, $os_temp), 1, 1), 'VirtualMachineCloneSpec', "win_CloneSpec returns VirtualMachineCloneSpec object for domain" );
-isa_ok( &Support::lin_CloneSpec( ${&Support::get_keys( 'template' )}[0], $snapshot_view, &Support::RelocateSpec( 'test_1337' ),  &Support::ConfigSpec( 512, 1, $os_temp)), 'VirtualMachineCloneSpec', "lin_CloneSpec returned VirtualMachineCloneSpec object" );
-isa_ok( &Support::oth_CloneSpec( $snapshot_view,  &Support::RelocateSpec( 'test_1337' ),  &Support::ConfigSpec( 512, 1, $os_temp)), 'VirtualMachineCloneSpec', "oth_CloneSpec returned VirtualMachineCloneSpec object" );
+for my $os_temp ( @{&Support::get_keys("template")} ) {
+    diag("Going to use $os_temp as test template");
+    my $snapshot_config = VirtualMachineConfigInfo->new( alternateGuestName => 'test', changeVersion => 'test', defaultPowerOps => VirtualMachineDefaultPowerOpInfo->new(), files => VirtualMachineFileInfo->new(), flags => VirtualMachineFlagInfo->new(), guestFullName => 'test', guestId => 'test', hardware => VirtualHardware->new( memoryMB => 512, numCPU => 1 ), name => 'test', modified => '1970-01-01T00:00:00Z', template => 1, uuid => '12345678-abcd-1234-cdef-123456789abc', version => '1' );
+    my $snapshot_view = VirtualMachineSnapshot->new( config => $snapshot_config);
+    isa_ok( &Support::RelocateSpec( 'test_1337' ), 'VirtualMachineRelocateSpec', "RelocateSpec returned VirtualMachineRelocateSpec object" );
+    isa_ok( &Support::ConfigSpec( 512, 1, $os_temp ), 'VirtualMachineConfigSpec', "ConfigSpec returned VirtualMachineConfigSpec object" );
+    isa_ok( &Support::CustomizationPassword , 'CustomizationPassword', "CustomizationPassword returned CustomizationPassword object" );
+    isa_ok( &Support::identification_domain, 'CustomizationIdentification', "identification_domain returned CustomizationIdentification object" );
+    isa_ok( &Support::identification_workgroup, 'CustomizationIdentification', "identification_workgroup returned CustomizationIdentification object" );
+    isa_ok( &Support::win_CloneSpec( "T_$os_temp", $snapshot_view, &Support::RelocateSpec( 'test_1337' ),  &Support::ConfigSpec( 512, 1, $os_temp), 0, 1), 'VirtualMachineCloneSpec', "win_CloneSpec returns VirtualMachineCloneSpec object for workgroup" );
+    isa_ok( &Support::win_CloneSpec( "T_$os_temp", $snapshot_view, &Support::RelocateSpec( 'test_1337' ),  &Support::ConfigSpec( 512, 1, $os_temp), 1, 1), 'VirtualMachineCloneSpec', "win_CloneSpec returns VirtualMachineCloneSpec object for domain" );
+    isa_ok( &Support::lin_CloneSpec( "T_$os_temp", $snapshot_view, &Support::RelocateSpec( 'test_1337' ),  &Support::ConfigSpec( 512, 1, $os_temp)), 'VirtualMachineCloneSpec', "lin_CloneSpec returned VirtualMachineCloneSpec object" );
+    isa_ok( &Support::oth_CloneSpec( $snapshot_view,  &Support::RelocateSpec( 'test_1337' ),  &Support::ConfigSpec( 512, 1, $os_temp)), 'VirtualMachineCloneSpec', "oth_CloneSpec returned VirtualMachineCloneSpec object" );
+}
 $view = &Guest::entity_name_view( 'test_1337', 'ResourcePool' );
 $view->Destroy;
 &Util::disconnect;

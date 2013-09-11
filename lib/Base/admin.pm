@@ -49,6 +49,7 @@ sub main {
     &Log::debug("Admin::main sub started");
     &misc::option_parser( $module_opts, "main" );
 }
+
 #tested
 sub cleanup {
     &Log::debug("Starting Admin::cleanup sub");
@@ -70,6 +71,7 @@ sub cleanup {
         }
     }
 }
+
 #tested
 sub templates {
     &Log::debug("Admin::templates sub started");
@@ -82,6 +84,7 @@ sub templates {
         &Log::normal( "Name:'$template'" . " " x $length . "Path:'$path'" );
     }
 }
+
 #tested
 sub test {
     &Log::debug("Admin::test started");

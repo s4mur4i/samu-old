@@ -196,32 +196,40 @@ sub CustomizationAdapterMapping_generator {
 }
 
 sub poweron {
-    my ( $vmname ) = @_;
+    my ($vmname) = @_;
     &Log::debug("Starting Guest::poweron sub, vmname=>'$vmname'");
     &VCenter::num_check( $vmname, 'VirtualMachine' );
-    my $view = Vim::find_entity_view( view_type => 'VirtualMachine', properties => [ 'runtime.powerState' ], filter => { name => $vmname } );
+    my $view = Vim::find_entity_view(
+        view_type  => 'VirtualMachine',
+        properties => ['runtime.powerState'],
+        filter     => { name => $vmname }
+    );
     my $powerstate = $view->get_property('runtime.powerState');
     if ( $powerstate->val ne "poweredOff" ) {
         &Log::warning("Machine is already powered on");
         return 0;
     }
     my $task = $view->PowerOnVM_Task;
-    &VCenter::Task_Status( $task );
+    &VCenter::Task_Status($task);
     &Log::debug("Powered on VM");
 }
 
 sub poweroff {
-    my ( $vmname ) = @_;
+    my ($vmname) = @_;
     &Log::debug("Starting Guest::poweroff sub, vmname=>'$vmname'");
     &VCenter::num_check( $vmname, 'VirtualMachine' );
-    my $view = Vim::find_entity_view( view_type => 'VirtualMachine', properties => [ 'runtime.powerState' ], filter => { name => $vmname } );
+    my $view = Vim::find_entity_view(
+        view_type  => 'VirtualMachine',
+        properties => ['runtime.powerState'],
+        filter     => { name => $vmname }
+    );
     my $powerstate = $view->get_property('runtime.powerState');
     if ( $powerstate->val eq "poweredOff" ) {
         &Log::warning("Machine is already powered off");
         return 0;
     }
     my $task = $view->PowerOffVM_Task;
-    &VCenter::Task_Status( $task );
+    &VCenter::Task_Status($task);
     &Log::debug("Powered off VM");
 }
 
@@ -234,11 +242,11 @@ sub short_vm_info {
     my $view = Vim::find_entity_view(
         view_type  => 'VirtualMachine',
         properties => [ 'name', 'guest', 'summary.runtime.powerState' ],
-        filter     => { name => $name }
+        filter => { name => $name }
     );
     &Log::normal( "VMname:'" . $view->name );
     my $powerState = $view->get_property('summary.runtime.powerState');
-    &Log::normal( "\tPower State:'" . $powerState->val . "'");
+    &Log::normal( "\tPower State:'" . $powerState->val . "'" );
 
 #    &Log::normal("\tAlternate name: '" . &Guest::get_altername( $view->name ));
     if ( $view->guest->toolsStatus eq 'toolsNotInstalled' ) {

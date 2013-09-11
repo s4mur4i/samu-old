@@ -11,6 +11,7 @@ use Sys::Syslog qw(:standard :macros);
 use File::Basename;
 
 my $verbosity;
+
 #tested
 sub verbosity {
     return $verbosity;
@@ -50,26 +51,31 @@ sub log2line {
     print STDERR "$prefix: $msg\n";
     return "$msg\n";
 }
+
 #tested
 # Report a critical error and terminate the script
 sub critical {
     syslog( LOG_ERR, log2line( 'ERROR', @_ ) );
 }
+
 #tested
 sub normal {
     syslog( LOG_INFO, log2line( 'INFO', @_ ) );
 }
+
 #tested
 # Report a warning but continue
 sub warning {
     ( verbosity() >= 1 ) and syslog( LOG_WARNING, log2line( 'WARNING', @_ ) );
     return -1;    # failure
 }
+
 #tested
 # Send an info message
 sub info {
     ( verbosity() >= 2 ) and syslog( LOG_INFO, log2line( 'INFO', @_ ) );
 }
+
 #tested
 # Send a debug message
 sub debug {

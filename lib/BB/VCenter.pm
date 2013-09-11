@@ -26,6 +26,7 @@ sub clonevm {
     &Task_Status($task);
     &Log::debug("Finished cloning vm");
 }
+
 #tested
 sub create_test_vm {
     my ($name) = @_;
@@ -284,9 +285,13 @@ sub Task_Status {
 }
 
 sub ticket_vms_name {
-    my ( $ticket ) = @_;
+    my ($ticket) = @_;
     &Log::debug("Starting VCenter::ticket_vms_name sub, ticket=>'$ticket'");
-    return Vim::find_entity_views( view_type  => 'VirtualMachine', properties => ['name'], filter => { name => qr/^$ticket-/ });
+    return Vim::find_entity_views(
+        view_type  => 'VirtualMachine',
+        properties => ['name'],
+        filter     => { name => qr/^$ticket-/ }
+    );
 }
 
 ### Subs for creation/deletion
@@ -462,6 +467,7 @@ sub SDK_options {
     Opts::parse();
     Opts::validate();
 }
+
 #tested
 sub connect_vcenter {
     &Log::debug("Starting VCenter::connect_vcenter sub");
@@ -480,6 +486,7 @@ sub connect_vcenter {
         );
     }
 }
+
 #tested
 sub disconnect_vcenter {
     &Log::debug("Starting VCenter::disconnect_vcenter sub");

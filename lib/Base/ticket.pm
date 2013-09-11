@@ -74,9 +74,9 @@ sub ticket_info {
     &Log::debug("Starting Ticket::ticket_info sub");
     my $ticket = Opts::get_option('ticket');
     &Log::debug("Information about ticket=>'$ticket'");
-    my $machines = &VCenter::ticket_vms_name( $ticket );
+    my $machines = &VCenter::ticket_vms_name($ticket);
     for my $vm (@$machines) {
-        &Log::debug("Getting information about '" . $vm->name . "'");
+        &Log::debug( "Getting information about '" . $vm->name . "'" );
         &Guest::short_vm_info( $vm->name );
     }
     return 1;
@@ -86,9 +86,9 @@ sub ticket_on {
     &Log::debug("Starting Ticket::on sub");
     my $ticket = Opts::get_option('ticket');
     &Log::debug("Powering on ticket, ticket=>'$ticket'");
-    my $machines = &VCenter::ticket_vms_name( $ticket );
+    my $machines = &VCenter::ticket_vms_name($ticket);
     for my $vm (@$machines) {
-        &Log::normal("Powering on '". $vm->name . "'");
+        &Log::normal( "Powering on '" . $vm->name . "'" );
         &Guest::poweron( $vm->name );
     }
     return 1;
@@ -98,9 +98,9 @@ sub ticket_off {
     &Log::debug("Starting Ticket::off sub");
     my $ticket = Opts::get_option('ticket');
     &Log::debug("Powering off ticket, ticket=>'$ticket'");
-    my $machines = &VCenter::ticket_vms_name( $ticket );
+    my $machines = &VCenter::ticket_vms_name($ticket);
     for my $vm (@$machines) {
-        &Log::normal("Powering off '" . $vm->name . "'");
+        &Log::normal( "Powering off '" . $vm->name . "'" );
         &Guest::poweroff( $vm->name );
     }
     return 1;

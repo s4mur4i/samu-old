@@ -136,7 +136,7 @@ my %template_hash = (
         os       => 'other'
     },
     'rhel_6.0_en_amd64_rhel60' => {
-        path     => 'Support/vm/templates/Linux/rhel/T_rhel_6.0_en_amd64_rhel60',
+        path => 'Support/vm/templates/Linux/rhel/T_rhel_6.0_en_amd64_rhel60',
         username => 'root',
         password => 'titkos',
         os       => 'other'
@@ -170,6 +170,7 @@ my %map_hash = (
 =head3 exception
 
 =cut
+
 #tested
 sub get_keys {
     my ($hash) = @_;
@@ -197,6 +198,7 @@ sub get_keys {
 =head3 exception
 
 =cut
+
 #tested
 sub get_key_info {
     my ( $hash, $key ) = @_;
@@ -212,6 +214,7 @@ sub get_key_info {
         );
     }
 }
+
 #tested
 sub get_key_value {
     my ( $hash, $key, $value ) = @_;
@@ -246,6 +249,7 @@ sub RelocateSpec {
     );
     return $relocate_spec;
 }
+
 #tested
 sub ConfigSpec {
     my ( $memory, $cpu, $os_temp ) = @_;
@@ -259,11 +263,13 @@ sub ConfigSpec {
     );
     return $config_spec;
 }
+
 #tested
 sub CustomizationPassword {
     &Log::debug("Starting Support::CustomizationPassword sub");
     return CustomizationPassword->new( plainText => 1, value => 'titkos' );
 }
+
 #tested
 sub identification_domain {
     &Log::debug("Starting Support::identification_domain sub");
@@ -273,6 +279,7 @@ sub identification_domain {
         joinDomain          => 'support.balabit'
     );
 }
+
 #tested
 sub identification_workgroup {
     &Log::debug("Starting Support::identification_workgroup sub");
@@ -282,6 +289,7 @@ sub identification_workgroup {
         joinWorkgroup       => 'SUPPORT'
     );
 }
+
 #tested
 sub win_CloneSpec {
     my ( $os_temp, $snapshot_view, $relocate_spec, $config_spec, $domain, $key )
@@ -363,6 +371,7 @@ sub win_CloneSpec {
     &Log::debug("Returning win Clone Spec");
     return $clone_spec;
 }
+
 #tested
 sub lin_CloneSpec {
     my ( $os_temp, $snapshot_view, $relocate_spec, $config_spec ) = @_;
@@ -395,6 +404,7 @@ sub lin_CloneSpec {
     &Log::debug("Returning lin Clone Spec");
     return $clone_spec;
 }
+
 #tested
 sub oth_CloneSpec {
     my ( $snapshot_view, $relocate_spec, $config_spec ) = @_;

@@ -138,6 +138,7 @@ sub list_disk {
 sub list_snapshot {
 
 }
+
 #tested
 sub clone_vm {
     &Log::debug("Entity::clone sub started");

@@ -8,6 +8,7 @@ BEGIN {
     our @ISA    = qw( Exporter );
     our @EXPORT = qw( );
 }
+
 #tested
 sub array_longest {
     my ($array) = @_;
@@ -21,11 +22,13 @@ sub array_longest {
     &Log::debug("Longest element is $max");
     return $max;
 }
+
 #tested
 sub random_3digit {
     &Log::debug("Starting Misc::random_3digit sub");
     return int( rand(999) );
 }
+
 #tested
 sub generate_mac {
     my ($username) = @_;
@@ -102,6 +105,7 @@ sub mac_compare {
     &Log::info("No VM found with same mac");
     return 0;
 }
+
 #tested
 # increment 1 on the last 3 bytes of the MAC. if overflow occurrs, then throw error
 sub increment_mac {
@@ -124,6 +128,7 @@ sub increment_mac {
     &Log::debug("Incrementd mac, mac=>'$new_mac'");
     return $new_mac;
 }
+
 #tested
 sub vmname_splitter {
     my ($vmname) = @_;
@@ -172,6 +177,7 @@ sub vmname_splitter {
     }
     return \%return;
 }
+
 #tested
 sub increment_disk_name {
     my ($name) = @_;
@@ -201,6 +207,7 @@ sub increment_disk_name {
     &Log::debug("disk name has been incremented=>'${pre}_$num$post'");
     return "${pre}_$num$post";
 }
+
 #tested
 sub filename_splitter {
     my ($filename) = @_;
@@ -218,6 +225,7 @@ sub filename_splitter {
     );
     return [ $datas, $folder, $image ];
 }
+
 #tested
 sub generate_vmname {
     my ( $ticket, $username, $os_temp ) = @_;
@@ -242,12 +250,17 @@ sub uniq_vmname {
 
 sub ticket_list {
     &Log::debug("Starting Misc::ticket_list sub");
-    my $machines = Vim::find_entity_views(view_type =>'VirtualMachine', properties => [ 'name' ] );
-    my %tickets=();
+    my $machines = Vim::find_entity_views(
+        view_type  => 'VirtualMachine',
+        properties => ['name']
+    );
+    my %tickets = ();
     for my $machine (@$machines) {
-        my $hash = &vmname_splitter($machine->name);
-        if ( $hash->{ticket} ne 'unknown' and  !defined($tickets{$hash->{ticket}}) ) {
-            $tickets{$hash->{ticket}}=$hash->{username};
+        my $hash = &vmname_splitter( $machine->name );
+        if ( $hash->{ticket} ne 'unknown'
+            and !defined( $tickets{ $hash->{ticket} } ) )
+        {
+            $tickets{ $hash->{ticket} } = $hash->{username};
         }
     }
     return %tickets;
