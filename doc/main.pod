@@ -564,6 +564,10 @@
 
     Test connection to VCenter. Prints the Server time
 
+=item pod2wiki
+
+    Transfer a pod file to Dokuwiki format
+
 =back
 
 =head1 ADMIN_functions
@@ -601,6 +605,26 @@
 =head3 OPTIONS
 
 =over
+
+=back
+
+=head2 ADMIN_pod2wiki_function
+
+=head3 SYNOPSIS
+
+    herring.pl admin pod2wiki [options]
+
+=head3 OPTIONS
+
+=over
+
+=item in
+
+    The POD file to transfer
+
+=item out
+
+    The output file
 
 =back
 
