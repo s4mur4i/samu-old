@@ -40,14 +40,27 @@ our $module_opts = {
             },
         },
         list => {
-            helper   => 'TICKET_list_function',
             function => \&ticket_list,
         },
         on => {
             function => \&ticket_on,
+            opts     => {
+                ticket => {
+                    type     => "=s",
+                    help     => "Ticket to power on",
+                    required => 1,
+                },
+            },
         },
         off => {
             function => \&ticket_off,
+            opts     => {
+                ticket => {
+                    type     => "=s",
+                    help     => "Ticket to power off",
+                    required => 1,
+                },
+            },
         },
     },
 };
@@ -58,18 +71,39 @@ sub main {
 }
 
 sub ticket_info {
-    &Log::debug("Startin Ticket::ticket_info sub");
+    &Log::debug("Starting Ticket::ticket_info sub");
     my $ticket = Opts::get_option('ticket');
     &Log::debug("Information about ticket=>'$ticket'");
-    my $machines = Vim::find_entity_views(
-        view_type  => 'VirtualMachine',
-        properties => ['name'],
-        filter     => { name => qr/^$ticket-/ }
-    );
+    my $machines = &VCenter::ticket_vms_name( $ticket );
     for my $vm (@$machines) {
-        &Log::debug("Getting information about ''$vm->name'");
+        &Log::debug("Getting information about '" . $vm->name . "'");
         &Guest::short_vm_info( $vm->name );
     }
+    return 1;
+}
+
+sub ticket_on {
+    &Log::debug("Starting Ticket::on sub");
+    my $ticket = Opts::get_option('ticket');
+    &Log::debug("Powering on ticket, ticket=>'$ticket'");
+    my $machines = &VCenter::ticket_vms_name( $ticket );
+    for my $vm (@$machines) {
+        &Log::normal("Powering on '". $vm->name . "'");
+        &Guest::poweron( $vm->name );
+    }
+    return 1;
+}
+
+sub ticket_off {
+    &Log::debug("Starting Ticket::off sub");
+    my $ticket = Opts::get_option('ticket');
+    &Log::debug("Powering off ticket, ticket=>'$ticket'");
+    my $machines = &VCenter::ticket_vms_name( $ticket );
+    for my $vm (@$machines) {
+        &Log::normal("Powering off '" . $vm->name . "'");
+        &Guest::poweroff( $vm->name );
+    }
+    return 1;
 }
 
 sub ticket_list {
