@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use Base::misc;
 use BB::Common;
+use Pod::Simple::Wiki::Dokuwiki;
 
 my $help = 0;
 
@@ -41,6 +42,21 @@ our $module_opts = {
         test => {
             function => \&test,
             opts     => {},
+        },
+        pod2wiki => {
+            function => \&pod2wiki,
+            opts     => {
+                in => {
+                    type     => "=s",
+                    help     => "Source Pod file",
+                    required => 1,
+                },
+                out => {
+                    type     => "=s",
+                    help     => "Output file",
+                    required => 1,
+                },
+            },
         },
     },
 };
@@ -94,6 +110,16 @@ sub test {
     );
     my $si_view = Vim::get_view( mo_ref => $si_moref );
     &Log::normal( "Server Time : " . $si_view->CurrentTime() );
+}
+
+sub pod2wiki {
+    my $in = Opts::get_option('in');
+    my $out = Opts::get_option('out');
+    my $parser = Pod::Simple::Wiki->new('dokuwiki');
+    open( my $IN,  "<", $in ) or Connection::Connect->throw( error =>  "Couldn't open: $!", type => 'file', dest => $in );
+    open( my $OUT, ">", $out ) or Connection::Connect->throw( error => "Couldn't open: $!", type => 'file', dest => $out );
+    $parser->output_fh($OUT);
+    $parser->parse_file($IN);
 }
 
 1
