@@ -240,5 +240,18 @@ sub uniq_vmname {
     return $vmname;
 }
 
+sub ticket_list {
+    &Log::debug("Starting Misc::ticket_list sub");
+    my $machines = Vim::find_entity_views(view_type =>'VirtualMachine', properties => [ 'name' ] );
+    my %tickets=();
+    for my $machine (@$machines) {
+        my $hash = &vmname_splitter($machine->name);
+        if ( $hash->{ticket} ne 'unknown' and  !defined($tickets{$hash->{ticket}}) ) {
+            $tickets{$hash->{ticket}}=$hash->{username};
+        }
+    }
+    return %tickets;
+}
+
 1
 __END__
