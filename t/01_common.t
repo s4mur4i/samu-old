@@ -26,12 +26,7 @@ eol_unix_ok(
     { all_reasons => 1, trailing_whitespace => 1 }
 );
 eol_unix_ok(
-    "$FindBin::Bin/../pod2wiki.pl",
-    'Herring is ^M and trailing whitespace free',
-    { all_reasons => 1, trailing_whitespace => 1 }
-);
-eol_unix_ok(
     "$FindBin::Bin/../TEST_PERL_MODULES.pl",
-    'Herring is ^M and trailing whitespace free',
+    'TEST_PERL_MODULES is ^M and trailing whitespace free',
     { all_reasons => 1, trailing_whitespace => 1 }
 );

@@ -113,11 +113,21 @@ sub test {
 }
 
 sub pod2wiki {
-    my $in = Opts::get_option('in');
-    my $out = Opts::get_option('out');
+    my $in     = Opts::get_option('in');
+    my $out    = Opts::get_option('out');
     my $parser = Pod::Simple::Wiki->new('dokuwiki');
-    open( my $IN,  "<", $in ) or Connection::Connect->throw( error =>  "Couldn't open: $!", type => 'file', dest => $in );
-    open( my $OUT, ">", $out ) or Connection::Connect->throw( error => "Couldn't open: $!", type => 'file', dest => $out );
+    open( my $IN, "<", $in )
+      or Connection::Connect->throw(
+        error => "Couldn't open: $!",
+        type  => 'file',
+        dest  => $in
+      );
+    open( my $OUT, ">", $out )
+      or Connection::Connect->throw(
+        error => "Couldn't open: $!",
+        type  => 'file',
+        dest  => $out
+      );
     $parser->output_fh($OUT);
     $parser->parse_file($IN);
 }

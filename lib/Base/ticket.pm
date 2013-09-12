@@ -112,30 +112,37 @@ sub ticket_list {
     my $tickets = &Misc::ticket_list;
     &Log::debug("Finished collecting ticket list");
     my $dbh = &Kayako::connect_kayako();
-    for my $ticket ( sort (keys %{$tickets}) ) {
+    for my $ticket ( sort ( keys %{$tickets} ) ) {
         &Log::debug("Collecting information about ticket=>'$ticket'");
         if ( $ticket ne "" and $ticket ne "unknown" ) {
             my $string = "";
             $string = "Ticket: $ticket, owner: $$tickets{$ticket}";
-            my $result = &Kayako::run_query( $dbh, "select ticketstatustitle from swtickets where ticketid = '$ticket'" );
-            if ( defined( $result ) ) {
-                $string .= ", ticket status: " . $$result{ticketstatustitle} ."";
-                $result = &Kayako::run_query( $dbh, "select fieldvalue from swcustomfieldvalues where typeid = '$ticket' and customfieldid = '25'" );
+            my $result = &Kayako::run_query( $dbh,
+"select ticketstatustitle from swtickets where ticketid = '$ticket'"
+            );
+            if ( defined($result) ) {
+                $string .=
+                  ", ticket status: " . $$result{ticketstatustitle} . "";
+                $result = &Kayako::run_query( $dbh,
+"select fieldvalue from swcustomfieldvalues where typeid = '$ticket' and customfieldid = '25'"
+                );
                 if ( defined($result) or $$result{fieldvalue} ne "" ) {
                     my @result = split( " ", $$result{fieldvalue} );
-                    foreach ( @result ) {
+                    foreach (@result) {
                         if ( $_ ne "" ) {
                             my $id;
-                            if ($_ =~ /^\s*\d+\s*$/ ) {
+                            if ( $_ =~ /^\s*\d+\s*$/ ) {
                                 $id = $_;
-                            } elsif ($_ =~ /\?id=\d+/ ) {
-                                ( $id ) = $_ =~ /id=(\d+)\D?/ ;
-                            } else {
+                            }
+                            elsif ( $_ =~ /\?id=\d+/ ) {
+                                ($id) = $_ =~ /id=(\d+)\D?/;
+                            }
+                            else {
                                 $id = $_;
                             }
                             $string .= ", bugzilla: " . $id;
-                            my $content = &Bugzilla::bugzilla_status( $id );
-                            if ( defined( $content ) ) {
+                            my $content = &Bugzilla::bugzilla_status($id);
+                            if ( defined($content) ) {
                                 $string .= ", bugzilla status: $content";
                             }
 
@@ -144,7 +151,8 @@ sub ticket_list {
                 }
             }
             &Log::normal($string);
-        } else {
+        }
+        else {
             &Log::debug("Ticket name is empty or unknown");
         }
     }

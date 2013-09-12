@@ -81,7 +81,7 @@ sub create_test_vm {
         memoryMB     => '512',
         files        => $files,
         numCPUs      => 1,
-        guestId       => 'winNetEnterpriseGuest',
+        guestId      => 'winNetEnterpriseGuest',
         deviceChange => \@vm_devices
     );
     $folder->CreateVM( pool => $resource_pool, config => $config_spec );
@@ -290,6 +290,7 @@ sub Task_Status {
     &Log::debug("Finishing VCenter::Task_status sub");
     return;
 }
+
 #tested
 sub ticket_vms_name {
     my ($ticket) = @_;

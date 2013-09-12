@@ -8,7 +8,7 @@ use Test::More;
 use lib "$FindBin::Bin/../../lib";
 use English qw(-no_match_vars);
 
-if ( not $ENV{ALL} or not $ENV{POD} ) {
+if ( !($ENV{ALL} or $ENV{POD}) ) {
     my $msg = 'Author test.  Set $ENV{POD} to a true value to run.';
     plan( skip_all => $msg );
 }

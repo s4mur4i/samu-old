@@ -33,7 +33,7 @@ for my $template ( @{&Support::get_keys( 'template' )} ) {
     $view = Vim::find_entity_view( view_type => 'VirtualMachine', properties => [ 'name' ], filter => { name => qr/^test_1337-/ } );
     ok( !defined($view), "Cloned entity Destroyed succesfully" );
 }
-my $resource_pool_view = Vim::find_entity_view( view_type => 'VirtualMachine', properties => [ 'name' ], filter => { name => qr/^test_1337-/ } );
+my $resource_pool_view = Vim::find_entity_view( view_type => 'ResourcePool', properties => [ 'name' ], filter => { name => qr/^test_1337-/ } );
 $resource_pool_view->Destroy;
 &Util::disconnect();
 done_testing;

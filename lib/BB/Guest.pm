@@ -194,6 +194,7 @@ sub CustomizationAdapterMapping_generator {
     &Log::debug("Returning array of adapter mappings");
     return @return;
 }
+
 #tested
 sub poweron {
     my ($vmname) = @_;
@@ -214,6 +215,7 @@ sub poweron {
     &Log::debug("Powered on VM");
     return 1;
 }
+
 #tested
 sub poweroff {
     my ($vmname) = @_;
