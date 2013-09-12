@@ -81,12 +81,13 @@ sub create_test_vm {
         memoryMB     => '512',
         files        => $files,
         numCPUs      => 1,
+        guestId       => 'winNetEnterpriseGuest',
         deviceChange => \@vm_devices
     );
     $folder->CreateVM( pool => $resource_pool, config => $config_spec );
 }
 
-sub create_entities {
+sub create_test_entities {
     &VCenter::create_resource_pool( 'test_1337', 'Resources' );
     &VCenter::create_folder( 'test_1337', 'vm' );
     &VCenter::create_switch( 'test_1337', 'DistributedVirtualSwitch' );
@@ -293,11 +294,16 @@ sub Task_Status {
 sub ticket_vms_name {
     my ($ticket) = @_;
     &Log::debug("Starting VCenter::ticket_vms_name sub, ticket=>'$ticket'");
-    return Vim::find_entity_views(
+    my $vms = Vim::find_entity_views(
         view_type  => 'VirtualMachine',
         properties => ['name'],
         filter     => { name => qr/^$ticket-/ }
     );
+    my @return;
+    for my $vm (@$vms) {
+        push( @return, $vm->name );
+    }
+    return @return;
 }
 
 ### Subs for creation/deletion

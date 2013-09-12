@@ -22,23 +22,28 @@ for my $type ( @types ) {
         plan( skip_all => "test_1337 $type exists. Delete it before test can be run" );
     }
 }
-ok( scalar(&VCenter::ticket_vms_name( 'test_1337' )) eq 1, "ticket_vms_name returned one name" );
+&VCenter::create_test_entities;
+&VCenter::create_test_vm( 'test_1337-test-test_test-123' );
 my @vmname = &VCenter::ticket_vms_name( 'test_1337' );
-like( $vmname[0], qr/^test_1337_[^-]*-[^-]*-\d{1,3}/, "ticket_vms_name is a valid vmname" );
+use Data::Dumper;
+diag(Dumper @vmname);
+is( scalar(@vmname), 1, "ticket_vms_name returned one name" );
+like( $vmname[0], qr/^test_1337-[^-]*-[^-]*-\d{1,3}/, "ticket_vms_name is a valid vmname" );
 
 diag("Powering on VM");
-ok( &Guest::poweron($vmname[0]), "Powering on VM" );
+is( &Guest::poweron($vmname[0]), 1, "Powering on VM" );
 my $view = Vim::find_entity_view( view_type => 'VirtualMachine', properties => [ 'runtime.powerState' ], filter => { name => $vmname[0] } );
 my $powerstate = $view->get_property('runtime.powerState');
 ok( $powerstate->val eq 'poweredOn', "Guest is powered on" );
 
 diag("Powering off VM");
-ok( &Guest::poweroff($vmname[0]), "Powering off VM" );
+is( &Guest::poweroff($vmname[0]), 1, "Powering off VM" );
 $view = Vim::find_entity_view( view_type => 'VirtualMachine', properties => [ 'runtime.powerState' ], filter => { name => $vmname[0] } );
 $powerstate = $view->get_property('runtime.powerState');
 ok( $powerstate->val eq 'poweredOff', "Guest is powered off" );
 for my $type ( @types ) {
-    my $view = Vim::find_entity_view( view_type => $type, properties => [ 'name' ], filter => { name => qr/^test_1337-/ } );
+    diag("Destroying test $type");
+    my $view = Vim::find_entity_view( view_type => $type, properties => [ 'name' ], filter => { name => qr/^test_1337/ } );
     $view->Destroy;
 }
 &Util::disconnect();

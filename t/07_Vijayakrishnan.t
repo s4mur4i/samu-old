@@ -6,7 +6,7 @@ use 5.14.0;
 use Test::More;
 use English qw(-no_match_vars);
 
-if ( not $ENV{CRITIC} ) {
+if ( not $ENV{ALL} or not $ENV{CRITIC} ) {
     my $msg = 'Author test.  Set $ENV{CRITIC} to a true value to run.';
     plan( skip_all => $msg );
 }

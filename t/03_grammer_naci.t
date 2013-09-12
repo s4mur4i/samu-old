@@ -6,7 +6,7 @@ use FindBin;
 use English qw(-no_match_vars);
 use Test::More;
 
-if ( not $ENV{CRITIC} ) {
+if ( not $ENV{ALL} or not $ENV{CRITIC} ) {
     my $msg = 'Author test.  Set $ENV{CRITIC} to a true value to run.';
     plan( skip_all => $msg );
 }

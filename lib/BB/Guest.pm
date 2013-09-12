@@ -212,6 +212,7 @@ sub poweron {
     my $task = $view->PowerOnVM_Task;
     &VCenter::Task_Status($task);
     &Log::debug("Powered on VM");
+    return 1;
 }
 #tested
 sub poweroff {
@@ -231,6 +232,7 @@ sub poweroff {
     my $task = $view->PowerOffVM_Task;
     &VCenter::Task_Status($task);
     &Log::debug("Powered off VM");
+    return 1;
 }
 
 ### print functions

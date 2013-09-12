@@ -6,7 +6,7 @@ use 5.14.0;
 use Test::More;
 use English qw(-no_match_vars);
 
-if ( not $ENV{DNS} ) {
+if ( not $ENV{ALL} or not $ENV{DNS} ) {
     my $msg = 'Author test.  Set $ENV{DNS} to a true value to run.';
     plan( skip_all => $msg );
 }

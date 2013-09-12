@@ -41,6 +41,7 @@ our $module_opts = {
         },
         list => {
             function => \&ticket_list,
+            opts     => {},
         },
         on => {
             function => \&ticket_on,
@@ -108,16 +109,15 @@ sub ticket_off {
 
 sub ticket_list {
     &Log::debug("Starting Ticket::ticket_list sub");
-    my %tickets = &Misc::ticket_list;
+    my $tickets = &Misc::ticket_list;
     &Log::debug("Finished collecting ticket list");
     my $dbh = &Kayako::connect_kayako();
-    for my $ticket ( sort (keys %tickets) ) {
+    for my $ticket ( sort (keys %{$tickets}) ) {
         &Log::debug("Collecting information about ticket=>'$ticket'");
         if ( $ticket ne "" and $ticket ne "unknown" ) {
-            my $print = "";
-            $string = "Ticket: $ticket, owner: $tickets{$ticket}";
+            my $string = "";
+            $string = "Ticket: $ticket, owner: $$tickets{$ticket}";
             my $result = &Kayako::run_query( $dbh, "select ticketstatustitle from swtickets where ticketid = '$ticket'" );
-            ## FIXME need to implement multiple tickets in field seperated by space
             if ( defined( $result ) ) {
                 $string .= ", ticket status: " . $$result{ticketstatustitle} ."";
                 $result = &Kayako::run_query( $dbh, "select fieldvalue from swcustomfieldvalues where typeid = '$ticket' and customfieldid = '25'" );

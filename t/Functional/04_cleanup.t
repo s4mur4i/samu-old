@@ -23,7 +23,7 @@ for my $type ( @types ) {
     }
 }
 diag("Creating empty resources and calling backend subs");
-&VCenter::create_entities;
+&VCenter::create_test_entities;
 for my $type ( @types ) {
     my $ret = &VCenter::check_if_empty_entity( 'test_1337', $type );
     is( $ret , 1, "Check if empty returned true for empty $type" );
@@ -31,13 +31,13 @@ for my $type ( @types ) {
     is( Vim::find_entity_view( view_type =>$type, properties => [ 'name' ], filter => { name => 'test_1337' } ), undef, "test_1337 $type doesn't exist after delete" );
 }
 diag("Creating resources and calling cleanup to see if deleted");
-&VCenter::create_entities;
+&VCenter::create_test_entities;
 is( &admin::cleanup, '' ,"Admin cleanup sub deletes resource Pool" );
 for my $type ( @types ) {
     is( Vim::find_entity_view( view_type =>$type, properties => [ 'name' ], filter => { name => 'test_1337' } ), undef, "test_1337 $type doesn't exist after cleanup" );
 }
 diag("Creating resources with entity and see if they don't get deleted");
-&VCenter::create_entities;
+&VCenter::create_test_entities;
 ok( \&VCenter::create_dvportgroup( 'test_1337_dvg', 'test_1337' ), "Creating test_1337_dvg DVPG");
 &VCenter::create_test_vm( 'test_1337' );
 &admin::cleanup;
