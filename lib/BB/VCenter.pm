@@ -307,6 +307,16 @@ sub ticket_vms_name {
     return @return;
 }
 
+sub name2path {
+    my ( $name ) = @_;
+    &Log::debug("Starting VCenter::name2path sub, name=>'$name'");
+    my $vim = &get_vim;
+    my $view = &Guest::entity_name_view( $name, 'VirtualMachine' );
+    my $path = Util::get_inventory_path($view, $vim);
+    &Log::debug("Returning path=>'$path'");
+    return $path;
+}
+
 ### Subs for creation/deletion
 
 sub create_resource_pool {
@@ -507,7 +517,7 @@ sub disconnect_vcenter {
 }
 
 sub service_content {
-    &Log::debug("Retrieving Service Content object");
+    &Log::debug("Retrieving VCenter::Service Content object");
     my $sc = Vim::get_service_content();
     if ( !defined($sc) ) {
         Vcenter::ServiceContent->throw(
@@ -515,5 +525,15 @@ sub service_content {
     }
     return $sc;
 }
+
+sub get_vim {
+    &Log::debug("Starting VCenter::Vim object retrieve");
+    my $vim = Vim::get_vim();
+    if ( !defined($vim) ) {
+        VCenter::ServiceContent->throw( error => 'Could not retrieve Vim object' );
+    }
+    return $vim;
+}
+
 1
 __END__
