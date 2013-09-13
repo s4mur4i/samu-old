@@ -51,7 +51,7 @@ WriteMakefile(
         'Encode'           => 2.42_01,
         'Exporter'         => 5.64_03,
         'FindBin'          => 1.50,
-        'DBD::mysql'       => 4.021,
+        'DBD::mysql'       => 4.020,
         'Module::Load'     => 0.24,
         'GSSAPI::Status'   => 0,
         'Crypt::SSLeay'    => 0.58,
