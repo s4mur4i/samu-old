@@ -12,11 +12,28 @@ BEGIN {
 sub entity_name_view {
     my ( $name, $type ) = @_;
     &Log::debug("Retrieving entity name view, name=>'$name', type=>'$type'");
+    &VCenter::num_check( $name, $type );
     my $view = Vim::find_entity_view(
         view_type  => $type,
         properties => ['name'],
         filter     => { name => $name }
     );
+    return $view;
+}
+
+sub entity_full_view {
+    my ( $name, $type ) = @_;
+    &Log::debug("Retrieving entity full view sub, name=>'$name', type=>'$type'");
+    &VCenter::num_check( $name, $type );
+    my $view = Vim::find_entity_view( view_type => $type, filter => { name => $name } );
+    return $view;
+}
+
+sub entity_property_view {
+    my ( $name, $type, $property ) = @_;
+    &Log::debug("Retrieving entity property view sub, name=>'$name', type=>'$type', property=>'$property'");
+    &VCenter::num_check( $name, $type );
+    my $view = Vim::find_entity_view( view_type => $type, properties => [ $property ], filter => { name => $name } );
     return $view;
 }
 

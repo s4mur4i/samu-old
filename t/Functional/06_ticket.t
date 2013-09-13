@@ -16,17 +16,17 @@ diag("Test ticket functions");
 &Opts::validate();
 &Util::connect();
 my @types = qw(VirtualMachine ResourcePool DistributedVirtualSwitch Folder);
-for my $type ( @types ) {
-    my $view = Vim::find_entity_view( view_type => $type, properties => [ 'name' ], filter => { name => qr/^test_1337-/ } );
-    if ( defined( $view ) ) {
-        plan( skip_all => "test_1337 $type exists. Delete it before test can be run" );
-    }
-}
-&VCenter::create_test_entities;
+#for my $type ( @types ) {
+#    my $view = Vim::find_entity_view( view_type => $type, properties => [ 'name' ], filter => { name => qr/^test_1337/ } );
+#    if ( defined( $view ) ) {
+#        plan( skip_all => "test_1337 $type exists. Delete it before test can be run" );
+#    }
+#}
+#&VCenter::create_test_entities;
 &VCenter::create_test_vm( 'test_1337-test-test_test-123' );
 my @vmname = &VCenter::ticket_vms_name( 'test_1337' );
 use Data::Dumper;
-diag(Dumper @vmname);
+diag("fff: $vmname[0]");
 is( scalar(@vmname), 1, "ticket_vms_name returned one name" );
 like( $vmname[0], qr/^test_1337-[^-]*-[^-]*-\d{1,3}/, "ticket_vms_name is a valid vmname" );
 
@@ -45,13 +45,6 @@ for my $type ( @types ) {
     diag("Destroying test $type");
     my $view = Vim::find_entity_view( view_type => $type, properties => [ 'name' ], filter => { name => qr/^test_1337/ } );
     $view->Destroy;
-}
-my @types = ( 'VirtualMachine', 'ResourcePool', 'Folder', 'DistributedVirtualSwitch' );
-for my $type ( @types ) {
-    my $view = Vim::find_entity_view( view_type => $type, properties => [ 'name' ], filter => { name => 'test_1337' } );
-    if ( defined( $view ) ) {
-        $view->Destroy;
-    }
 }
 &Util::disconnect();
 done_testing;

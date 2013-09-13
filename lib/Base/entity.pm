@@ -3,6 +3,7 @@ package entity;
 use strict;
 use warnings;
 use Base::misc;
+use Data::Dumper;
 
 my $help = 0;
 
@@ -43,8 +44,7 @@ our $module_opts = {
                     help     => "The machine tempalte we want to use",
                     required => 1,
                 },
-                parent_pool => {
-                    type     => "=s",
+                parent_pool => { type     => "=s",
                     help     => "Parent resource pool. Defaults to users pool.",
                     default  => 'Resources',
                     required => 0,
@@ -69,11 +69,29 @@ our $module_opts = {
             },
         },
         info => {
+            helper => 'VM_functions/VM_info_function',
             functions => {
-                dumper  => { helper => 'AUTHOR', function => \&info_dumper },
-                runtime => { helper => 'AUTHOR', function => \&info_runtime },
+                dumper  => {
+                    function => \&info_dumper,
+                    opts => {
+                        vmname => {
+                            type => "=s",
+                            help => "The vm's name which information should be dump",
+                            required => 1,
+                        },
+                    },
+                },
+                runtime => {
+                    function => \&info_runtime,
+                    opts => {
+                        vmname => {
+                            type => "=s",
+                            help => "The vm's name which information should be dump",
+                            required => 1,
+                        },
+                    }
+                },
             },
-            opts => {},
         },
         add => {
             functions => {
@@ -241,6 +259,20 @@ sub clone_vm {
           . "'" );
     &Log::normal("Unique name of vm: $vmname");
     return 1;
+}
+
+sub info_dumper {
+    &Log::debug("Entity::info_dumper sub started");
+    my $vmname = Opts::get_option('vmname');
+    my $view = &Guest::entity_full_view( $vmname, 'VirtualMachine' );
+    &Log::normal( Dumper( $view ) );
+}
+
+sub info_runtime {
+    &Log::debug("Entity::info_runtime sub started");
+    my $vmname = Opts::get_option('vmname');
+    my $view = &Guest::entity_property_view( $vmname, 'VirtualMachine', 'runtime' );
+    &Log::normal( Dumper( $view ) );
 }
 
 1;

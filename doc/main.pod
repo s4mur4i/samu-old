@@ -299,6 +299,30 @@
 
 =back
 
+=head2 VM_dumper_function
+
+=head3 SYNOPSIS
+
+    herring.pl vm info dumper [options]
+
+=head3 OPTIONS
+
+=over
+
+=back
+
+=head2 VM_runtime_function
+
+=head3 SYNOPSIS
+
+    herring.pl vm info runtime [options]
+
+=head3 OPTIONS
+
+=over
+
+=back
+
 =head1 TICKET
 
 =head3 SYNOPSIS
