@@ -77,8 +77,8 @@ sub ticket_info {
     &Log::debug("Information about ticket=>'$ticket'");
     my $machines = &VCenter::ticket_vms_name($ticket);
     for my $vm (@$machines) {
-        &Log::debug( "Getting information about '" . $vm->name . "'" );
-        &Guest::short_vm_info( $vm->name );
+        &Log::debug( "Getting information about '" . $vm . "'" );
+        &Guest::short_vm_info( $vm );
     }
     return 1;
 }

@@ -304,15 +304,15 @@ sub ticket_vms_name {
     for my $vm (@$vms) {
         push( @return, $vm->name );
     }
-    return @return;
+    return \@return;
 }
 
 sub name2path {
-    my ( $name ) = @_;
+    my ($name) = @_;
     &Log::debug("Starting VCenter::name2path sub, name=>'$name'");
-    my $vim = &get_vim;
+    my $vim  = &get_vim;
     my $view = &Guest::entity_name_view( $name, 'VirtualMachine' );
-    my $path = Util::get_inventory_path($view, $vim);
+    my $path = Util::get_inventory_path( $view, $vim );
     &Log::debug("Returning path=>'$path'");
     return $path;
 }
@@ -530,7 +530,8 @@ sub get_vim {
     &Log::debug("Starting VCenter::Vim object retrieve");
     my $vim = Vim::get_vim();
     if ( !defined($vim) ) {
-        VCenter::ServiceContent->throw( error => 'Could not retrieve Vim object' );
+        VCenter::ServiceContent->throw(
+            error => 'Could not retrieve Vim object' );
     }
     return $vim;
 }

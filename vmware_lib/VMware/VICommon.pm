@@ -444,7 +444,7 @@ sub query_api_supported {
       my $xmlurl = substr $url, 0, index($url, '/sdk');
       $xmlurl = $xmlurl . '/sdk/vimServiceVersions.xml';
 
-      my $user_agent = LWP::UserAgent->new(agent => "VI Perl");
+      my $user_agent = LWP::UserAgent->new(agent => "VI Perl", ssl_opts => { SSL_verify_mode => 'SSL_VERIFY_NONE', verify_hostname => 0 });
       my $cookie_jar = HTTP::Cookies->new(ignore_discard => 1);
       $user_agent->cookie_jar($cookie_jar);
       $user_agent->protocols_allowed(['http', 'https']);
@@ -519,7 +519,7 @@ sub query_server_version {
             die "Unsupported IP address format\n";
          }
       }
-      my $user_agent = LWP::UserAgent->new(agent => "VI Perl");
+      my $user_agent = LWP::UserAgent->new(agent => "VI Perl", ssl_opts => { SSL_verify_mode => 'SSL_VERIFY_NONE', verify_hostname => 0 });
       my $cookie_jar = HTTP::Cookies->new(ignore_discard => 1);
       $user_agent->cookie_jar($cookie_jar);
       $user_agent->protocols_allowed(['http', 'https']);
@@ -2101,7 +2101,7 @@ END
 
 sub new {
    my ($class, $url) = @_;
-   my $user_agent = LWP::UserAgent->new(agent => "VI Perl");
+   my $user_agent = LWP::UserAgent->new(agent => "VI Perl", ssl_opts => { SSL_verify_mode => 'SSL_VERIFY_NONE', verify_hostname => 0 });
    my $cookie_jar = HTTP::Cookies->new(ignore_discard => 1);
    $user_agent->cookie_jar( $cookie_jar );
    $user_agent->protocols_allowed( ['http', 'https'] );
