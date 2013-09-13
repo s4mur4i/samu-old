@@ -10,7 +10,7 @@ use BB::Common;
 use Base::admin;
 
 diag("Check if any entity exists for our test_1337 ticket");
-my @types = ( 'ResourcePool', 'Folder', 'DistributedVirtualSwitch' );
+my @types = ( 'VirtualMachine', 'ResourcePool', 'Folder', 'DistributedVirtualSwitch' );
 &Opts::parse();
 &Opts::validate();
 &Util::connect();

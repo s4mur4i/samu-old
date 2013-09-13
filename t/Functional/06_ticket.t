@@ -46,5 +46,12 @@ for my $type ( @types ) {
     my $view = Vim::find_entity_view( view_type => $type, properties => [ 'name' ], filter => { name => qr/^test_1337/ } );
     $view->Destroy;
 }
+my @types = ( 'VirtualMachine', 'ResourcePool', 'Folder', 'DistributedVirtualSwitch' );
+for my $type ( @types ) {
+    my $view = Vim::find_entity_view( view_type => $type, properties => [ 'name' ], filter => { name => 'test_1337' } );
+    if ( defined( $view ) ) {
+        $view->Destroy;
+    }
+}
 &Util::disconnect();
 done_testing;
