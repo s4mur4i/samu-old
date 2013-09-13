@@ -76,6 +76,41 @@ sub find_last_snapshot {
     }
 }
 
+sub get_altername {
+    my ( $vmname ) =@_;
+    &Log::debug("Starting Guest::get_altername sub, vmname=>'$vmname'");
+    &VCenter::num_check( $vmname, 'VirtualMachine' );
+    my $view = Vim::find_entity_view( view_type => 'VirtualMachine', properties => [ 'value' ], filter => { name => $vmname } );
+    my $key = &get_annotation_key( $vmname, "alternateName" );
+    if ( defined( $view->value ) ) {
+        foreach ( @{ $view->value } ) {
+            if ( $_->key eq $key ) {
+                &Log::debug("Found altername value=>'" . $_->value . "'" );
+                return $_->value;
+            }
+        }
+    }
+    &Log::debug("No altername was found, returning empty string");
+    return "";
+}
+
+sub get_annotation_key {
+    my ( $vmname, $name ) =@_;
+    &Log::debug("Starting Guest::get_annotation_key sub, vmname=>'$vmname', key=>'$name'");
+    &VCenter::num_check( $vmname, 'VirtualMachine' );
+    my $view = Vim::find_entity_view( view_type => 'VirtualMachine', properties => [ 'availableField' ], filter => { name => $vmname } );
+    foreach ( @{ $view->availableField } ) {
+        if ( $_->name eq $name  ) {
+            &Log::debug("Found key returning value=>'" . $_->key . "'" );
+            return $_->key;
+        }
+    }
+    &Log::debug("No annotation key was found with requested name");
+    return 0;
+}
+
+
+
 sub network_interfaces {
     my ($vmname) = @_;
     &Log::debug("Starting Guest::network_interfaces sub, vmname=>'$vmname'");
@@ -269,7 +304,7 @@ sub short_vm_info {
     my $powerState = $view->get_property('summary.runtime.powerState');
     &Log::normal( "\tPower State:'" . $powerState->val . "'" );
 
-#    &Log::normal("\tAlternate name: '" . &Guest::get_altername( $view->name ));
+    &Log::normal("\tAlternate name: '" . &Guest::get_altername( $view->name ) . "'" );
     if ( $view->guest->toolsStatus eq 'toolsNotInstalled' ) {
         &Log::normal("\tTools not installed. Cannot extract some information");
     }

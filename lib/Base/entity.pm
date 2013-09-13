@@ -100,17 +100,26 @@ our $module_opts = {
                 disk     => { helper => 'AUTHOR', function => \&add_disk },
                 snapshot => { helper => 'AUTHOR', function => \&add_snapshot },
             },
-            opts => {},
         },
         delete => {
+            helper => 'VM_functions/VM_delete_function',
             functions => {
                 cdrom   => { helper => 'AUTHOR', function => \&delete_cdrom },
                 network => { helper => 'AUTHOR', function => \&delete_network },
                 disk    => { helper => 'AUTHOR', function => \&delete_disk },
                 snapshot =>
                   { helper => 'AUTHOR', function => \&delete_snapshot },
+                vm => {
+                    function => \&delete_vm,
+                    opts => {
+                        vmname => {
+                            type => '=s',
+                            help => "Name of vm to delete",
+                            required => 1,
+                        },
+                    },
+                },
             },
-            opts => {},
         },
         list => {
             functions => {
@@ -120,7 +129,6 @@ our $module_opts = {
                 snapshopt =>
                   { helper => 'AUTHOR', function => \&list_snapshot },
             },
-            opts => {},
         },
         change => {
             functions => {
@@ -131,7 +139,6 @@ our $module_opts = {
                   { helper => 'AUTHOR', function => \&change_snapshot },
                 power => { helper => 'AUTHOR', function => \&change_power },
             },
-            opts => {},
         },
     },
 };
@@ -264,6 +271,7 @@ sub clone_vm {
 sub info_dumper {
     &Log::debug("Entity::info_dumper sub started");
     my $vmname = Opts::get_option('vmname');
+    &Log::debug("Vmname requested=>'$vmname'");
     my $view = &Guest::entity_full_view( $vmname, 'VirtualMachine' );
     &Log::normal( Dumper( $view ) );
 }
@@ -271,8 +279,21 @@ sub info_dumper {
 sub info_runtime {
     &Log::debug("Entity::info_runtime sub started");
     my $vmname = Opts::get_option('vmname');
+    &Log::debug("Vmname requested=>'$vmname'");
     my $view = &Guest::entity_property_view( $vmname, 'VirtualMachine', 'runtime' );
     &Log::normal( Dumper( $view ) );
+}
+
+sub delete_vm {
+    &Log::debug("Entity::delete_vm sub started");
+    my $vmname = Opts::get_option('vmname');
+    &Log::debug("Vmname requested=>'$vmname'");
+    &VCenter::destroy_entity( $vmname, 'VirtualMachine' );
+    if ( &VCenter::exists_entity( $vmname, 'VirtualMachine' ) ) {
+        Entity::NumException->throw( error => 'VM was not deleted succcesfully', entity => $vmname, count => '1' );
+    } else {
+        &Log::normal("Entity deleted succesfully");
+    }
 }
 
 1;
