@@ -4,7 +4,6 @@ use strict;
 use warnings;
 use Base::misc;
 use BB::Common;
-use Pod::Simple::Wiki::Dokuwiki;
 
 my $help = 0;
 
@@ -113,6 +112,11 @@ sub test {
 }
 
 sub pod2wiki {
+    eval { require Pod::Simple::Wiki::Dokuwiki; };
+    if ( $@ ) {
+        &Log::debug("Cannot load Wiki module!");
+        die "Pina";
+    }
     my $in     = Opts::get_option('in');
     my $out    = Opts::get_option('out');
     my $parser = Pod::Simple::Wiki->new('dokuwiki');
