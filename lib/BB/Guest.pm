@@ -305,6 +305,111 @@ sub poweroff {
     return 1;
 }
 
+#TODO
+sub revert_to_snapshot {
+    my ( $vmname, $id ) = @_;
+    &Log::debug(
+"Starting GuestManagement::revert_to_snapshot sub, vmname=>'$vmname', id=>'$id'\n"
+    );
+    my $view = Vim::find_entity_view(
+        view_type  => 'VirtualMachine',
+        properties => ['snapshot'],
+        filter     => { name => $vmname }
+    );
+    if ( !defined($view) ) {
+        SDK::Error::Entity::NumException->throw(
+            error  => 'Could not find VM entity',
+            entity => $vmname,
+            count  => '0'
+        );
+    }
+    if ( defined( $view->snapshot ) ) {
+        foreach ( @{ $view->snapshot->rootSnapshotList } ) {
+            my $snapshot = &find_snapshot_by_id( $_, $id );
+            if ( defined($snapshot) ) {
+                Util::trace( 1, "Found Id reverting\n" );
+                my $moref = Vim::get_view( mo_ref => $snapshot->snapshot );
+                my $task =
+                  $moref->RevertToSnapshot_Task( suppressPowerOn => 1 );
+                &Vcenter::Task_getStatus($task);
+                Util::trace( 4,
+"Finishing GuestManagement::revert_to_snapshot sub, return=>'success'\n"
+                );
+                return 1;
+            }
+        }
+    }
+    else {
+        SDK::Error::Entity::Snapshot->throw(
+            error => "No snapshot found by vm $vmname" );
+    }
+}
+
+sub create_snapshot {
+    my ( $vmname, $snap_name, $desc ) = @_;
+    &Log::debug(
+"Starting Guest::create_snapshot sub, vmname=>'$vmname', snap_name=>'$snap_name', desc=>'$desc'"
+    );
+    &VCenter::num_check( $vmname, 'VirtualMachine' );
+    my $view = &entity_name_view( $vmname, 'VirtualMachine' );
+    my $task = $view->CreateSnapshot_Task(
+        name        => $snap_name,
+        description => $desc,
+        memory      => 1,
+        quiesce     => 1
+    );
+    &Vcenter::Task_Status($task);
+    return 1;
+}
+
+sub list_snapshot {
+    my ($vmname) = @_;
+    &Log::debug("Starting Guest::list_snapshot sub, vmname=>'$vmname'");
+    &VCenter::num_check( $vmname, 'VirtualMachine' );
+    my $view = &entity_property_view( $vmname, 'VirtualMachine', 'snapshot' );
+    if ( !defined( $view->snapshot ) ) {
+        Entity::Snapshot->throw(
+            error    => "Entity has no snapshots defined",
+            entity   => $vmname,
+            snapshot => 0
+        );
+    }
+    my $current_snapshot = $view->snapshot->currentSnapshot->value;
+    foreach ( @{ $view->snapshot->rootSnapshotList } ) {
+        &traverse_snapshot( $_, $current_snapshot );
+    }
+    return 1;
+}
+
+sub traverse_snapshot {
+    my ( $snapshot_moref, $current_snapshot ) = @_;
+    &Log::debug(
+"Starting Guest::traverse_snapshot sub, current_snapshot=>'$current_snapshot', snapshot_moref_name=>'"
+          . $snapshot_moref->name
+          . "'" );
+    my $current = "";
+    if ( $snapshot_moref->snapshot->value eq $current_snapshot ) {
+        &Log::debug("Found current active snapshot");
+        $current = "*CUR* ";
+    }
+    &Log::normal( $current
+          . "ID => '"
+          . $snapshot_moref->id
+          . "', name => '"
+          . $snapshot_moref->name
+          . "', createTime => '"
+          . $snapshot_moref->createTime
+          . "', description => '"
+          . $snapshot_moref->description
+          . "'" );
+    if ( defined( $snapshot_moref->{'childSnapshotList'} ) ) {
+        foreach ( @{ $snapshot_moref->{'childSnapshotList'} } ) {
+            &traverse_snapshot( $_, $current_snapshot );
+        }
+    }
+    return 0;
+}
+
 ### print functions
 
 sub short_vm_info {
