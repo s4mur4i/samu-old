@@ -360,6 +360,10 @@
 
     Turn all machines off attached to a ticket
 
+=item delete
+
+    Delete all entities attsached to a ticket
+
 =back
 
 =head1 TICKET_functions
@@ -409,6 +413,18 @@
 =head3 SYNOPSIS
 
     herring.pl ticket off [options]
+
+=head3 OPTIONS
+
+=over
+
+=back
+
+=head2 TICKET_delete_function
+
+=head3 SYNOPSIS
+
+    herring.pl ticket delete [options]
 
 =head3 OPTIONS
 

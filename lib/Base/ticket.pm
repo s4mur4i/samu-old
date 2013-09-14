@@ -64,8 +64,8 @@ our $module_opts = {
             },
         },
         delete => {
-            funtion => \&ticket_delete,
-            opts => {
+            function => \&ticket_delete,
+            opts    => {
                 ticket => {
                     type     => "=s",
                     help     => "Ticket to delete",
@@ -86,23 +86,38 @@ sub ticket_delete {
     my $ticket = Opts::get_option('ticket');
     &Log::debug("Delete ticket=>'$ticket'");
     my $machines = &VCenter::ticket_vms_name($ticket);
+    use Data::Dumper;
+    &Log::debug(Dumper $machines);
     for my $vm (@$machines) {
-        &Log::debug("Deleting vm '" . $vm . "'" );
+        &Log::debug("Powering off VM if not already powered off");
+        &Guest::poweroff($vm);
+        &Log::debug( "Deleting vm '" . $vm . "'" );
         &VCenter::destroy_entity( $vm, 'VirtualMachine' );
     }
-    for my $type ( qw(ResourcePool Folder) ) {
-        &Log::debug("Deleting type '" . $type . "'" );
-        my @entities = Vim::find_entity_views( view_type => $type, properties => [ 'name' ], filter => { name => $ticket } );
-        for my $entity ( @entities) {
-            &Log::debug("Deleting entity " . $entity->name . " in type " . $type );
+    for my $type (qw(ResourcePool Folder)) {
+        &Log::debug( "Deleting type '" . $type . "'" );
+        my $entities = Vim::find_entity_views(
+            view_type  => $type,
+            properties => ['name'],
+            filter     => { name => $ticket }
+        );
+        for my $entity (@$entities) {
+            &Log::debug(
+                "Deleting entity " . $entity->name . " in type " . $type );
             &VCenter::destroy_entity( $entity->name, $type );
         }
     }
-    my $switch_view = Vim::find_entity_views( view_type => 'DistributedVirtualSwitch', properties => [ 'name' ], filter => { name => $ticket } );
-    if ( defined( $switch_view ) ) {
+    my $switch_view = Vim::find_entity_view(
+        view_type  => 'DistributedVirtualSwitch',
+        properties => ['name'],
+        filter     => { name => $ticket }
+    );
+    if ( defined($switch_view) ) {
         &Log::debug("Found switch for ticket, deleting");
-        &VCenter::destroy_entity( $switch_view->name, 'DistributedVirtualSwitch' );
-    } else {
+        &VCenter::destroy_entity( $switch_view->name,
+            'DistributedVirtualSwitch' );
+    }
+    else {
         &Log::debug("No switch present for ticket");
     }
     &Log::normal("Ticket deleted succesfully");
@@ -116,7 +131,7 @@ sub ticket_info {
     my $machines = &VCenter::ticket_vms_name($ticket);
     for my $vm (@$machines) {
         &Log::debug( "Getting information about '" . $vm . "'" );
-        &Guest::short_vm_info( $vm );
+        &Guest::short_vm_info($vm);
     }
     return 1;
 }

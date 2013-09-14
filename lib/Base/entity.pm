@@ -44,7 +44,8 @@ our $module_opts = {
                     help     => "The machine tempalte we want to use",
                     required => 1,
                 },
-                parent_pool => { type     => "=s",
+                parent_pool => {
+                    type     => "=s",
                     help     => "Parent resource pool. Defaults to users pool.",
                     default  => 'Resources',
                     required => 0,
@@ -69,24 +70,26 @@ our $module_opts = {
             },
         },
         info => {
-            helper => 'VM_functions/VM_info_function',
+            helper    => 'VM_functions/VM_info_function',
             functions => {
-                dumper  => {
+                dumper => {
                     function => \&info_dumper,
-                    opts => {
+                    opts     => {
                         vmname => {
                             type => "=s",
-                            help => "The vm's name which information should be dump",
+                            help =>
+                              "The vm's name which information should be dump",
                             required => 1,
                         },
                     },
                 },
                 runtime => {
                     function => \&info_runtime,
-                    opts => {
+                    opts     => {
                         vmname => {
                             type => "=s",
-                            help => "The vm's name which information should be dump",
+                            help =>
+                              "The vm's name which information should be dump",
                             required => 1,
                         },
                     }
@@ -102,7 +105,7 @@ our $module_opts = {
             },
         },
         delete => {
-            helper => 'VM_functions/VM_delete_function',
+            helper    => 'VM_functions/VM_delete_function',
             functions => {
                 cdrom   => { helper => 'AUTHOR', function => \&delete_cdrom },
                 network => { helper => 'AUTHOR', function => \&delete_network },
@@ -111,10 +114,10 @@ our $module_opts = {
                   { helper => 'AUTHOR', function => \&delete_snapshot },
                 vm => {
                     function => \&delete_vm,
-                    opts => {
+                    opts     => {
                         vmname => {
-                            type => '=s',
-                            help => "Name of vm to delete",
+                            type     => '=s',
+                            help     => "Name of vm to delete",
                             required => 1,
                         },
                     },
@@ -273,15 +276,16 @@ sub info_dumper {
     my $vmname = Opts::get_option('vmname');
     &Log::debug("Vmname requested=>'$vmname'");
     my $view = &Guest::entity_full_view( $vmname, 'VirtualMachine' );
-    &Log::normal( Dumper( $view ) );
+    &Log::normal( Dumper($view) );
 }
 
 sub info_runtime {
     &Log::debug("Entity::info_runtime sub started");
     my $vmname = Opts::get_option('vmname');
     &Log::debug("Vmname requested=>'$vmname'");
-    my $view = &Guest::entity_property_view( $vmname, 'VirtualMachine', 'runtime' );
-    &Log::normal( Dumper( $view ) );
+    my $view =
+      &Guest::entity_property_view( $vmname, 'VirtualMachine', 'runtime' );
+    &Log::normal( Dumper($view) );
 }
 
 sub delete_vm {
@@ -290,8 +294,13 @@ sub delete_vm {
     &Log::debug("Vmname requested=>'$vmname'");
     &VCenter::destroy_entity( $vmname, 'VirtualMachine' );
     if ( &VCenter::exists_entity( $vmname, 'VirtualMachine' ) ) {
-        Entity::NumException->throw( error => 'VM was not deleted succcesfully', entity => $vmname, count => '1' );
-    } else {
+        Entity::NumException->throw(
+            error  => 'VM was not deleted succcesfully',
+            entity => $vmname,
+            count  => '1'
+        );
+    }
+    else {
         &Log::normal("Entity deleted succesfully");
     }
 }

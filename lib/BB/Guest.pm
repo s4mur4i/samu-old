@@ -23,17 +23,25 @@ sub entity_name_view {
 
 sub entity_full_view {
     my ( $name, $type ) = @_;
-    &Log::debug("Retrieving entity full view sub, name=>'$name', type=>'$type'");
+    &Log::debug(
+        "Retrieving entity full view sub, name=>'$name', type=>'$type'");
     &VCenter::num_check( $name, $type );
-    my $view = Vim::find_entity_view( view_type => $type, filter => { name => $name } );
+    my $view =
+      Vim::find_entity_view( view_type => $type, filter => { name => $name } );
     return $view;
 }
 
 sub entity_property_view {
     my ( $name, $type, $property ) = @_;
-    &Log::debug("Retrieving entity property view sub, name=>'$name', type=>'$type', property=>'$property'");
+    &Log::debug(
+"Retrieving entity property view sub, name=>'$name', type=>'$type', property=>'$property'"
+    );
     &VCenter::num_check( $name, $type );
-    my $view = Vim::find_entity_view( view_type => $type, properties => [ $property ], filter => { name => $name } );
+    my $view = Vim::find_entity_view(
+        view_type  => $type,
+        properties => [$property],
+        filter     => { name => $name }
+    );
     return $view;
 }
 
@@ -77,15 +85,19 @@ sub find_last_snapshot {
 }
 
 sub get_altername {
-    my ( $vmname ) =@_;
+    my ($vmname) = @_;
     &Log::debug("Starting Guest::get_altername sub, vmname=>'$vmname'");
     &VCenter::num_check( $vmname, 'VirtualMachine' );
-    my $view = Vim::find_entity_view( view_type => 'VirtualMachine', properties => [ 'value' ], filter => { name => $vmname } );
+    my $view = Vim::find_entity_view(
+        view_type  => 'VirtualMachine',
+        properties => ['value'],
+        filter     => { name => $vmname }
+    );
     my $key = &get_annotation_key( $vmname, "alternateName" );
     if ( defined( $view->value ) ) {
         foreach ( @{ $view->value } ) {
             if ( $_->key eq $key ) {
-                &Log::debug("Found altername value=>'" . $_->value . "'" );
+                &Log::debug( "Found altername value=>'" . $_->value . "'" );
                 return $_->value;
             }
         }
@@ -95,21 +107,25 @@ sub get_altername {
 }
 
 sub get_annotation_key {
-    my ( $vmname, $name ) =@_;
-    &Log::debug("Starting Guest::get_annotation_key sub, vmname=>'$vmname', key=>'$name'");
+    my ( $vmname, $name ) = @_;
+    &Log::debug(
+"Starting Guest::get_annotation_key sub, vmname=>'$vmname', key=>'$name'"
+    );
     &VCenter::num_check( $vmname, 'VirtualMachine' );
-    my $view = Vim::find_entity_view( view_type => 'VirtualMachine', properties => [ 'availableField' ], filter => { name => $vmname } );
+    my $view = Vim::find_entity_view(
+        view_type  => 'VirtualMachine',
+        properties => ['availableField'],
+        filter     => { name => $vmname }
+    );
     foreach ( @{ $view->availableField } ) {
-        if ( $_->name eq $name  ) {
-            &Log::debug("Found key returning value=>'" . $_->key . "'" );
+        if ( $_->name eq $name ) {
+            &Log::debug( "Found key returning value=>'" . $_->key . "'" );
             return $_->key;
         }
     }
     &Log::debug("No annotation key was found with requested name");
     return 0;
 }
-
-
 
 sub network_interfaces {
     my ($vmname) = @_;
@@ -304,7 +320,8 @@ sub short_vm_info {
     my $powerState = $view->get_property('summary.runtime.powerState');
     &Log::normal( "\tPower State:'" . $powerState->val . "'" );
 
-    &Log::normal("\tAlternate name: '" . &Guest::get_altername( $view->name ) . "'" );
+    &Log::normal(
+        "\tAlternate name: '" . &Guest::get_altername( $view->name ) . "'" );
     if ( $view->guest->toolsStatus eq 'toolsNotInstalled' ) {
         &Log::normal("\tTools not installed. Cannot extract some information");
     }
