@@ -467,7 +467,11 @@ sub destroy_entity {
     my $view = &Guest::entity_name_view( $name, $type );
     my $task = $view->Destroy_Task;
     &Task_Status($task);
-    $view = Vim::find_entity_view( view_type => $type, properties => [ 'name' ], filter => { name => $name } );
+    $view = Vim::find_entity_view(
+        view_type  => $type,
+        properties => ['name'],
+        filter     => { name => $name }
+    );
     if ( defined($view) ) {
         Entity::NumException->throw(
             error  => 'Could not delete entity',
