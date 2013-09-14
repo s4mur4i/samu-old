@@ -767,6 +767,9 @@
     VI_SERVICEPATH=/sdk/webService
 
     You only need to fill the username and password entry with your AD username/password
+    In .bashrc the following entry should also be added:
+
+    PERL_LWP_SSL_VERIFY_HOSTNAME=0
 
 =head1 INSTALLATION
 
