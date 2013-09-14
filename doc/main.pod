@@ -837,7 +837,7 @@
 
 =item AUTHOR
 
-    This will check if AUTHOR has not forgotten to update specific tests, or left FIXME -s in the code
+    This will check if AUTHOR has not forgotten to update specific tests, or left fix me -s in the code
 
 =item CRITIC
 
