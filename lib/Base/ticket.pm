@@ -65,7 +65,7 @@ our $module_opts = {
         },
         delete => {
             function => \&ticket_delete,
-            opts    => {
+            opts     => {
                 ticket => {
                     type     => "=s",
                     help     => "Ticket to delete",
@@ -86,8 +86,6 @@ sub ticket_delete {
     my $ticket = Opts::get_option('ticket');
     &Log::debug("Delete ticket=>'$ticket'");
     my $machines = &VCenter::ticket_vms_name($ticket);
-    use Data::Dumper;
-    &Log::debug(Dumper $machines);
     for my $vm (@$machines) {
         &Log::debug("Powering off VM if not already powered off");
         &Guest::poweroff($vm);
