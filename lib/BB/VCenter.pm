@@ -226,7 +226,7 @@ sub check_if_empty_entity {
     }
     if ( !defined($view) ) {
         Entity::NumException->throw(
-            error  => 'Switch does not exist',
+            error  => "$type does not exist",
             entity => $name,
             count  => '0'
         );

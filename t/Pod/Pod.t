@@ -42,3 +42,4 @@ url
 username
 utf
 vm
+DNS

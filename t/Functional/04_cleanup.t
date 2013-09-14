@@ -16,7 +16,7 @@ my @types = ( 'VirtualMachine', 'ResourcePool', 'Folder', 'DistributedVirtualSwi
 &Util::connect();
 is( &admin::cleanup, '',"Admin cleanup sub ran succesfully" );
 for my $type ( @types ) {
-    my $view = Vim::find_entity_view( view_type => $type, properties => [ 'name' ], filter => { name => 'test_1337' } );
+    my $view = Vim::find_entity_view( view_type => $type, properties => [ 'name' ], filter => { name => qr/^test_1337/ } );
     if ( defined( $view ) ) {
         diag("$type exists");
         plan( skip_all => "test_1337 $type exists. Delete it before test can be run" );
@@ -24,7 +24,7 @@ for my $type ( @types ) {
 }
 diag("Creating empty resources and calling backend subs");
 &VCenter::create_test_entities;
-for my $type ( @types ) {
+for my $type ( qw(ResourcePool Folder DistributedVirtualSwitch) ) {
     my $ret = &VCenter::check_if_empty_entity( 'test_1337', $type );
     is( $ret , 1, "Check if empty returned true for empty $type" );
     ok( \&VCenter::destroy_entity( 'test_1337', $type ), "Destroying test_1337 $type" );

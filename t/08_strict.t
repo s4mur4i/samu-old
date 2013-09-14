@@ -4,7 +4,7 @@ use warnings;
 use 5.14.0;
 use FindBin;
 use Test::More;
-#use lib "$FindBin::Bin/../lib";
+use lib "$FindBin::Bin/../lib";
 use English qw(-no_match_vars);
 
 if ( !($ENV{ALL} or $ENV{AUTHOR}) ) {

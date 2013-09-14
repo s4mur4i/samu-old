@@ -833,7 +833,7 @@
 
 =item DNS
 
-    This will run DNS test to see if resolve is working
+    This will run DNS queries to see if resolve is working
 
 =item AUTHOR
 

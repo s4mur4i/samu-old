@@ -102,7 +102,8 @@ our $module_opts = {
                 network  => { helper => 'AUTHOR', function => \&add_network },
                 disk     => { helper => 'AUTHOR', function => \&add_disk },
                 snapshot => {
-                    function => \&add_snapshot opts => {
+                    function => \&add_snapshot,
+                    opts     => {
                         vmname => {
                             type => "=s",
                             help =>
@@ -151,7 +152,8 @@ our $module_opts = {
                 network   => { helper => 'AUTHOR', function => \&list_network },
                 disk      => { helper => 'AUTHOR', function => \&list_disk },
                 snapshopt => {
-                    function => \&list_snapshot opts => {
+                    function => \&list_snapshot,
+                    opts     => {
                         vmname => {
                             type     => '=s',
                             help     => 'Name of vm to list snapshot',
@@ -167,7 +169,8 @@ our $module_opts = {
                 network => { helper => 'AUTHOR', function => \&change_network },
                 disk    => { helper => 'AUTHOR', function => \&change_disk },
                 snapshot => {
-                    function => \&change_snapshot opts => {
+                    function => \&change_snapshot,
+                    opts     => {
                         vmname => {
                             type     => '=s',
                             help     => 'Name of vm',
