@@ -6,7 +6,7 @@ use Base::misc;
 
 my $help = 0;
 
-BEGIN() {
+BEGIN {
     use Exporter();
     our ( @ISA, @EXPORT );
 

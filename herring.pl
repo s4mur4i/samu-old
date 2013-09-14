@@ -25,8 +25,11 @@ BEGIN {
 my $herring_opts = {
     helper    => [qw(SYNOPSIS OPTIONS FUNCTIONS)],
     functions => {
-        vm =>
-          { helper => 'VM', module => 'entity', function => \&entity::main },
+        vm => {
+            helper   => 'VM',
+            module   => 'entity',
+            function => \&entity::main
+        },
         datastore => {
             helper   => 'DATASTORE',
             module   => 'datastore',
@@ -47,8 +50,11 @@ my $herring_opts = {
             module   => 'bugzilla',
             function => \&bugzilla::main
         },
-        admin =>
-          { helper => 'ADMIN', module => 'admin', function => \&admin::main },
+        admin => {
+            helper   => 'ADMIN',
+            module   => 'admin',
+            function => \&admin::main
+        },
     }
 };
 

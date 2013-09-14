@@ -226,7 +226,7 @@ sub check_if_empty_entity {
     }
     if ( !defined($view) ) {
         Entity::NumException->throw(
-            error  => 'Switch does not exist',
+            error  => "$type does not exist",
             entity => $name,
             count  => '0'
         );
@@ -266,6 +266,7 @@ sub Task_Status {
     my $progress = 0;
     while ($continue) {
         &Log::debug("Looping through Task query");
+        $task_view->ViewBase::update_view_data();
         if ( defined( $task_view->info->progress )
             and $progress ne $task_view->info->progress )
         {
@@ -283,9 +284,6 @@ sub Task_Status {
                 fault  => $task_view->info->error->localizedMessage
             );
         }
-        &Log::debug("Sleeping and updating view");
-        sleep 5;
-        $task_view->ViewBase::update_view_data();
     }
     &Log::debug("Finishing VCenter::Task_status sub");
     return;
@@ -469,7 +467,11 @@ sub destroy_entity {
     my $view = &Guest::entity_name_view( $name, $type );
     my $task = $view->Destroy_Task;
     &Task_Status($task);
-    $view = &Guest::entity_name_view( $name, $type );
+    $view = Vim::find_entity_view(
+        view_type  => $type,
+        properties => ['name'],
+        filter     => { name => $name }
+    );
     if ( defined($view) ) {
         Entity::NumException->throw(
             error  => 'Could not delete entity',

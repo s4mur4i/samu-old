@@ -3,6 +3,7 @@ package entity;
 use strict;
 use warnings;
 use Base::misc;
+use Data::Dumper;
 
 my $help = 0;
 
@@ -69,51 +70,121 @@ our $module_opts = {
             },
         },
         info => {
+            helper    => 'VM_functions/VM_info_function',
             functions => {
-                dumper  => { helper => 'AUTHOR', function => \&info_dumper },
-                runtime => { helper => 'AUTHOR', function => \&info_runtime },
+                dumper => {
+                    function => \&info_dumper,
+                    opts     => {
+                        vmname => {
+                            type => "=s",
+                            help =>
+                              "The vm's name which information should be dump",
+                            required => 1,
+                        },
+                    },
+                },
+                runtime => {
+                    function => \&info_runtime,
+                    opts     => {
+                        vmname => {
+                            type => "=s",
+                            help =>
+                              "The vm's name which information should be dump",
+                            required => 1,
+                        },
+                    }
+                },
             },
-            opts => {},
         },
         add => {
             functions => {
                 cdrom    => { helper => 'AUTHOR', function => \&add_cdrom },
                 network  => { helper => 'AUTHOR', function => \&add_network },
                 disk     => { helper => 'AUTHOR', function => \&add_disk },
-                snapshot => { helper => 'AUTHOR', function => \&add_snapshot },
+                snapshot => {
+                    function => \&add_snapshot,
+                    opts     => {
+                        vmname => {
+                            type => "=s",
+                            help =>
+                              "The vm's name where snapshot should be created",
+                            required => 1,
+                        },
+                        snap_name => {
+                            type     => "=s",
+                            help     => "Snapshots name",
+                            default  => "snap",
+                            required => 0,
+                        },
+                        desc => {
+                            type     => "=s",
+                            help     => "The snapshots description",
+                            default  => "I am a snapshot",
+                            required => 0,
+                        },
+                    },
+                },
             },
-            opts => {},
         },
         delete => {
+            helper    => 'VM_functions/VM_delete_function',
             functions => {
                 cdrom   => { helper => 'AUTHOR', function => \&delete_cdrom },
                 network => { helper => 'AUTHOR', function => \&delete_network },
                 disk    => { helper => 'AUTHOR', function => \&delete_disk },
                 snapshot =>
                   { helper => 'AUTHOR', function => \&delete_snapshot },
+                vm => {
+                    function => \&delete_vm,
+                    opts     => {
+                        vmname => {
+                            type     => '=s',
+                            help     => "Name of vm to delete",
+                            required => 1,
+                        },
+                    },
+                },
             },
-            opts => {},
         },
         list => {
             functions => {
-                cdrom   => { helper => 'AUTHOR', function => \&list_cdrom },
-                network => { helper => 'AUTHOR', function => \&list_network },
-                disk    => { helper => 'AUTHOR', function => \&list_disk },
-                snapshopt =>
-                  { helper => 'AUTHOR', function => \&list_snapshot },
+                cdrom     => { helper => 'AUTHOR', function => \&list_cdrom },
+                network   => { helper => 'AUTHOR', function => \&list_network },
+                disk      => { helper => 'AUTHOR', function => \&list_disk },
+                snapshopt => {
+                    function => \&list_snapshot,
+                    opts     => {
+                        vmname => {
+                            type     => '=s',
+                            help     => 'Name of vm to list snapshot',
+                            required => 1,
+                        },
+                    },
+                },
             },
-            opts => {},
         },
         change => {
             functions => {
                 cdrom   => { helper => 'AUTHOR', function => \&change_cdrom },
                 network => { helper => 'AUTHOR', function => \&change_network },
                 disk    => { helper => 'AUTHOR', function => \&change_disk },
-                snapshot =>
-                  { helper => 'AUTHOR', function => \&change_snapshot },
+                snapshot => {
+                    function => \&change_snapshot,
+                    opts     => {
+                        vmname => {
+                            type     => '=s',
+                            help     => 'Name of vm',
+                            required => 1,
+                        },
+                        id => {
+                            type     => '=s',
+                            help     => 'ID of snapshot to revert to',
+                            required => 1,
+                        },
+                    },
+                },
                 power => { helper => 'AUTHOR', function => \&change_power },
             },
-            opts => {},
         },
     },
 };
@@ -131,12 +202,34 @@ sub list_network {
 
 }
 
-sub list_disk {
-
+sub change_snapshot {
+    &Log::debug("Entity::list_snapshot sub started");
+    my $vmname = Opts::get_option('vmname');
+    my $id     = Opts::get_option('id');
+    &Log::debug("Requested options, vmname=>'$vmname', id=>'$id'");
+    &Guest::revert_to_snapshot_id( $vmname, $id );
+    return 1;
 }
 
 sub list_snapshot {
+    &Log::debug("Entity::list_snapshot sub started");
+    my $vmname = Opts::get_option('vmname');
+    &Log::debug("Requested options, vmname=>'$vmname'");
+    &Guest::list_snapshot($vmname);
+    return 1;
+}
 
+sub add_snapshot {
+    &Log::debug("Entity::add_snapshot sub started");
+    my $vmname    = Opts::get_option('vmname');
+    my $snap_name = Opts::get_option('snap_name');
+    my $desc      = Opts::get_option('desc');
+    &Log::debug(
+"Requested options, vmname=>'$vmname', snap_name=>'$snap_name', desc=>'$desc'"
+    );
+    &Guest::create_snapshot( $vmname, $snap_name, $desc );
+    &Log::normal("Finished creating snapshot");
+    return 1;
 }
 
 #tested
@@ -240,6 +333,43 @@ sub clone_vm {
           . &Support::get_key_value( 'template', $os_temp, 'password' )
           . "'" );
     &Log::normal("Unique name of vm: $vmname");
+    return 1;
+}
+
+sub info_dumper {
+    &Log::debug("Entity::info_dumper sub started");
+    my $vmname = Opts::get_option('vmname');
+    &Log::debug("Vmname requested=>'$vmname'");
+    my $view = &Guest::entity_full_view( $vmname, 'VirtualMachine' );
+    &Log::normal( Dumper($view) );
+    return 1;
+}
+
+sub info_runtime {
+    &Log::debug("Entity::info_runtime sub started");
+    my $vmname = Opts::get_option('vmname');
+    &Log::debug("Vmname requested=>'$vmname'");
+    my $view =
+      &Guest::entity_property_view( $vmname, 'VirtualMachine', 'runtime' );
+    &Log::normal( Dumper($view) );
+    return 1;
+}
+
+sub delete_vm {
+    &Log::debug("Entity::delete_vm sub started");
+    my $vmname = Opts::get_option('vmname');
+    &Log::debug("Vmname requested=>'$vmname'");
+    &VCenter::destroy_entity( $vmname, 'VirtualMachine' );
+    if ( &VCenter::exists_entity( $vmname, 'VirtualMachine' ) ) {
+        Entity::NumException->throw(
+            error  => 'VM was not deleted succcesfully',
+            entity => $vmname,
+            count  => '1'
+        );
+    }
+    else {
+        &Log::normal("Entity deleted succesfully");
+    }
     return 1;
 }
 

@@ -74,7 +74,7 @@ sub cleanup {
         my $entities =
           Vim::find_entity_views( view_type => $type, properties => ['name'] );
         foreach my $entity (@$entities) {
-            &Log::debug("Checking $entity in $type");
+            &Log::debug( "Checking " . $entity->name . " in $type" );
             if ( &VCenter::check_if_empty_entity( $entity->name, $type ) ) {
                 &Log::normal( "Deleting entity=>'"
                       . $entity->name
