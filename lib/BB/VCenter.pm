@@ -90,10 +90,10 @@ sub create_test_vm {
 sub create_test_entities {
     &VCenter::create_resource_pool( 'test_1337', 'Resources' );
     &VCenter::create_folder( 'test_1337', 'vm' );
-    &VCenter::create_switch( 'test_1337', 'DistributedVirtualSwitch' );
+    &VCenter::create_switch('test_1337');
 }
 ### Helper subs to query information
-
+#tested
 sub num_check {
     my ( $name, $type ) = @_;
     &Log::debug(
@@ -111,9 +111,10 @@ sub num_check {
         );
     }
     &Log::debug("Entity is single");
-    return 0;
+    return 1;
 }
 
+#tested
 sub exists_entity {
     my ( $name, $type ) = @_;
     &Log::debug(
@@ -131,6 +132,7 @@ sub exists_entity {
     }
 }
 
+#tested
 sub path2name {
     my ($path) = @_;
     &Log::debug("Starting VCenter::path2name sub, path=>'$path'");
@@ -145,9 +147,9 @@ sub path2name {
     }
     my $view = &moref2view($moref);
     return $view->name;
-
 }
 
+#tested
 sub path2moref {
     my ($path) = @_;
     &Log::debug("Starting VCenter::path2moref sub, path=>'$path'");
@@ -164,6 +166,7 @@ sub path2moref {
     return $moref;
 }
 
+#tested
 sub moref2view {
     my ($moref) = @_;
     &Log::debug("Starting VCenter::moref2view sub");
@@ -197,6 +200,7 @@ sub linked_clone_folder {
     return $temp_fol;
 }
 
+#tested
 sub check_if_empty_entity {
     my ( $name, $type ) = @_;
     &Log::debug(
@@ -254,6 +258,7 @@ sub check_if_empty_entity {
     return 0;
 }
 
+#tested
 sub Task_Status {
     my ($taskRef) = @_;
     &Log::debug("Starting VCenter::Task_Status sub");
@@ -305,6 +310,7 @@ sub ticket_vms_name {
     return \@return;
 }
 
+#tested
 sub name2path {
     my ($name) = @_;
     &Log::debug("Starting VCenter::name2path sub, name=>'$name'");
@@ -316,7 +322,7 @@ sub name2path {
 }
 
 ### Subs for creation/deletion
-
+#tested
 sub create_resource_pool {
     my ( $rp_name, $rp_parent ) = @_;
     &Log::debug(
@@ -379,6 +385,7 @@ sub create_resource_pool {
     return $rp_name_view;
 }
 
+#tested
 sub create_folder {
     my ( $fol_name, $fol_parent ) = @_;
     &Log::debug(
@@ -415,10 +422,18 @@ sub create_folder {
     return $fol_name_view;
 }
 
+#tested
 sub create_switch {
     my ($name) = @_;
     &Log::debug("Starting VCenter::create_switch sub, name=>'$name'");
     &num_check( 'network', 'Folder' );
+    if ( &exists_entity( $name, 'DistributedVirtualSwitch' ) ) {
+        Entity::NumException->throw(
+            error  => 'Cannot create switch, already exists',
+            entity => $name,
+            count  => '1'
+        );
+    }
     my $network_folder = &Guest::entity_name_view( 'network', 'Folder' );
     my $host_view =
       &Guest::entity_name_view( 'vmware-it1.balabit', 'HostSystem' );
@@ -440,11 +455,19 @@ sub create_switch {
     &Log::debug("Finished creating switch");
 }
 
+#tested
 sub create_dvportgroup {
     my ( $name, $switch ) = @_;
     &Log::debug(
 "Starting VCenter::create_dvportgroup sub, name=>'$name', switch=>'$switch'"
     );
+    if ( &exists_entity( $name, 'DistributedVirtualPortgroup' ) ) {
+        Entity::NumException->throw(
+            error  => 'Cannot create entity, already exists',
+            entity => $name,
+            count  => '1'
+        );
+    }
     &num_check( $switch, 'DistributedVirtualSwitch' );
     my $switch_view =
       &Guest::entity_name_view( $switch, 'DistributedVirtualSwitch' );
@@ -459,6 +482,7 @@ sub create_dvportgroup {
     &Log::debug("Finished creating dv port group");
 }
 
+#tested
 sub destroy_entity {
     my ( $name, $type ) = @_;
     &Log::debug(
@@ -518,6 +542,7 @@ sub disconnect_vcenter {
     Util::disconnect();
 }
 
+#tested
 sub service_content {
     &Log::debug("Retrieving VCenter::Service Content object");
     my $sc = Vim::get_service_content();
@@ -528,6 +553,7 @@ sub service_content {
     return $sc;
 }
 
+#tested
 sub get_vim {
     &Log::debug("Starting VCenter::Vim object retrieve");
     my $vim = Vim::get_vim();

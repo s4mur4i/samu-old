@@ -118,7 +118,7 @@ sub ticket_delete {
     else {
         &Log::debug("No switch present for ticket");
     }
-    &Log::normal("Ticket deleted succesfully");
+    print "Ticket deleted succesfully\n";
     return 1;
 }
 
@@ -140,7 +140,7 @@ sub ticket_on {
     &Log::debug("Powering on ticket, ticket=>'$ticket'");
     my $machines = &VCenter::ticket_vms_name($ticket);
     for my $vm (@$machines) {
-        &Log::normal( "Powering on '" . $vm->name . "'" );
+        print "Powering on '" . $vm->name . "'\n";
         &Guest::poweron( $vm->name );
     }
     return 1;
@@ -152,7 +152,7 @@ sub ticket_off {
     &Log::debug("Powering off ticket, ticket=>'$ticket'");
     my $machines = &VCenter::ticket_vms_name($ticket);
     for my $vm (@$machines) {
-        &Log::normal( "Powering off '" . $vm->name . "'" );
+        print "Powering off '" . $vm->name . "'\n";
         &Guest::poweroff( $vm->name );
     }
     return 1;
@@ -201,7 +201,7 @@ sub ticket_list {
                     }
                 }
             }
-            &Log::normal($string);
+            print $string . "\n";
         }
         else {
             &Log::debug("Ticket name is empty or unknown");

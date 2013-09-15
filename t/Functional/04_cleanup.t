@@ -3,17 +3,20 @@ use strict;
 use warnings;
 use 5.14.0;
 use Test::More;
+use Test::Exception;
 use FindBin;
 use lib "$FindBin::Bin/../../lib/";
 use lib "$FindBin::Bin/../../vmware_lib/";
 use BB::Common;
 use Base::admin;
 
+BEGIN {
+    &Opts::parse();
+    &Opts::validate();
+    &Util::connect();
+}
 diag("Check if any entity exists for our test_1337 ticket");
 my @types = ( 'VirtualMachine', 'ResourcePool', 'Folder', 'DistributedVirtualSwitch' );
-&Opts::parse();
-&Opts::validate();
-&Util::connect();
 is( &admin::cleanup, '',"Admin cleanup sub ran succesfully" );
 for my $type ( @types ) {
     my $view = Vim::find_entity_view( view_type => $type, properties => [ 'name' ], filter => { name => qr/^test_1337/ } );
@@ -39,6 +42,8 @@ for my $type ( @types ) {
 diag("Creating resources with entity and see if they don't get deleted");
 &VCenter::create_test_entities;
 ok( \&VCenter::create_dvportgroup( 'test_1337_dvg', 'test_1337' ), "Creating test_1337_dvg DVPG");
+throws_ok { &VCenter::create_dvportgroup( 'test_1337_dvg', 'test_1337' ) } 'Entity::NumException', 'Exception is thrown by second dvg creation';
+throws_ok { &VCenter::create_dvportgroup( 'test_1337_dvg2', 'test_1337_test_1337' ) } 'Entity::NumException', 'Exception is thrown if no parent switch found';
 &VCenter::create_test_vm( 'test_1337' );
 &admin::cleanup;
 for my $type ( @types ) {
@@ -55,5 +60,14 @@ $task = $view->Destroy_Task;
 for my $type ( @types ) {
     is( Vim::find_entity_view( view_type =>$type, properties => [ 'name' ], filter => { name => 'test_1337' } ), undef, "test_1337 $type doesn't exist after cleanup" );
 }
-&Util::disconnect();
 done_testing;
+END {
+    my @types = ( 'VirtualMachine', 'ResourcePool', 'Folder', 'DistributedVirtualSwitch' );
+    for my $type ( @types ) {
+        my $view = Vim::find_entity_view( view_type => $type, properties => [ 'name' ], filter => { name => qr/^test_1337/ } );
+        if ( defined( $view ) ) {
+            $view->Destroy;
+        }
+    }
+    &Util::disconnect();
+}

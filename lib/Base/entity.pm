@@ -129,11 +129,46 @@ our $module_opts = {
         delete => {
             helper    => 'VM_functions/VM_delete_function',
             functions => {
-                cdrom   => { helper => 'AUTHOR', function => \&delete_cdrom },
-                network => { helper => 'AUTHOR', function => \&delete_network },
-                disk    => { helper => 'AUTHOR', function => \&delete_disk },
-                snapshot =>
-                  { helper => 'AUTHOR', function => \&delete_snapshot },
+                cdrom => {
+                    function => \&delete_cdrom,
+                    opts     => {
+                        vmname => {
+                            type     => '=s',
+                            help     => 'Which VMs cdrom to list.',
+                            required => '1',
+                        },
+                    },
+                },
+                network => {
+                    function => \&delete_network,
+                    opts     => {
+                        vmname => {
+                            type     => '=s',
+                            help     => 'Which VMs cdrom to list.',
+                            required => '1',
+                        },
+                    },
+                },
+                disk => {
+                    function => \&delete_disk,
+                    opts     => {
+                        vmname => {
+                            type     => '=s',
+                            help     => 'Which VMs cdrom to list.',
+                            required => '1',
+                        },
+                    },
+                },
+                snapshot => {
+                    function => \&delete_snapshot,
+                    opts     => {
+                        vmname => {
+                            type     => '=s',
+                            help     => 'Which VMs cdrom to list.',
+                            required => '1',
+                        },
+                    },
+                },
                 vm => {
                     function => \&delete_vm,
                     opts     => {
@@ -148,9 +183,36 @@ our $module_opts = {
         },
         list => {
             functions => {
-                cdrom     => { helper => 'AUTHOR', function => \&list_cdrom },
-                network   => { helper => 'AUTHOR', function => \&list_network },
-                disk      => { helper => 'AUTHOR', function => \&list_disk },
+                cdrom => {
+                    function => \&list_cdrom,
+                    opts     => {
+                        vmname => {
+                            type     => '=s',
+                            help     => 'Which VMs cdrom to list.',
+                            required => '1',
+                        },
+                    },
+                },
+                network => {
+                    function => \&list_network,
+                    opts     => {
+                        vmname => {
+                            type     => '=s',
+                            help     => 'Which VMs network to list.',
+                            required => '1',
+                        },
+                    },
+                },
+                disk => {
+                    function => \&list_disk,
+                    opts     => {
+                        vmname => {
+                            type     => '=s',
+                            help     => 'Which VMs disk to list.',
+                            required => '1',
+                        },
+                    },
+                },
                 snapshopt => {
                     function => \&list_snapshot,
                     opts     => {
@@ -165,9 +227,51 @@ our $module_opts = {
         },
         change => {
             functions => {
-                cdrom   => { helper => 'AUTHOR', function => \&change_cdrom },
-                network => { helper => 'AUTHOR', function => \&change_network },
-                disk    => { helper => 'AUTHOR', function => \&change_disk },
+                cdrom => {
+                    function => \&change_cdrom,
+                    opts     => {
+                        vmname => {
+                            type     => '=s',
+                            help     => 'Which VMs disk to list.',
+                            required => '1',
+                        },
+                    },
+                },
+                network => {
+                    function => \&change_network,
+                    opts     => {
+                        vmname => {
+                            type     => '=s',
+                            help     => 'Which VMs cdrom to list.',
+                            required => '1',
+                        },
+                    },
+                },
+                disk => {
+                    function => \&change_disk,
+                    opts     => {
+                        vmname => {
+                            type     => '=s',
+                            help     => 'Which VMs cdrom to list.',
+                            required => '1',
+                        },
+                    },
+                },
+                altername => {
+                    function => \&change_altername,
+                    opts     => {
+                        vmname => {
+                            type     => '=s',
+                            help     => 'Name of vm',
+                            required => 1,
+                        },
+                        name => {
+                            type     => '=s',
+                            help     => 'Name of new alternate name for vm',
+                            required => 1,
+                        },
+                    },
+                },
                 snapshot => {
                     function => \&change_snapshot,
                     opts     => {
@@ -183,7 +287,22 @@ our $module_opts = {
                         },
                     },
                 },
-                power => { helper => 'AUTHOR', function => \&change_power },
+                power => {
+                    function => \&change_power,
+                    opts     => {
+                        vmname => {
+                            type     => '=s',
+                            help     => 'Which VMs cdrom to list.',
+                            required => '1',
+                        },
+                        state => {
+                            type => '=s',
+                            help =>
+'What state should the vm be put in. Possible: on/off',
+                            required => '1',
+                        },
+                    },
+                },
             },
         },
     },
@@ -195,11 +314,56 @@ sub main {
 }
 
 sub list_cdrom {
-
+    &Log::debug("Entity::list_cdrom sub started");
+    my $vmname = Opts::get_option('vmname');
+    &Log::debug("Requested options, vmname=>'$vmname'");
+    my @cdrom_hw = &Guest::get_hw( $vmname, 'VirtualCdrom' );
+    for ( my $i = 0 ; $i < scalar(@cdrom_hw) ; $i++ ) {
+        &Log::debug("Iterating thorugh CDrom hardware '$i'");
+        my $backing = "Unknown";
+        if ( ${ $cdrom_hw[$i] }->backing->isa('VirtualCdromIsoBackingInfo') ) {
+            &Log::debug("Backing is a file backing");
+            $backing = ${ $cdrom_hw[$i] }->backing->fileName;
+        }
+        elsif ( ${ $cdrom_hw[$i] }
+            ->backing->isa('VirtualCdromRemotePassthroughBackingInfo') )
+        {
+            &Log::debug("Backing is a remote pas through backing");
+            $backing = "Host Device";
+        }
+        print "number=>'$i', key=>'${$cdrom_hw[$i]}->key', backing=>'$backing', label=>'${$cdrom_hw[$i]}->label'\n";
+    }
+    &Log::debug("Finished list_cdrom sub");
+    return 1;
 }
 
 sub list_network {
+    &Log::debug("Entity::list_network sub started");
+    my $vmname = Opts::get_option('vmname');
+    &Log::debug("Requested options, vmname=>'$vmname'");
+    return 1;
+}
 
+sub list_disk {
+    &Log::debug("Entity::list_disk sub started");
+    my $vmname = Opts::get_option('vmname');
+    &Log::debug("Requested options, vmname=>'$vmname'");
+    my @disk_hw = &Guest::get_hw( $vmname, 'VirtualDisk' );
+    for ( my $i = 0 ; $i < scalar(@disk_hw) ; $i++ ) {
+        &Log::debug("Iterating thorugh disk hardware '$i'");
+        print "number=>'$i', key=>'${$disk_hw[$i]}->key', size=>'${$disk_hw[$i]}->capacityInKB' KB, path=>${$disk_hw[$i]}->backing->fileName\n";
+    }
+    &Log::debug("Finished list_disk sub");
+    return 1;
+}
+
+sub change_altername {
+    &Log::debug("Entity::change_altername sub started");
+    my $vmname = Opts::get_option('vmname');
+    my $name   = Opts::get_option('name');
+    &Log::debug("Requested options, vmname=>'$vmname', name=>'$name'");
+    &Guest::change_altername( $vmname, $name );
+    return 1;
 }
 
 sub change_snapshot {
@@ -228,7 +392,7 @@ sub add_snapshot {
 "Requested options, vmname=>'$vmname', snap_name=>'$snap_name', desc=>'$desc'"
     );
     &Guest::create_snapshot( $vmname, $snap_name, $desc );
-    &Log::normal("Finished creating snapshot");
+    &Log::info("Finished creating snapshot");
     return 1;
 }
 
@@ -240,9 +404,7 @@ sub clone_vm {
     my $os_temp     = Opts::get_option('os_temp');
     &Support::get_key_info( 'template', $os_temp );
     my $domain = Opts::get_option('domain');
-    &Log::info(
-"Arguments: parent_pool=>'$parent_pool', ticket=>'$ticket', os_temp=>'$os_temp', domain=>'$domain'"
-    );
+    &Log::info( "Arguments: parent_pool=>'$parent_pool', ticket=>'$ticket', os_temp=>'$os_temp', domain=>'$domain'");
     &Log::debug("Get os_temp object for cloning and information");
     my $os_temp_path = &Support::get_key_value( 'template', $os_temp, 'path' );
     my $os_temp_view =
@@ -326,13 +488,10 @@ sub clone_vm {
             $config_spec );
     }
     &VCenter::clonevm( $os_temp_view->name, $vmname, $os_temp, $clone_spec );
-    &Log::seperator;
-    &Log::normal("Machine is provisioned");
-    &Log::normal( "Login: '"
-          . &Support::get_key_value( 'template', $os_temp, 'username' ) . "'/'"
-          . &Support::get_key_value( 'template', $os_temp, 'password' )
-          . "'" );
-    &Log::normal("Unique name of vm: $vmname");
+    print "=" x 40 . "\n";
+    print "Machine is provisioned\n";
+    print "Login: '" . &Support::get_key_value( 'template', $os_temp, 'username' ) . "'/'" . &Support::get_key_value( 'template', $os_temp, 'password' ) . "'\n";
+    print "Unique name of vm: $vmname\n";
     return 1;
 }
 
@@ -341,7 +500,7 @@ sub info_dumper {
     my $vmname = Opts::get_option('vmname');
     &Log::debug("Vmname requested=>'$vmname'");
     my $view = &Guest::entity_full_view( $vmname, 'VirtualMachine' );
-    &Log::normal( Dumper($view) );
+    print Dumper($view);
     return 1;
 }
 
@@ -351,7 +510,7 @@ sub info_runtime {
     &Log::debug("Vmname requested=>'$vmname'");
     my $view =
       &Guest::entity_property_view( $vmname, 'VirtualMachine', 'runtime' );
-    &Log::normal( Dumper($view) );
+    print Dumper($view);
     return 1;
 }
 
@@ -368,7 +527,7 @@ sub delete_vm {
         );
     }
     else {
-        &Log::normal("Entity deleted succesfully");
+        &Log::info("Entity deleted succesfully");
     }
     return 1;
 }

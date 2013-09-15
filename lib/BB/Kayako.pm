@@ -10,6 +10,7 @@ BEGIN {
     our @EXPORT = qw( );
 }
 
+#tested
 sub connect_kayako {
     &Log::debug("Starting Kayako::connect_kayako sub");
     my $dsn  = "dbi:mysql:kayako:10.21.0.17";
@@ -26,14 +27,17 @@ sub connect_kayako {
     return $dbh;
 }
 
+#tested
 sub disconnect_kayako {
     my ($dbh) = @_;
     &Log::debug("Starting Kayako::disconnect_kayako sub");
     $dbh->disconnect
       or &Log::warning( "Kayako db disconnect warning:" . $dbh->errstr );
     &Log::debug("Finished Kayako::disconnect_kayako sub");
+    return 1;
 }
 
+#tested
 sub run_query {
     my ( $dbh, $query ) = @_;
     &Log::debug("Starting Kayako::run_query sub, query=>'$query'");

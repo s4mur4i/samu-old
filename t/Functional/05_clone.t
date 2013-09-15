@@ -10,17 +10,19 @@ use lib "$FindBin::Bin/../../vmware_lib/";
 use BB::Common;
 use Base::entity;
 
-diag("Test cloning functions");
-&Opts::add_options(%{$entity::module_opts->{functions}->{clone}->{opts}});
-&Opts::parse();
-&Opts::set_option("ticket", "test_1337");
-&Opts::set_option("os_temp", "test");
-&Opts::validate();
-&Util::connect();
-my $view = Vim::find_entity_view( view_type => 'VirtualMachine', properties => [ 'name' ], filter => { name => qr/^test_1337-/ } );
-if ( defined( $view ) ) {
-    plan( skip_all => "test_1337 VirtualMachine exists. Delete it before test can be run" );
+BEGIN {
+    &Opts::add_options(%{$entity::module_opts->{functions}->{clone}->{opts}});
+    &Opts::parse();
+    &Opts::set_option("ticket", "test_1337");
+    &Opts::set_option("os_temp", "test");
+    &Opts::validate();
+    &Util::connect();
+    my $view = Vim::find_entity_view( view_type => 'VirtualMachine', properties => [ 'name' ], filter => { name => qr/^test_1337-/ } );
+    if ( defined( $view ) ) {
+        plan( skip_all => "test_1337 VirtualMachine exists. Delete it before test can be run" );
+    }
 }
+diag("Test cloning functions");
 throws_ok { &entity::clone_vm; } 'Template::Status', 'Incorrect template throws Exception';
 for my $template ( @{&Support::get_keys( 'template' )} ) {
     diag("Testing template: $template");
@@ -33,12 +35,14 @@ for my $template ( @{&Support::get_keys( 'template' )} ) {
     $view = Vim::find_entity_view( view_type => 'VirtualMachine', properties => [ 'name' ], filter => { name => qr/^test_1337-/ } );
     ok( !defined($view), "Cloned entity Destroyed succesfully" );
 }
-my @types = ( 'VirtualMachine', 'ResourcePool', 'Folder', 'DistributedVirtualSwitch' );
-for my $type ( @types ) {
-    my $view = Vim::find_entity_view( view_type => $type, properties => [ 'name' ], filter => { name => 'test_1337' } );
-    if ( defined( $view ) ) {
-        $view->Destroy;
-    }
-}
-&Util::disconnect();
 done_testing;
+END {
+    my @types = ( 'VirtualMachine', 'ResourcePool', 'Folder', 'DistributedVirtualSwitch' );
+    for my $type ( @types ) {
+        my $view = Vim::find_entity_view( view_type => $type, properties => [ 'name' ], filter => { name => qr/^test_1337/ } );
+        if ( defined( $view ) ) {
+            $view->Destroy;
+        }
+    }
+    &Util::disconnect();
+}

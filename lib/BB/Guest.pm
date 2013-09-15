@@ -9,6 +9,7 @@ BEGIN {
     our @EXPORT = qw( );
 }
 
+#tested
 sub entity_name_view {
     my ( $name, $type ) = @_;
     &Log::debug("Retrieving entity name view, name=>'$name', type=>'$type'");
@@ -21,6 +22,7 @@ sub entity_name_view {
     return $view;
 }
 
+#tested
 sub entity_full_view {
     my ( $name, $type ) = @_;
     &Log::debug(
@@ -31,6 +33,7 @@ sub entity_full_view {
     return $view;
 }
 
+#tested
 sub entity_property_view {
     my ( $name, $type, $property ) = @_;
     &Log::debug(
@@ -45,6 +48,7 @@ sub entity_property_view {
     return $view;
 }
 
+#tested
 sub vm_memory {
     my ($name) = @_;
     &Log::debug("Retrieving VirtualMachine memory size in MB, name=>'$name'");
@@ -56,6 +60,7 @@ sub vm_memory {
     return $view->get_property('summary.config.memorySizeMB');
 }
 
+#tested
 sub vm_numcpu {
     my ($name) = @_;
     &Log::debug("Retrieving VirtualMachine Cpu count, name=>'$name'");
@@ -84,6 +89,7 @@ sub find_last_snapshot {
     }
 }
 
+#tested
 sub get_altername {
     my ($vmname) = @_;
     &Log::debug("Starting Guest::get_altername sub, vmname=>'$vmname'");
@@ -106,6 +112,22 @@ sub get_altername {
     return "";
 }
 
+sub change_altername {
+    my ( $vmname, $name ) = @_;
+    &Log::debug(
+        "Starting Guest::change_altername sub, vmname=>'$vmname', name=>'$name'"
+    );
+    &VCenter::num_check( $vmname, 'VirtualMachine' );
+    my $view   = &entity_name_view($vmname);
+    my $sc     = Vim::get_service_content();
+    my $custom = Vim::get_view( mo_ref => $sc->customFieldsManager );
+    my $key    = &get_annotation_key( $vmname, "alternateName" );
+    $custom->SetField( entity => $view, key => $key, value => $name );
+    &Log::debug("Finished changing altername");
+    return 1;
+}
+
+#tested
 sub get_annotation_key {
     my ( $vmname, $name ) = @_;
     &Log::debug(
@@ -127,6 +149,7 @@ sub get_annotation_key {
     return 0;
 }
 
+#tested
 sub network_interfaces {
     my ($vmname) = @_;
     &Log::debug("Starting Guest::network_interfaces sub, vmname=>'$vmname'");
@@ -176,6 +199,7 @@ sub network_interfaces {
     return \%interfaces;
 }
 
+#tested
 sub generate_network_setup {
     my ($os_temp) = @_;
     my @return;
@@ -238,6 +262,7 @@ sub generate_network_setup {
     return @return;
 }
 
+#tested
 sub CustomizationAdapterMapping_generator {
     my ($vmname) = @_;
     &Log::debug(
@@ -261,6 +286,52 @@ sub CustomizationAdapterMapping_generator {
     }
     &Log::debug("Returning array of adapter mappings");
     return @return;
+}
+
+sub count_hw {
+    my ( $vmname, $hw ) = @_;
+    &Log::debug("Starting Guest::count_hw sub, vmname=>'$vmname', hw=>'$hw'");
+    &VCenter::num_check( $vmname, 'VirtualMachine' );
+    my $view = Vim::find_entity_view(
+        view_type  => 'VirtualMachine',
+        properties => ['config.hardware.device'],
+        filter     => { name => $vmname }
+    );
+    my $count = 0;
+    &Log::debug("Starting loop through hardver");
+    my $devices = $view->get_property('config.hardware.device');
+    foreach ( @{$devices} ) {
+
+        if ( $_->isa($hw) ) {
+            &Log::debug("Found requrested hardver incrementing count");
+            $count++;
+        }
+    }
+    &Log::debug("Returning count=>'$count'");
+    return $count;
+}
+
+sub get_hw {
+    my ( $vmname, $hw ) = @_;
+    &Log::debug("Starting Guest::count_hw sub, vmname=>'$vmname', hw=>'$hw'");
+    &VCenter::num_check( $vmname, 'VirtualMachine' );
+    my @hw   = ();
+    my $view = Vim::find_entity_view(
+        view_type  => 'VirtualMachine',
+        properties => ['config.hardware.device'],
+        filter     => { name => $vmname }
+    );
+    &Log::debug("Starting loop through hardver");
+    my $devices = $view->get_property('config.hardware.device');
+    foreach ( @{$devices} ) {
+
+        if ( $_->isa($hw) ) {
+            &Log::debug("Found requrested hardver pushing to return");
+            push( @hw, $_ );
+        }
+    }
+    &Log::debug( "Returning count=>'" . scalar(@hw) . "'" );
+    return @hw;
 }
 
 #tested
@@ -305,46 +376,60 @@ sub poweroff {
     return 1;
 }
 
-#TODO
 sub revert_to_snapshot {
     my ( $vmname, $id ) = @_;
     &Log::debug(
-"Starting GuestManagement::revert_to_snapshot sub, vmname=>'$vmname', id=>'$id'\n"
+        "Starting Guest::revert_to_snapshot sub, vmname=>'$vmname', id=>'$id'\n"
     );
-    my $view = Vim::find_entity_view(
-        view_type  => 'VirtualMachine',
-        properties => ['snapshot'],
-        filter     => { name => $vmname }
-    );
-    if ( !defined($view) ) {
-        SDK::Error::Entity::NumException->throw(
-            error  => 'Could not find VM entity',
-            entity => $vmname,
-            count  => '0'
+    my $view = &entity_property_view( $vmname, 'VirtualMachine', 'snapshot' );
+    if ( !defined( $view->snapshot ) ) {
+        Entity::Snapshot->throw(
+            error    => "No snapshot found",
+            entity   => $vmname,
+            snapshot => $id
         );
     }
-    if ( defined( $view->snapshot ) ) {
-        foreach ( @{ $view->snapshot->rootSnapshotList } ) {
-            my $snapshot = &find_snapshot_by_id( $_, $id );
-            if ( defined($snapshot) ) {
-                Util::trace( 1, "Found Id reverting\n" );
-                my $moref = Vim::get_view( mo_ref => $snapshot->snapshot );
-                my $task =
-                  $moref->RevertToSnapshot_Task( suppressPowerOn => 1 );
-                &Vcenter::Task_getStatus($task);
-                Util::trace( 4,
-"Finishing GuestManagement::revert_to_snapshot sub, return=>'success'\n"
-                );
-                return 1;
+    foreach ( @{ $view->snapshot->rootSnapshotList } ) {
+        my $snapshot = &find_snapshot_by_id( $_, $id );
+        if ( defined($snapshot) ) {
+            &Log::debug("Found Id reverting");
+            my $moref = Vim::get_view( mo_ref => $snapshot->snapshot );
+            my $task = $moref->RevertToSnapshot_Task( suppressPowerOn => 1 );
+            &Vcenter::Task_Status($task);
+            &Log::debug(
+"Finishing GuestManagement::revert_to_snapshot sub, return=>'success'"
+            );
+            return 1;
+        }
+    }
+    &Log::debug("Could not revert to requested id");
+    return 0;
+}
+
+#tested
+sub find_snapshot_by_id {
+    my ( $snapshot_view, $id ) = @_;
+    &Log::debug( "Starting Guest::find_snapshot_by_id sub, snapshot_view_id=>'"
+          . $snapshot_view->id
+          . "', id=>'$id'" );
+    my $return;
+    if ( $snapshot_view->id == $id ) {
+        $return = $snapshot_view;
+    }
+    elsif ( defined( $snapshot_view->childSnapshotList ) ) {
+        foreach ( @{ $snapshot_view->childSnapshotList } ) {
+            if ( !defined($return) ) {
+                &Log::debug(
+                    "We have not found the required snapshot searching");
+                $return = &find_snapshot_by_id( $_, $id );
             }
         }
     }
-    else {
-        SDK::Error::Entity::Snapshot->throw(
-            error => "No snapshot found by vm $vmname" );
-    }
+    &Log::debug("Returning snapshot");
+    return $return;
 }
 
+#tested
 sub create_snapshot {
     my ( $vmname, $snap_name, $desc ) = @_;
     &Log::debug(
@@ -358,10 +443,11 @@ sub create_snapshot {
         memory      => 1,
         quiesce     => 1
     );
-    &Vcenter::Task_Status($task);
+    &VCenter::Task_Status($task);
     return 1;
 }
 
+#tested
 sub list_snapshot {
     my ($vmname) = @_;
     &Log::debug("Starting Guest::list_snapshot sub, vmname=>'$vmname'");
@@ -376,11 +462,14 @@ sub list_snapshot {
     }
     my $current_snapshot = $view->snapshot->currentSnapshot->value;
     foreach ( @{ $view->snapshot->rootSnapshotList } ) {
+        &Log::debug("Traversing snapshot");
         &traverse_snapshot( $_, $current_snapshot );
     }
+    &Log::debug("Finished listing snapshot");
     return 1;
 }
 
+#tested
 sub traverse_snapshot {
     my ( $snapshot_moref, $current_snapshot ) = @_;
     &Log::debug(
@@ -392,16 +481,7 @@ sub traverse_snapshot {
         &Log::debug("Found current active snapshot");
         $current = "*CUR* ";
     }
-    &Log::normal( $current
-          . "ID => '"
-          . $snapshot_moref->id
-          . "', name => '"
-          . $snapshot_moref->name
-          . "', createTime => '"
-          . $snapshot_moref->createTime
-          . "', description => '"
-          . $snapshot_moref->description
-          . "'" );
+    print $current . "ID => '" . $snapshot_moref->id . "', name => '" . $snapshot_moref->name . "', createTime => '" . $snapshot_moref->createTime . "', description => '" . $snapshot_moref->description . "'\n";
     if ( defined( $snapshot_moref->{'childSnapshotList'} ) ) {
         foreach ( @{ $snapshot_moref->{'childSnapshotList'} } ) {
             &traverse_snapshot( $_, $current_snapshot );
@@ -421,35 +501,36 @@ sub short_vm_info {
         properties => [ 'name', 'guest', 'summary.runtime.powerState' ],
         filter => { name => $name }
     );
-    &Log::normal( "VMname:'" . $view->name );
+    print "VMname:'" . $view->name . "\n";
     my $powerState = $view->get_property('summary.runtime.powerState');
-    &Log::normal( "\tPower State:'" . $powerState->val . "'" );
+    print "\tPower State:'" . $powerState->val . "'\n";
 
-    &Log::normal(
-        "\tAlternate name: '" . &Guest::get_altername( $view->name ) . "'" );
+    print "\tAlternate name: '" . &Guest::get_altername( $view->name ) . "'";
     if ( $view->guest->toolsStatus eq 'toolsNotInstalled' ) {
-        &Log::normal("\tTools not installed. Cannot extract some information");
+        print "\tTools not installed. Cannot extract some information\n";
     }
     else {
         if ( defined( $view->guest->net ) ) {
             foreach ( @{ $view->guest->net } ) {
+                my $string = "";
                 if ( defined( $_->ipAddress ) ) {
-                    &Log::normal( "\tNetwork => '"
-                          . $_->network
-                          . "', with ipAddresses => [ "
-                          . join( ", ", @{ $_->ipAddress } )
-                          . " ]" );
+                    $string = "ipAddresses => [ "
+                      . join( ", ", @{ $_->ipAddress } ) . " ]";
                 }
-                else {
-                    &Log::normal( "\tNetwork => '" . $_->network . "'" );
+                if ( defined( $_->network ) ) {
+                    $string .= ", Network => '" . $_->network . "'";
                 }
+                if ( $string =~ /^$/ ) {
+                    $string = "No network information could be extracted";
+                }
+                print "\t" . $string . "\n";
             }
             if ( defined( $view->guest->hostName ) ) {
-                &Log::normal( "\tHostname: '" . $view->guest->hostName . "'" );
+                print "\tHostname: '" . $view->guest->hostName . "'\n";
             }
         }
         else {
-            &Log::normal("\tNo network information available");
+            print "\tNo network information available\n";
         }
     }
     my $vm_info = &Misc::vmname_splitter( $view->name );
@@ -465,20 +546,14 @@ sub short_vm_info {
     }
     if ( $vm_info->{uniq} ne 'unknown' ) {
         if ( defined( &Support::get_key_info( 'template', $os ) ) ) {
-            &Log::normal( "\tDefault login : '"
-                  . &Support::get_key_value( 'template', $os, 'username' )
-                  . "' / '"
-                  . &Support::get_key_value( 'template', $os, 'password' )
-                  . "'" );
+            print "\tDefault login : '" . &Support::get_key_value( 'template', $os, 'username' ) . "' / '" . &Support::get_key_value( 'template', $os, 'password' ) . "'\n";
         }
         else {
-            &Log::normal(
-                "\tRegex matched an OS, but no template found to it os => '$os'"
-            );
+            print "\tRegex matched an OS, but no template found to it os => '$os'\n";
         }
     }
     else {
-        &Log::normal("\tVmname not standard name => '$name'");
+        print "\tVmname not standard name => '$name'\n";
     }
 }
 

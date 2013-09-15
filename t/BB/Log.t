@@ -3,9 +3,10 @@ use strict;
 use warnings;
 use 5.14.0;
 use Test::More;
+use Test::Output;
 use FindBin;
 use lib "$FindBin::Bin/../../lib";
 
 BEGIN { use_ok('BB::Log'); }
-diag("Dummy test to use BB::Log module");
+diag("Test sub for use of module");
 done_testing;

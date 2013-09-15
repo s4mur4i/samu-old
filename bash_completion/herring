@@ -1,0 +1,181 @@
+# bash completion for herring
+
+_containsElement () {
+  local e
+  for e in $2; do [[ "$e" == "$1" ]] && return 0; done
+  return 1
+}
+
+_herring() {
+
+    local cur opts default_opts sdk_opts vm_clone cur_opt i opt_var
+    COMPREPLY=()
+
+	default_opts="-v -q -h --help"
+    sdk_opts="--config --credstore --encoding --passthroughauth --passthroughauthpackage --password --portnumber --protocol --savesessionfile --server --servicepath --sessionfile --url --username --version --verbose"
+
+    vm="clone list delete add change info"
+    vm_clone="--cpu --domain --memory --os_temp --parent_pool --ticket"
+
+    vm_info="dumper runtime"
+    vm_info_dumper="--vmname"
+    vm_info_runtime="--vmname"
+
+    vm_add="cdrom network disk snapshot"
+    vm_add_cdrom=""
+    vm_add_disk=""
+    vm_add_network=""
+    vm_add_snapshot=""
+
+    vm_delete="cdrom network disk snapshot vm"
+    vm_delete_cdrom="--vmname"
+    vm_delete_disk="--vmname"
+    vm_delete_network="--vmname"
+    vm_delete_snapshot="--vmname"
+    vm_delete_vm="--vmname"
+
+    vm_list="cdrom network disk snapshot"
+    vm_list_cdrom="--vmname"
+    vm_list_disk="--vmname"
+    vm_list_network="--vmname"
+    vm_list_snapshot="--vmname"
+
+    vm_change="cdrom network disk altername snapshot power"
+    vm_change_cdrom="--vmname"
+    vm_change_network="--vmname"
+    vm_change_disk="--vmname"
+    vm_change_altername="--vmname --name"
+    vm_change_snapshot="--vmname --id"
+    vm_change_power="--vmname --state"
+
+    ticket="info list on off delete"
+
+    ticket_info="--ticket"
+    ticket_list=""
+    ticet_on="--ticket"
+    ticet_off="--ticket"
+    ticet_delete="--ticket"
+
+    bugzilla="info"
+
+    bugzilla_info=""
+
+    datastore="add delete list"
+
+    datastore_add=""
+    datastore_delete=""
+    datastore_list=""
+
+    kayako="info"
+
+    kayako_info=""
+
+    admin="test cleanup templates pod2wiki"
+
+    admin_test=""
+    admin_cleanup=""
+    admin_templates=""
+    admin_pod2wiki="--in --out"
+
+    herring="vm ticket datastore bugzilla kayako admin"
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+	_helper_opts="-h --help -m --man"
+    _options="${herring}"
+
+    _vm_options="${vm}"
+
+    _vm_clone_options="${sdk_opts} ${vm_clone}"
+
+    _vm_info_options="${vm_info}"
+    _vm_info_dumper_options="${vm_info_dumper} ${sdk_opts}"
+    _vm_info_runtime_options="${vm_info_runtime} ${sdk_opts}"
+
+    _vm_add_options="${vm_add}"
+    _vm_add_cdrom_options="${vm_add_cdrom} ${sdk_opts}"
+    _vm_add_disk_options="${vm_add_disk} ${sdk_opts}"
+    _vm_add_network_options="${vm_add_network} ${sdk_opts}"
+    _vm_add_snapshot_options="${vm_add_snapshot} ${sdk_opts}"
+
+    _vm_delete_options="${vm_delete}"
+    _vm_delete_cdrom_options="${vm_delete_cdrom} ${sdk_opts}"
+    _vm_delete_disk_options="${vm_delete_disk} ${sdk_opts}"
+    _vm_delete_network_options="${vm_delete_network} ${sdk_opts}"
+    _vm_delete_snapshot_options="${vm_delete_snapshot} ${sdk_opts}"
+    _vm_delete_vm_options="${vm_delete_vm} ${sdk_opts}"
+
+    _vm_list_options="${vm_list}"
+    _vm_list_cdrom_options="${vm_list_cdrom} ${sdk_opts}"
+    _vm_list_disk_options="${vm_list_disk} ${sdk_opts}"
+    _vm_list_network_options="${vm_list_network} ${sdk_opts}"
+    _vm_list_snapshot_options="${vm_list_snapshot} ${sdk_opts}"
+
+    _vm_change_options="${vm_change}"
+    _vm_change_cdrom_options="${vm_change_cdrom} ${sdk_opts}"
+    _vm_change_network_options="${vm_change_network} ${sdk_opts}"
+    _vm_change_disk_options="${vm_change_disk} ${sdk_opts}"
+    _vm_change_altername_options="${vm_change_altername} ${sdk_opts}"
+    _vm_change_snapshot_options="${vm_change_snapshot} ${sdk_opts}"
+    _vm_change_power_options="${vm_change_power} ${sdk_opts}"
+
+    _ticket_options="${ticket}"
+
+    _ticket_list_options="${ticket_list} ${sdk_opts}"
+    _ticket_info_options="${ticket_info} ${sdk_opts}"
+    _ticket_on_options="${ticket_on} ${sdk_opts}"
+    _ticket_off_options="${ticket_off} ${sdk_opts}"
+    _ticket_delete_options="${ticket_delete} ${sdk_opts}"
+
+    _bugzilla_options="${bugzilla}"
+
+    _bugzilla_info_options="${bugzilla_info} ${sdk_opts}"
+
+    _datastore_options="${datastore}"
+
+    _datastore_add_options="${datastore_add} ${sdk_opts}"
+    _datastore_delete_options="${datastore_delete} ${sdk_opts}"
+    _datastore_list_options="${datastore_list} ${sdk_opts}"
+
+    _kayako_options="${kayako}"
+
+    _kayako_info_options="${kayako_info} ${sdk_opts}"
+
+    _admin_options="${admin}"
+
+    _admin_test_options="${admin_test} ${sdk_opts}"
+    _admin_cleanup_options="${admin_cleanup} ${sdk_opts}"
+    _admin_templates_options="${admin_templates} ${sdk_opts}"
+    _admin_pod2wiki_options="${admin_pod2wiki} ${sdk_opts}"
+
+	i=1
+	cur_opt=""
+	while [ "$i" -lt "$COMP_CWORD" ]
+	do
+		# elements of helper_opts trigger no further completion
+		if _containsElement "${COMP_WORDS[$i]}" "$_helper_opts"
+		then
+			cur_opt="_helper"
+			break
+		else
+			# elements of default_opts should be ignored
+			#if ! _containsElement "${COMP_WORDS[$i]}" "$default_opts"
+			if [[ ! "${COMP_WORDS[$i]}" =~ ^- ]]
+			then
+                local varname="${cur_opt}_${COMP_WORDS[$i]}_options"
+				[ -n "${!varname}" ] && cur_opt="${cur_opt}_${COMP_WORDS[$i]}"
+			fi
+		fi
+		i=$((i+1))
+	done
+
+	if [ "$cur_opt" == "_helper" ]
+	then
+		COMPREPLY=()
+	else
+		opt_var="${cur_opt}_options"
+		COMPREPLY=( $(compgen -W "$default_opts ${!opt_var}" -- $cur) )
+	fi
+
+    return 0
+} &&
+complete -F _herring herring.pl

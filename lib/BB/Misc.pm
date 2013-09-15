@@ -87,10 +87,12 @@ sub mac_compare {
     my ($mac) = @_;
     &Log::debug("Starting Misc::mac_compare sub, mac=>'$mac'");
     my $vm_view = Vim::find_entity_views(
-        view_type  => 'VirtualMachine',
-        properties => [ 'config.hardware.device', 'summary.config.name' ]
+        view_type => 'VirtualMachine',
+        properties =>
+          [ 'config.hardware.device', 'summary.config.name', 'name' ]
     );
     foreach (@$vm_view) {
+        &Log::debug( "Examining VM=>'" . $_->name . "'" );
         my $vm_name = $_->get_property('summary.config.name');
         my $devices = $_->get_property('config.hardware.device');
         foreach (@$devices) {
@@ -248,6 +250,7 @@ sub uniq_vmname {
     return $vmname;
 }
 
+#tested
 sub ticket_list {
     &Log::debug("Starting Misc::ticket_list sub");
     my $machines = Vim::find_entity_views(

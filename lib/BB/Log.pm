@@ -10,6 +10,8 @@ use Getopt::Long qw(:config bundling pass_through);
 use Sys::Syslog qw(:standard :macros);
 use File::Basename;
 
+my $verbose;
+my $quiet;
 my $verbosity;
 
 #tested
@@ -25,13 +27,9 @@ sub log2line {
     my $msg   = shift;
     my %args  = @_;
     my $sep   = '';
-    my (
-        $package, $filename,  $line,     $subroutine,
-        $hasargs, $wantarray, $evaltext, $is_require
-    ) = caller(1);
-    my $prefix =
-      basename($filename) . " " . getpwuid($<) . " [$level] [" . $$ . "]";
-
+    my ( $package, $filename,  $line,     $subroutine, $hasargs, $wantarray, $evaltext, $is_require) = caller(1);
+    my $prefix = basename($filename) . " " . getpwuid($<) . " [$level] [" . $$ . "]";
+    my $prefix_stderr = basename($filename) . " " . [$level];
     closelog();
     openlog( $prefix, "", LOG_USER );
     $msg .= ';';
@@ -48,42 +46,48 @@ sub log2line {
         $msg .= "$sep $k='$v'";
         $sep = ',';
     }
-    print STDERR "$prefix: $msg\n";
+    print STDERR "$prefix_stderr: $msg\n";
     return "$msg\n";
 }
 
-#tested
-# Report a critical error and terminate the script
-sub critical {
-    syslog( LOG_ERR, log2line( 'ERROR', @_ ) );
+sub debug2 {
+    ( verbosity() >= 10 ) and syslog( LOG_DEBUG, log2line( 'DEBUG2', @_ ) );
 }
 
-#tested
-sub normal {
-    syslog( LOG_INFO, log2line( 'INFO', @_ ) );
+sub debug1 {
+    ( verbosity() >= 9 ) and syslog( LOG_DEBUG, log2line( 'DEBUG1', @_ ) );
 }
 
-#tested
-# Report a warning but continue
-sub warning {
-    ( verbosity() >= 1 ) and syslog( LOG_WARNING, log2line( 'WARNING', @_ ) );
-    return -1;    # failure
-}
-
-#tested
-# Send an info message
-sub info {
-    ( verbosity() >= 2 ) and syslog( LOG_INFO, log2line( 'INFO', @_ ) );
-}
-
-#tested
-# Send a debug message
 sub debug {
-    ( verbosity() >= 3 ) and syslog( LOG_DEBUG, log2line( 'DEBUG', @_ ) );
+    ( verbosity() >= 8 ) and syslog( LOG_DEBUG, log2line( 'DEBUG', @_ ) );
 }
 
-sub seperator {
-    print "=" x 20 . "\n";
+sub info {
+    ( verbosity() >= 7 ) and syslog( LOG_INFO, log2line( 'INFO', @_ ) );
+}
+
+sub notice {
+    ( verbosity() >= 6 ) and syslog( LOG_NOTICE, log2line( 'NOTICE', @_ ) );
+}
+
+sub warning {
+    ( verbosity() >= 5 ) and syslog( LOG_WARNING, log2line( 'WARNING', @_ ) );
+}
+
+sub error {
+    ( verbosity() >= 4 ) and syslog( LOG_ERR, log2line( 'ERROR', @_ ) );
+}
+
+sub critical {
+    ( verbosity() >= 3 ) and syslog( LOG_CRIT, log2line( 'CRITICAL', @_ ) );
+}
+
+sub alert {
+    ( verbosity() >= 2 ) and syslog( LOG_ALERT, log2line( 'ALERT', @_ ) );
+}
+
+sub emergency {
+    ( verbosity() >= 1 ) and syslog( LOG_EMERG, log2line( 'EMERGENCY', @_ ) );
 }
 
 BEGIN {
@@ -91,17 +95,23 @@ BEGIN {
     our ( @ISA, @EXPORT );
 
     @ISA    = qw(Exporter);
-    @EXPORT = qw(&verbosity &critical &warning &info &debug &normal);
+    @EXPORT = qw( );
 
     GetOptions(
-        "verbose|v+" => \$verbosity,    # occurence counter
+        "v+" => \$verbose,    # occurence counter
+        "q+" => \$quiet,    # occurence counter
     );
-    $verbosity ||= 0;
+    $quiet ||=0;
+    $verbose ||= 0;
+    $verbosity = ( 6 + $verbose ) - $quiet;
+    if ( $verbosity < 0 ) {
+        $verbosity = 0;
+    } elsif ( $verbosity > 10 ) {
+        $verbosity =10;
+    }
 
     debug("==== Log started");
     debug("Verbosity level verbosity=>'$verbosity'");
 }
 
 1;
-
-# vim:ft=perl:ai:si:ts=4:sw=4:et

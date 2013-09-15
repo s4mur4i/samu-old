@@ -215,12 +215,5 @@ sub catch_ex {
     }
 }
 
-## Functionality test sub
-#sub test {
-#    &Log::debug("Starting Error:test sub");
-#    &Log::normal("Error module test sub");
-#    &Log::debug("Finished Error::test sub");
-#}
-
 #### We need to end with success
 1

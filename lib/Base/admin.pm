@@ -70,13 +70,13 @@ sub cleanup {
     &Log::debug("Starting Admin::cleanup sub");
     my @types = ( 'ResourcePool', 'Folder', 'DistributedVirtualSwitch' );
     for my $type (@types) {
-        &Log::normal("Looping through $type");
+        &Log::info("Looping through $type");
         my $entities =
           Vim::find_entity_views( view_type => $type, properties => ['name'] );
         foreach my $entity (@$entities) {
             &Log::debug( "Checking " . $entity->name . " in $type" );
             if ( &VCenter::check_if_empty_entity( $entity->name, $type ) ) {
-                &Log::normal( "Deleting entity=>'"
+                &Log::info( "Deleting entity=>'"
                       . $entity->name
                       . "',type=>'"
                       . $type
@@ -96,7 +96,7 @@ sub templates {
         &Log::debug("Element working on:'$template'");
         my $path = &Support::get_key_value( 'template', $template, 'path' );
         my $length = ( $max - length($template) ) + 1;
-        &Log::normal( "Name:'$template'" . " " x $length . "Path:'$path'" );
+        print "Name:'$template'" . " " x $length . "Path:'$path'\n";
     }
 }
 
@@ -108,7 +108,7 @@ sub test {
         value => 'ServiceInstance'
     );
     my $si_view = Vim::get_view( mo_ref => $si_moref );
-    &Log::normal( "Server Time : " . $si_view->CurrentTime() );
+    print "Server Time : " . $si_view->CurrentTime() . "\n";
 }
 
 sub pod2wiki {

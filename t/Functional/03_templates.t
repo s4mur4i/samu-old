@@ -9,9 +9,11 @@ use lib "$FindBin::Bin/../../lib/";
 use BB::Common;
 use Base::admin;
 
-&Opts::parse();
-&Opts::validate();
-&Util::connect();
+BEGIN {
+    &Opts::parse();
+    &Opts::validate();
+    &Util::connect();
+}
 ok( \&admin::templates, "Admin templates sub ran succesfully" );
 stderr_like( \&admin::templates, qr/^admin.pm\s[^ ]*\s\[INFO\]\s\[\d*\]:\sName:'[^ ']*'\s*Path:'[^ ']*';/, "Output is a valid templates output" );
 my $T_vms = Vim::find_entity_views( view_type => 'VirtualMachine', properties => [ 'name' ], filter => { name => qr/^T_/ } );
@@ -25,6 +27,22 @@ for my $T_vm ( @$T_vms) {
         isnt( &Support::get_key_value( 'template', $os_temp, $key ), undef, "Template $os_temp has default key $key defined" );
     }
     is( &VCenter::name2path( $T_vm->name ), &Support::get_key_value( 'template', $os_temp, 'path' ), "$os_temp path is same as in hash" );
+    is( $T_vm->name, &VCenter::path2name(&Support::get_key_value( 'template', $os_temp, 'path' )), "Reverse lookup for path" );
+    diag("Only one entity exists from vmname");
+    isa_ok( &Guest::entity_name_view( $T_vm->name, 'VirtualMachine' ), 'VirtualMachine', "Moref is returned by known object" );
+    isa_ok( &Guest::entity_full_view( $T_vm->name, 'VirtualMachine' ), 'VirtualMachine', "Moref is returned by known object" );
+    isa_ok( &Guest::entity_full_view( $T_vm->name, 'VirtualMachine', 'name' ), 'VirtualMachine', "Moref is returned by known object" );
+    my $memory = Vim::find_entity_view( view_type  => 'VirtualMachine', properties => ['summary.config.memorySizeMB'], filter => { name => $T_vm->name });
+    ok( &Guest::vm_memory( $T_vm->name ) eq $memory->get_property('summary.config.memorySizeMB'), "vm_memory returned correct value" );
+    my $cpu = Vim::find_entity_view( view_type  => 'VirtualMachine', properties => ['summary.config.numCpu'], filter => { name => $T_vm->name });
+    ok( &Guest::vm_numcpu( $T_vm->name ) eq $cpu->get_property('summary.config.numCpu'), "vm_numcpu returned correct value" );
+    diag("Testing altername");
+    is( &Guest::get_altername($T_vm->name), '', "Altername is default for " . $T_vm->name );
+   # is( &Guest::change_altername( $T_vm, 'test' ), '', "Changing altername to test for " . $T_vm->name );
+    #is( &Guest::get_altername($T_vm), 'test', "Altername is test for " . $T_vm->name );
+    like( &Guest::get_annotation_key( $T_vm->name, "alternateName" ), qr/^\d+$/, "Annotation_key returns digit" );
 }
-&Util::disconnect();
 done_testing;
+END {
+    &Util::disconnect();
+}

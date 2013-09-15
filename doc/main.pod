@@ -24,18 +24,13 @@
 
     Print the man page with information about all modules
 
-=item -v|-vv|-vvv
+=item -v|-vv|-vvv|-vvvv
 
     Increase verbosity of printing
 
-=item -v
-    Print WARNING messages
+=item -q|-qq|-qqq|-qqqq|-qqqqq|-qqqqqq
 
-=item -vv
-    Print INFO messages
-
-=item -vvv
-    Print DEBUG information used at development or troubleshooting phase
+    Decrease verbosity of printing
 
 =back
 
@@ -827,9 +822,13 @@
     make clean
     rm Makefile.old
 
+=back
+
 =head3 test_variables
 
     Some tests are skipped because normal environment they shouldnt be run or used. If required to be run the following environemtn variables need to be configured:
+
+=over
 
 =item DNS
 
@@ -850,6 +849,58 @@
 =item ALL
 
     This will run all above tests
+
+=back
+
+=head1 LOGLEVEL
+
+    In the framework we use 10 levels for logs. Default is 6
+
+=over
+
+=item 10 DEBUG2
+
+    Very Verbose information, mostly variables and objects are dumped at this level
+
+=item 9  DEBUG1
+
+    Variables are dumped at this level
+
+=item 8  DEBUG
+
+    Subroutine entries and exists are logged
+
+=item 7  INFO
+
+    Information messages printed
+
+=item 6  NOTICE
+
+    Notice messages are printed. This is default level
+
+=item 5  WARNING
+
+    Warning messages are printed
+
+=item 4  ERROR
+
+    Errors are printed
+
+=item 3  CRITICAL
+
+    Critical messages are printed
+
+=item 2  ALERT
+
+    Alert messages are printed
+
+=item 1  EMERGENCY
+
+    Emergency messages are printed
+
+=item 0
+
+    At this level no information is printed. This level should very seldomly be used
 
 =back
 

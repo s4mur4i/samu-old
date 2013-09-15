@@ -92,6 +92,7 @@ GetOptions(
 
 eval { &misc::option_parser( $herring_opts, "jew_main" ); };
 if ($@) {
+    &Log::debug("There was an error need to run the catch_ex sub");
     &Error::catch_ex($@);
 }
 __END__

@@ -20,13 +20,13 @@ BEGIN {
 
 my %template_hash = (
     'scb_300' => {
-        path     => 'Support/vm/templates/SCB/3.0/T_scb_300',
+        path     => 'Support/vm/templates/SCB/scb_3.0/T_scb_300',
         username => 'root',
         password => 'titkos',
         os       => 'scb'
     },
     'scb_330' => {
-        path     => 'Support/vm/templates/SCB/3.3/T_scb_330',
+        path     => 'Support/vm/templates/SCB/scb_3.3/T_scb_330',
         username => 'root',
         password => 'titkos',
         os       => 'scb'
@@ -39,6 +39,12 @@ my %template_hash = (
     },
     'scb_342' => {
         path     => 'Support/vm/templates/SCB/3.4/T_scb_342',
+        username => 'root',
+        password => 'titkos',
+        os       => 'scb'
+    },
+    'scb_350' => {
+        path     => 'Support/vm/templates/SCB/3.5/T_scb_350',
         username => 'root',
         password => 'titkos',
         os       => 'scb'
