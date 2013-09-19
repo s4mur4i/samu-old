@@ -97,6 +97,7 @@ our $module_opts = {
             },
         },
         add => {
+            helper    => 'VM_functions/VM_add_function',
             functions => {
                 cdrom    => { helper => 'AUTHOR', function => \&add_cdrom },
                 network  => { helper => 'AUTHOR', function => \&add_network },
@@ -182,6 +183,7 @@ our $module_opts = {
             },
         },
         list => {
+            helper    => 'VM_functions/VM_list_function',
             functions => {
                 cdrom => {
                     function => \&list_cdrom,
@@ -213,7 +215,7 @@ our $module_opts = {
                         },
                     },
                 },
-                snapshopt => {
+                snapshot => {
                     function => \&list_snapshot,
                     opts     => {
                         vmname => {
@@ -226,6 +228,7 @@ our $module_opts = {
             },
         },
         change => {
+            helper    => 'VM_functions/VM_change_function',
             functions => {
                 cdrom => {
                     function => \&change_cdrom,
