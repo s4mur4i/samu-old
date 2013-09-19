@@ -29,7 +29,7 @@ sub log2line {
     my $sep   = '';
     my ( $package, $filename,  $line,     $subroutine, $hasargs, $wantarray, $evaltext, $is_require) = caller(1);
     my $prefix = basename($filename) . " " . getpwuid($<) . " [$level] [" . $$ . "]";
-    my $prefix_stderr = basename($filename) . " " . [$level];
+    my $prefix_stderr = basename($filename) . " [$level]";
     closelog();
     openlog( $prefix, "", LOG_USER );
     $msg .= ';';
