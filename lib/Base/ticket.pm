@@ -129,7 +129,67 @@ sub ticket_info {
     my $machines = &VCenter::ticket_vms_name($ticket);
     for my $vm (@$machines) {
         &Log::debug( "Getting information about '" . $vm . "'" );
-        &Guest::short_vm_info($vm);
+        &Log::debug("Starting Guest::short_vm_info sub, name=>'$vm'");
+        &VCenter::num_check( $vm, 'VirtualMachine' );
+        my $view = Vim::find_entity_view(
+            view_type  => 'VirtualMachine',
+            properties => [ 'name', 'guest', 'summary.runtime.powerState' ],
+            filter => { name => $vm }
+        );
+        print "VMname:'" . $view->name . "\n";
+        my $powerState = $view->get_property('summary.runtime.powerState');
+        print "\tPower State:'" . $powerState->val . "'\n";
+
+        print "\tAlternate name: '" . &Guest::get_altername( $view->name ) . "'\n";
+        if ( $view->guest->toolsStatus eq 'toolsNotInstalled' ) {
+            print "\tTools not installed. Cannot extract some information\n";
+        }
+        else {
+            if ( defined( $view->guest->net ) ) {
+                foreach ( @{ $view->guest->net } ) {
+                    my $string = "";
+                    if ( defined( $_->ipAddress ) ) {
+                        $string = "ipAddresses => [ "
+                          . join( ", ", @{ $_->ipAddress } ) . " ]";
+                    }
+                    if ( defined( $_->network ) ) {
+                        $string .= ", Network => '" . $_->network . "'";
+                    }
+                    if ( $string =~ /^$/ ) {
+                        $string = "No network information could be extracted";
+                    }
+                    print "\t" . $string . "\n";
+                }
+                if ( defined( $view->guest->hostName ) ) {
+                    print "\tHostname: '" . $view->guest->hostName . "'\n";
+                }
+            }
+            else {
+                print "\tNo network information available\n";
+            }
+        }
+        my $vm_info = &Misc::vmname_splitter( $view->name );
+        my $os;
+        if ( $vm_info->{type} =~ /xcb/ ) {
+            &Log::debug("Product is an XCB product");
+            $os = "$vm_info->{family}_$vm_info->{version}";
+        }
+        elsif ( $vm_info->{type} ne 'unknown' ) {
+            &Log::debug("Product is known");
+            $os =
+    "$vm_info->{family}_$vm_info->{version}_$vm_info->{lang}_$vm_info->{arch}_$vm_info->{type}";
+        }
+        if ( $vm_info->{uniq} ne 'unknown' ) {
+            if ( defined( &Support::get_key_info( 'template', $os ) ) ) {
+                print "\tDefault login : '" . &Support::get_key_value( 'template', $os, 'username' ) . "' / '" . &Support::get_key_value( 'template', $os, 'password' ) . "'\n";
+            }
+            else {
+                print "\tRegex matched an OS, but no template found to it os => '$os'\n";
+            }
+        }
+        else {
+            print "\tVmname not standard name => '$vm'\n";
+        }
     }
     return 1;
 }
