@@ -112,107 +112,131 @@ use overload
 #tested
 sub catch_ex {
     my ($ex) = @_;
+    &Log::debug2("Dumping exception:" . Dumper($ex) );
     &Log::debug("Invoking Error:catch_ex sub");
     ## Entity Exceptions
     if ( $ex->isa('Entity::NumException') ) {
         &Log::critical( "Desc=>'"
-              . $ex->error
-              . "',entity=>'"
-              . $ex->entity
-              . "',count=>'"
-              . $ex->count
-              . "'" );
+            . $ex->error
+            . "',entity=>'"
+            . $ex->entity
+            . "',count=>'"
+            . $ex->count
+            . "'" );
     }
     elsif ( $ex->isa('Entity::Status') ) {
-        &Log::critical(
-            "Desc=>'" . $ex->error . "',entity=>'" . $ex->entity . "'" );
+        &Log::critical( "Desc=>'"
+            . $ex->error
+            . "',entity=>'"
+            . $ex->entity
+            . "'" );
     }
     elsif ( $ex->isa('Entity::Auth') ) {
         &Log::critical( "Desc=>'"
-              . $ex->error
-              . "',entity=>'"
-              . $ex->entity
-              . "',user=>'"
-              . $ex->username
-              . "',pass=>'"
-              . $ex->password
-              . "'" );
+            . $ex->error
+            . "',entity=>'"
+            . $ex->entity
+            . "',user=>'"
+            . $ex->username
+            . "',pass=>'"
+            . $ex->password
+            . "'" );
     }
     elsif ( $ex->isa('Entity::TransferError') ) {
-        &Log::critical(
-            "Desc=>'" . $ex->error . "',entity=>'" . $ex->entity . "'" );
+        &Log::critical( "Desc=>'"
+            . $ex->error
+            . "',entity=>'"
+            . $ex->entity
+            . "'" );
     }
     elsif ( $ex->isa('Entity::HWError') ) {
         &Log::critical( "Desc=>'"
-              . $ex->error
-              . "',entity=>'"
-              . $ex->entity
-              . "',hw=>'"
-              . $ex->hw
-              . "'" );
+            . $ex->error
+            . "',entity=>'"
+            . $ex->entity
+            . "',hw=>'"
+            . $ex->hw
+            . "'" );
     }
     elsif ( $ex->isa('Entity::Snapshot') ) {
         &Log::critical( "Desc=>'"
-              . $ex->error
-              . "',entity=>'"
-              . $ex->error
-              . "',snapshot=>'"
-              . $ex->snapshot
-              . "'" );
+            . $ex->error
+            . "',entity=>'"
+            . $ex->error
+            . "',snapshot=>'"
+            . $ex->snapshot
+            . "'" );
     }
     elsif ( $ex->isa('Entity::Mac') ) {
         &Log::critical( "Desc=>'"
-              . $ex->error
-              . "',entity=>'"
-              . $ex->entity
-              . "',mac=>'"
-              . $ex->mac
-              . "'" );
+            . $ex->error
+            . "',entity=>'"
+            . $ex->entity
+            . "',mac=>'"
+            . $ex->mac
+            . "'" );
     }
     elsif ( $ex->isa('Vcenter::ServiceContent') ) {
-        &Log::critical( "Desc=>'" . $ex->error . "'" );
+        &Log::critical( "Desc=>'"
+            . $ex->error
+            . "'" );
     }
     elsif ( $ex->isa('Vcenter::Path') ) {
-        &Log::critical(
-            "Desc=>'" . $ex->error . "',path=>'" . $ex->path . "'" );
+        &Log::critical( "Desc=>'"
+            . $ex->error
+            . "',path=>'"
+            . $ex->path
+            . "'" );
     }
     elsif ( $ex->isa('Connection::Connect') ) {
         &Log::critical( "Desc=>'"
-              . $ex->error
-              . "',type=>'"
-              . $ex->type
-              . "',dest=>'"
-              . $ex->dest
-              . "'" );
+            . $ex->error
+            . "',type=>'"
+            . $ex->type
+            . "',dest=>'"
+            . $ex->dest
+            . "'" );
     }
     elsif ( $ex->isa('Template::Status') ) {
-        &Log::critical(
-            "Desc=>'" . $ex->error . "',template=>'" . $ex->template . "'" );
+        &Log::critical( "Desc=>'"
+            . $ex->error
+            . "',template=>'"
+            . $ex->template
+            . "'" );
     }
     elsif ( $ex->isa('Template::Error') ) {
-        &Log::critical(
-            "Desc=>'" . $ex->error . "',template=>'" . $ex->template . "'" );
+        &Log::critical( "Desc=>'"
+            . $ex->error
+            . "',template=>'"
+            . $ex->template
+            . "'" );
     }
     elsif ( $ex->isa('TaskEr::NotDefined') ) {
-        &Log::critical( "Desc=>'" . $ex->error . "'" );
+        &Log::critical( "Desc=>'"
+            . $ex->error
+            . "'" );
     }
     elsif ( $ex->isa('TaskEr::Error') ) {
         &Log::critical( "Desc=>'"
-              . $ex->error
-              . "',detail=>'"
-              . $ex->detail
-              . "',fault=>'"
-              . $ex->fault
-              . "'" );
+            . $ex->error
+            . "',detail=>'"
+            . $ex->detail
+            . "',fault=>'"
+            . $ex->fault
+            . "'" );
     }
     elsif ( $ex->isa('Exception::Class') ) {
-        print Dumper($ex);
+        &Log::debug("This is an unimplemented exception.");
         &Log::critical("Cannot understand the object, throwing dump");
+        &Log::critical("Information:" . Dumper($ex) );
     }
     else {
-        print Dumper($ex);
+        &Log::info("This is an unknwo error. Dumping information");
         &Log::critical("I'm blue and I'm a WTF.....");
+        &Log::critical("Information:" . Dumper($ex) );
     }
+    &Log::debug("catch_ex sub is completed");
+    return 1;
 }
 
 #### We need to end with success
