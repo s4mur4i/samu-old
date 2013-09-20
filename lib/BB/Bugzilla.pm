@@ -21,7 +21,6 @@ sub bugzilla_status {
         &Log::debug2("Line is:'$line'");
         ($content) = $line =~ /\s*<span id="static_bug_status">(\w+)/
           if ( $line =~ /<span id="static_bug_status">/ );
-        &Log::debug2("Content is : $content");
     }
     if ( !defined($content) ) {
         &Log::debug("Content could not be understood returning Unknown");
