@@ -9,6 +9,7 @@ use warnings;
 use Getopt::Long qw(:config bundling pass_through);
 use Sys::Syslog qw(:standard :macros);
 use File::Basename;
+use Data::Dumper;
 
 my $verbose;
 my $quiet;
@@ -90,6 +91,10 @@ sub emergency {
     ( verbosity() >= 1 ) and syslog( LOG_EMERG, log2line( 'EMERGENCY', @_ ) );
 }
 
+sub dumpobj {
+    my ( $name, $obj ) = @_;
+    ( verbosity() >= 10 ) and &debug2("Dumping object $name:" . Dumper($obj) );
+}
 BEGIN {
     use Exporter();
     our ( @ISA, @EXPORT );
