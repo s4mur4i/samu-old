@@ -1,42 +1,8 @@
-Archive::Zip
-Crypt::SSLeay
-Data::Dumper
-Exception::Class
-ExtUtils::MakeMaker
-File::HomeDir
-File::Path
-File::Spec
-Getopt::Long
-HTTP::Cookies
-HTTP::Headers
-HTTP::Request
-HTTP::Response
-LWP::ConnCache
-LWP::UserAgent
-Module::Load
-Pod::Simple
-Pod::Usage
-Sys::Syslog
-Term::ReadKey
-Test::DNS
-Test::EOL
-Test::Exception
-Test::Files
-Test::Fixme
-Test::More
-Test::Output
-Test::Perl
-Test::PerlTidy
-Test::Pod
-Test::PureASCII
-Test::Spelling
-Test::Strict
-Test::Trap
-URI::Escape
-URI::URL
-XML::LibXML
-Carp
-Encode
-Exporter
-FindBin
-DBD::mysql
+Archive::Zip Crypt::SSLeay Data::Dumper Exception::Class ExtUtils::MakeMaker
+  File::HomeDir File::Path File::Spec Getopt::Long HTTP::Cookies HTTP::Headers
+  HTTP::Request HTTP::Response LWP::ConnCache LWP::Simple LWP::UserAgent
+  Module::Load Pod::Simple Pod::Usage Sys::Syslog Term::ReadKey Test::DNS
+  Test::EOL Test::Exception Test::Files Test::Fixme Test::More Test::Output
+  Test::Pod Test::PureASCII Test::Spelling Test::Strict Test::Trap URI::Escape
+  URI::URL XML::LibXML Carp DBI Encode Exporter FindBin DBD::mysql
+  Test::Perl::Critic
