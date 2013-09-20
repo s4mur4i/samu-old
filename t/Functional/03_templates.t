@@ -38,8 +38,6 @@ for my $T_vm ( @$T_vms) {
     ok( &Guest::vm_numcpu( $T_vm->name ) eq $cpu->get_property('summary.config.numCpu'), "vm_numcpu returned correct value" );
     diag("Testing altername");
     is( &Guest::get_altername($T_vm->name), '', "Altername is default for " . $T_vm->name );
-   # is( &Guest::change_altername( $T_vm, 'test' ), '', "Changing altername to test for " . $T_vm->name );
-    #is( &Guest::get_altername($T_vm), 'test', "Altername is test for " . $T_vm->name );
     like( &Guest::get_annotation_key( $T_vm->name, "alternateName" ), qr/^\d+$/, "Annotation_key returns digit" );
 }
 done_testing;

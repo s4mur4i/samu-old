@@ -113,7 +113,7 @@ sub test {
 
 sub pod2wiki {
     eval { require Pod::Simple::Wiki::Dokuwiki; };
-    if ( $@ ) {
+    if ($@) {
         &Log::debug("Cannot load Wiki module!");
         die "Pina";
     }

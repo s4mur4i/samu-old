@@ -19,7 +19,7 @@ sub clonevm {
     &Log::dumpobj( "clone_spec", $clone_spec );
     my $template_view = &Guest::entity_name_view( $template, 'VirtualMachine' );
     &Log::debug2( "template_view", $template_view );
-    my $folder_view   = &Guest::entity_name_view( $folder,   'Folder' );
+    my $folder_view = &Guest::entity_name_view( $folder, 'Folder' );
     &Log::dumpobj( "folder_view", $folder_view );
     &Log::info("Starting Clone task");
     my $task = $template_view->CloneVM_Task(
@@ -27,7 +27,7 @@ sub clonevm {
         name   => $vmname,
         spec   => $clone_spec
     );
-    &Log::dumpobj("Task object:" . Dumper($task) );
+    &Log::dumpobj( "Task object:" . Dumper($task) );
     &Task_Status($task);
     &Log::debug("Finished cloning vm");
     return 1;
@@ -477,7 +477,7 @@ sub create_switch {
 sub create_dvportgroup {
     my ( $name, $switch ) = @_;
     &Log::debug(
-        "Starting VCenter::create_dvportgroup sub, name=>'$name', switch=>'$switch'"
+"Starting VCenter::create_dvportgroup sub, name=>'$name', switch=>'$switch'"
     );
     if ( &exists_entity( $name, 'DistributedVirtualPortgroup' ) ) {
         Entity::NumException->throw(
@@ -498,7 +498,7 @@ sub create_dvportgroup {
     );
     &Log::dumpobj( "spec", $spec );
     my $task = $switch_view->AddDVPortgroup_Task( spec => $spec );
-    &Log::dumpobj( "task", $task);
+    &Log::dumpobj( "task", $task );
     &Task_Status($task);
     &Log::debug("Finished creating dv port group");
     return 1;

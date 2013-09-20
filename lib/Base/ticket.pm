@@ -140,7 +140,8 @@ sub ticket_info {
         my $powerState = $view->get_property('summary.runtime.powerState');
         print "\tPower State:'" . $powerState->val . "'\n";
 
-        print "\tAlternate name: '" . &Guest::get_altername( $view->name ) . "'\n";
+        print "\tAlternate name: '"
+          . &Guest::get_altername( $view->name ) . "'\n";
         if ( $view->guest->toolsStatus eq 'toolsNotInstalled' ) {
             print "\tTools not installed. Cannot extract some information\n";
         }
@@ -177,14 +178,19 @@ sub ticket_info {
         elsif ( $vm_info->{type} ne 'unknown' ) {
             &Log::debug("Product is known");
             $os =
-    "$vm_info->{family}_$vm_info->{version}_$vm_info->{lang}_$vm_info->{arch}_$vm_info->{type}";
+"$vm_info->{family}_$vm_info->{version}_$vm_info->{lang}_$vm_info->{arch}_$vm_info->{type}";
         }
         if ( $vm_info->{uniq} ne 'unknown' ) {
             if ( defined( &Support::get_key_info( 'template', $os ) ) ) {
-                print "\tDefault login : '" . &Support::get_key_value( 'template', $os, 'username' ) . "' / '" . &Support::get_key_value( 'template', $os, 'password' ) . "'\n";
+                print "\tDefault login : '"
+                  . &Support::get_key_value( 'template', $os, 'username' )
+                  . "' / '"
+                  . &Support::get_key_value( 'template', $os, 'password' )
+                  . "'\n";
             }
             else {
-                print "\tRegex matched an OS, but no template found to it os => '$os'\n";
+                print
+"\tRegex matched an OS, but no template found to it os => '$os'\n";
             }
         }
         else {

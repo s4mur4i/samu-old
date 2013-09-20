@@ -43,3 +43,4 @@ username
 utf
 vm
 DNS
+LOGLEVEL

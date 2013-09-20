@@ -191,7 +191,17 @@ sub network_interfaces {
         $interfaces{$key}->{unitnumber}    = $device->unitNumber;
         $interfaces{$key}->{label}         = $device->deviceInfo->label;
         $interfaces{$key}->{summary}       = $device->deviceInfo->summary;
-        &Log::debug("Interface gathered, information: ".(join ',', (map {"$_=>'".$interfaces{$key}->{$_}."'"} sort keys %{$interfaces{$key}}),"key=>'$key'"));
+        &Log::debug(
+            "Interface gathered, information: "
+              . (
+                join ',',
+                (
+                    map { "$_=>'" . $interfaces{$key}->{$_} . "'" }
+                    sort keys %{ $interfaces{$key} }
+                ),
+                "key=>'$key'"
+              )
+        );
     }
     &Log::debug("Returning interfaces hash");
     return \%interfaces;
@@ -479,7 +489,15 @@ sub traverse_snapshot {
         &Log::debug("Found current active snapshot");
         $current = "*CUR* ";
     }
-    print $current . "ID => '" . $snapshot_moref->id . "', name => '" . $snapshot_moref->name . "', createTime => '" . $snapshot_moref->createTime . "', description => '" . $snapshot_moref->description . "'\n";
+    print $current
+      . "ID => '"
+      . $snapshot_moref->id
+      . "', name => '"
+      . $snapshot_moref->name
+      . "', createTime => '"
+      . $snapshot_moref->createTime
+      . "', description => '"
+      . $snapshot_moref->description . "'\n";
     if ( defined( $snapshot_moref->{'childSnapshotList'} ) ) {
         foreach ( @{ $snapshot_moref->{'childSnapshotList'} } ) {
             &traverse_snapshot( $_, $current_snapshot );

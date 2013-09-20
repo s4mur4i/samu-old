@@ -334,7 +334,8 @@ sub list_cdrom {
             &Log::debug("Backing is a remote pas through backing");
             $backing = "Host Device";
         }
-        print "number=>'$i', key=>'${$cdrom_hw[$i]}->key', backing=>'$backing', label=>'${$cdrom_hw[$i]}->label'\n";
+        print
+"number=>'$i', key=>'${$cdrom_hw[$i]}->key', backing=>'$backing', label=>'${$cdrom_hw[$i]}->label'\n";
     }
     &Log::debug("Finished list_cdrom sub");
     return 1;
@@ -354,7 +355,8 @@ sub list_disk {
     my @disk_hw = &Guest::get_hw( $vmname, 'VirtualDisk' );
     for ( my $i = 0 ; $i < scalar(@disk_hw) ; $i++ ) {
         &Log::debug("Iterating thorugh disk hardware '$i'");
-        print "number=>'$i', key=>'${$disk_hw[$i]}->key', size=>'${$disk_hw[$i]}->capacityInKB' KB, path=>${$disk_hw[$i]}->backing->fileName\n";
+        print
+"number=>'$i', key=>'${$disk_hw[$i]}->key', size=>'${$disk_hw[$i]}->capacityInKB' KB, path=>${$disk_hw[$i]}->backing->fileName\n";
     }
     &Log::debug("Finished list_disk sub");
     return 1;
@@ -407,7 +409,9 @@ sub clone_vm {
     my $os_temp     = Opts::get_option('os_temp');
     &Support::get_key_info( 'template', $os_temp );
     my $domain = Opts::get_option('domain');
-    &Log::info( "Arguments: parent_pool=>'$parent_pool', ticket=>'$ticket', os_temp=>'$os_temp', domain=>'$domain'");
+    &Log::info(
+"Arguments: parent_pool=>'$parent_pool', ticket=>'$ticket', os_temp=>'$os_temp', domain=>'$domain'"
+    );
     &Log::debug("Get os_temp object for cloning and information");
     my $os_temp_path = &Support::get_key_value( 'template', $os_temp, 'path' );
     my $os_temp_view =
@@ -493,7 +497,9 @@ sub clone_vm {
     &VCenter::clonevm( $os_temp_view->name, $vmname, $os_temp, $clone_spec );
     print "=" x 40 . "\n";
     print "Machine is provisioned\n";
-    print "Login: '" . &Support::get_key_value( 'template', $os_temp, 'username' ) . "'/'" . &Support::get_key_value( 'template', $os_temp, 'password' ) . "'\n";
+    print "Login: '"
+      . &Support::get_key_value( 'template', $os_temp, 'username' ) . "'/'"
+      . &Support::get_key_value( 'template', $os_temp, 'password' ) . "'\n";
     print "Unique name of vm: $vmname\n";
     return 1;
 }

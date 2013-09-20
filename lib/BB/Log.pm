@@ -28,12 +28,17 @@ sub log2line {
     my $msg   = shift;
     my %args  = @_;
     my $sep   = '';
-    my ( $package, $filename,  $line,     $subroutine, $hasargs, $wantarray, $evaltext, $is_require) = caller(1);
-    my $prefix = basename($filename) . " " . getpwuid($<) . " [$level] [" . $$ . "]";
+    my (
+        $package, $filename,  $line,     $subroutine,
+        $hasargs, $wantarray, $evaltext, $is_require
+    ) = caller(1);
+    my $prefix =
+      basename($filename) . " " . getpwuid($<) . " [$level] [" . $$ . "]";
     my $prefix_stderr = basename($filename) . " [$level]";
     closelog();
     openlog( $prefix, "", LOG_USER );
     $msg .= ';';
+
     for my $k ( sort keys %args ) {
         my $v = $args{$k};
 
@@ -93,8 +98,9 @@ sub emergency {
 
 sub dumpobj {
     my ( $name, $obj ) = @_;
-    ( verbosity() >= 10 ) and &debug2("Dumping object $name:" . Dumper($obj) );
+    ( verbosity() >= 10 ) and &debug2( "Dumping object $name:" . Dumper($obj) );
 }
+
 BEGIN {
     use Exporter();
     our ( @ISA, @EXPORT );
@@ -104,15 +110,16 @@ BEGIN {
 
     GetOptions(
         "v+" => \$verbose,    # occurence counter
-        "q+" => \$quiet,    # occurence counter
+        "q+" => \$quiet,      # occurence counter
     );
-    $quiet ||=0;
+    $quiet   ||= 0;
     $verbose ||= 0;
     $verbosity = ( 6 + $verbose ) - $quiet;
     if ( $verbosity < 0 ) {
         $verbosity = 0;
-    } elsif ( $verbosity > 10 ) {
-        $verbosity =10;
+    }
+    elsif ( $verbosity > 10 ) {
+        $verbosity = 10;
     }
 
     debug("==== Log started");
