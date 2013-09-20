@@ -158,7 +158,6 @@ _herring() {
 			break
 		else
 			# elements of default_opts should be ignored
-			#if ! _containsElement "${COMP_WORDS[$i]}" "$default_opts"
 			if [[ ! "${COMP_WORDS[$i]}" =~ ^- ]]
 			then
                 local varname="${cur_opt}_${COMP_WORDS[$i]}_options"
