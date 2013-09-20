@@ -31,7 +31,7 @@ is( exists $view->{snapshot}, '', "There are no snapshots on vm" );
 throws_ok { &Guest::list_snapshot( $view->name ) } 'Entity::Snapshot', "list snapshot returns 1 for succesful run";
 is( &Guest::create_snapshot( $view->name, 'test', 'test' ), 1, "Create snapshot was succesful" );
 $view->update_view_data();
-stderr_like(  sub { &Guest::traverse_snapshot( $view->snapshot->rootSnapshotList->[0], $view->snapshot->currentSnapshot->value ) }, qr/^\*CUR\* ID=> '1', name=> 'test', creationTime=>'[^']*', description=>'test';$/, qr/^$/, "traverse snapshot returns one snapshot" );
+output_like(  sub { &Guest::traverse_snapshot( $view->snapshot->rootSnapshotList->[0], $view->snapshot->currentSnapshot->value ) }, qr/^\*CUR\* ID=> '1', name=> 'test', creationTime=>'[^']*', description=>'test'$/, qr/^$/, "traverse snapshot returns one snapshot" );
 is( &Guest::traverse_snapshot( $view->snapshot->rootSnapshotList->[0], $view->snapshot->currentSnapshot->value ), 0, "Traverse snapshot returned 0" );
 done_testing;
 END {

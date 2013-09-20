@@ -86,157 +86,128 @@ throws_ok {
 diag("Testing Catch and outputs");
 eval { Entity->throw( error => 'test', entity => 'test' ); };
 my $ex = $@;
-
-#Error.pm s4mur4i [ERROR] [3686]: I'm blue and I'm a WTF.....;
 combined_like(
     sub { &Error::catch_ex($ex) },
-    qr/Error.pm\s[^ ]*\s\[ERROR\]\s\[\d*\]:\sI'm blue and I'm a WTF.....;/,
+    qr/^Error.pm\s\[CRITICAL\]:\sI'm blue and I'm a WTF.....;/,
     "Entity Base exception"
 );
 eval { Template->throw( error => 'test', template => 'test' ); };
 $ex = $@;
 combined_like(
     sub { &Error::catch_ex($ex) },
-    qr/Error.pm\s[^ ]*\s\[ERROR\]\s\[\d*\]:\sI'm blue and I'm a WTF.....;/,
+    qr/^Error.pm\s\[CRITICAL\]:\sI'm blue and I'm a WTF.....;/,
     "Template Base exception"
 );
 eval { TaskEr->throw( error => 'test' ); };
 $ex = $@;
 combined_like(
     sub { &Error::catch_ex($ex) },
-    qr/Error.pm\s[^ ]*\s\[ERROR\]\s\[\d*\]:\sI'm blue and I'm a WTF.....;/,
+    qr/^Error.pm\s\[CRITICAL\]:\sI'm blue and I'm a WTF.....;/,
     "TaskEr Base exception"
 );
 eval { Connection->throw( error => 'test' ); };
 $ex = $@;
 combined_like(
     sub { &Error::catch_ex($ex) },
-    qr/Error.pm\s[^ ]*\s\[ERROR\]\s\[\d*\]:\sI'm blue and I'm a WTF.....;/,
+    qr/^Error.pm\s\[CRITICAL\]:\sI'm blue and I'm a WTF.....;/,
     "Connection Base exception"
 );
 eval { Vcenter->throw( error => 'test' ); };
 $ex = $@;
 combined_like(
     sub { &Error::catch_ex($ex) },
-    qr/Error.pm\s[^ ]*\s\[ERROR\]\s\[\d*\]:\sI'm blue and I'm a WTF.....;/,
+    qr/^Error.pm\s\[CRITICAL\]:\sI'm blue and I'm a WTF.....;/,
     "Vcenter Base exception"
 );
-eval {
-    Entity::NumException->throw(
-        error  => 'test',
-        entity => 'test',
-        count  => '1'
-    );
-};
+eval { Entity::NumException->throw( error  => 'test', entity => 'test', count  => '1'); };
 $ex = $@;
 stderr_like(
     sub { &Error::catch_ex($ex) },
-qr/Error.pm\s[^ ]*\s\[ERROR\]\s\[\d*\]:\sDesc=>'test',entity=>'test',count=>'1';/,
+    qr/^Error.pm\s\[CRITICAL\]:\sDesc=>'test',entity=>'test',count=>'1';$/,
     "Entity Numcount exception output"
 );
 eval { Entity::Status->throw( error => 'test', entity => 'test' ); };
 $ex = $@;
 stderr_like(
     sub { &Error::catch_ex($ex) },
-    qr/Error.pm\s[^ ]*\s\[ERROR\]\s\[\d*\]:\sDesc=>'test',entity=>'test';/,
+    qr/^Error.pm\s\[CRITICAL\]:\sDesc=>'test',entity=>'test';$/,
     "Entity Status exception output"
 );
-eval {
-    Entity::Auth->throw(
-        error    => 'test',
-        entity   => 'test',
-        username => 'me',
-        password => 'bebebebe'
-    );
-};
+eval { Entity::Auth->throw( error    => 'test', entity   => 'test', username => 'me', password => 'bebebebe'); };
 $ex = $@;
 stderr_like(
     sub { &Error::catch_ex($ex) },
-qr/Error.pm\s[^ ]*\s\[ERROR\]\s\[\d*\]:\sDesc=>'test',entity=>'test',user=>'me',pass=>'bebebebe';/,
+    qr/^Error.pm\s\[CRITICAL\]:\sDesc=>'test',entity=>'test',user=>'me',pass=>'bebebebe';$/,
     "Entity Auth exception output"
 );
 eval { Entity::TransferError->throw( error => 'test', entity => 'test' ); };
 $ex = $@;
 stderr_like(
     sub { &Error::catch_ex($ex) },
-    qr/Error.pm\s[^ ]*\s\[ERROR\]\s\[\d*\]:\sDesc=>'test',entity=>'test';/,
+    qr/^Error.pm\s\[CRITICAL\]:\sDesc=>'test',entity=>'test';$/,
     "Entity TransferError exception output"
 );
-eval {
-    Entity::HWError->throw( error => 'test', entity => 'test', hw => 'dick' );
-};
+eval { Entity::HWError->throw( error => 'test', entity => 'test', hw => 'dick' ); };
 $ex = $@;
 stderr_like(
     sub { &Error::catch_ex($ex) },
-qr/Error.pm\s[^ ]*\s\[ERROR\]\s\[\d*\]:\sDesc=>'test',entity=>'test',hw=>'dick';/,
+    qr/^Error.pm\s\[CRITICAL\]:\sDesc=>'test',entity=>'test',hw=>'dick';$/,
     "Entity HWError exception output"
 );
-eval {
-    Entity::Snapshot->throw(
-        error    => 'test',
-        entity   => 'test',
-        snapshot => 'test'
-    );
-};
+eval { Entity::Snapshot->throw( error => 'test', entity => 'test', snapshot => 'test'); };
 $ex = $@;
 stderr_like(
     sub { &Error::catch_ex($ex) },
-qr/Error.pm\s[^ ]*\s\[ERROR\]\s\[\d*\]:\sDesc=>'test',entity=>'test',snapshot=>'test';/,
+    qr/^Error.pm\s\[CRITICAL\]:\sDesc=>'test',entity=>'test',snapshot=>'test';$/,
     "Entity Snapshot exception output"
 );
 eval { Entity::Mac->throw( error => 'test', entity => 'test', mac => 'test' ); };
 $ex = $@;
 stderr_like(
     sub { &Error::catch_ex($ex) },
-qr/Error.pm\s[^ ]*\s\[ERROR\]\s\[\d*\]:\sDesc=>'test',entity=>'test',mac=>'test';/,
+    qr/^Error.pm\s\[CRITICAL\]:\sDesc=>'test',entity=>'test',mac=>'test';$/,
     "Entity Mac exception output"
 );
 eval { Vcenter::ServiceContent->throw( error => 'test' ); };
 $ex = $@;
 stderr_like(
     sub { &Error::catch_ex($ex) },
-    qr/Error.pm\s[^ ]*\s\[ERROR\]\s\[\d*\]:\sDesc=>'test';/,
+    qr/^Error.pm\s\[CRITICAL\]:\sDesc=>'test';$/,
     "Vcenter ServiceContent exception output"
 );
 eval { Vcenter::Path->throw( error => 'test', path => '/some/path/to/gold' ); };
 $ex = $@;
 stderr_like(
     sub { &Error::catch_ex($ex) },
-qr@Error.pm\s[^ ]*\s\[ERROR\]\s\[\d*\]:\sDesc=>'test',path=>'/some/path/to/gold';@,
+    qr@^Error.pm\s\[CRITICAL\]:\sDesc=>'test',path=>'/some/path/to/gold';$@,
     "Vcenter Path exception output"
 );
-eval {
-    Connection::Connect->throw(
-        error => 'test',
-        type  => 'test',
-        dest  => 'test'
-    );
-};
+eval { Connection::Connect->throw( error => 'test', type  => 'test', dest  => 'test'); };
 $ex = $@;
 stderr_like(
     sub { &Error::catch_ex($ex) },
-qr@Error.pm\s[^ ]*\s\[ERROR\]\s\[\d*\]:\sDesc=>'test',type=>'test',dest=>'test';@,
+    qr/^Error.pm\s\[CRITICAL\]:\sDesc=>'test',type=>'test',dest=>'test';$/,
     "Connection Connect exception output"
 );
 eval { Template::Status->throw( error => 'test', template => 'template' ); };
 $ex = $@;
 stderr_like(
     sub { &Error::catch_ex($ex) },
-qr@Error.pm\s[^ ]*\s\[ERROR\]\s\[\d*\]:\sDesc=>'test',template=>'template';@,
+    qr/^Error.pm\s\[CRITICAL\]:\sDesc=>'test',template=>'template';$/,
     "Template Status exception output"
 );
 eval { Template::Error->throw( error => 'test', template => 'template' ); };
 $ex = $@;
 stderr_like(
     sub { &Error::catch_ex($ex) },
-qr@Error.pm\s[^ ]*\s\[ERROR\]\s\[\d*\]:\sDesc=>'test',template=>'template';@,
+    qr/^Error.pm\s\[CRITICAL\]:\sDesc=>'test',template=>'template';$/,
     "Template Error exception output"
 );
 eval { TaskEr::NotDefined->throw( error => 'test' ); };
 $ex = $@;
 stderr_like(
     sub { &Error::catch_ex($ex) },
-    qr/Error.pm\s[^ ]*\s\[ERROR\]\s\[\d*\]:\sDesc=>'test';/,
+    qr/^Error.pm\s\[CRITICAL\]:\sDesc=>'test';$/,
     "TaskEr NotDefined exception output"
 );
 eval {
@@ -245,14 +216,14 @@ eval {
 $ex = $@;
 stderr_like(
     sub { &Error::catch_ex($ex) },
-qr@Error.pm\s[^ ]*\s\[ERROR\]\s\[\d*\]:\sDesc=>'test',detail=>'test',fault=>'test';@,
+    qr/^Error.pm\s\[CRITICAL\]:\sDesc=>'test',detail=>'test',fault=>'test';$/,
     "TaskEr Error exception output"
 );
 eval { BaseException->throw(); };
 $ex = $@;
-combined_like(
+stderr_like(
     sub { &Error::catch_ex($ex) },
-    qr/Error.pm\s[^ ]*\s\[ERROR\]\s\[\d*\]:\sI'm blue and I'm a WTF.....;/,
+    qr/^Error.pm\s\[CRITICAL\]:\sI'm blue and I'm a WTF.+;/,
     "Base Exception for all exceptions output"
 );
 done_testing();
