@@ -33,7 +33,7 @@ sub log2line {
         $hasargs, $wantarray, $evaltext, $is_require
     ) = caller(1);
     my $prefix =
-      basename($filename) . " " . getpwuid($<) . " [$level] [" . $$ . "]";
+      basename($filename) . " [" . $$ . "]:" . getpwuid($<) . " [$level]";
     my $prefix_stderr = basename($filename) . " [$level]";
     closelog();
     openlog( $prefix, "", LOG_USER );
