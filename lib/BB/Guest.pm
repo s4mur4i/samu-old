@@ -191,9 +191,7 @@ sub network_interfaces {
         $interfaces{$key}->{unitnumber}    = $device->unitNumber;
         $interfaces{$key}->{label}         = $device->deviceInfo->label;
         $interfaces{$key}->{summary}       = $device->deviceInfo->summary;
-        &Log::debug(
-"Interface gathered information, mac=>'$interfaces{$key}->{mac}', controllerkey=>'$interfaces{$key}->{controllerkey}', unitnumber=>'$interfaces{$key}->{unitnumber}', label=>'$interfaces{$key}->{label}', summary=>'$interfaces{$key}->{summary}', type=>'$interfaces{$key}->{type}', key=>'$key'"
-        );
+        &Log::debug("Interface gathered, information: ".(join ',', (map {"$_=>'".$interfaces{$key}->{$_}."'"} sort keys %{$interfaces{$key}}),"key=>'$key'"));
     }
     &Log::debug("Returning interfaces hash");
     return \%interfaces;
@@ -488,73 +486,6 @@ sub traverse_snapshot {
         }
     }
     return 0;
-}
-
-### print functions
-
-sub short_vm_info {
-    my ($name) = @_;
-    &Log::debug("Starting Guest::short_vm_info sub, name=>'$name'");
-    &VCenter::num_check( $name, 'VirtualMachine' );
-    my $view = Vim::find_entity_view(
-        view_type  => 'VirtualMachine',
-        properties => [ 'name', 'guest', 'summary.runtime.powerState' ],
-        filter => { name => $name }
-    );
-    print "VMname:'" . $view->name . "\n";
-    my $powerState = $view->get_property('summary.runtime.powerState');
-    print "\tPower State:'" . $powerState->val . "'\n";
-
-    print "\tAlternate name: '" . &Guest::get_altername( $view->name ) . "'";
-    if ( $view->guest->toolsStatus eq 'toolsNotInstalled' ) {
-        print "\tTools not installed. Cannot extract some information\n";
-    }
-    else {
-        if ( defined( $view->guest->net ) ) {
-            foreach ( @{ $view->guest->net } ) {
-                my $string = "";
-                if ( defined( $_->ipAddress ) ) {
-                    $string = "ipAddresses => [ "
-                      . join( ", ", @{ $_->ipAddress } ) . " ]";
-                }
-                if ( defined( $_->network ) ) {
-                    $string .= ", Network => '" . $_->network . "'";
-                }
-                if ( $string =~ /^$/ ) {
-                    $string = "No network information could be extracted";
-                }
-                print "\t" . $string . "\n";
-            }
-            if ( defined( $view->guest->hostName ) ) {
-                print "\tHostname: '" . $view->guest->hostName . "'\n";
-            }
-        }
-        else {
-            print "\tNo network information available\n";
-        }
-    }
-    my $vm_info = &Misc::vmname_splitter( $view->name );
-    my $os;
-    if ( $vm_info->{type} =~ /xcb/ ) {
-        &Log::debug("Product is an XCB product");
-        $os = "$vm_info->{family}_$vm_info->{version}";
-    }
-    elsif ( $vm_info->{type} ne 'unknown' ) {
-        &Log::debug("Product is known");
-        $os =
-"$vm_info->{family}_$vm_info->{version}_$vm_info->{lang}_$vm_info->{arch}_$vm_info->{type}";
-    }
-    if ( $vm_info->{uniq} ne 'unknown' ) {
-        if ( defined( &Support::get_key_info( 'template', $os ) ) ) {
-            print "\tDefault login : '" . &Support::get_key_value( 'template', $os, 'username' ) . "' / '" . &Support::get_key_value( 'template', $os, 'password' ) . "'\n";
-        }
-        else {
-            print "\tRegex matched an OS, but no template found to it os => '$os'\n";
-        }
-    }
-    else {
-        print "\tVmname not standard name => '$name'\n";
-    }
 }
 
 1
