@@ -2,6 +2,7 @@ package VCenter;
 
 use strict;
 use warnings;
+use Data::Dumper;
 
 BEGIN {
     use Exporter;
@@ -15,16 +16,21 @@ sub clonevm {
     my ( $template, $vmname, $folder, $clone_spec ) = @_;
     &Log::debug(
         "Starting VCenter::clonevm sub, vmname=>'$vmname', folder=>'$folder'");
+    &Log::dumpobj( "clone_spec", $clone_spec );
     my $template_view = &Guest::entity_name_view( $template, 'VirtualMachine' );
+    &Log::debug2( "template_view", $template_view );
     my $folder_view   = &Guest::entity_name_view( $folder,   'Folder' );
+    &Log::dumpobj( "folder_view", $folder_view );
     &Log::info("Starting Clone task");
     my $task = $template_view->CloneVM_Task(
         folder => $folder_view,
         name   => $vmname,
         spec   => $clone_spec
     );
+    &Log::dumpobj("Task object:" . Dumper($task) );
     &Task_Status($task);
     &Log::debug("Finished cloning vm");
+    return 1;
 }
 
 #tested
@@ -85,12 +91,14 @@ sub create_test_vm {
         deviceChange => \@vm_devices
     );
     $folder->CreateVM( pool => $resource_pool, config => $config_spec );
+    return 1;
 }
 
 sub create_test_entities {
     &VCenter::create_resource_pool( 'test_1337', 'Resources' );
     &VCenter::create_folder( 'test_1337', 'vm' );
     &VCenter::create_switch('test_1337');
+    return 1;
 }
 ### Helper subs to query information
 #tested
@@ -103,6 +111,7 @@ sub num_check {
         properties => ['name'],
         filter     => { name => $name }
     );
+    &Log::dumpobj( "views", $views );
     if ( scalar(@$views) ne 1 ) {
         Entity::NumException->throw(
             error  => 'Entity count not expected',
@@ -124,12 +133,12 @@ sub exists_entity {
         properties => ['name'],
         filter     => { name => $name }
     );
-    if ( defined($view) ) {
-        return 1;
-    }
-    else {
+    &Log::dumpobj( "view", $view );
+    if ( !defined($view) ) {
+        &Log::debug("Entity does not exist");
         return 0;
     }
+    return 1;
 }
 
 #tested
@@ -270,12 +279,12 @@ sub Task_Status {
     my $continue = 1;
     my $progress = 0;
     while ($continue) {
-        &Log::debug("Looping through Task query");
+        &Log::debug1("Looping through Task query");
         $task_view->ViewBase::update_view_data();
         if ( defined( $task_view->info->progress )
             and $progress ne $task_view->info->progress )
         {
-            &Log::normal( "Currently at " . $task_view->info->progress . "%" );
+            &Log::info( "Currently at " . $task_view->info->progress . "%" );
             $progress = $task_view->info->progress;
         }
         elsif ( $task_view->info->state->val eq 'success' ) {
@@ -371,6 +380,7 @@ sub create_resource_pool {
         memoryAllocation => $memoryallocation
     );
     &Log::debug("Starting creation of resource pool in parent");
+    &Log::dumpobj( "rp_spec", $rp_spec );
     my $rp_name_view =
       $rp_parent_view->CreateResourcePool( name => $rp_name, spec => $rp_spec );
 
@@ -382,6 +392,7 @@ sub create_resource_pool {
         );
     }
     &Log::debug("Resource pool creation was succesful");
+    &Log::dumpobj( "rp_name_view", $rp_name_view );
     return $rp_name_view;
 }
 
@@ -409,6 +420,7 @@ sub create_folder {
         );
     }
     my $fol_parent_view = &Guest::entity_name_view( $fol_parent, 'Folder' );
+    &Log::dumpobj( 'fol_parent_view', $fol_parent_view );
     &Log::debug("Starting creation of folder in parent");
     my $fol_name_view = $fol_parent_view->CreateFolder( name => $fol_name );
     if ( $fol_name_view->type ne $type ) {
@@ -418,6 +430,7 @@ sub create_folder {
             count  => '0'
         );
     }
+    &Log::dumpobj( 'fol_name_view', $fol_name_view );
     &Log::debug("Folder creation was succesful");
     return $fol_name_view;
 }
@@ -435,31 +448,36 @@ sub create_switch {
         );
     }
     my $network_folder = &Guest::entity_name_view( 'network', 'Folder' );
+    &num_check( 'vmware-it1.balabit', 'HostSystem' );
     my $host_view =
       &Guest::entity_name_view( 'vmware-it1.balabit', 'HostSystem' );
-    &num_check( 'vmware-it1.balabit', 'HostSystem' );
     my $hostspec = DistributedVirtualSwitchHostMemberConfigSpec->new(
         operation           => 'add',
         maxProxySwitchPorts => 99,
         host                => $host_view
     );
+    &Log::dumpobj( "hostspec", $hostspec );
     my $dvsconfigspec = DVSConfigSpec->new(
         name        => $name,
         maxPorts    => 300,
         description => "DVS for ticket $name",
         host        => [$hostspec]
     );
+    &Log::dumpobj( "dvsconfigspec", $dvsconfigspec );
     my $spec = DVSCreateSpec->new( configSpec => $dvsconfigspec );
+    &Log::dumpobj( "spec", $spec );
     my $task = $network_folder->CreateDVS_Task( spec => $spec );
+    &Log::dumpobj( "task", $task );
     &Task_Status($task);
     &Log::debug("Finished creating switch");
+    return 1;
 }
 
 #tested
 sub create_dvportgroup {
     my ( $name, $switch ) = @_;
     &Log::debug(
-"Starting VCenter::create_dvportgroup sub, name=>'$name', switch=>'$switch'"
+        "Starting VCenter::create_dvportgroup sub, name=>'$name', switch=>'$switch'"
     );
     if ( &exists_entity( $name, 'DistributedVirtualPortgroup' ) ) {
         Entity::NumException->throw(
@@ -471,15 +489,19 @@ sub create_dvportgroup {
     &num_check( $switch, 'DistributedVirtualSwitch' );
     my $switch_view =
       &Guest::entity_name_view( $switch, 'DistributedVirtualSwitch' );
+    &Log::dumpobj( "switch_view", $switch_view );
     my $spec = DVPortgroupConfigSpec->new(
         name        => $name,
         type        => 'earlyBinding',
         numPorts    => 20,
         description => "Port group"
     );
+    &Log::dumpobj( "spec", $spec );
     my $task = $switch_view->AddDVPortgroup_Task( spec => $spec );
+    &Log::dumpobj( "task", $task);
     &Task_Status($task);
     &Log::debug("Finished creating dv port group");
+    return 1;
 }
 
 #tested
@@ -515,6 +537,8 @@ sub SDK_options {
     Opts::add_options(%$opts);
     Opts::parse();
     Opts::validate();
+    &Log::debug("Options validated succesfully");
+    return 1;
 }
 
 #tested
@@ -534,12 +558,15 @@ sub connect_vcenter {
             dest  => 'VCenter'
         );
     }
+    &Log::debug("Connected succesfully to VCenter");
+    return 1;
 }
 
 #tested
 sub disconnect_vcenter {
     &Log::debug("Starting VCenter::disconnect_vcenter sub");
     Util::disconnect();
+    return 1;
 }
 
 #tested
@@ -550,6 +577,8 @@ sub service_content {
         Vcenter::ServiceContent->throw(
             error => 'Could not retrieve service content' );
     }
+    &Log::dumpobj( "service_content", $sc );
+    &Log::debug("Returning service content object");
     return $sc;
 }
 
@@ -561,6 +590,8 @@ sub get_vim {
         VCenter::ServiceContent->throw(
             error => 'Could not retrieve Vim object' );
     }
+    &Log::dumpobj( "vim", $vim );
+    &Log::debug("Returning vim object");
     return $vim;
 }
 
