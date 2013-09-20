@@ -15,12 +15,13 @@ sub bugzilla_status {
     my ($ticket) = @_;
     &Log::debug("Starting Bugzilla::bugzilla_status sub, ticket=>'$ticket'");
     my $url = "http://bugzilla.balabit/bugzilla-3.0/show_bug.cgi?id=$ticket";
-    &Log::debug("URL is:'$url'");
+    &Log::debug1("URL is:'$url'");
     my $content;
     for my $line ( split qr/\R/, get($url) ) {
+        &Log::debug2("Line is:'$line'");
         ($content) = $line =~ /\s*<span id="static_bug_status">(\w+)/
           if ( $line =~ /<span id="static_bug_status">/ );
-        &Log::debug($line);
+        &Log::debug2("Content is : $content");
     }
     if ( !defined($content) ) {
         &Log::debug("Content could not be understood returning Unknown");
