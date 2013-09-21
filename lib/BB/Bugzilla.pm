@@ -8,6 +8,7 @@ BEGIN {
     use Exporter;
     our @ISA    = qw( Exporter );
     our @EXPORT = qw( );
+    &Log::debug1("Loaded module Bugzilla");
 }
 
 #tested
