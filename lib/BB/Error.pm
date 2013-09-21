@@ -3,7 +3,9 @@ package Error;
 use strict;
 use warnings;
 
-#use lib "$FindBin::Bin";
+BEGIN {
+    &Log::debug1("Loaded module Error");
+}
 use Data::Dumper;
 use Exception::Class (
     'BaseException',
@@ -231,7 +233,7 @@ sub catch_ex {
         &Log::critical("Information:" . Dumper($ex) );
     }
     else {
-        &Log::info("This is an unknwo error. Dumping information");
+        &Log::info("This is an unkown error. Dumping information");
         &Log::critical("I'm blue and I'm a WTF.....");
         &Log::critical("Information:" . Dumper($ex) );
     }
