@@ -7,6 +7,7 @@ BEGIN {
     use Exporter;
     our @ISA    = qw( Exporter );
     our @EXPORT = qw( );
+    &Log::debug1("Loaded module Guest");
 }
 
 #tested
@@ -19,6 +20,7 @@ sub entity_name_view {
         properties => ['name'],
         filter     => { name => $name }
     );
+    &Log::dumpobj( "name_view", $view );
     return $view;
 }
 
@@ -30,6 +32,7 @@ sub entity_full_view {
     &VCenter::num_check( $name, $type );
     my $view =
       Vim::find_entity_view( view_type => $type, filter => { name => $name } );
+    &Log::dumpobj( "full_view", $view );
     return $view;
 }
 
@@ -45,31 +48,8 @@ sub entity_property_view {
         properties => [$property],
         filter     => { name => $name }
     );
+    &Log::dumpobj( "property_view", $view );
     return $view;
-}
-
-#tested
-sub vm_memory {
-    my ($name) = @_;
-    &Log::debug("Retrieving VirtualMachine memory size in MB, name=>'$name'");
-    my $view = Vim::find_entity_view(
-        view_type  => 'VirtualMachine',
-        properties => ['summary.config.memorySizeMB'],
-        filter     => { name => $name }
-    );
-    return $view->get_property('summary.config.memorySizeMB');
-}
-
-#tested
-sub vm_numcpu {
-    my ($name) = @_;
-    &Log::debug("Retrieving VirtualMachine Cpu count, name=>'$name'");
-    my $view = Vim::find_entity_view(
-        view_type  => 'VirtualMachine',
-        properties => ['summary.config.numCpu'],
-        filter     => { name => $name }
-    );
-    return $view->get_property('summary.config.numCpu');
 }
 
 sub find_last_snapshot {
