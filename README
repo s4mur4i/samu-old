@@ -1,0 +1,15 @@
+INSTALL
+
+# Base
+12.04
+zwa installed with default values
+
+libexception-class-perl libfile-homedir-perl libterm-readkey-perl libarchive-zip-perl libcrypt-ssleay-perl libxml-libxml-perl libdbd-mysql-perl
+
+# Test
+
+libtest-output-perl libtest-pod-perl libtest-strict-perl libtest-trap-perl libtest-perl-critic-perl libtest-fixme-perl libtest-eol-perl libtest-spelling-perl libtest-exception-perl libtest-file-perl
+
+Packages not found in apt
+
+Test::DNS, Test::Files, Test::PureASCII
