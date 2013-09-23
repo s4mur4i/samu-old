@@ -8,10 +8,8 @@ WriteMakefile(
     "VERSION"          => "20130905",
     "MIN_PERL_VERSION" => '5.14.0',
     "LICENSE"          => "perl",
-    "test"             => {
-        TESTS => 't/*.t t/*/*.t',
-    },
-    TEST_REQUIRES => {
+    "test"             => { TESTS => 't/*.t t/*/*.t', },
+    BUILD_REQUIRES     => {
         'Test::DNS'           => 0.13,
         'Test::EOL'           => 1.5,
         'Test::Exception'     => 0.32,
@@ -29,7 +27,8 @@ WriteMakefile(
         'ExtUtils::MakeMaker' => 6.74,
         'Test::Strict'        => 0.22,
     },
-    PREREQ_PM => {
+    CONFIGURE_REQUIRES => { 'ExtUtils::MakeMaker' => 6.57_05 },
+    PREREQ_PM          => {
         'Archive::Zip'     => 1.30,
         'Data::Dumper'     => 2.130_02,
         'Exception::Class' => 1.31,
@@ -56,5 +55,6 @@ WriteMakefile(
         'GSSAPI::Status'   => 0,
         'Crypt::SSLeay'    => 0.57,
     },
-    PREREQ_FATAL => 1,
+
+    #    PREREQ_FATAL => 1,
 );
