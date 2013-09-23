@@ -15,6 +15,7 @@ use BB::Kayako;
 
 use VMware::VIRuntime;
 
+&Log::debug1("Loaded module common");
 #tested
 our $VERSION = '1.0.0';
 

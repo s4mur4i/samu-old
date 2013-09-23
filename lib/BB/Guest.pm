@@ -7,6 +7,7 @@ BEGIN {
     use Exporter;
     our @ISA    = qw( Exporter );
     our @EXPORT = qw( );
+    &Log::debug1("Loaded module Guest");
 }
 
 #tested
@@ -14,11 +15,7 @@ sub entity_name_view {
     my ( $name, $type ) = @_;
     &Log::debug("Retrieving entity name view, name=>'$name', type=>'$type'");
     &VCenter::num_check( $name, $type );
-    my $view = Vim::find_entity_view(
-        view_type  => $type,
-        properties => ['name'],
-        filter     => { name => $name }
-    );
+    my $view = &entity_property_view( $name, 'VirtualMachine', 'name' );
     return $view;
 }
 
@@ -30,6 +27,7 @@ sub entity_full_view {
     &VCenter::num_check( $name, $type );
     my $view =
       Vim::find_entity_view( view_type => $type, filter => { name => $name } );
+    &Log::dumpobj( "full_view", $view );
     return $view;
 }
 
@@ -45,31 +43,8 @@ sub entity_property_view {
         properties => [$property],
         filter     => { name => $name }
     );
+    &Log::dumpobj( "property_view", $view );
     return $view;
-}
-
-#tested
-sub vm_memory {
-    my ($name) = @_;
-    &Log::debug("Retrieving VirtualMachine memory size in MB, name=>'$name'");
-    my $view = Vim::find_entity_view(
-        view_type  => 'VirtualMachine',
-        properties => ['summary.config.memorySizeMB'],
-        filter     => { name => $name }
-    );
-    return $view->get_property('summary.config.memorySizeMB');
-}
-
-#tested
-sub vm_numcpu {
-    my ($name) = @_;
-    &Log::debug("Retrieving VirtualMachine Cpu count, name=>'$name'");
-    my $view = Vim::find_entity_view(
-        view_type  => 'VirtualMachine',
-        properties => ['summary.config.numCpu'],
-        filter     => { name => $name }
-    );
-    return $view->get_property('summary.config.numCpu');
 }
 
 sub find_last_snapshot {
@@ -296,29 +271,6 @@ sub CustomizationAdapterMapping_generator {
     return @return;
 }
 
-sub count_hw {
-    my ( $vmname, $hw ) = @_;
-    &Log::debug("Starting Guest::count_hw sub, vmname=>'$vmname', hw=>'$hw'");
-    &VCenter::num_check( $vmname, 'VirtualMachine' );
-    my $view = Vim::find_entity_view(
-        view_type  => 'VirtualMachine',
-        properties => ['config.hardware.device'],
-        filter     => { name => $vmname }
-    );
-    my $count = 0;
-    &Log::debug("Starting loop through hardver");
-    my $devices = $view->get_property('config.hardware.device');
-    foreach ( @{$devices} ) {
-
-        if ( $_->isa($hw) ) {
-            &Log::debug("Found requrested hardver incrementing count");
-            $count++;
-        }
-    }
-    &Log::debug("Returning count=>'$count'");
-    return $count;
-}
-
 sub get_hw {
     my ( $vmname, $hw ) = @_;
     &Log::debug("Starting Guest::count_hw sub, vmname=>'$vmname', hw=>'$hw'");
@@ -347,11 +299,7 @@ sub poweron {
     my ($vmname) = @_;
     &Log::debug("Starting Guest::poweron sub, vmname=>'$vmname'");
     &VCenter::num_check( $vmname, 'VirtualMachine' );
-    my $view = Vim::find_entity_view(
-        view_type  => 'VirtualMachine',
-        properties => ['runtime.powerState'],
-        filter     => { name => $vmname }
-    );
+    my $view = &entity_property_view( $vmname, 'VirtualMachine', 'runtime.powerState' );
     my $powerstate = $view->get_property('runtime.powerState');
     if ( $powerstate->val ne "poweredOff" ) {
         &Log::warning("Machine is already powered on");
@@ -368,11 +316,7 @@ sub poweroff {
     my ($vmname) = @_;
     &Log::debug("Starting Guest::poweroff sub, vmname=>'$vmname'");
     &VCenter::num_check( $vmname, 'VirtualMachine' );
-    my $view = Vim::find_entity_view(
-        view_type  => 'VirtualMachine',
-        properties => ['runtime.powerState'],
-        filter     => { name => $vmname }
-    );
+    my $view = &entity_property_view( $vmname, 'VirtualMachine', 'runtime.powerState' );
     my $powerstate = $view->get_property('runtime.powerState');
     if ( $powerstate->val eq "poweredOff" ) {
         &Log::warning("Machine is already powered off");
@@ -405,7 +349,7 @@ sub revert_to_snapshot {
             my $task = $moref->RevertToSnapshot_Task( suppressPowerOn => 1 );
             &Vcenter::Task_Status($task);
             &Log::debug(
-"Finishing GuestManagement::revert_to_snapshot sub, return=>'success'"
+                "Finishing GuestManagement::revert_to_snapshot sub, return=>'success'"
             );
             return 1;
         }
@@ -422,10 +366,13 @@ sub find_snapshot_by_id {
           . "', id=>'$id'" );
     my $return;
     if ( $snapshot_view->id == $id ) {
+        &Log::debug("Found the requested snapshot");
         $return = $snapshot_view;
     }
     elsif ( defined( $snapshot_view->childSnapshotList ) ) {
         foreach ( @{ $snapshot_view->childSnapshotList } ) {
+            &Log::debug2("Iterating through a snapshot");
+            &Log::dumpobj( "snapshot", $_ );
             if ( !defined($return) ) {
                 &Log::debug(
                     "We have not found the required snapshot searching");
@@ -434,6 +381,7 @@ sub find_snapshot_by_id {
         }
     }
     &Log::debug("Returning snapshot");
+    &Log::dumpobj( "returning snapshot", $return );
     return $return;
 }
 
@@ -443,7 +391,6 @@ sub create_snapshot {
     &Log::debug(
 "Starting Guest::create_snapshot sub, vmname=>'$vmname', snap_name=>'$snap_name', desc=>'$desc'"
     );
-    &VCenter::num_check( $vmname, 'VirtualMachine' );
     my $view = &entity_name_view( $vmname, 'VirtualMachine' );
     my $task = $view->CreateSnapshot_Task(
         name        => $snap_name,
@@ -452,6 +399,7 @@ sub create_snapshot {
         quiesce     => 1
     );
     &VCenter::Task_Status($task);
+    &Log::debug("Finished create_snapshot sub");
     return 1;
 }
 
@@ -459,7 +407,6 @@ sub create_snapshot {
 sub list_snapshot {
     my ($vmname) = @_;
     &Log::debug("Starting Guest::list_snapshot sub, vmname=>'$vmname'");
-    &VCenter::num_check( $vmname, 'VirtualMachine' );
     my $view = &entity_property_view( $vmname, 'VirtualMachine', 'snapshot' );
     if ( !defined( $view->snapshot ) ) {
         Entity::Snapshot->throw(
@@ -469,6 +416,7 @@ sub list_snapshot {
         );
     }
     my $current_snapshot = $view->snapshot->currentSnapshot->value;
+    &Log::debug1("My current snapshot is: $current_snapshot");
     foreach ( @{ $view->snapshot->rootSnapshotList } ) {
         &Log::debug("Traversing snapshot");
         &traverse_snapshot( $_, $current_snapshot );
@@ -484,6 +432,7 @@ sub traverse_snapshot {
 "Starting Guest::traverse_snapshot sub, current_snapshot=>'$current_snapshot', snapshot_moref_name=>'"
           . $snapshot_moref->name
           . "'" );
+    &Log::dumpobj( "snapshot_moref", $snapsot_moref );
     my $current = "";
     if ( $snapshot_moref->snapshot->value eq $current_snapshot ) {
         &Log::debug("Found current active snapshot");
@@ -503,7 +452,8 @@ sub traverse_snapshot {
             &traverse_snapshot( $_, $current_snapshot );
         }
     }
-    return 0;
+    &Log::debug("Finished traverse_snapshot sub");
+    return 1;
 }
 
 1
