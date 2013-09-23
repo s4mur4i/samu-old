@@ -55,6 +55,5 @@ WriteMakefile(
         'GSSAPI::Status'   => 0,
         'Crypt::SSLeay'    => 0.57,
     },
-
-    #    PREREQ_FATAL => 1,
+    PREREQ_FATAL => 1,
 );
