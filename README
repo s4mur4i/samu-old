@@ -12,4 +12,4 @@ libtest-output-perl libtest-pod-perl libtest-strict-perl libtest-trap-perl libte
 
 Packages not found in apt
 
-Test::DNS, Test::Files, Test::PureASCII
+Test::DNS, Test::Files, Test::PureASCII Test::PerlTidy
