@@ -4,7 +4,7 @@ INSTALL
 12.04
 zwa installed with default values
 
-libexception-class-perl libfile-homedir-perl libterm-readkey-perl libarchive-zip-perl libcrypt-ssleay-perl libxml-libxml-perl libdbd-mysql-perl libgssapi-perl
+libexception-class-perl libfile-homedir-perl libterm-readkey-perl libarchive-zip-perl libcrypt-ssleay-perl libxml-libxml-perl libdbd-mysql-perl libgssapi-perl libpod-simple-wiki-perl
 
 # Test
 
