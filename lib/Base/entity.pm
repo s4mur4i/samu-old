@@ -323,19 +323,27 @@ sub list_cdrom {
     my @cdrom_hw = &Guest::get_hw( $vmname, 'VirtualCdrom' );
     for ( my $i = 0 ; $i < scalar(@cdrom_hw) ; $i++ ) {
         &Log::debug("Iterating thorugh CDrom hardware '$i'");
+        &Log::dumpobj( "cdrom $i", $cdrom_hw[$i] );
         my $backing = "Unknown";
-        if ( ${ $cdrom_hw[$i] }->backing->isa('VirtualCdromIsoBackingInfo') ) {
+        if ( $cdrom_hw[$i]->{backing}->isa('VirtualCdromIsoBackingInfo') ) {
             &Log::debug("Backing is a file backing");
-            $backing = ${ $cdrom_hw[$i] }->backing->fileName;
+            $backing = $cdrom_hw[$i]->{backing}->fileName;
         }
-        elsif ( ${ $cdrom_hw[$i] }
-            ->backing->isa('VirtualCdromRemotePassthroughBackingInfo') )
+        elsif ( $cdrom_hw[$i]->{backing}
+            ->isa('VirtualCdromRemotePassthroughBackingInfo') )
         {
-            &Log::debug("Backing is a remote pas through backing");
+            &Log::debug("Backing is a remote passthrough backing");
             $backing = "Host Device";
         }
-        print
-"number=>'$i', key=>'${$cdrom_hw[$i]}->key', backing=>'$backing', label=>'${$cdrom_hw[$i]}->label'\n";
+        my $label = $cdrom_hw[$i]->{label} || "None";
+        print "number=>'"
+          . $i
+          . "', key=>'"
+          . $cdrom_hw[$i]->{key}
+          . "', backing=>'"
+          . $backing
+          . "', label=>'"
+          . $label . "'\n";
     }
     &Log::debug("Finished list_cdrom sub");
     return 1;
@@ -345,6 +353,7 @@ sub list_network {
     &Log::debug("Entity::list_network sub started");
     my $vmname = Opts::get_option('vmname');
     &Log::debug("Requested options, vmname=>'$vmname'");
+    my @net_hw = &Guest::get_hw( $vmname, 'VirtualEthernetCard' );
     return 1;
 }
 
@@ -353,10 +362,18 @@ sub list_disk {
     my $vmname = Opts::get_option('vmname');
     &Log::debug("Requested options, vmname=>'$vmname'");
     my @disk_hw = &Guest::get_hw( $vmname, 'VirtualDisk' );
+    &Log::dumpobj( "disk_hw", @disk_hw );
     for ( my $i = 0 ; $i < scalar(@disk_hw) ; $i++ ) {
         &Log::debug("Iterating thorugh disk hardware '$i'");
-        print
-"number=>'$i', key=>'${$disk_hw[$i]}->key', size=>'${$disk_hw[$i]}->capacityInKB' KB, path=>${$disk_hw[$i]}->backing->fileName\n";
+        &Log::dumpobj( "disk $i", $disk_hw[$i] );
+        print "number=>'"
+          . $i
+          . "', key=>'"
+          . $disk_hw[$i]->{key}
+          . "', size=>'"
+          . $disk_hw[$i]->{capacityInKB}
+          . "' KB, path=>'"
+          . $disk_hw[$i]->{backing}->{fileName} . "'\n";
     }
     &Log::debug("Finished list_disk sub");
     return 1;
