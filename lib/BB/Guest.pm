@@ -14,7 +14,7 @@ sub entity_name_view {
     my ( $name, $type ) = @_;
     &Log::debug("Retrieving entity name view, name=>'$name', type=>'$type'");
     &VCenter::num_check( $name, $type );
-    my $view = &entity_property_view( $name, 'VirtualMachine', 'name' );
+    my $view = &entity_property_view( $name, $type, 'name' );
     return $view;
 }
 
