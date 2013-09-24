@@ -155,10 +155,10 @@ my %template_hash = (
         os       => 'other',
     },
     'ubuntu_10.04_en_amd64_sta' => {
-	path => 'Support/vm/templates/Linux/ubuntu/T_ubuntu_10.04_en_amd64_sta',
-	username => 'root',
-	password => 'titkos',
-	os       => 'other'
+        path => 'Support/vm/templates/Linux/ubuntu/T_ubuntu_10.04_en_amd64_sta',
+        username => 'root',
+        password => 'titkos',
+        os       => 'other'
     },
 );
 
