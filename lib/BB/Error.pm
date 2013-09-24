@@ -3,9 +3,6 @@ package Error;
 use strict;
 use warnings;
 
-BEGIN {
-    &Log::debug1("Loaded module Error");
-}
 use Data::Dumper;
 use Exception::Class (
     'BaseException',

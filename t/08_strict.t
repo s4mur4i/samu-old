@@ -19,7 +19,7 @@ if ( $EVAL_ERROR ) {
     plan( skip_all => $msg );
 }
 
-my @dirs = ( "$FindBin::Bin/../blib" );
+my @dirs = ( "$FindBin::Bin/../lib" );
 Test::Strict->import;
 diag("Testing presence of strict in perl files");
 all_perl_files_ok(@dirs);

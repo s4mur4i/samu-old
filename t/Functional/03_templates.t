@@ -33,9 +33,11 @@ for my $T_vm ( @$T_vms) {
     isa_ok( &Guest::entity_full_view( $T_vm->name, 'VirtualMachine' ), 'VirtualMachine', "Moref is returned by known object" );
     isa_ok( &Guest::entity_full_view( $T_vm->name, 'VirtualMachine', 'name' ), 'VirtualMachine', "Moref is returned by known object" );
     my $memory = Vim::find_entity_view( view_type  => 'VirtualMachine', properties => ['summary.config.memorySizeMB'], filter => { name => $T_vm->name });
-    ok( &Guest::entity_property_view( $T_vm->name, 'VirtualMachine', 'summary.config.memorySizeMB' ) eq $memory->get_property('summary.config.memorySizeMB'), "vm_memory returned correct value" );
+    my $view = &Guest::entity_property_view( $T_vm->name, 'VirtualMachine', 'summary.config.memorySizeMB' );
+    ok( $view->get_property('summary.config.memorySizeMB') eq $memory->get_property('summary.config.memorySizeMB'), "vm_memory returned correct value" );
     my $cpu = Vim::find_entity_view( view_type  => 'VirtualMachine', properties => ['summary.config.numCpu'], filter => { name => $T_vm->name });
-    ok( &Guest::entity_property_view( $T_vm->name, 'VirtualMachine', 'summary.config.numCpu' ) eq $cpu->get_property('summary.config.numCpu'), "vm_numcpu returned correct value" );
+    $view = &Guest::entity_property_view( $T_vm->name, 'VirtualMachine', 'summary.config.numCpu' );
+    ok( $view->get_property('summary.config.numCpu') eq $cpu->get_property('summary.config.numCpu'), "vm_numcpu returned correct value" );
     diag("Testing altername");
     is( &Guest::get_altername($T_vm->name), '', "Altername is default for " . $T_vm->name );
     like( &Guest::get_annotation_key( $T_vm->name, "alternateName" ), qr/^\d+$/, "Annotation_key returns digit" );
