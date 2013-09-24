@@ -32,7 +32,7 @@ throws_ok { &Guest::list_snapshot( $view->name ) } 'Entity::Snapshot', "list sna
 is( &Guest::create_snapshot( $view->name, 'test', 'test' ), 1, "Create snapshot was succesful" );
 $view->update_view_data();
 output_like(  sub { &Guest::traverse_snapshot( $view->snapshot->rootSnapshotList->[0], $view->snapshot->currentSnapshot->value ) }, qr/^\*CUR\*\sID\s=>\s'1',\sname\s=>\s'test',\screateTime\s=>\s'[^']*',\sdescription\s=>\s'test'$/, qr/^$/, "traverse snapshot returns one snapshot" );
-is( &Guest::traverse_snapshot( $view->snapshot->rootSnapshotList->[0], $view->snapshot->currentSnapshot->value ), 0, "Traverse snapshot returned 0" );
+is( &Guest::traverse_snapshot( $view->snapshot->rootSnapshotList->[0], $view->snapshot->currentSnapshot->value ), 1, "Traverse snapshot returned 1" );
 done_testing;
 END {
     my @types = ( 'VirtualMachine', 'ResourcePool', 'Folder', 'DistributedVirtualSwitch' );
