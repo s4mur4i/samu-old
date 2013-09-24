@@ -7,3 +7,4 @@ egrep -Rh "^use\s*[^: ]*[\s;]+$" * | sort -u|egrep -v "strict|warnings|constant|
 ## static module
 echo "DBD::mysql" >> $file
 echo "Test::Perl::Critic" >> $file
+echo "Pod::Simple::Wiki" >> $file

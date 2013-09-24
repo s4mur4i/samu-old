@@ -41,3 +41,4 @@ Exporter
 FindBin
 DBD::mysql
 Test::Perl::Critic
+Pod::Simple::Wiki
