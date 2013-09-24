@@ -154,9 +154,8 @@ sub path2name {
             path  => $path
         );
     }
-    perl-support / templates / comments . templates
-      : #perl-support/templates/comments.templates:#my $view = &moref2view($moref);
-      return $view->name;
+    my $view = &moref2view($moref);
+    return $view->name;
 }
 
 #tested
