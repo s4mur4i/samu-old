@@ -24,6 +24,7 @@ sub verbosity {
 # args: (generic description, followed by arguments as a hash)
 # example: $l = log2line('Incoming connection', ip => '1.2.3.4', local_port => 1234, remote_port => $rport);
 sub log2line {
+    $0 =~ s/.*\///g;    # strip off the leading . from the program name
     my $level = shift;
     my $msg   = shift;
     my %args  = @_;
@@ -33,7 +34,11 @@ sub log2line {
         $hasargs, $wantarray, $evaltext, $is_require
     ) = caller(1);
     my $prefix =
-      basename($filename) . " [" . $$ . "]:" . getpwuid($<) . " [$level]";
+        $0 . "["
+      . $$ . "]: ("
+      . basename($filename) . ") "
+      . getpwuid($<)
+      . " [$level]";
     my $prefix_stderr = basename($filename) . " [$level]";
     closelog();
     openlog( $prefix, "", LOG_USER );
