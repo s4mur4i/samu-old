@@ -7,7 +7,6 @@ BEGIN {
     use Exporter;
     our @ISA    = qw( Exporter );
     our @EXPORT = qw( );
-    &Log::debug1("Loaded module Guest");
 }
 
 #tested
@@ -299,7 +298,8 @@ sub poweron {
     my ($vmname) = @_;
     &Log::debug("Starting Guest::poweron sub, vmname=>'$vmname'");
     &VCenter::num_check( $vmname, 'VirtualMachine' );
-    my $view = &entity_property_view( $vmname, 'VirtualMachine', 'runtime.powerState' );
+    my $view =
+      &entity_property_view( $vmname, 'VirtualMachine', 'runtime.powerState' );
     my $powerstate = $view->get_property('runtime.powerState');
     if ( $powerstate->val ne "poweredOff" ) {
         &Log::warning("Machine is already powered on");
@@ -316,7 +316,8 @@ sub poweroff {
     my ($vmname) = @_;
     &Log::debug("Starting Guest::poweroff sub, vmname=>'$vmname'");
     &VCenter::num_check( $vmname, 'VirtualMachine' );
-    my $view = &entity_property_view( $vmname, 'VirtualMachine', 'runtime.powerState' );
+    my $view =
+      &entity_property_view( $vmname, 'VirtualMachine', 'runtime.powerState' );
     my $powerstate = $view->get_property('runtime.powerState');
     if ( $powerstate->val eq "poweredOff" ) {
         &Log::warning("Machine is already powered off");
@@ -349,7 +350,7 @@ sub revert_to_snapshot {
             my $task = $moref->RevertToSnapshot_Task( suppressPowerOn => 1 );
             &Vcenter::Task_Status($task);
             &Log::debug(
-                "Finishing GuestManagement::revert_to_snapshot sub, return=>'success'"
+"Finishing GuestManagement::revert_to_snapshot sub, return=>'success'"
             );
             return 1;
         }
@@ -432,7 +433,7 @@ sub traverse_snapshot {
 "Starting Guest::traverse_snapshot sub, current_snapshot=>'$current_snapshot', snapshot_moref_name=>'"
           . $snapshot_moref->name
           . "'" );
-    &Log::dumpobj( "snapshot_moref", $snapsot_moref );
+    &Log::dumpobj( "snapshot_moref", $snapshot_moref );
     my $current = "";
     if ( $snapshot_moref->snapshot->value eq $current_snapshot ) {
         &Log::debug("Found current active snapshot");
