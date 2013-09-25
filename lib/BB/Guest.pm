@@ -92,7 +92,7 @@ sub change_altername {
         "Starting Guest::change_altername sub, vmname=>'$vmname', name=>'$name'"
     );
     &VCenter::num_check( $vmname, 'VirtualMachine' );
-    my $view   = &entity_name_view($vmname);
+    my $view   = &entity_name_view($vmname, 'VirtualMachine');
     my $sc     = Vim::get_service_content();
     my $custom = Vim::get_view( mo_ref => $sc->customFieldsManager );
     my $key    = &get_annotation_key( $vmname, "alternateName" );
