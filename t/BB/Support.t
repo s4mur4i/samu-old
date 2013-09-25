@@ -30,8 +30,6 @@ ok( ref( &Support::get_keys("agents") ) eq 'ARRAY', 'get_keys returned array' );
 throws_ok { &Support::get_keys('TEST') } 'Template::Status',
   'get_keys throws exception';
 
-ok( ref( &Support::get_key_info( 'template', 'scb_342' ) ) eq 'HASH',
-    'get_key_info returned hash' );
 throws_ok { &Support::get_key_info( 'TEST', 'TEST' ) } 'Template::Status',
   'get_key_info throws exception for bad map';
 throws_ok { &Support::get_key_info( 'template', 'TEST' ) } 'Template::Status',
@@ -65,6 +63,7 @@ for my $os_temp ( @{ &Support::get_keys("template") } ) {
         uuid     => '12345678-abcd-1234-cdef-123456789abc',
         version  => '1'
     );
+    ok( ref( &Support::get_key_info( 'template', $os_temp ) ) eq 'HASH', 'get_key_info returned hash' );
     my $snapshot_view =
       VirtualMachineSnapshot->new( config => $snapshot_config );
     isa_ok( &Support::RelocateSpec('test_1337'),
