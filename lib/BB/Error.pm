@@ -155,7 +155,7 @@ sub catch_ex {
         &Log::critical( "Desc=>'"
               . $ex->error
               . "',entity=>'"
-              . $ex->error
+              . $ex->entity
               . "',snapshot=>'"
               . $ex->snapshot
               . "'" );
