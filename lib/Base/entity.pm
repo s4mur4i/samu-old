@@ -330,12 +330,18 @@ sub list_cdrom {
             $backing = $cdrom_hw[$i]->{backing}->fileName;
         }
         elsif ( $cdrom_hw[$i]->{backing}
-            ->isa('VirtualCdromRemotePassthroughBackingInfo') )
+            ->isa('VirtualCdromRemotePassthroughBackingInfo')
+            or
+            $cdrom_hw[$i]->{backing}->isa('VirtualCdromRemoteAtapiBackingInfo')
+          )
         {
-            &Log::debug("Backing is a remote passthrough backing");
-            $backing = "Host Device";
+            &Log::debug("Backing is a Client device backing either passthrough or emulated ide");
+            $backing = "Client Device";
+        } elsif ( $cdrom_hw[$i]->{backing}->isa('VirtualCdromAtapiBackingInfo') ) {
+            &Log::debug("Backing is a Host device backing");
+            $backing = $cdrom_hw[$i]->{backing}->{deviceName};
         }
-        my $label = $cdrom_hw[$i]->{label} || "None";
+        my $label = $cdrom_hw[$i]->{deviceInfo}->{label} || "None";
         print "number=>'"
           . $i
           . "', key=>'"
