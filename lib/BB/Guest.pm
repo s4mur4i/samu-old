@@ -334,6 +334,7 @@ sub poweroff {
     return 1;
 }
 
+#tested
 sub revert_to_snapshot {
     my ( $vmname, $id ) = @_;
     &Log::debug(
@@ -414,11 +415,63 @@ sub create_snapshot {
 }
 
 #tested
+sub remove_all_snapshots {
+    my ($vmname) = @_;
+    &Log::debug("Starting Guest::remove_all_snapshot sub, vmname=>'$vmname'");
+    my $view = &entity_property_view( $vmname, 'VirtualMachine', 'snapshot' );
+    if ( !defined( $view->snapshot ) ) {
+        Entity::Snapshot->throw(
+            error    => "Entity has no snapshots defined",
+            entity   => $vmname,
+            snapshot => 0
+        );
+    }
+    my $task = $view->RemoveAllSnapshots_Task( consolidate => 1 );
+    &Log::dumpobj( "task", $task );
+    &VCenter::Task_Status( $task );
+    &Log::debug("Finished removing all snapshot");
+    return 1;
+}
+
+#tested
+sub remove_snapshot {
+    my ($vmname, $id ) = @_;
+    &Log::debug("Starting Guest::remove_snapshot sub, vmname=>'$vmname', id=>'$id'");
+    my $view = &entity_property_view( $vmname, 'VirtualMachine', 'snapshot' );
+    if ( !defined( $view->snapshot ) ) {
+        Entity::Snapshot->throw(
+            error    => "Entity has no snapshots defined",
+            entity   => $vmname,
+            snapshot => 0
+        );
+    } else {
+        foreach ( @{ $view->snapshot->rootSnapshotList } ) {
+            &Log::dumpobj( "snapshot", $_ );
+            my $snapshot = &find_snapshot_by_id( $_, $id );
+            if ( defined( $snapshot ) ) {
+                my $view = &VCenter::moref2view( $snapshot->snapshot );
+                &Log::dumpobj( "view", $view);
+                my $task = $view->RemoveSnapshot_Task( removeChildren => 0 );
+                &Log::dumpobj( "task", $task );
+                &VCenter::Task_Status( $task );
+                &Log::debug("Finished removing snapshot");
+                return 1;
+            } else {
+                &Log::debug("Requested snapshot is not in this tree");
+            }
+        }
+        &Log::debug("Finished Looping through the snapshots");
+    }
+    &Log::debug("Could not find requested snapshot id to remove");
+    return 0;
+}
+
+#tested
 sub list_snapshot {
     my ($vmname) = @_;
     &Log::debug("Starting Guest::list_snapshot sub, vmname=>'$vmname'");
     my $view = &entity_property_view( $vmname, 'VirtualMachine', 'snapshot' );
-    if ( !defined( $view->snapshot ) ) {
+    if ( !defined( $view->snapshot ) or !defined( $view->snapshot->currentSnapshot ) ) {
         Entity::Snapshot->throw(
             error    => "Entity has no snapshots defined",
             entity   => $vmname,

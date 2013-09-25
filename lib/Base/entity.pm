@@ -165,8 +165,19 @@ our $module_opts = {
                     opts     => {
                         vmname => {
                             type     => '=s',
-                            help     => 'Which VMs cdrom to list.',
+                            help     => 'Which VMs snapshot to delete',
                             required => '1',
+                        },
+                        id => {
+                            type     => '=s',
+                            help     => 'Id of snapshot to delete',
+                            required => '0',
+                        },
+                        all => {
+                            type     => '',
+                            help     => 'Delete all snapshots',
+                            required => '0',
+                            default => 0,
                         },
                     },
                 },
@@ -335,9 +346,13 @@ sub list_cdrom {
             $cdrom_hw[$i]->{backing}->isa('VirtualCdromRemoteAtapiBackingInfo')
           )
         {
-            &Log::debug("Backing is a Client device backing either passthrough or emulated ide");
+            &Log::debug(
+"Backing is a Client device backing either passthrough or emulated ide"
+            );
             $backing = "Client Device";
-        } elsif ( $cdrom_hw[$i]->{backing}->isa('VirtualCdromAtapiBackingInfo') ) {
+        }
+        elsif ( $cdrom_hw[$i]->{backing}->isa('VirtualCdromAtapiBackingInfo') )
+        {
             &Log::debug("Backing is a Host device backing");
             $backing = $cdrom_hw[$i]->{backing}->{deviceName};
         }
@@ -394,15 +409,17 @@ sub change_altername {
     return 1;
 }
 
+#tested
 sub change_snapshot {
     &Log::debug("Entity::list_snapshot sub started");
     my $vmname = Opts::get_option('vmname');
     my $id     = Opts::get_option('id');
     &Log::debug("Requested options, vmname=>'$vmname', id=>'$id'");
-    &Guest::revert_to_snapshot_id( $vmname, $id );
+    &Guest::revert_to_snapshot( $vmname, $id );
     return 1;
 }
 
+#tested
 sub list_snapshot {
     &Log::debug("Entity::list_snapshot sub started");
     my $vmname = Opts::get_option('vmname');
@@ -411,14 +428,19 @@ sub list_snapshot {
     return 1;
 }
 
+#tested
 sub add_snapshot {
     &Log::debug("Entity::add_snapshot sub started");
     my $vmname    = Opts::get_option('vmname');
     my $snap_name = Opts::get_option('snap_name');
     my $desc      = Opts::get_option('desc');
-    &Log::debug(
-"Requested options, vmname=>'$vmname', snap_name=>'$snap_name', desc=>'$desc'"
-    );
+    &Log::debug( "Requested options, vmname=>'"
+          . $vmname
+          . "', snap_name=>'"
+          . $snap_name
+          . "', desc=>'"
+          . $desc
+          . "'" );
     &Guest::create_snapshot( $vmname, $snap_name, $desc );
     &Log::info("Finished creating snapshot");
     return 1;
@@ -567,6 +589,28 @@ sub delete_vm {
     else {
         &Log::info("Entity deleted succesfully");
     }
+    return 1;
+}
+
+#tested
+sub delete_snapshot {
+    &Log::debug("Entity::delete_snapshot sub started");
+    my $vmname = Opts::get_option('vmname');
+    my $id     = Opts::get_option('id') || 0;
+    my $all    = Opts::get_option('all');
+    &Log::debug("Arguments are, vmname=>'$vmname', id=>'$id', all=>'$all'");
+    if ($all) {
+        &Log::debug("All snapshots need to be removed");
+        &Guest::remove_all_snapshots($vmname);
+    }
+    elsif ( $id) {
+        &Log::debug("$id snapshot need to be removed");
+        &Guest::remove_snapshot( $vmname, $id );
+    }
+    else {
+        &Log::warning("Please give either all or id");
+    }
+    &Log::info("Snapshot delete sub completed");
     return 1;
 }
 
