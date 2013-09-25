@@ -49,14 +49,14 @@ sub option_parser {
             &Log::debug("Parsing options to VMware SDK");
             &VCenter::SDK_options( $opts->{opts} );
             eval {
-                &Log::debug("Connecting to Vcenter");
+                &Log::debug("Connecting to VCenter");
                 &VCenter::connect_vcenter();
             };
             if ($@) { &Error::catch_ex($@) }
         }
         &Log::debug("Invoking handler function of $module_name");
         &{ $opts->{function} };
-        &Log::debug("Disconnecting from Vcenter");
+        &Log::debug("Disconnecting from VCenter");
         &VCenter::disconnect_vcenter();
     }
     else {

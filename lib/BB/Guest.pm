@@ -353,7 +353,7 @@ sub revert_to_snapshot {
             &Log::debug("Found Id reverting");
             my $moref = Vim::get_view( mo_ref => $snapshot->snapshot );
             my $task = $moref->RevertToSnapshot_Task( suppressPowerOn => 1 );
-            &Vcenter::Task_Status($task);
+            &VCenter::Task_Status($task);
             &Log::debug(
 "Finishing GuestManagement::revert_to_snapshot sub, return=>'success'"
             );
