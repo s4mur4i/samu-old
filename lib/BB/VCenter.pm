@@ -171,7 +171,7 @@ sub path2moref {
             path  => $path
         );
     }
-    &Log::dumbobj( "moref", $moref );
+    &Log::dumpobj( "moref", $moref );
     &Log::debug("Returning moref");
     return $moref;
 }
