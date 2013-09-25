@@ -440,17 +440,19 @@ sub clone_vm {
         $memory = Opts::get_option('memory');
     }
     else {
-        $memory =
+        my $view =
           &Guest::entity_property_view( $os_temp_view->name, 'VirtualMachine',
             'summary.config.memorySizeMB' );
+        $memory = $view->get_property('summary.config.memorySizeMB');
     }
     if ( defined( Opts::get_option('cpu') ) ) {
         $cpu = Opts::get_option('cpu');
     }
     else {
-        $cpu =
+        my $view =
           &Guest::entity_property_view( $os_temp_view->name, 'VirtualMachine',
             'summary.config.numCpu' );
+        $cpu = $view->get_property('summary.config.numCpu');
     }
     &Log::info("Memory and cpu, memory=>'$memory', cpu=>'$cpu'");
     &Log::debug("Checking if parent resource pool exists");
