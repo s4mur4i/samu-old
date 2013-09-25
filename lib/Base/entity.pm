@@ -327,6 +327,7 @@ sub main {
     &misc::option_parser( $module_opts, "main" );
 }
 
+#tested
 sub list_cdrom {
     &Log::debug("Entity::list_cdrom sub started");
     my $vmname = Opts::get_option('vmname');
@@ -370,14 +371,27 @@ sub list_cdrom {
     return 1;
 }
 
+#tested
 sub list_network {
     &Log::debug("Entity::list_network sub started");
     my $vmname = Opts::get_option('vmname');
     &Log::debug("Requested options, vmname=>'$vmname'");
     my @net_hw = &Guest::get_hw( $vmname, 'VirtualEthernetCard' );
+    for ( my $i = 0 ; $i < scalar(@net_hw) ; $i++ ) {
+        &Log::debug("Iterating thorugh Network hardware '$i'");
+        &Log::dumpobj( "network $i", $net_hw[$i] );
+        my $type = "Unknown";
+        if ( $net_hw[$i]->isa('VirtualE1000') ) {
+            $type = "E1000";
+        } else {
+            &Log::debug("Some unknown interface type, need to implement object handle");
+        }
+        print "number=>'$i', key=>'".$net_hw[$i]->{key}."', mac=>'".$net_hw[$i]->{macAddress}."', network=>'".$net_hw[$i]->{backing}->{deviceName}."', type=>'".$type."', label=>'".$net_hw[$i]->{deviceInfo}->{label}."'\n";
+    }
     return 1;
 }
 
+#tested
 sub list_disk {
     &Log::debug("Entity::list_disk sub started");
     my $vmname = Opts::get_option('vmname');
