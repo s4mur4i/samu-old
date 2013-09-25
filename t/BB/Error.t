@@ -60,11 +60,11 @@ throws_ok {
 }
 'Entity', 'Entity Mac Exception';
 throws_ok { Vcenter::ServiceContent->throw( error => 'test' ) } 'Vcenter',
-  'Vcenter Service Content Exception';
+  'VCenter Service Content Exception';
 throws_ok {
     Vcenter::Path->throw( error => 'test', path => '/path/to/inventory' );
 }
-'Vcenter', 'Vcenter Path Exception';
+'Vcenter', 'VCenter Path Exception';
 throws_ok { Template::Status->throw( error => 'test', template => 'test' ) }
 'Template', 'Template Status Exception';
 throws_ok { Template::Error->throw( error => 'test', template => 'test' ) }
@@ -117,7 +117,7 @@ $ex = $@;
 combined_like(
     sub { &Error::catch_ex($ex) },
     qr/^Error.pm\s\[CRITICAL\]:\sI'm blue and I'm a WTF.....;/,
-    "Vcenter Base exception"
+    "VCenter Base exception"
 );
 eval { Entity::NumException->throw( error  => 'test', entity => 'teste', count  => '1'); };
 $ex = $@;
@@ -173,14 +173,14 @@ $ex = $@;
 stderr_like(
     sub { &Error::catch_ex($ex) },
     qr/^Error.pm\s\[CRITICAL\]:\sDesc=>'test';$/,
-    "Vcenter ServiceContent exception output"
+    "VCenter ServiceContent exception output"
 );
 eval { Vcenter::Path->throw( error => 'test', path => '/some/path/to/gold' ); };
 $ex = $@;
 stderr_like(
     sub { &Error::catch_ex($ex) },
     qr@^Error.pm\s\[CRITICAL\]:\sDesc=>'test',path=>'/some/path/to/gold';$@,
-    "Vcenter Path exception output"
+    "VCenter Path exception output"
 );
 eval { Connection::Connect->throw( error => 'test1', type  => 'test2', dest  => 'test3'); };
 $ex = $@;

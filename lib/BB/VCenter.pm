@@ -127,7 +127,7 @@ sub num_check {
 sub exists_entity {
     my ( $name, $type ) = @_;
     &Log::debug(
-        "Starting Vcenter::exists_entity sub, name=>'$name', type=>'$type'");
+        "Starting VCenter::exists_entity sub, name=>'$name', type=>'$type'");
     my $view = Vim::find_entity_view(
         view_type  => $type,
         properties => ['name'],
@@ -193,7 +193,7 @@ sub moref2view {
 sub linked_clone_folder {
     my ($temp_name) = @_;
     &Log::debug(
-        "Starting Vcenter::linked_clone_folder sub, temp_name=>'$temp_name'");
+        "Starting VCenter::linked_clone_folder sub, temp_name=>'$temp_name'");
     my $temp_fol;
     if ( &exists_entity( $temp_name, 'Folder' ) ) {
         &Log::info("Linked clone folder already exists");
@@ -215,7 +215,7 @@ sub linked_clone_folder {
 #tested
 sub check_if_empty_entity {
     my ( $name, $type ) = @_;
-    &Log::debug( "Starting Vcenter::check_if_empty_entity sub, name=>'"
+    &Log::debug( "Starting VCenter::check_if_empty_entity sub, name=>'"
           . $name
           . "', type=>'"
           . $type
@@ -346,7 +346,7 @@ sub create_resource_pool {
           . "'" );
     my $type = 'ResourcePool';
     if ( &exists_entity( $rp_name, $type ) ) {
-        &Log::debug("Resource pool already exists on Vcenter");
+        &Log::debug("Resource pool already exists on VCenter");
         Entity::NumException->throw(
             error  => 'Resource pool already exists. Cannot create',
             entity => $rp_name,
@@ -354,7 +354,7 @@ sub create_resource_pool {
         );
     }
     elsif ( !&exists_entity( $rp_parent, $type ) ) {
-        &Log::debug("Resource pool parent doesn't exists on Vcenter");
+        &Log::debug("Resource pool parent doesn't exists on VCenter");
         Entity::NumException->throw(
             error  => 'Resource pool parent doesn\'t exist. Cannot create',
             entity => $rp_parent,
@@ -411,7 +411,7 @@ sub create_folder {
     );
     my $type = 'Folder';
     if ( &exists_entity( $fol_name, $type ) ) {
-        &Log::debug("Folder already exists on Vcenter");
+        &Log::debug("Folder already exists on VCenter");
         Entity::NumException->throw(
             error  => 'Folder already exists. Cannot create',
             entity => $fol_name,
@@ -419,7 +419,7 @@ sub create_folder {
         );
     }
     elsif ( !&exists_entity( $fol_parent, $type ) ) {
-        &Log::debug("Folder parent doesn't exists on Vcenter");
+        &Log::debug("Folder parent doesn't exists on VCenter");
         Entity::NumException->throw(
             error  => 'Folder parent doesn\'t exist. Cannot create',
             entity => $fol_parent,
