@@ -171,6 +171,7 @@ sub path2moref {
             path  => $path
         );
     }
+    &Log::dumpobj( "moref", $moref );
     &Log::debug("Returning moref");
     return $moref;
 }
@@ -179,10 +180,12 @@ sub path2moref {
 sub moref2view {
     my ($moref) = @_;
     &Log::debug("Starting VCenter::moref2view sub");
+    &Log::dumpobj( "moref", $moref );
     my $view = Vim::get_view( mo_ref => $moref );
     if ( !defined($view) ) {
         Entity::Status->throw( error => "Could not retrieve view from moref" );
     }
+    &Log::dumpobj( "view", $view );
     &Log::debug("Returning view");
     return $view;
 }
@@ -212,9 +215,11 @@ sub linked_clone_folder {
 #tested
 sub check_if_empty_entity {
     my ( $name, $type ) = @_;
-    &Log::debug(
-"Starting Vcenter::check_if_empty_entity sub, name=>'$name', type=>'$type'"
-    );
+    &Log::debug( "Starting Vcenter::check_if_empty_entity sub, name=>'"
+          . $name
+          . "', type=>'"
+          . $type
+          . "'" );
     my $view;
     if ( $type eq 'DistributedVirtualSwitch' ) {
         $view = Vim::find_entity_view(
@@ -300,7 +305,7 @@ sub Task_Status {
         }
     }
     &Log::debug("Finishing VCenter::Task_status sub");
-    return;
+    return 1;
 }
 
 #tested
@@ -334,9 +339,11 @@ sub name2path {
 #tested
 sub create_resource_pool {
     my ( $rp_name, $rp_parent ) = @_;
-    &Log::debug(
-"Starting VCenter::create_resource_pool sub, rp_name=>'$rp_name', rp_parent=>'$rp_parent'"
-    );
+    &Log::debug( "Starting VCenter::create_resource_pool sub, rp_name=>'"
+          . $rp_name
+          . "', rp_parent=>'"
+          . $rp_parent
+          . "'" );
     my $type = 'ResourcePool';
     if ( &exists_entity( $rp_name, $type ) ) {
         &Log::debug("Resource pool already exists on Vcenter");

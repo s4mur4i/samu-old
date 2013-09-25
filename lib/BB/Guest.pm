@@ -248,8 +248,9 @@ sub generate_network_setup {
 sub CustomizationAdapterMapping_generator {
     my ($vmname) = @_;
     &Log::debug(
-"Starting Guest::CustomizationAdapterMapping_generator sub, vmname=>'$vmname'"
-    );
+        "Starting Guest::CustomizationAdapterMapping_generator sub, vmname=>'"
+          . $vmname
+          . "'" );
     my @return;
     for my $key ( keys &network_interfaces($vmname) ) {
         &Log::debug("Generating $key Adapter mapping");
@@ -272,7 +273,11 @@ sub CustomizationAdapterMapping_generator {
 
 sub get_hw {
     my ( $vmname, $hw ) = @_;
-    &Log::debug("Starting Guest::count_hw sub, vmname=>'$vmname', hw=>'$hw'");
+    &Log::debug( "Starting Guest::count_hw sub, vmname=>'"
+          . $vmname
+          . "', hw=>'"
+          . $hw
+          . "'" );
     &VCenter::num_check( $vmname, 'VirtualMachine' );
     my @hw   = ();
     my $view = Vim::find_entity_view(
@@ -389,9 +394,13 @@ sub find_snapshot_by_id {
 #tested
 sub create_snapshot {
     my ( $vmname, $snap_name, $desc ) = @_;
-    &Log::debug(
-"Starting Guest::create_snapshot sub, vmname=>'$vmname', snap_name=>'$snap_name', desc=>'$desc'"
-    );
+    &Log::debug( "Starting Guest::create_snapshot sub, vmname=>'"
+          . $vmname
+          . "', snap_name=>'"
+          . $snap_name
+          . "', desc=>'"
+          . $desc
+          . "'" );
     my $view = &entity_name_view( $vmname, 'VirtualMachine' );
     my $task = $view->CreateSnapshot_Task(
         name        => $snap_name,
@@ -430,7 +439,9 @@ sub list_snapshot {
 sub traverse_snapshot {
     my ( $snapshot_moref, $current_snapshot ) = @_;
     &Log::debug(
-"Starting Guest::traverse_snapshot sub, current_snapshot=>'$current_snapshot', snapshot_moref_name=>'"
+            "Starting Guest::traverse_snapshot sub, current_snapshot=>'"
+          . $current_snapshot
+          . "', snapshot_moref_name=>'"
           . $snapshot_moref->name
           . "'" );
     &Log::dumpobj( "snapshot_moref", $snapshot_moref );
