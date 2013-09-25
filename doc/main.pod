@@ -1,16 +1,15 @@
 =head1 NAME
 
-    herring.pl -- Support automatisation script
+herring.pl -- Support automatisation script
 
 =head1 DESCRIPTION
 
-    This script is used as a wrapper script for automatisation task used by support.
-
-    To get information about any sub module call any option with help. Documentation and information can be reached under the repective sub module help.
+This script is used as a wrapper script for automatisation task used by support.
+To get information about any sub module call any option with help. Documentation and information can be reached under the respective sub module help.
 
 =head1 SYNOPSIS
 
-    herring.pl [options] [function]
+herring.pl [options] [function]
 
 =head1 OPTIONS
 
@@ -18,19 +17,19 @@
 
 =item --help|-h
 
-    Print the help page
+Print the help page
 
 =item --man|-m
 
-    Print the man page with information about all modules
+Print the man page with information about all modules
 
 =item -v|-vv|-vvv|-vvvv
 
-    Increase verbosity of printing
+Increase verbosity of printing
 
 =item -q|-qq|-qqq|-qqqq|-qqqqq|-qqqqqq
 
-    Decrease verbosity of printing
+Decrease verbosity of printing
 
 =back
 
@@ -40,39 +39,39 @@
 
 =item vm
 
-    Access VM Entity functions
+Access VM Entity functions
 
 =item datastore
 
-    Access Datastore functions
+Access Datastore functions
 
 =item ticket
 
-    Access ticket functions
+Access ticket functions
 
 =item kayako
 
-    Access kayako functions
+Access kayako functions
 
 =item bugzilla
 
-    Access bugzilla functions
+Access bugzilla functions
 
 =item admin
 
-    Higher level commands for administering or maintenance of the Vcenter and environment
+Higher level commands for administering or maintenance of the VCenter and environment
 
 =back
 
 =head1 SUBS
 
-    List of defined functions, each can be called with it's own help and detailed information. Each sub has their own help defined.
+List of defined functions, each can be called with it's own help and detailed information. Each sub has their own help defined.
 
 =head1 VM
 
 =head3 SYNOPSIS
 
-    herring.pl vm [options] [function]
+herring.pl vm [options] [function]
 
 =head3 OPTIONS
 
@@ -80,7 +79,7 @@
 
 =item --help|-h
 
-    Print the help page
+Print the help page
 
 =back
 
@@ -90,27 +89,27 @@
 
 =item clone
 
-    Sub used to provision vm guests from templates.
+Sub used to provision vm guests from templates.
 
 =item add
 
-    Sub to add different hardwares to a guest
+Sub to add different hardware to a guest
 
 =item list
 
-    Sub to list different hardwares of a guest
+Sub to list different hardware of a guest
 
 =item delete
 
-    Sub to delete/remove different hardwares of a guest
+Sub to delete/remove different hardware of a guest
 
 =item change
 
-    Sub to change settings of a guest
+Sub to change settings of a guest
 
 =item info
 
-    Sub used to dump information about a vm
+Sub used to dump information about a vm
 
 =back
 
@@ -120,7 +119,7 @@
 
 =head3 SYNOPSIS
 
-    herring.pl vm clone [options]
+herring.pl vm clone [options]
 
 =head3 OPTIONS
 
@@ -132,7 +131,7 @@
 
 =head3 SYNOPSIS
 
-    herring.pl vm list [options] [function]
+herring.pl vm list [options] [function]
 
 =head3 OPTIONS
 
@@ -146,19 +145,19 @@
 
 =item network
 
-    List network interfaces attached to a vm
+List network interfaces attached to a vm
 
 =item cdrom
 
-    List cdrom-s attached to a vm
+List cdrom-s attached to a vm
 
 =item disk
 
-    List disk-s attached to a vm
+List disk-s attached to a vm
 
 =item snapshot
 
-    List snapshots attached to a vm
+List snapshots attached to a vm
 
 =back
 
@@ -166,7 +165,7 @@
 
 =head3 SYNOPSIS
 
-    herring.pl vm add [options] [function]
+herring.pl vm add [options] [function]
 
 =head3 OPTIONS
 
@@ -180,19 +179,19 @@
 
 =item cdrom
 
-    Add a cdrom drive to a vm
+Add a cdrom drive to a vm
 
 =item network
 
-    Add a network interface to a vm
+Add a network interface to a vm
 
 =item disk
 
-    Add a thin provisioned hard disk to a vm
+Add a thin provisioned hard disk to a vm
 
 =item snapshot
 
-    List snapshots attached to a vm
+List snapshots attached to a vm
 
 =back
 
@@ -200,7 +199,7 @@
 
 =head3 SYNOPSIS
 
-    herring.pl vm delete [options] [function]
+herring.pl vm delete [options] [function]
 
 =head3 OPTIONS
 
@@ -214,19 +213,19 @@
 
 =item cdrom
 
-    Delete a cdrom drive to a vm
+Delete a cdrom drive to a vm
 
 =item network
 
-    Delete a network interface to a vm
+Delete a network interface to a vm
 
 =item disk
 
-    Delete a hard disk from a vm
+Delete a hard disk from a vm
 
 =item snapshot
 
-    Delete a snapshot attached to a vm
+Delete a snapshot attached to a vm
 
 =back
 
@@ -234,7 +233,7 @@
 
 =head3 SYNOPSIS
 
-    herring.pl vm change [options] [function]
+herring.pl vm change [options] [function]
 
 =head3 OPTIONS
 
@@ -248,23 +247,23 @@
 
 =item cdrom
 
-    Change the backend iso to a cdrom drive
+Change the backend iso to a cdrom drive
 
 =item network
 
-    Change the network connected to a network
+Change the network connected to a network
 
 =item altername
 
-    Change the alternative name of a vm
+Change the alternative name of a vm
 
 =item snapshot
 
-    Revert to snapshot attached to a vm
+Revert to snapshot attached to a vm
 
 =item power
 
-    Change the power state of a vm
+Change the power state of a vm
 
 =back
 
@@ -272,7 +271,7 @@
 
 =head3 SYNOPSIS
 
-    herring.pl vm info [options] [function]
+herring.pl vm info [options] [function]
 
 =head3 OPTIONS
 
@@ -286,11 +285,11 @@
 
 =item dumper
 
-    This information is used for development purposes, It dumps all object information about vm to STDOUT
+This information is used for development purposes, It dumps all object information about vm to STDOUT
 
 =item runtime
 
-    Information about runtime environment
+Information about runtime environment
 
 =back
 
@@ -298,7 +297,7 @@
 
 =head3 SYNOPSIS
 
-    herring.pl vm info dumper [options]
+herring.pl vm info dumper [options]
 
 =head3 OPTIONS
 
@@ -310,7 +309,7 @@
 
 =head3 SYNOPSIS
 
-    herring.pl vm info runtime [options]
+herring.pl vm info runtime [options]
 
 =head3 OPTIONS
 
@@ -322,7 +321,7 @@
 
 =head3 SYNOPSIS
 
-    herring.pl ticket [options] [function]
+herring.pl ticket [options] [function]
 
 
 =head3 OPTIONS
@@ -331,7 +330,7 @@
 
 =item --help|-h
 
-    Print the help page
+Print the help page
 
 =back
 
@@ -341,23 +340,23 @@
 
 =item list
 
-    List all ticket on the ESXi, their owner, the kayako status currently, and if possible the Bugzilla status
+List all ticket on the ESXi, their owner, the kayako status currently, and if possible the Bugzilla status
 
 =item info
 
-    List all machines attached to a ticket, and their logon information
+List all machines attached to a ticket, and their login information
 
 =item on
 
-    Turn all machines on attached to a ticket
+Turn all machines on attached to a ticket
 
 =item off
 
-    Turn all machines off attached to a ticket
+Turn all machines off attached to a ticket
 
 =item delete
 
-    Delete all entities attsached to a ticket
+Delete all entities attached to a ticket
 
 =back
 
@@ -367,7 +366,7 @@
 
 =head3 SYNOPSIS
 
-    herring.pl ticket list [options]
+herring.pl ticket list [options]
 
 =head3 OPTIONS
 
@@ -379,7 +378,7 @@
 
 =head3 SYNOPSIS
 
-    herring.pl ticket info [options]
+herring.pl ticket info [options]
 
 =head3 OPTIONS
 
@@ -391,7 +390,7 @@
 
 =head3 SYNOPSIS
 
-    herring.pl ticket on [options]
+herring.pl ticket on [options]
 
 =head3 OPTIONS
 
@@ -399,7 +398,7 @@
 
 =item --help|-h
 
-    Print the help page
+Print the help page
 
 =back
 
@@ -407,7 +406,7 @@
 
 =head3 SYNOPSIS
 
-    herring.pl ticket off [options]
+herring.pl ticket off [options]
 
 =head3 OPTIONS
 
@@ -419,7 +418,7 @@
 
 =head3 SYNOPSIS
 
-    herring.pl ticket delete [options]
+herring.pl ticket delete [options]
 
 =head3 OPTIONS
 
@@ -431,7 +430,7 @@
 
 =head3 SYNOPSIS
 
-    herring.pl datastore [options] [function]
+herring.pl datastore [options] [function]
 
 =head3 OPTIONS
 
@@ -445,19 +444,19 @@
 
 =item list
 
-    List datastores mounted on Vcenter
+List datastores mounted on VCenter
 
 =item add
 
-    Add a datastore to the Vcenter
+Add a datastore to the VCenter
 
 =item delete
 
-    Unmount and delete a datastore from the Vcenter
+Unmount and delete a datastore from the VCenter
 
 =item info
 
-    Information about a datastore
+Information about a datastore
 
 =back
 
@@ -467,7 +466,7 @@
 
 =head3 SYNOPSIS
 
-    herring.pl datastore list [options]
+herring.pl datastore list [options]
 
 =head3 OPTIONS
 
@@ -479,7 +478,7 @@
 
 =head3 SYNOPSIS
 
-    herring.pl datastore add [options]
+herring.pl datastore add [options]
 
 =head3 OPTIONS
 
@@ -491,7 +490,7 @@
 
 =head3 SYNOPSIS
 
-    herring.pl datastore delete [options]
+herring.pl datastore delete [options]
 
 =head3 OPTIONS
 
@@ -503,7 +502,7 @@
 
 =head3 SYNOPSIS
 
-    herring.pl datastore info [options]
+herring.pl datastore info [options]
 
 =head3 OPTIONS
 
@@ -515,7 +514,7 @@
 
 =head3 SYNOPSIS
 
-    herring.pl kayako [options] [functions]
+herring.pl kayako [options] [functions]
 
 =head3 OPTIONS
 
@@ -523,7 +522,7 @@
 
 =item -help|-h
 
-    Print the help page
+Print the help page
 
 =back
 
@@ -533,7 +532,7 @@
 
 =item TBD
 
-    To Be Defined
+To Be Defined
 
 =back
 
@@ -543,7 +542,7 @@
 
 =head3 SYNOPSIS
 
-    herring.pl bugzilla [options] [functions]
+herring.pl bugzilla [options] [functions]
 
 =head3 OPTIONS
 
@@ -551,7 +550,7 @@
 
 =item -help|-h
 
-    Print the help page
+Print the help page
 
 =back
 
@@ -561,7 +560,7 @@
 
 =item TBD
 
-    To Be Defined
+To Be Defined
 
 =back
 
@@ -571,7 +570,7 @@
 
 =head3 SYNOPSIS
 
-    herring.pl admin [functions] [options]
+herring.pl admin [functions] [options]
 
 =head3 OPTIONS
 
@@ -579,7 +578,7 @@
 
 =item --help|-h
 
-    Print the help page
+Print the help page
 
 =back
 
@@ -589,19 +588,19 @@
 
 =item cleanup
 
-    Start the cleanup task to remove empty entites on the Vcenter
+Start the cleanup task to remove empty entities on the VCenter
 
 =item templates
 
-    List template names and paths
+List template names and paths
 
 =item test
 
-    Test connection to VCenter. Prints the Server time
+Test connection to VCenter. Prints the Server time
 
 =item pod2wiki
 
-    Transfer a pod file to Dokuwiki format
+Transfer a pod file to Dokuwiki format
 
 =back
 
@@ -611,7 +610,7 @@
 
 =head3 SYNOPSIS
 
-    herring.pl admin cleanup [options]
+herring.pl admin cleanup [options]
 
 =head3 OPTIONS
 
@@ -623,7 +622,7 @@
 
 =head3 SYNOPSIS
 
-    herring.pl admin templates [options]
+herring.pl admin templates [options]
 
 =head3 OPTIONS
 
@@ -635,7 +634,7 @@
 
 =head3 SYNOPSIS
 
-    herring.pl admin test [options]
+herring.pl admin test [options]
 
 =head3 OPTIONS
 
@@ -647,7 +646,7 @@
 
 =head3 SYNOPSIS
 
-    herring.pl admin pod2wiki [options]
+herring.pl admin pod2wiki [options]
 
 =head3 OPTIONS
 
@@ -655,11 +654,11 @@
 
 =item in
 
-    The POD file to transfer
+The POD file to transfer
 
 =item out
 
-    The output file
+The output file
 
 =back
 
@@ -669,77 +668,77 @@
 
 =item --config (variable VI_CONFIG)
 
-    Location of the VI Perl configuration file
+Location of the VI Perl configuration file
 
 =item --credstore (variable VI_CREDSTORE)
 
-    Name of the credential store file defaults to <HOME>/.vmware/credstore/vicredentials.xml on Linux and <APPDATA>/VMware/credstore/vicredentials.xml on Windows
+Name of the credential store file defaults to <HOME>/.vmware/credstore/vicredentials.xml on Linux and <APPDATA>/VMware/credstore/vicredentials.xml on Windows
 
 =item --encoding (variable VI_ENCODING, default 'utf8')
 
-    Encoding: utf8, cp936 (Simplified Chinese), iso-8859-1 (German), shiftjis (Japanese)
+Encoding: utf8, cp936 (Simplified Chinese), iso-8859-1 (German), shiftjis (Japanese)
 
 =item --help
 
-    Display usage information for the script
+Display usage information for the script
 
 =item --passthroughauth (variable VI_PASSTHROUGHAUTH)
 
-    Attempt to use pass-through authentication
+Attempt to use pass-through authentication
 
 =item --passthroughauthpackage (variable VI_PASSTHROUGHAUTHPACKAGE, default 'Negotiate')
 
-    Pass-through authentication negotiation package
+Pass-through authentication negotiation package
 
 =item --password (variable VI_PASSWORD)
 
-    Password
+Password
 
 =item --portnumber (variable VI_PORTNUMBER)
 
-    Port used to connect to server
+Port used to connect to server
 
 =item --protocol (variable VI_PROTOCOL, default 'https')
 
-    Protocol used to connect to server
+Protocol used to connect to server
 
 =item --savesessionfile (variable VI_SAVESESSIONFILE)
 
-    File to save session ID/cookie to utilize
+File to save session ID/cookie to utilize
 
 =item --server (variable VI_SERVER, default 'localhost')
 
-    VI server to connect to. Required if url is not present
+VI server to connect to. Required if url is not present
 
 =item --servicepath (variable VI_SERVICEPATH, default '/sdk/webService')
 
-    Service path used to connect to server
+Service path used to connect to server
 
 =item --sessionfile (variable VI_SESSIONFILE)
 
-    File containing session ID/cookie to utilize
+File containing session ID/cookie to utilize
 
 =item --url (variable VI_URL)
 
-    VI SDK URL to connect to. Required if server is not present
+VI SDK URL to connect to. Required if server is not present
 
 =item --username (variable VI_USERNAME)
 
-    Username
+Username
 
 =item --verbose (variable VI_VERBOSE)
 
-    Display additional debugging information
+Display additional debugging information
 
 =item --version
 
-    Display version information for the script
+Display version information for the script
 
 =back
 
 =head1 BUGS
 
-    Known Bugs:
+Known Bugs:
 
 =over
 
@@ -749,26 +748,47 @@
 
 =head1 FILES
 
-    SDK uses the default ~/.visdkrc for storing enviromental values.
-    Further information can be found on: https://supportwiki.balabit/doku.php/products:vmware:infra_info
-    The file should have following content:
+SDK uses the default ~/.visdkrc for storing environmental values.
+Further information can be found on: https://supportwiki.balabit/doku.php/products:vmware:infra_info
+The file should have following content:
 
-    VI_USERNAME=
-    VI_PASSWORD=
-    VI_SERVER=vcenter.ittest.balabit
-    VI_URL=https://vcenter.ittest.balabit/sdk
-    VI_PORTNUMBER=443
-    VI_PROTOCOL=HTTPS
-    VI_SERVICEPATH=/sdk/webService
+	VI_USERNAME=
+	VI_PASSWORD=
+	VI_SERVER=10.21.0.1
+	VI_URL=https://10.21.0.1/sdk
+	VI_PORTNUMBER=443
+	VI_PROTOCOL=HTTPS
+	VI_SERVICEPATH=/sdk/webService
 
-    You only need to fill the username and password entry with your AD username/password
-    In .bashrc the following entry should also be added:
+You only need to fill the username and password entry with your AD username/password
+In .bashrc the following entry should also be added:
 
-    PERL_LWP_SSL_VERIFY_HOSTNAME=0
+	PERL_LWP_SSL_VERIFY_HOSTNAME=0
 
 =head1 INSTALLATION
 
-    To test all required modules with required versions two scripts are required.
+To test all required modules with required versions two scripts are required.
+
+=head2 dependency
+
+Two deb files have been created to make dependency install easier. they can be found under the deb folder.
+
+=over
+
+=item balabit-prereq
+
+These packages are needed to run the normal scripts
+
+=item balabit-test-prereq
+
+These packages are needed to run the test scripts. Some packages can only be installed from CPAN, README should contain additional information
+
+=back
+
+To install the dependencies please do following:
+
+	dpkg -i deb/<package>.deb
+	apt-get install -f
 
 =head2 generate_perl_modules.sh+TEST_PERL_MODULES.pl
 
@@ -776,136 +796,136 @@
 
 =item generate_perl_modules.sh
 
-    This script will help to generate a list of modules from scripts that are up to date. Under normal circumstances you don't need to run this script
-    This script will generate the PERL_MODULES file which is required by TEST_PERL_MODULES.pl
+This script will help to generate a list of modules from scripts that are up to date. Under normal circumstances you don't need to run this script
+This script will generate the PERL_MODULES file which is required by TEST_PERL_MODULES.pl
 
 =item TEST_PERL_MODULES.pl
 
-    This script will do a test require on all modules in PERL_MODULES, and test if they can be loaded successfully
-    If you would like to test if the modules for running the test framework are installed run it with env variable TEST
+This script will do a test require on all modules in PERL_MODULES, and test if they can be loaded successfully
+If you would like to test if the modules for running the test framework are installed run it with environment variable TEST
 
-    TEST=1 ./TEST_PERL_MODULES.pl
+	TEST=1 ./TEST_PERL_MODULES.pl
 
 =back
 
 =head2 Makefile.PL
 
-    This is the official version from CPAN how to distribute and test modules. Makefile.PL contains all modules needed to run or test the code/modules.
-    To run it do:
+This is the official version from CPAN how to distribute and test modules. Makefile.PL contains all modules needed to run or test the code/modules.
+To run it do:
 
-    perl Makefile.PL
+	perl Makefile.PL
 
-    It will print information if any module is missing any required version of a module.
-    To clean up files generated by the Makefile.PL run following commands:
+It will print information if any module is missing any required version of a module.
+To clean up files generated by the Makefile.PL run following commands:
 
-    make clean
-    rm Makefile.old
+	make clean
+	rm Makefile.old
 
 =head3 Tests
 
-    To run tests either make or prove can be used.
+To run tests either make or prove can be used.
 
 =over
 
 =item prove
 
-    Prove is installed with Test::More and is a command line interface to run tests:
+Prove is installed with Test::More and is a command line interface to run tests:
 
-    prove -l t/*
+	prove -l t/*
 
 =item Makefile.PL
 
-    Makefile.PL can be used to run the test suite with make:
+Makefile.PL can be used to run the test suite with make:
 
-    perl Makefile.PL
-    make test
-    make clean
-    rm Makefile.old
+	perl Makefile.PL
+	make test
+	make clean
+	rm Makefile.old
 
 =back
 
 =head3 test_variables
 
-    Some tests are skipped because normal environment they shouldnt be run or used. If required to be run the following environemtn variables need to be configured:
+Some tests are skipped because normal environment they shouldn't be run or used. If required to be run the following environment variables need to be configured:
 
 =over
 
 =item DNS
 
-    This will run DNS queries to see if resolve is working
+This will run DNS queries to see if resolve is working
 
 =item AUTHOR
 
-    This will check if AUTHOR has not forgotten to update specific tests, or left fix me -s in the code
+This will check if AUTHOR has not forgotten to update specific tests, or left fix me -s in the code
 
 =item CRITIC
 
-    This will criticise the code to see if it is tidy, or perl standards have been used
+This will criticise the code to see if it is tidy, or perl standards have been used
 
 =item POD
 
-    This will run tests on the pod file
+This will run tests on the pod file
 
 =item ALL
 
-    This will run all above tests
+This will run all above tests
 
 =back
 
 =head1 LOGLEVEL
 
-    In the framework we use 10 levels for logs. Default is 6
+In the framework we use 10 levels for logs. Default is 6
 
 =over
 
 =item 10 DEBUG2
 
-    Very Verbose information, mostly variables and objects are dumped at this level
+Very Verbose information, mostly variables and objects are dumped at this level
 
 =item 9  DEBUG1
 
-    Variables are dumped at this level
+Variables are dumped at this level
 
 =item 8  DEBUG
 
-    Subroutine entries and exists are logged
+Subroutine entries and exists are logged
 
 =item 7  INFO
 
-    Information messages printed
+Information messages printed
 
 =item 6  NOTICE
 
-    Notice messages are printed. This is default level
+Notice messages are printed. This is default level
 
 =item 5  WARNING
 
-    Warning messages are printed
+Warning messages are printed
 
 =item 4  ERROR
 
-    Errors are printed
+Errors are printed
 
 =item 3  CRITICAL
 
-    Critical messages are printed
+Critical messages are printed
 
 =item 2  ALERT
 
-    Alert messages are printed
+Alert messages are printed
 
 =item 1  EMERGENCY
 
-    Emergency messages are printed
+Emergency messages are printed
 
 =item 0
 
-    At this level no information is printed. This level should very seldomly be used
+At this level no information is printed. This level should very rarely be used
 
 =back
 
 =head1 AUTHOR
 
-    Krisztian Banhidy <s4mur4i@balabit.hu>
+	Krisztian Banhidy <s4mur4i@balabit.hu>
 
 =cut
