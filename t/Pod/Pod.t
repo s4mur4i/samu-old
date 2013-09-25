@@ -44,3 +44,4 @@ utf
 vm
 DNS
 LOGLEVEL
+wiki
