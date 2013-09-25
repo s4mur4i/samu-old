@@ -56,7 +56,7 @@ WriteMakefile(
         'Module::Load'      => 0.18,
         'GSSAPI::Status'    => 0,
         'Crypt::SSLeay'     => 0.57,
-        'Pod::Simple::Wiki' => 0.15,
+        'Pod::Simple::Wiki' => 0.11,
     },
     PREREQ_FATAL => 0,
 );
