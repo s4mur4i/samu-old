@@ -400,6 +400,7 @@ sub list_disk {
     return 1;
 }
 
+#tested
 sub change_altername {
     &Log::debug("Entity::change_altername sub started");
     my $vmname = Opts::get_option('vmname');
@@ -574,6 +575,7 @@ sub info_runtime {
     return 1;
 }
 
+#tested
 sub delete_vm {
     &Log::debug("Entity::delete_vm sub started");
     my $vmname = Opts::get_option('vmname');

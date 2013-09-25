@@ -31,9 +31,18 @@ for my $template ( @{&Support::get_keys( 'template' )} ) {
     my $view = Vim::find_entity_view( view_type => 'VirtualMachine', properties => [ 'name' ], filter => { name => qr/^test_1337-/ } );
     ok( defined($view), "Cloned entity exists for $template" );
     $view->PowerOffVM;
-    $view->Destroy;
+    diag("Testing altername");
+    is( &Guest::get_altername($view->name), '', "Altername is default for " . $view->name );
+    like( &Guest::get_annotation_key( $view->name, "alternateName" ), qr/^\d+$/, "Annotation_key returns digit" );
+    is( &Guest::change_altername($view->name, "pina"), 1, "Altername is set for " . $view->name );
+    is( &Guest::get_altername($view->name), 'pina', "Altername is changed for " . $view->name );
+    &Opts::add_options(%{$entity::module_opts->{functions}->{delete}->{functions}->{vm}->{opts}});
+    &Opts::set_option("vmname", $view->name);
+    is( Opts::get_option('vmname'), $view->name, "Vmname option was set succesfully" );
+    is( &entity::delete_vm(), 1, "Destroy vm sub ran succesfully" );
     $view = Vim::find_entity_view( view_type => 'VirtualMachine', properties => [ 'name' ], filter => { name => qr/^test_1337-/ } );
     ok( !defined($view), "Cloned entity Destroyed succesfully" );
+    throws_ok { &entity::delete_vm() } 'Entity::NumException', "Destroy vm throws exception if no vm is present";
 }
 done_testing;
 END {
