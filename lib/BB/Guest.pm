@@ -105,7 +105,7 @@ sub change_altername {
 #tested
 sub add_cdrom_spec {
     my ($vmname) = @_;
-    &Log::debug("Starting Guest::add_cdrom sub, vmname=>'$vmname'");
+    &Log::debug("Starting Guest::add_cdrom_spec sub, vmname=>'$vmname'");
     my $ide_key      = &get_free_ide_controller->{key};
     my $cdrombacking = VirtualCdromRemotePassthroughBackingInfo->new(
         exclusive  => 0,
@@ -124,6 +124,12 @@ sub add_cdrom_spec {
     &Log::debug("Returning config spec");
     &Log::dumpobj( "vmspec", $vmspec );
     return $vmspec;
+}
+
+sub add_interface_spec {
+    my ($vmname) = @_;
+    &Log::debug("Starting Guest::add_interface_spec sub, vmname=>'$vmname'");
+
 }
 
 #tested

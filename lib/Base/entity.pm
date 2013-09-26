@@ -510,7 +510,13 @@ sub add_snapshot {
 }
 
 sub add_interface {
-
+    &Log::debug("Entity::add_interface sub started");
+    my $vmname = Opts::get_option('vmname');
+    &Log::debug("Requested option, vmname=>'$vmname'");
+    my $spec = &Guest::add_interface_spec($vmname);
+    &Guest::reconfig_vm( $vmname, $spec );
+    &Log::info("Finished adding interface");
+    return 1;
 }
 
 #tested
