@@ -99,9 +99,45 @@ our $module_opts = {
         add => {
             helper    => 'VM_functions/VM_add_function',
             functions => {
-                cdrom    => { helper => 'AUTHOR', function => \&add_cdrom },
-                network  => { helper => 'AUTHOR', function => \&add_network },
-                disk     => { helper => 'AUTHOR', function => \&add_disk },
+                cdrom    => {
+                    function => \&add_cdrom,
+                    opts => {
+                        vmname => {
+                            type => "=s",
+                            help =>
+                              "The vm's name where cdrom should be added",
+                            required => 1,
+                        },
+                    },
+                },
+                network  => {
+                    function => \&add_network,
+                    opts => {
+                        vmname => {
+                            type => "=s",
+                            help =>
+                              "The vm's name where network card should be added",
+                            required => 1,
+                        },
+                    },
+                },
+                disk     => {
+                    function => \&add_disk,
+                    opts => {
+                        vmname => {
+                            type => "=s",
+                            help =>
+                              "The vm's name where disk should be added",
+                            required => 1,
+                        },
+                        size => {
+                            type => "=s",
+                            help =>
+                              "The size of the disk",
+                            required => 1,
+                        },
+                    },
+                },
                 snapshot => {
                     function => \&add_snapshot,
                     opts     => {
@@ -333,6 +369,10 @@ sub list_cdrom {
     my $vmname = Opts::get_option('vmname');
     &Log::debug("Requested options, vmname=>'$vmname'");
     my @cdrom_hw = &Guest::get_hw( $vmname, 'VirtualCdrom' );
+    if ( @cdrom_hw eq 0 ) {
+        &Log::debug("No cdroms on entity");
+        print "Currently no cdroms attached to machine\n";
+    }
     for ( my $i = 0 ; $i < scalar(@cdrom_hw) ; $i++ ) {
         &Log::debug("Iterating thorugh CDrom hardware '$i'");
         &Log::dumpobj( "cdrom $i", $cdrom_hw[$i] );
@@ -415,6 +455,15 @@ sub list_disk {
 }
 
 #tested
+sub list_snapshot {
+    &Log::debug("Entity::list_snapshot sub started");
+    my $vmname = Opts::get_option('vmname');
+    &Log::debug("Requested options, vmname=>'$vmname'");
+    &Guest::list_snapshot($vmname);
+    return 1;
+}
+
+#tested
 sub change_altername {
     &Log::debug("Entity::change_altername sub started");
     my $vmname = Opts::get_option('vmname');
@@ -435,15 +484,6 @@ sub change_snapshot {
 }
 
 #tested
-sub list_snapshot {
-    &Log::debug("Entity::list_snapshot sub started");
-    my $vmname = Opts::get_option('vmname');
-    &Log::debug("Requested options, vmname=>'$vmname'");
-    &Guest::list_snapshot($vmname);
-    return 1;
-}
-
-#tested
 sub add_snapshot {
     &Log::debug("Entity::add_snapshot sub started");
     my $vmname    = Opts::get_option('vmname');
@@ -458,6 +498,30 @@ sub add_snapshot {
           . "'" );
     &Guest::create_snapshot( $vmname, $snap_name, $desc );
     &Log::info("Finished creating snapshot");
+    return 1;
+}
+
+sub add_interface {
+
+}
+
+sub add_cdrom {
+    &Log::debug("Entity::add_cdrom sub started");
+    my $vmname    = Opts::get_option('vmname');
+    &Log::debug("Requested option, vmname=>'$vmname'");
+    my $spec = &Guest::add_cdrom_spec( $vmname );
+    &Guest::reconfig_vm( $vmname, $spec );
+    &Log::info("Finished adding cdrom");
+    return 1;
+}
+
+sub add_disk {
+    &Log::debug("Entity::add_cdrom sub started");
+    my $vmname    = Opts::get_option('vmname');
+    my $size    = Opts::get_option('size') * 1024;
+    &Log::debug("Requested option, vmname=>'$vmname', size=>'$size'");
+    &Guest::add_disk( $vmname, $size );
+    &Log::info("Finished adding disk");
     return 1;
 }
 

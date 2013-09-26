@@ -86,6 +86,7 @@ sub get_altername {
     return "";
 }
 
+#tested
 sub change_altername {
     my ( $vmname, $name ) = @_;
     &Log::debug(
@@ -98,6 +99,92 @@ sub change_altername {
     my $key    = &get_annotation_key( $vmname, "alternateName" );
     $custom->SetField( entity => $view, key => $key, value => $name );
     &Log::debug("Finished changing altername");
+    return 1;
+}
+
+sub add_cdrom_spec {
+    my ( $vmname ) = @_;
+    &Log::debug( "Starting Guest::add_cdrom sub, vmname=>'$vmname'" );
+#    my @cdrom_hw = &get_hw( $vmname, 'VirtualCdrom' );
+#    my $key = $cdrom_hw[-1]->{key}++;
+    my $ide_key = &get_free_ide_controller->{key};
+    my $cdrombacking = VirtualCdromRemotePassthroughBackingInfo->new( exclusive => 0, deviceName => '' );
+    my $cdrom = VirtualCdrom->new( key => -1, backing => $cdrombacking, controllerKey => $ide_key );
+    my $devspec = VirtualDeviceConfigSpec->new( operation => VirtualDeviceConfigSpecOperation->new( 'add' ), device => $cdrom, );
+    my $vmspec = VirtualMachineConfigSpec->new( deviceChange => [ $devspec ] );
+    &Log::debug("Returning config spec");
+    &Log::dumpobj( "vmspec", $vmspec );
+    return $vmspec;
+}
+
+sub add_disk {
+    my ( $vmname, $size ) = @_;
+    &Log::debug( "Starting Guest::add_cdrom sub, vmname=>'$vmname', size=>'$size'" );
+    my @disk_hw = &get_hw( $vmname, 'VirtualDisk' );
+    my $scsi_con = &get_scsi_controller( $vmname );
+    my $unitnumber = $#{ $scsi_con->device } + 1;
+    if ( $unitnumber < 7 ) {
+       &Log::debug("Not yet reached controller id");
+    } elsif ( $unitnumber == 15 ) {
+        Entity::HWError->throw( error => 'SCSI controller has already 15 disks', entity => $vmname, hw => 'SCSI Controller' );
+    } else {
+        $unitnumber++;
+    }
+
+}
+
+sub get_scsi_controller {
+    my ( $vmname ) = @_;
+    &Log::debug("Starting Guest::get_scsi_controller sub, vmname=>'$vmname'");
+    my @types = ( 'VirtualBusLogicController', 'VirtualLsiLogicController', 'VirtualLsiLogicSASController', 'ParaVirtualSCSIController' );
+    my @controller;
+    for my $type ( @types ) {
+        &Log::debug1("Looping through $type");
+        my @cont = &get_hw( $vmname, $type );
+        if ( scalar(@cont) eq 1 ) {
+            &Log::debug("Pushing controller to return array");
+            push( @controller, @cont );
+        }
+    }
+    if ( scalar(@controller) != 1 ) {
+        Entity::HWError->throw( error => 'Scsi controller count not good', entity => $vmname, hw => 'SCSI Controller' );
+    }
+    &Log::debug("Returning Scsi controller");
+    &Log::dumpobj( "controller", @controller);
+    return $controller[0];
+}
+
+sub get_free_ide_controller {
+    my ( $vmname ) = @_;
+    &Log::debug("Starting Guest::get_free_ide_controller sub, vmname=>'$vmname'");
+    my @controller = &get_hw( $vmname, 'VirtualIDEController' );
+    for ( my $i = 0 ; $i < scalar(@controller) ; $i++ ) {
+        &Log::dumpobj( "ide_controller", $controller[$i]);
+        if ( defined( $controller[$i]->device ) ) {
+            &Log::debug("There are devices on controller, checking count");
+            if ( @{ $controller[$i]->device } lt 2 ) {
+                &Log::debug("There is free space on controller returning key");
+                return $controller[$i];
+            } else {
+                &Log::debug("Controller Full");
+            }
+        } else {
+            &Log::debug("Controller is empty, returning key");
+            return $controller[$i];
+        }
+    }
+    &Log::debug("Found no free ide controller");
+    Entity::HWError->throw( error => 'Could not find free ide controller', entity => $vmname, hw => 'ide_controller' );
+}
+
+sub reconfig_vm {
+    my ( $vmname, $spec ) = @_;
+    &Log::debug("Starting Guest::reconfig_vm sub, vmname=>'$vmname'");
+    &Log::dumpobj( "spec", $spec );
+    my $view = &entity_name_view( $vmname, 'VirtualMachine' );
+    my $task = $view->ReconfigVM_Task( spec => $spec );
+    &VCenter::Task_Status( $task );
+    &Log::debug("Finished VM reconfig");
     return 1;
 }
 
