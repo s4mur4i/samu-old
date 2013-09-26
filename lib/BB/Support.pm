@@ -77,6 +77,13 @@ my %template_hash = (
         key      => 'TM24T-X9RMF-VWXK6-X8JC9-BFGM2',
         os       => 'win'
     },
+    'win_2008_en_x86_ent' => {
+        path     => 'Support/vm/templates/Windows/2008/T_win_2008_en_x86_ent',
+	username => 'Administrator',
+	password => 'TitkoS12',
+	key      => 'YQGMW-MPWTJ-34KDK-48M3W-X4Q6V',
+	os       => 'win'
+    },
     'deb_7.0.0_en_amd64_wheezy' => {
         path => 'Support/vm/templates/Linux/deb/T_deb_7.0.0_en_amd64_wheezy',
         username => 'root',
