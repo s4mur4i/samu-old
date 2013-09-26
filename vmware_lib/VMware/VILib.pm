@@ -113,6 +113,10 @@ our %options = (
       type => "",
       help => "Display usage information for the script",
    },
+   h => {
+      type => "",
+      help => "Display usage information for the script",
+   },
    version => {
       type => "",
       help => "Display version information for the script",
@@ -548,7 +552,7 @@ sub parse {
 
 sub validate {
    my @validators = @_;
-   if (option_is_set('help')) {
+   if (option_is_set('help') or option_is_set('h')) {
       usage();
       exit 0;
    }
