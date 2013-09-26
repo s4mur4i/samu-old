@@ -102,6 +102,7 @@ sub change_altername {
     return 1;
 }
 
+#tested
 sub add_cdrom_spec {
     my ( $vmname ) = @_;
     &Log::debug( "Starting Guest::add_cdrom sub, vmname=>'$vmname'" );
@@ -115,16 +116,17 @@ sub add_cdrom_spec {
     return $vmspec;
 }
 
+#tested
 sub add_disk_spec {
     my ( $vmname, $size ) = @_;
     &Log::debug( "Starting Guest::add_cdrom sub, vmname=>'$vmname', size=>'$size'" );
     my @disk_hw = &get_hw( $vmname, 'VirtualDisk' );
     my $scsi_con = &get_scsi_controller( $vmname );
     my $unitnumber = $disk_hw[-1]->{unitNumber} + 1;
-    if ( $scsi_con->{unitNumber} == $unitnumber ) {
-        &Log::debug("New requested unitnumber is same id as scsi controller");
-        $unitnumber++;
-    }
+    #if ( $scsi_con->{unitNumber} == $unitnumber ) {
+    #    &Log::debug("New requested unitnumber is same id as scsi controller");
+    #    $unitnumber++;
+    #}
     if ( $unitnumber == 7 ) {
         &Log::debug("Reached Controller ID, incrementing");
         $unitnumber++;
@@ -141,6 +143,7 @@ sub add_disk_spec {
     return $vmspec;
 }
 
+#tested
 sub get_scsi_controller {
     my ( $vmname ) = @_;
     &Log::debug("Starting Guest::get_scsi_controller sub, vmname=>'$vmname'");
@@ -167,6 +170,7 @@ sub get_scsi_controller {
     return $return;
 }
 
+#tested
 sub get_free_ide_controller {
     my ( $vmname ) = @_;
     &Log::debug("Starting Guest::get_free_ide_controller sub, vmname=>'$vmname'");
@@ -190,6 +194,7 @@ sub get_free_ide_controller {
     Entity::HWError->throw( error => 'Could not find free ide controller', entity => $vmname, hw => 'ide_controller' );
 }
 
+#tested
 sub reconfig_vm {
     my ( $vmname, $spec ) = @_;
     &Log::debug("Starting Guest::reconfig_vm sub, vmname=>'$vmname'");
@@ -371,6 +376,7 @@ sub CustomizationAdapterMapping_generator {
     return @return;
 }
 
+#tested
 sub get_hw {
     my ( $vmname, $hw ) = @_;
     &Log::debug( "Starting Guest::count_hw sub, vmname=>'"

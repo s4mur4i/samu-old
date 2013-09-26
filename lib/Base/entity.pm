@@ -505,6 +505,7 @@ sub add_interface {
 
 }
 
+#tested
 sub add_cdrom {
     &Log::debug("Entity::add_cdrom sub started");
     my $vmname    = Opts::get_option('vmname');
@@ -515,6 +516,7 @@ sub add_cdrom {
     return 1;
 }
 
+#teted
 sub add_disk {
     &Log::debug("Entity::add_cdrom sub started");
     my $vmname    = Opts::get_option('vmname');
