@@ -1,6 +1,6 @@
 =head1 NAME
 
-herring.pl -- Support automatisation script
+samu.pl -- Support automatisation script
 
 =head1 DESCRIPTION
 
@@ -9,7 +9,7 @@ To get information about any sub module call any option with help. Documentation
 
 =head1 SYNOPSIS
 
-herring.pl [options] [function]
+samu.pl [options] [function]
 
 =head1 OPTIONS
 
@@ -71,7 +71,7 @@ List of defined functions, each can be called with it's own help and detailed in
 
 =head3 SYNOPSIS
 
-herring.pl vm [options] [function]
+samu.pl vm [options] [function]
 
 =head3 OPTIONS
 
@@ -119,7 +119,7 @@ Sub used to dump information about a vm
 
 =head3 SYNOPSIS
 
-herring.pl vm clone [options]
+samu.pl vm clone [options]
 
 =head3 OPTIONS
 
@@ -131,7 +131,7 @@ herring.pl vm clone [options]
 
 =head3 SYNOPSIS
 
-herring.pl vm list [options] [function]
+samu.pl vm list [options] [function]
 
 =head3 OPTIONS
 
@@ -165,7 +165,7 @@ List snapshots attached to a vm
 
 =head3 SYNOPSIS
 
-herring.pl vm add [options] [function]
+samu.pl vm add [options] [function]
 
 =head3 OPTIONS
 
@@ -199,7 +199,7 @@ List snapshots attached to a vm
 
 =head3 SYNOPSIS
 
-herring.pl vm delete [options] [function]
+samu.pl vm delete [options] [function]
 
 =head3 OPTIONS
 
@@ -233,7 +233,7 @@ Delete a snapshot attached to a vm
 
 =head3 SYNOPSIS
 
-herring.pl vm change [options] [function]
+samu.pl vm change [options] [function]
 
 =head3 OPTIONS
 
@@ -271,7 +271,7 @@ Change the power state of a vm
 
 =head3 SYNOPSIS
 
-herring.pl vm info [options] [function]
+samu.pl vm info [options] [function]
 
 =head3 OPTIONS
 
@@ -297,7 +297,7 @@ Information about runtime environment
 
 =head3 SYNOPSIS
 
-herring.pl vm info dumper [options]
+samu.pl vm info dumper [options]
 
 =head3 OPTIONS
 
@@ -309,7 +309,7 @@ herring.pl vm info dumper [options]
 
 =head3 SYNOPSIS
 
-herring.pl vm info runtime [options]
+samu.pl vm info runtime [options]
 
 =head3 OPTIONS
 
@@ -321,7 +321,7 @@ herring.pl vm info runtime [options]
 
 =head3 SYNOPSIS
 
-herring.pl ticket [options] [function]
+samu.pl ticket [options] [function]
 
 
 =head3 OPTIONS
@@ -366,7 +366,7 @@ Delete all entities attached to a ticket
 
 =head3 SYNOPSIS
 
-herring.pl ticket list [options]
+samu.pl ticket list [options]
 
 =head3 OPTIONS
 
@@ -378,7 +378,7 @@ herring.pl ticket list [options]
 
 =head3 SYNOPSIS
 
-herring.pl ticket info [options]
+samu.pl ticket info [options]
 
 =head3 OPTIONS
 
@@ -390,7 +390,7 @@ herring.pl ticket info [options]
 
 =head3 SYNOPSIS
 
-herring.pl ticket on [options]
+samu.pl ticket on [options]
 
 =head3 OPTIONS
 
@@ -406,7 +406,7 @@ Print the help page
 
 =head3 SYNOPSIS
 
-herring.pl ticket off [options]
+samu.pl ticket off [options]
 
 =head3 OPTIONS
 
@@ -418,7 +418,7 @@ herring.pl ticket off [options]
 
 =head3 SYNOPSIS
 
-herring.pl ticket delete [options]
+samu.pl ticket delete [options]
 
 =head3 OPTIONS
 
@@ -430,7 +430,7 @@ herring.pl ticket delete [options]
 
 =head3 SYNOPSIS
 
-herring.pl datastore [options] [function]
+samu.pl datastore [options] [function]
 
 =head3 OPTIONS
 
@@ -466,7 +466,7 @@ Information about a datastore
 
 =head3 SYNOPSIS
 
-herring.pl datastore list [options]
+samu.pl datastore list [options]
 
 =head3 OPTIONS
 
@@ -478,7 +478,7 @@ herring.pl datastore list [options]
 
 =head3 SYNOPSIS
 
-herring.pl datastore add [options]
+samu.pl datastore add [options]
 
 =head3 OPTIONS
 
@@ -490,7 +490,7 @@ herring.pl datastore add [options]
 
 =head3 SYNOPSIS
 
-herring.pl datastore delete [options]
+samu.pl datastore delete [options]
 
 =head3 OPTIONS
 
@@ -502,7 +502,7 @@ herring.pl datastore delete [options]
 
 =head3 SYNOPSIS
 
-herring.pl datastore info [options]
+samu.pl datastore info [options]
 
 =head3 OPTIONS
 
@@ -514,7 +514,7 @@ herring.pl datastore info [options]
 
 =head3 SYNOPSIS
 
-herring.pl kayako [options] [functions]
+samu.pl kayako [options] [functions]
 
 =head3 OPTIONS
 
@@ -542,7 +542,7 @@ To Be Defined
 
 =head3 SYNOPSIS
 
-herring.pl bugzilla [options] [functions]
+samu.pl bugzilla [options] [functions]
 
 =head3 OPTIONS
 
@@ -570,7 +570,7 @@ To Be Defined
 
 =head3 SYNOPSIS
 
-herring.pl admin [functions] [options]
+samu.pl admin [functions] [options]
 
 =head3 OPTIONS
 
@@ -610,7 +610,7 @@ Transfer a pod file to Dokuwiki format
 
 =head3 SYNOPSIS
 
-herring.pl admin cleanup [options]
+samu.pl admin cleanup [options]
 
 =head3 OPTIONS
 
@@ -622,7 +622,7 @@ herring.pl admin cleanup [options]
 
 =head3 SYNOPSIS
 
-herring.pl admin templates [options]
+samu.pl admin templates [options]
 
 =head3 OPTIONS
 
@@ -634,7 +634,7 @@ herring.pl admin templates [options]
 
 =head3 SYNOPSIS
 
-herring.pl admin test [options]
+samu.pl admin test [options]
 
 =head3 OPTIONS
 
@@ -646,7 +646,7 @@ herring.pl admin test [options]
 
 =head3 SYNOPSIS
 
-herring.pl admin pod2wiki [options]
+samu.pl admin pod2wiki [options]
 
 =head3 OPTIONS
 
@@ -927,5 +927,66 @@ At this level no information is printed. This level should very rarely be used
 =head1 AUTHOR
 
 	Krisztian Banhidy <s4mur4i@balabit.hu>
+
+=head1 LOGO
+
+                            /|
+                          /'||
+                         |  ||
+                         |  ||
+                         |  ||
+                         |  ||
+                         |  ||
+                         |  ||
+                         |  ||
+                         |  ||
+                         |  ||
+                         |  ||
+                         |  ||
+                         |  ||
+                         |  ||
+                         |  ||
+                         |  ||         __.--._
+                         |  ||      /~~   __.-~\ _
+                         |  ||  _.-~ / _---._ ~-\/~\
+                         |  || // /  /~/  .-  \  /~-\
+                         |  ||((( /(/_(.-(-~~~~~-)_/ |
+                         |  || ) (( |_.----~~~~~-._\ /
+                         |  ||    ) |              \_|
+                         |  ||     (| =-_   _.-=-  |~)        ,
+                         |  ||      | `~~ |   ~~'  |/~-._-'/'/_,
+                         |  ||       \    |        /~-.__---~ , ,
+                         |  ||       |   ~-''     || `\_~~~----~
+                         |  ||_.ssSS$$\ -====-   / )\_  ~~--~
+                 ___.----|~~~|%$$$$$$/ \_    _.-~ /' )$s._
+        __---~-~~        |   |%%$$$$/ /  ~~~~   /'  /$$$$$$$s__
+      /~       ~\    ============$$/ /        /'  /$$$$$$$$$$$SS-.
+    /'      ./\\\\\\_( ~---._(_))$/ /       /'  /$$$$%$$$$$~      \
+    (      //////////(~-(..___)/$/ /      /'  /$$%$$%$$$$'         \
+     \    |||||||||||(~-(..___)$/ /  /  /'  /$$$%$$$%$$$            |
+      `-__ \\\\\\\\\\\(-.(_____) /  / /'  /$$$$%$$$$$%$             |
+          ~~""""""""""-\.(____) /   /'  /$$$$$%%$$$$$$\_            /
+                        $|===|||  /'  /$$$$$$$%%%$$$$$( ~         ,'|
+                    __  $|===|%\/'  /$$$$SAMU$$$%%%%$$|        ,''  |
+                   ///\ $|===|/'  /$$$$$$%$$$$$$$%%%%$(            /'
+                    \///\|===|  /$$$$$$$$$%%$$$$$$%%%%$\_-._       |
+                     `\//|===| /$$$$$$$$$$$%%%$$$$$$-~~~    ~      /
+                       `\|-~~(~~-`$$$$$$$$$%%%///////._       ._  |
+                       (__--~(     ~\\\\\\\\\\\\\\\\\\\\        \ \
+                       (__--~~(       \\\\\\\\\\\\\\\\\\|        \/
+                        (__--~(       ||||||||||||||||||/       _/
+                         (__.--._____//////////////////__..---~~
+                         |   """"'''''           ___,,,,ss$$$%
+                        ,%\__      __,,,\sssSS$$$$$$$$$$$$$$%%
+                      ,%%%%$$$$$$$$$$\;;;;\$$$$$$$$$$$$$$$$%%%$.
+                     ,%%%%%%$$$$$$$$$$%\;;;;\$$$$$$$$$$$$%%%$$$$
+                   ,%%%%%%%%$$$$$$$$$%$$$\;;;;\$$$$$$$$$%%$$$$$$,
+                  ,%%%%%%%%%$$$$$$$$%$$$$$$\;;;;\$$$$$$%%$$$$$$$$
+                 ,%%%%%%%%%%%$$$$$$%$Support\;;;;\$$$%$$$$$$$$$$$
+                 %%%%%%%%%%%%$#Automatisation$\;;;$$$$$$$$$$$$$$$
+                   ""==%%%%%%%$$Management###$$$$$$$$$$$$$$$$$SV"
+                               $$Util$$$$$$$$$$$$$$====""""
+                                 """"""""~~~~
+
 
 =cut

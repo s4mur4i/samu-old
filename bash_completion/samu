@@ -1,4 +1,4 @@
-# bash completion for herring
+# bash completion for samu
 
 _containsElement () {
   local e
@@ -6,7 +6,7 @@ _containsElement () {
   return 1
 }
 
-_herring() {
+_samu() {
 
     local cur opts default_opts sdk_opts vm_clone cur_opt i opt_var
     COMPREPLY=()
@@ -77,11 +77,11 @@ _herring() {
     admin_templates=""
     admin_pod2wiki="--in --out"
 
-    herring="vm ticket datastore bugzilla kayako admin"
+    samu="vm ticket datastore bugzilla kayako admin"
     cur="${COMP_WORDS[COMP_CWORD]}"
 
 	_helper_opts="-h --help -m --man"
-    _options="${herring}"
+    _options="${samu}"
 
     _vm_options="${vm}"
 
@@ -177,4 +177,4 @@ _herring() {
 
     return 0
 } &&
-complete -F _herring herring.pl
+complete -F _samu samu.pl
