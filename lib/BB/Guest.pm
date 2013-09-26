@@ -105,8 +105,6 @@ sub change_altername {
 sub add_cdrom_spec {
     my ( $vmname ) = @_;
     &Log::debug( "Starting Guest::add_cdrom sub, vmname=>'$vmname'" );
-#    my @cdrom_hw = &get_hw( $vmname, 'VirtualCdrom' );
-#    my $key = $cdrom_hw[-1]->{key}++;
     my $ide_key = &get_free_ide_controller->{key};
     my $cdrombacking = VirtualCdromRemotePassthroughBackingInfo->new( exclusive => 0, deviceName => '' );
     my $cdrom = VirtualCdrom->new( key => -1, backing => $cdrombacking, controllerKey => $ide_key );
@@ -117,41 +115,56 @@ sub add_cdrom_spec {
     return $vmspec;
 }
 
-sub add_disk {
+sub add_disk_spec {
     my ( $vmname, $size ) = @_;
     &Log::debug( "Starting Guest::add_cdrom sub, vmname=>'$vmname', size=>'$size'" );
     my @disk_hw = &get_hw( $vmname, 'VirtualDisk' );
     my $scsi_con = &get_scsi_controller( $vmname );
-    my $unitnumber = $#{ $scsi_con->device } + 1;
-    if ( $unitnumber < 7 ) {
-       &Log::debug("Not yet reached controller id");
-    } elsif ( $unitnumber == 15 ) {
-        Entity::HWError->throw( error => 'SCSI controller has already 15 disks', entity => $vmname, hw => 'SCSI Controller' );
-    } else {
+    my $unitnumber = $disk_hw[-1]->{unitNumber} + 1;
+    if ( $scsi_con->{unitNumber} == $unitnumber ) {
+        &Log::debug("New requested unitnumber is same id as scsi controller");
         $unitnumber++;
     }
-
+    if ( $unitnumber == 7 ) {
+        &Log::debug("Reached Controller ID, incrementing");
+        $unitnumber++;
+    } elsif ( $unitnumber == 15 ) {
+        Entity::HWError->throw( error => 'SCSI controller has already 15 disks', entity => $vmname, hw => 'SCSI Controller' );
+    }
+    my $inc_path = &Misc::increment_disk_name( $disk_hw[-1]->{backing}->{fileName} );
+    my $disk_backing_info = VirtualDiskFlatVer2BackingInfo->new( fileName => $inc_path, diskMode => "persistent", thinProvisioned => 1 );
+    my $disk = VirtualDisk->new( controllerKey => $scsi_con->key, unitNumber => $unitnumber, key => -1, backing => $disk_backing_info, capacityInKB => $size );
+    my $devspec = VirtualDeviceConfigSpec->new( operation => VirtualDeviceConfigSpecOperation->new( 'add' ), device => $disk, fileOperation => VirtualDeviceConfigSpecFileOperation->new( 'create' ) );
+    my $vmspec = VirtualMachineConfigSpec->new( deviceChange => [ $devspec ] );
+    &Log::debug("Returning config spec");
+    &Log::dumpobj( "vmspec", $vmspec );
+    return $vmspec;
 }
 
 sub get_scsi_controller {
     my ( $vmname ) = @_;
     &Log::debug("Starting Guest::get_scsi_controller sub, vmname=>'$vmname'");
     my @types = ( 'VirtualBusLogicController', 'VirtualLsiLogicController', 'VirtualLsiLogicSASController', 'ParaVirtualSCSIController' );
-    my @controller;
+    my @controller=();
     for my $type ( @types ) {
         &Log::debug1("Looping through $type");
         my @cont = &get_hw( $vmname, $type );
+        &Log::dumpobj( "get_hw_return", @cont);
         if ( scalar(@cont) eq 1 ) {
             &Log::debug("Pushing controller to return array");
-            push( @controller, @cont );
+            push( @controller, $cont[0] );
         }
     }
     if ( scalar(@controller) != 1 ) {
         Entity::HWError->throw( error => 'Scsi controller count not good', entity => $vmname, hw => 'SCSI Controller' );
+    } else {
+        &Log::debug("There was one controller as expected");
     }
     &Log::debug("Returning Scsi controller");
-    &Log::dumpobj( "controller", @controller);
-    return $controller[0];
+    # For some reason pushing the @cont single element array magicly changes array into a string, nasty workaround
+    my $return = $controller[0];
+    &Log::dumpobj( "controller", $return);
+    return $return;
 }
 
 sub get_free_ide_controller {
@@ -382,6 +395,7 @@ sub get_hw {
         }
     }
     &Log::debug( "Returning count=>'" . scalar(@hw) . "'" );
+    &Log::dumpobj( $hw, @hw);
     return @hw;
 }
 
