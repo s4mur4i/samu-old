@@ -16,7 +16,7 @@ all_perl_files_ok( { all_reasons => 1, trailing_whitespace => 1 },
 all_perl_files_ok( { all_reasons => 1, trailing_whitespace => 1 },
     "$FindBin::Bin" );
 eol_unix_ok(
-    "$FindBin::Bin/../herring.pl",
+    "$FindBin::Bin/../samu.pl",
     'Herring is ^M and trailing whitespace free',
     { all_reasons => 1, trailing_whitespace => 1 }
 );

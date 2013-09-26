@@ -1,7 +1,7 @@
 Changes
 doc/main.pod
 generate_perl_modules.sh
-herring.pl
+samu.pl
 lib/Base/admin.pm
 lib/Base/bugzilla.pm
 lib/Base/datastore.pm

@@ -41,7 +41,7 @@ dir_only_contains_ok(
 );
 dir_contains_ok(
     "$FindBin::Bin/../",
-    [qw(herring.pl generate_perl_modules.sh TEST_PERL_MODULES.pl)],
+    [qw(samu.pl generate_perl_modules.sh TEST_PERL_MODULES.pl)],
     "Base only contains the default modules"
 );
 
