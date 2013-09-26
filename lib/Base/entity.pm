@@ -520,7 +520,8 @@ sub add_disk {
     my $vmname    = Opts::get_option('vmname');
     my $size    = Opts::get_option('size') * 1024;
     &Log::debug("Requested option, vmname=>'$vmname', size=>'$size'");
-    &Guest::add_disk( $vmname, $size );
+    my $spec = &Guest::add_disk_spec( $vmname, $size );
+    &Guest::reconfig_vm( $vmname, $spec );
     &Log::info("Finished adding disk");
     return 1;
 }
