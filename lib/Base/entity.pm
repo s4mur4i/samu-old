@@ -99,41 +99,38 @@ our $module_opts = {
         add => {
             helper    => 'VM_functions/VM_add_function',
             functions => {
-                cdrom    => {
+                cdrom => {
                     function => \&add_cdrom,
-                    opts => {
+                    opts     => {
                         vmname => {
                             type => "=s",
-                            help =>
-                              "The vm's name where cdrom should be added",
+                            help => "The vm's name where cdrom should be added",
                             required => 1,
                         },
                     },
                 },
-                network  => {
+                network => {
                     function => \&add_network,
-                    opts => {
+                    opts     => {
                         vmname => {
                             type => "=s",
                             help =>
-                              "The vm's name where network card should be added",
+"The vm's name where network card should be added",
                             required => 1,
                         },
                     },
                 },
-                disk     => {
+                disk => {
                     function => \&add_disk,
-                    opts => {
+                    opts     => {
                         vmname => {
                             type => "=s",
-                            help =>
-                              "The vm's name where disk should be added",
+                            help => "The vm's name where disk should be added",
                             required => 1,
                         },
                         size => {
-                            type => "=s",
-                            help =>
-                              "The size of the disk",
+                            type     => "=s",
+                            help     => "The size of the disk",
                             required => 1,
                         },
                     },
@@ -213,7 +210,7 @@ our $module_opts = {
                             type     => '',
                             help     => 'Delete all snapshots',
                             required => '0',
-                            default => 0,
+                            default  => 0,
                         },
                     },
                 },
@@ -423,10 +420,21 @@ sub list_network {
         my $type = "Unknown";
         if ( $net_hw[$i]->isa('VirtualE1000') ) {
             $type = "E1000";
-        } else {
-            &Log::debug("Some unknown interface type, need to implement object handle");
         }
-        print "number=>'$i', key=>'".$net_hw[$i]->{key}."', mac=>'".$net_hw[$i]->{macAddress}."', network=>'".$net_hw[$i]->{backing}->{deviceName}."', type=>'".$type."', label=>'".$net_hw[$i]->{deviceInfo}->{label}."'\n";
+        else {
+            &Log::debug(
+                "Some unknown interface type, need to implement object handle");
+        }
+        print "number=>'$i', key=>'"
+          . $net_hw[$i]->{key}
+          . "', mac=>'"
+          . $net_hw[$i]->{macAddress}
+          . "', network=>'"
+          . $net_hw[$i]->{backing}->{deviceName}
+          . "', type=>'"
+          . $type
+          . "', label=>'"
+          . $net_hw[$i]->{deviceInfo}->{label} . "'\n";
     }
     return 1;
 }
@@ -508,9 +516,9 @@ sub add_interface {
 #tested
 sub add_cdrom {
     &Log::debug("Entity::add_cdrom sub started");
-    my $vmname    = Opts::get_option('vmname');
+    my $vmname = Opts::get_option('vmname');
     &Log::debug("Requested option, vmname=>'$vmname'");
-    my $spec = &Guest::add_cdrom_spec( $vmname );
+    my $spec = &Guest::add_cdrom_spec($vmname);
     &Guest::reconfig_vm( $vmname, $spec );
     &Log::info("Finished adding cdrom");
     return 1;
@@ -519,8 +527,8 @@ sub add_cdrom {
 #teted
 sub add_disk {
     &Log::debug("Entity::add_cdrom sub started");
-    my $vmname    = Opts::get_option('vmname');
-    my $size    = Opts::get_option('size') * 1024;
+    my $vmname = Opts::get_option('vmname');
+    my $size   = Opts::get_option('size') * 1024;
     &Log::debug("Requested option, vmname=>'$vmname', size=>'$size'");
     my $spec = &Guest::add_disk_spec( $vmname, $size );
     &Guest::reconfig_vm( $vmname, $spec );
@@ -686,7 +694,7 @@ sub delete_snapshot {
         &Log::debug("All snapshots need to be removed");
         &Guest::remove_all_snapshots($vmname);
     }
-    elsif ( $id) {
+    elsif ($id) {
         &Log::debug("$id snapshot need to be removed");
         &Guest::remove_snapshot( $vmname, $id );
     }

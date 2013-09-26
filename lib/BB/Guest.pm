@@ -93,7 +93,7 @@ sub change_altername {
         "Starting Guest::change_altername sub, vmname=>'$vmname', name=>'$name'"
     );
     &VCenter::num_check( $vmname, 'VirtualMachine' );
-    my $view   = &entity_name_view($vmname, 'VirtualMachine');
+    my $view   = &entity_name_view( $vmname, 'VirtualMachine' );
     my $sc     = Vim::get_service_content();
     my $custom = Vim::get_view( mo_ref => $sc->customFieldsManager );
     my $key    = &get_annotation_key( $vmname, "alternateName" );
@@ -104,13 +104,23 @@ sub change_altername {
 
 #tested
 sub add_cdrom_spec {
-    my ( $vmname ) = @_;
-    &Log::debug( "Starting Guest::add_cdrom sub, vmname=>'$vmname'" );
-    my $ide_key = &get_free_ide_controller->{key};
-    my $cdrombacking = VirtualCdromRemotePassthroughBackingInfo->new( exclusive => 0, deviceName => '' );
-    my $cdrom = VirtualCdrom->new( key => -1, backing => $cdrombacking, controllerKey => $ide_key );
-    my $devspec = VirtualDeviceConfigSpec->new( operation => VirtualDeviceConfigSpecOperation->new( 'add' ), device => $cdrom, );
-    my $vmspec = VirtualMachineConfigSpec->new( deviceChange => [ $devspec ] );
+    my ($vmname) = @_;
+    &Log::debug("Starting Guest::add_cdrom sub, vmname=>'$vmname'");
+    my $ide_key      = &get_free_ide_controller->{key};
+    my $cdrombacking = VirtualCdromRemotePassthroughBackingInfo->new(
+        exclusive  => 0,
+        deviceName => ''
+    );
+    my $cdrom = VirtualCdrom->new(
+        key           => -1,
+        backing       => $cdrombacking,
+        controllerKey => $ide_key
+    );
+    my $devspec = VirtualDeviceConfigSpec->new(
+        operation => VirtualDeviceConfigSpecOperation->new('add'),
+        device    => $cdrom,
+    );
+    my $vmspec = VirtualMachineConfigSpec->new( deviceChange => [$devspec] );
     &Log::debug("Returning config spec");
     &Log::dumpobj( "vmspec", $vmspec );
     return $vmspec;
@@ -119,10 +129,12 @@ sub add_cdrom_spec {
 #tested
 sub add_disk_spec {
     my ( $vmname, $size ) = @_;
-    &Log::debug( "Starting Guest::add_cdrom sub, vmname=>'$vmname', size=>'$size'" );
-    my @disk_hw = &get_hw( $vmname, 'VirtualDisk' );
-    my $scsi_con = &get_scsi_controller( $vmname );
+    &Log::debug(
+        "Starting Guest::add_cdrom sub, vmname=>'$vmname', size=>'$size'");
+    my @disk_hw    = &get_hw( $vmname, 'VirtualDisk' );
+    my $scsi_con   = &get_scsi_controller($vmname);
     my $unitnumber = $disk_hw[-1]->{unitNumber} + 1;
+
     #if ( $scsi_con->{unitNumber} == $unitnumber ) {
     #    &Log::debug("New requested unitnumber is same id as scsi controller");
     #    $unitnumber++;
@@ -130,14 +142,34 @@ sub add_disk_spec {
     if ( $unitnumber == 7 ) {
         &Log::debug("Reached Controller ID, incrementing");
         $unitnumber++;
-    } elsif ( $unitnumber == 15 ) {
-        Entity::HWError->throw( error => 'SCSI controller has already 15 disks', entity => $vmname, hw => 'SCSI Controller' );
     }
-    my $inc_path = &Misc::increment_disk_name( $disk_hw[-1]->{backing}->{fileName} );
-    my $disk_backing_info = VirtualDiskFlatVer2BackingInfo->new( fileName => $inc_path, diskMode => "persistent", thinProvisioned => 1 );
-    my $disk = VirtualDisk->new( controllerKey => $scsi_con->key, unitNumber => $unitnumber, key => -1, backing => $disk_backing_info, capacityInKB => $size );
-    my $devspec = VirtualDeviceConfigSpec->new( operation => VirtualDeviceConfigSpecOperation->new( 'add' ), device => $disk, fileOperation => VirtualDeviceConfigSpecFileOperation->new( 'create' ) );
-    my $vmspec = VirtualMachineConfigSpec->new( deviceChange => [ $devspec ] );
+    elsif ( $unitnumber == 15 ) {
+        Entity::HWError->throw(
+            error  => 'SCSI controller has already 15 disks',
+            entity => $vmname,
+            hw     => 'SCSI Controller'
+        );
+    }
+    my $inc_path =
+      &Misc::increment_disk_name( $disk_hw[-1]->{backing}->{fileName} );
+    my $disk_backing_info = VirtualDiskFlatVer2BackingInfo->new(
+        fileName        => $inc_path,
+        diskMode        => "persistent",
+        thinProvisioned => 1
+    );
+    my $disk = VirtualDisk->new(
+        controllerKey => $scsi_con->key,
+        unitNumber    => $unitnumber,
+        key           => -1,
+        backing       => $disk_backing_info,
+        capacityInKB  => $size
+    );
+    my $devspec = VirtualDeviceConfigSpec->new(
+        operation     => VirtualDeviceConfigSpecOperation->new('add'),
+        device        => $disk,
+        fileOperation => VirtualDeviceConfigSpecFileOperation->new('create')
+    );
+    my $vmspec = VirtualMachineConfigSpec->new( deviceChange => [$devspec] );
     &Log::debug("Returning config spec");
     &Log::dumpobj( "vmspec", $vmspec );
     return $vmspec;
@@ -145,53 +177,69 @@ sub add_disk_spec {
 
 #tested
 sub get_scsi_controller {
-    my ( $vmname ) = @_;
+    my ($vmname) = @_;
     &Log::debug("Starting Guest::get_scsi_controller sub, vmname=>'$vmname'");
-    my @types = ( 'VirtualBusLogicController', 'VirtualLsiLogicController', 'VirtualLsiLogicSASController', 'ParaVirtualSCSIController' );
-    my @controller=();
-    for my $type ( @types ) {
+    my @types = (
+        'VirtualBusLogicController',    'VirtualLsiLogicController',
+        'VirtualLsiLogicSASController', 'ParaVirtualSCSIController'
+    );
+    my @controller = ();
+    for my $type (@types) {
         &Log::debug1("Looping through $type");
         my @cont = &get_hw( $vmname, $type );
-        &Log::dumpobj( "get_hw_return", @cont);
+        &Log::dumpobj( "get_hw_return", @cont );
         if ( scalar(@cont) eq 1 ) {
             &Log::debug("Pushing controller to return array");
             push( @controller, $cont[0] );
         }
     }
     if ( scalar(@controller) != 1 ) {
-        Entity::HWError->throw( error => 'Scsi controller count not good', entity => $vmname, hw => 'SCSI Controller' );
-    } else {
+        Entity::HWError->throw(
+            error  => 'Scsi controller count not good',
+            entity => $vmname,
+            hw     => 'SCSI Controller'
+        );
+    }
+    else {
         &Log::debug("There was one controller as expected");
     }
     &Log::debug("Returning Scsi controller");
-    # For some reason pushing the @cont single element array magicly changes array into a string, nasty workaround
+
+# For some reason pushing the @cont single element array magicly changes array into a string, nasty workaround
     my $return = $controller[0];
-    &Log::dumpobj( "controller", $return);
+    &Log::dumpobj( "controller", $return );
     return $return;
 }
 
 #tested
 sub get_free_ide_controller {
-    my ( $vmname ) = @_;
-    &Log::debug("Starting Guest::get_free_ide_controller sub, vmname=>'$vmname'");
+    my ($vmname) = @_;
+    &Log::debug(
+        "Starting Guest::get_free_ide_controller sub, vmname=>'$vmname'");
     my @controller = &get_hw( $vmname, 'VirtualIDEController' );
     for ( my $i = 0 ; $i < scalar(@controller) ; $i++ ) {
-        &Log::dumpobj( "ide_controller", $controller[$i]);
+        &Log::dumpobj( "ide_controller", $controller[$i] );
         if ( defined( $controller[$i]->device ) ) {
             &Log::debug("There are devices on controller, checking count");
             if ( @{ $controller[$i]->device } lt 2 ) {
                 &Log::debug("There is free space on controller returning key");
                 return $controller[$i];
-            } else {
+            }
+            else {
                 &Log::debug("Controller Full");
             }
-        } else {
+        }
+        else {
             &Log::debug("Controller is empty, returning key");
             return $controller[$i];
         }
     }
     &Log::debug("Found no free ide controller");
-    Entity::HWError->throw( error => 'Could not find free ide controller', entity => $vmname, hw => 'ide_controller' );
+    Entity::HWError->throw(
+        error  => 'Could not find free ide controller',
+        entity => $vmname,
+        hw     => 'ide_controller'
+    );
 }
 
 #tested
@@ -201,7 +249,7 @@ sub reconfig_vm {
     &Log::dumpobj( "spec", $spec );
     my $view = &entity_name_view( $vmname, 'VirtualMachine' );
     my $task = $view->ReconfigVM_Task( spec => $spec );
-    &VCenter::Task_Status( $task );
+    &VCenter::Task_Status($task);
     &Log::debug("Finished VM reconfig");
     return 1;
 }
@@ -401,7 +449,7 @@ sub get_hw {
         }
     }
     &Log::debug( "Returning count=>'" . scalar(@hw) . "'" );
-    &Log::dumpobj( $hw, @hw);
+    &Log::dumpobj( $hw, @hw );
     return @hw;
 }
 
@@ -535,15 +583,16 @@ sub remove_all_snapshots {
     }
     my $task = $view->RemoveAllSnapshots_Task( consolidate => 1 );
     &Log::dumpobj( "task", $task );
-    &VCenter::Task_Status( $task );
+    &VCenter::Task_Status($task);
     &Log::debug("Finished removing all snapshot");
     return 1;
 }
 
 #tested
 sub remove_snapshot {
-    my ($vmname, $id ) = @_;
-    &Log::debug("Starting Guest::remove_snapshot sub, vmname=>'$vmname', id=>'$id'");
+    my ( $vmname, $id ) = @_;
+    &Log::debug(
+        "Starting Guest::remove_snapshot sub, vmname=>'$vmname', id=>'$id'");
     my $view = &entity_property_view( $vmname, 'VirtualMachine', 'snapshot' );
     if ( !defined( $view->snapshot ) ) {
         Entity::Snapshot->throw(
@@ -551,19 +600,21 @@ sub remove_snapshot {
             entity   => $vmname,
             snapshot => 0
         );
-    } else {
+    }
+    else {
         foreach ( @{ $view->snapshot->rootSnapshotList } ) {
             &Log::dumpobj( "snapshot", $_ );
             my $snapshot = &find_snapshot_by_id( $_, $id );
-            if ( defined( $snapshot ) ) {
+            if ( defined($snapshot) ) {
                 my $view = &VCenter::moref2view( $snapshot->snapshot );
-                &Log::dumpobj( "view", $view);
+                &Log::dumpobj( "view", $view );
                 my $task = $view->RemoveSnapshot_Task( removeChildren => 0 );
                 &Log::dumpobj( "task", $task );
-                &VCenter::Task_Status( $task );
+                &VCenter::Task_Status($task);
                 &Log::debug("Finished removing snapshot");
                 return 1;
-            } else {
+            }
+            else {
                 &Log::debug("Requested snapshot is not in this tree");
             }
         }
@@ -578,7 +629,9 @@ sub list_snapshot {
     my ($vmname) = @_;
     &Log::debug("Starting Guest::list_snapshot sub, vmname=>'$vmname'");
     my $view = &entity_property_view( $vmname, 'VirtualMachine', 'snapshot' );
-    if ( !defined( $view->snapshot ) or !defined( $view->snapshot->currentSnapshot ) ) {
+    if (   !defined( $view->snapshot )
+        or !defined( $view->snapshot->currentSnapshot ) )
+    {
         Entity::Snapshot->throw(
             error    => "Entity has no snapshots defined",
             entity   => $vmname,
