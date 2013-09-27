@@ -127,6 +127,10 @@ sub increment_mac {
     }
     $mac_hex = sprintf( "%04X%08X", $mac_hi, $mac_lo );
     my $new_mac = join( ':', $mac_hex =~ /../sg );
+    if ( &mac_compare($new_mac) ) {
+        &Log::info("Incrementing mac again");
+        $new_mac = &increment_mac($new_mac);
+    }
     &Log::debug("Incrementd mac, mac=>'$new_mac'");
     return $new_mac;
 }

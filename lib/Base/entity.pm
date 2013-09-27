@@ -110,13 +110,19 @@ our $module_opts = {
                     },
                 },
                 network => {
-                    function => \&add_network,
+                    function => \&add_interface,
                     opts     => {
                         vmname => {
                             type => "=s",
                             help =>
 "The vm's name where network card should be added",
                             required => 1,
+                        },
+                        type => {
+                            type => "=s",
+                            help => "Requested type of interface: E1000, Vmxnet",
+                            required => 0,
+                            default => "E1000",
                         },
                     },
                 },
@@ -512,8 +518,9 @@ sub add_snapshot {
 sub add_interface {
     &Log::debug("Entity::add_interface sub started");
     my $vmname = Opts::get_option('vmname');
+    my $type = Opts::get_option('type');
     &Log::debug("Requested option, vmname=>'$vmname'");
-    my $spec = &Guest::add_interface_spec($vmname);
+    my $spec = &Guest::add_interface_spec($vmname, $type);
     &Guest::reconfig_vm( $vmname, $spec );
     &Log::info("Finished adding interface");
     return 1;

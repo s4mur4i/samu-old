@@ -127,9 +127,86 @@ sub add_cdrom_spec {
 }
 
 sub add_interface_spec {
-    my ($vmname) = @_;
-    &Log::debug("Starting Guest::add_interface_spec sub, vmname=>'$vmname'");
+    my ( $vmname, $type ) = @_;
+    &Log::debug(
+"Starting Guest::add_interface_spec sub, vmname=>'$vmname', type=>'$type'"
+    );
+    my @net_hw = &Guest::get_hw( $vmname, 'VirtualEthernetCard' );
+    &VCenter::num_check( "VLAN21", "Network" );
+    my $switch  = &entity_name_view( 'VLAN21', 'Network' );
+    my $mac     = &Misc::increment_mac( $net_hw[-1]->{macAddress} );
+    my $backing = VirtualEthernetCardNetworkBackingInfo->new(
+        deviceName => $switch->name,
+        network    => $switch
+    );
+    my $device;
 
+    if ( $type eq "E1000" ) {
+        $device = &E1000_object( $backing, $mac );
+    }
+    elsif ( $type eq "Vmxnet" ) {
+        $device = &Vmxnet_object( $backing, $mac );
+    }
+    else {
+        Entity::HWError->throw(
+            error  => 'Unimplemented interface type was requested',
+            entity => $vmname,
+            hw     => $type
+        );
+    }
+    my $deviceconfig = VirtualDeviceConfigSpec->new(
+        operation => VirtualDeviceConfigSpecOperation->new('add'),
+        device    => $device
+    );
+    my $vmspec =
+      VirtualMachineConfigSpec->new( deviceChange => [$deviceconfig] );
+    &Log::debug("Returning config spec");
+    &Log::dumpobj( "vmspec", $vmspec );
+    return $vmspec;
+}
+
+sub E1000_object {
+    my ( $backing, $mac ) = @_;
+    &Log::debug(
+        "Starting Guest::E1000_object sub, mac=>'$mac'");
+    &Log::dumpobj( "backing", $backing );
+    my $device = VirtualE1000->new(
+        connectable => VirtualDeviceConnectInfo->new(
+            startConnected    => '1',
+            allowGuestControl => '1',
+            connected         => '1'
+        ),
+        wakeOnLanEnabled => 1,
+        macAddress       => $mac,
+        addressType      => "Manual",
+        key              => -1,
+        backing          => $backing
+    );
+    &Log::debug("Returning E1000 object");
+    &Log::dumpobj( "device", $device);
+    return $device;
+}
+
+sub Vmxnet_object {
+    my ( $backing, $mac ) = @_;
+    &Log::debug(
+        "Starting Guest::Vmxnet_object sub, mac=>'$mac'");
+    &Log::dumpobj( "backing", $backing );
+    my $device = VirtualVmxnet->new(
+        connectable => VirtualDeviceConnectInfo->new(
+            startConnected    => '1',
+            allowGuestControl => '1',
+            connected         => '1'
+        ),
+        wakeOnLanEnabled => 1,
+        macAddress       => $mac,
+        addressType      => "Manual",
+        key              => -1,
+        backing          => $backing
+    );
+    &Log::debug("Returning Vmxnet object");
+    &Log::dumpobj( "device", $device);
+    return $device;
 }
 
 #tested
@@ -141,10 +218,6 @@ sub add_disk_spec {
     my $scsi_con   = &get_scsi_controller($vmname);
     my $unitnumber = $disk_hw[-1]->{unitNumber} + 1;
 
-    #if ( $scsi_con->{unitNumber} == $unitnumber ) {
-    #    &Log::debug("New requested unitnumber is same id as scsi controller");
-    #    $unitnumber++;
-    #}
     if ( $unitnumber == 7 ) {
         &Log::debug("Reached Controller ID, incrementing");
         $unitnumber++;
