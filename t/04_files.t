@@ -35,7 +35,7 @@ dir_only_contains_ok(
 dir_only_contains_ok(
     "$FindBin::Bin/../lib/Base",
     [
-        qw(admin.pm bugzilla.pm datastore.pm entity.pm kayako.pm misc.pm ticket.pm)
+        qw(network.pm admin.pm bugzilla.pm datastore.pm entity.pm kayako.pm misc.pm ticket.pm)
     ],
     "Base only contains the default modules"
 );

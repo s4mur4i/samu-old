@@ -77,6 +77,12 @@ _samu() {
     admin_templates=""
     admin_pod2wiki="--in --out"
 
+    network="add list delete"
+
+    network_add=""
+    network_delete=""
+    network_list=""
+
     samu="vm ticket datastore bugzilla kayako admin"
     cur="${COMP_WORDS[COMP_CWORD]}"
 
@@ -141,6 +147,12 @@ _samu() {
     _kayako_info_options="${kayako_info} ${sdk_opts}"
 
     _admin_options="${admin}"
+
+    _network_options="${network}"
+
+    _network_add_options="${network_add} ${sdk_opts}"
+    _network_delete_options="${network_delete} ${sdk_opts}"
+    _network_list_options="${network_list} ${sdk_opts}"
 
     _admin_test_options="${admin_test} ${sdk_opts}"
     _admin_cleanup_options="${admin_cleanup} ${sdk_opts}"

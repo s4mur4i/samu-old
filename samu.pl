@@ -55,6 +55,11 @@ my $herring_opts = {
             module   => 'admin',
             function => \&admin::main
         },
+        network => {
+            helper   => 'NETWORK',
+            module   => 'network',
+            function => \&network::main
+        },
     }
 };
 

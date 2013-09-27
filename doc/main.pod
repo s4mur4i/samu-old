@@ -62,6 +62,10 @@ Access bugzilla functions
 
 Higher level commands for administering or maintenance of the VCenter and environment
 
+=item network
+
+Network related functions
+
 =back
 
 =head1 SUBS
@@ -660,6 +664,80 @@ The POD file to transfer
 =item out
 
 The output file
+
+=back
+
+=head1 NETWORK
+
+Network related functions
+
+=head3 SYNOPSIS
+
+samu.pl network [options] [functions]
+
+=head3 OPTIONS
+
+=over
+
+=item -help|-h
+
+Print the help page
+
+=back
+
+=head3 FUNCTIONS
+
+=over
+
+=item add
+
+Add a distributed virtual switch to VCenter
+
+=item list
+
+List distributed virtual switches in VCenter
+
+=item delete
+
+Remove distributed virtual switch from VCenter
+
+=back
+
+=head1 NETWORK_functions
+
+=head2 NETWORK_add_function
+
+=head3 SYNOPSIS
+
+samu.pl network add [options]
+
+=head3 OPTIONS
+
+=over
+
+=back
+
+=head2 NETWORK_list_function
+
+=head3 SYNOPSIS
+
+samu.pl network list [options]
+
+=head3 OPTIONS
+
+=over
+
+=back
+
+=head2 NETWORK_delete_function
+
+=head3 SYNOPSIS
+
+samu.pl network delete [options]
+
+=head3 OPTIONS
+
+=over
 
 =back
 
