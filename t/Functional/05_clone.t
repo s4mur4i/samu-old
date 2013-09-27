@@ -49,7 +49,7 @@ for my $template ( @{&Support::get_keys( 'template' )} ) {
     is( &entity::add_cdrom, 1, "Add cdrom 2 returned success" );
     is( &entity::add_cdrom, 1, "Add cdrom 3 returned success" );
     is( &entity::add_cdrom, 1, "Add cdrom 4 returned success" );
-    is( scalar(&Guest::get_hw( $name, 'VirtualCdrom')), '4', "There are 4 cdroms on machine" );
+    is( scalar(@{&Guest::get_hw( $name, 'VirtualCdrom')}), '4', "There are 4 cdroms on machine" );
     throws_ok { &entity::add_cdrom } 'Entity::HWError', "Add cdrom throws exception if no free controller is found";
     &Opts::add_options(%{$entity::module_opts->{functions}->{add}->{functions}->{disk}->{opts}});
     &Opts::set_option("size", "1");
@@ -66,7 +66,7 @@ for my $template ( @{&Support::get_keys( 'template' )} ) {
     is( &entity::add_disk, 1, "Add disk 12 returned success" );
     is( &entity::add_disk, 1, "Add disk 13 returned success" );
     is( &entity::add_disk, 1, "Add disk 14 returned success" );
-    is( scalar(&Guest::get_hw( $name, 'VirtualDisk')), '14', "There are 14 disks in machine" );
+    is( scalar(@{ &Guest::get_hw( $name, 'VirtualDisk')}), '14', "There are 14 disks in machine" );
     throws_ok { &entity::add_disk } 'Entity::HWError', "Add disk throws exception if no free scsi controller is found";
     diag("Deleting entity");
     &Opts::add_options(%{$entity::module_opts->{functions}->{delete}->{functions}->{vm}->{opts}});

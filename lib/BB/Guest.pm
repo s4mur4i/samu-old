@@ -131,7 +131,7 @@ sub add_interface_spec {
     &Log::debug(
 "Starting Guest::add_interface_spec sub, vmname=>'$vmname', type=>'$type'"
     );
-    my @net_hw = &Guest::get_hw( $vmname, 'VirtualEthernetCard' );
+    my @net_hw = @{ &Guest::get_hw( $vmname, 'VirtualEthernetCard' )};
     &VCenter::num_check( "VLAN21", "Network" );
     my $switch  = &entity_name_view( 'VLAN21', 'Network' );
     my $mac     = &Misc::increment_mac( $net_hw[-1]->{macAddress} );
@@ -213,8 +213,8 @@ sub Vmxnet_object {
 sub add_disk_spec {
     my ( $vmname, $size ) = @_;
     &Log::debug(
-        "Starting Guest::add_cdrom sub, vmname=>'$vmname', size=>'$size'");
-    my @disk_hw    = &get_hw( $vmname, 'VirtualDisk' );
+        "Starting Guest::add_disk_spec sub, vmname=>'$vmname', size=>'$size'");
+    my @disk_hw    = @{ &get_hw( $vmname, 'VirtualDisk' ) };
     my $scsi_con   = &get_scsi_controller($vmname);
     my $unitnumber = $disk_hw[-1]->{unitNumber} + 1;
 
@@ -265,11 +265,11 @@ sub get_scsi_controller {
     my @controller = ();
     for my $type (@types) {
         &Log::debug1("Looping through $type");
-        my @cont = &get_hw( $vmname, $type );
-        &Log::dumpobj( "get_hw_return", @cont );
+        my @cont = @{ &get_hw( $vmname, $type )};
+        &Log::dumpobj( "get_hw_return", \@cont );
         if ( scalar(@cont) eq 1 ) {
             &Log::debug("Pushing controller to return array");
-            push( @controller, $cont[0] );
+            push( @controller, @cont );
         }
     }
     if ( scalar(@controller) != 1 ) {
@@ -283,11 +283,8 @@ sub get_scsi_controller {
         &Log::debug("There was one controller as expected");
     }
     &Log::debug("Returning Scsi controller");
-
-# For some reason pushing the @cont single element array magicly changes array into a string, nasty workaround
-    my $return = $controller[0];
-    &Log::dumpobj( "controller", $return );
-    return $return;
+    &Log::dumpobj( "controller", \@controller );
+    return $controller[0];
 }
 
 #tested
@@ -295,7 +292,7 @@ sub get_free_ide_controller {
     my ($vmname) = @_;
     &Log::debug(
         "Starting Guest::get_free_ide_controller sub, vmname=>'$vmname'");
-    my @controller = &get_hw( $vmname, 'VirtualIDEController' );
+    my @controller = @{ &get_hw( $vmname, 'VirtualIDEController' ) };
     for ( my $i = 0 ; $i < scalar(@controller) ; $i++ ) {
         &Log::dumpobj( "ide_controller", $controller[$i] );
         if ( defined( $controller[$i]->device ) ) {
@@ -506,7 +503,7 @@ sub CustomizationAdapterMapping_generator {
 #tested
 sub get_hw {
     my ( $vmname, $hw ) = @_;
-    &Log::debug( "Starting Guest::count_hw sub, vmname=>'"
+    &Log::debug( "Starting Guest::get_hw sub, vmname=>'"
           . $vmname
           . "', hw=>'"
           . $hw
@@ -528,8 +525,8 @@ sub get_hw {
         }
     }
     &Log::debug( "Returning count=>'" . scalar(@hw) . "'" );
-    &Log::dumpobj( $hw, @hw );
-    return @hw;
+    &Log::dumpobj( $hw, \@hw );
+    return \@hw;
 }
 
 #tested

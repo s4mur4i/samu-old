@@ -371,7 +371,7 @@ sub list_cdrom {
     &Log::debug("Entity::list_cdrom sub started");
     my $vmname = Opts::get_option('vmname');
     &Log::debug("Requested options, vmname=>'$vmname'");
-    my @cdrom_hw = &Guest::get_hw( $vmname, 'VirtualCdrom' );
+    my @cdrom_hw = @{ &Guest::get_hw( $vmname, 'VirtualCdrom' )};
     if ( @cdrom_hw eq 0 ) {
         &Log::debug("No cdroms on entity");
         print "Currently no cdroms attached to machine\n";
@@ -419,7 +419,7 @@ sub list_interface {
     &Log::debug("Entity::list_interface sub started");
     my $vmname = Opts::get_option('vmname');
     &Log::debug("Requested options, vmname=>'$vmname'");
-    my @net_hw = &Guest::get_hw( $vmname, 'VirtualEthernetCard' );
+    my @net_hw = @{ &Guest::get_hw( $vmname, 'VirtualEthernetCard' )};
     for ( my $i = 0 ; $i < scalar(@net_hw) ; $i++ ) {
         &Log::debug("Iterating thorugh Network hardware '$i'");
         &Log::dumpobj( "interface $i", $net_hw[$i] );
@@ -450,8 +450,8 @@ sub list_disk {
     &Log::debug("Entity::list_disk sub started");
     my $vmname = Opts::get_option('vmname');
     &Log::debug("Requested options, vmname=>'$vmname'");
-    my @disk_hw = &Guest::get_hw( $vmname, 'VirtualDisk' );
-    &Log::dumpobj( "disk_hw", @disk_hw );
+    my @disk_hw = @{ &Guest::get_hw( $vmname, 'VirtualDisk' )};
+    &Log::dumpobj( "disk_hw", \@disk_hw );
     for ( my $i = 0 ; $i < scalar(@disk_hw) ; $i++ ) {
         &Log::debug("Iterating thorugh disk hardware '$i'");
         &Log::dumpobj( "disk $i", $disk_hw[$i] );

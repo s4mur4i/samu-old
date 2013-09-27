@@ -43,7 +43,7 @@ for my $T_vm ( @$T_vms) {
     like( &Guest::get_annotation_key( $T_vm->name, "alternateName" ), qr/^\d+$/, "Annotation_key returns digit" );
     diag("Testing network");
     my $os = &Support::get_key_value( 'template', $os_temp, 'os' );
-    my @net_hw = &Guest::get_hw( $T_vm->name, 'VirtualEthernetCard' );
+    my @net_hw = @{ &Guest::get_hw( $T_vm->name, 'VirtualEthernetCard' )};
     if ( $os =~ /^xcb$/ ) {
         is( scalar(@net_hw), 4, "XCB has 4 interfaces" );
     } else {
