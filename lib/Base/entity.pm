@@ -109,13 +109,13 @@ our $module_opts = {
                         },
                     },
                 },
-                network => {
+               interface => {
                     function => \&add_interface,
                     opts     => {
                         vmname => {
                             type => "=s",
                             help =>
-"The vm's name where network card should be added",
+"The vm's name where interface should be added",
                             required => 1,
                         },
                         type => {
@@ -179,8 +179,8 @@ our $module_opts = {
                         },
                     },
                 },
-                network => {
-                    function => \&delete_network,
+                interface => {
+                    function => \&delete_interface,
                     opts     => {
                         vmname => {
                             type     => '=s',
@@ -245,12 +245,12 @@ our $module_opts = {
                         },
                     },
                 },
-                network => {
-                    function => \&list_network,
+                interface => {
+                    function => \&list_interface,
                     opts     => {
                         vmname => {
                             type     => '=s',
-                            help     => 'Which VMs network to list.',
+                            help     => 'Which VMs interface to list.',
                             required => '1',
                         },
                     },
@@ -290,8 +290,8 @@ our $module_opts = {
                         },
                     },
                 },
-                network => {
-                    function => \&change_network,
+                interface => {
+                    function => \&change_interface,
                     opts     => {
                         vmname => {
                             type     => '=s',
@@ -415,14 +415,14 @@ sub list_cdrom {
 }
 
 #tested
-sub list_network {
-    &Log::debug("Entity::list_network sub started");
+sub list_interface {
+    &Log::debug("Entity::list_interface sub started");
     my $vmname = Opts::get_option('vmname');
     &Log::debug("Requested options, vmname=>'$vmname'");
     my @net_hw = &Guest::get_hw( $vmname, 'VirtualEthernetCard' );
     for ( my $i = 0 ; $i < scalar(@net_hw) ; $i++ ) {
         &Log::debug("Iterating thorugh Network hardware '$i'");
-        &Log::dumpobj( "network $i", $net_hw[$i] );
+        &Log::dumpobj( "interface $i", $net_hw[$i] );
         my $type = "Unknown";
         if ( $net_hw[$i]->isa('VirtualE1000') ) {
             $type = "E1000";
@@ -435,7 +435,7 @@ sub list_network {
           . $net_hw[$i]->{key}
           . "', mac=>'"
           . $net_hw[$i]->{macAddress}
-          . "', network=>'"
+          . "', interface=>'"
           . $net_hw[$i]->{backing}->{deviceName}
           . "', type=>'"
           . $type
