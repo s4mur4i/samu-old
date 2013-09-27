@@ -43,7 +43,7 @@ for my $template ( @{&Support::get_keys( 'template' )} ) {
     my $name = $view->name;
     output_like(  \&entity::list_disk, qr/^number=>'0',\skey=>'\d+',\ssize=>'\d+'\sKB,\spath=>'\[support\] $name\/$name.vmdk'$/, qr/^$/, "Listing disk information" );
     output_like(  \&entity::list_cdrom, qr/^number=>'0', key=>'\d+', backing=>'Client Device', label=>'[^']*'$/, qr/^$/, "Listing cdrom information" );
-    output_like(  \&entity::list_network, qr/^number=>'0', key=>'\d+', mac=>'([0-9A-F]{2}:){5}[0-9A-F]{2}', network=>'[^']*', type=>'[^']*', label=>'Network adapter 1'/, qr/^$/, "Listing network information" );
+    output_like(  \&entity::list_interface, qr/^number=>'0', key=>'\d+', mac=>'([0-9A-F]{2}:){5}[0-9A-F]{2}', interface=>'[^']*', type=>'[^']*', label=>'Network adapter 1'/, qr/^$/, "Listing network information" );
     throws_ok { &entity::list_snapshot( ) } 'Entity::Snapshot', "list_snapshot throws exception";
     diag("Testing add functions");
     is( &entity::add_cdrom, 1, "Add cdrom 2 returned success" );
@@ -68,6 +68,17 @@ for my $template ( @{&Support::get_keys( 'template' )} ) {
     is( &entity::add_disk, 1, "Add disk 14 returned success" );
     is( scalar(@{ &Guest::get_hw( $name, 'VirtualDisk')}), '14', "There are 14 disks in machine" );
     throws_ok { &entity::add_disk } 'Entity::HWError', "Add disk throws exception if no free scsi controller is found";
+    &Opts::add_options(%{$entity::module_opts->{functions}->{add}->{functions}->{interface}->{opts}});
+    my $cur_int = scalar(@{ &Guest::get_hw( $name, 'VirtualEthernetCard')});
+    &Opts::set_option("type", "E1000");
+    is( &entity::add_interface, 1, "Add interface returned success" );
+    is ( scalar(@{ &Guest::get_hw( $name, 'VirtualEthernetCard')}), ++$cur_int, "A new interface has been added" );
+    &Opts::set_option("type", "Vmxnet");
+    is( &entity::add_interface, 1, "Add interface returned success" );
+    is ( scalar(@{ &Guest::get_hw( $name, 'VirtualEthernetCard')}), ++$cur_int, "A 2nd interface has been added" );
+    &Opts::set_option("type", "Test");
+    throws_ok { &entity::add_disk } 'Entity::HWError', "Add disk throws exception if no free scsi controller is found";
+
     diag("Deleting entity");
     &Opts::add_options(%{$entity::module_opts->{functions}->{delete}->{functions}->{vm}->{opts}});
     is( Opts::get_option('vmname'), $view->name, "Vmname option was set succesfully" );

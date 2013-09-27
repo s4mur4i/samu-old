@@ -126,6 +126,7 @@ sub add_cdrom_spec {
     return $vmspec;
 }
 
+#tested
 sub add_interface_spec {
     my ( $vmname, $type ) = @_;
     &Log::debug(
@@ -165,6 +166,7 @@ sub add_interface_spec {
     return $vmspec;
 }
 
+#tested
 sub E1000_object {
     my ( $backing, $mac ) = @_;
     &Log::debug(
@@ -187,6 +189,7 @@ sub E1000_object {
     return $device;
 }
 
+#tested
 sub Vmxnet_object {
     my ( $backing, $mac ) = @_;
     &Log::debug(
