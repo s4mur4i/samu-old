@@ -693,9 +693,13 @@ Print the help page
 
 Add a distributed virtual switch to VCenter
 
-=item list
+=item list_switch
 
-List distributed virtual switches in VCenter
+List switches on VCenter
+
+=item list_dvp
+
+List distributed virtual portgroups on VCenter
 
 =item delete
 
