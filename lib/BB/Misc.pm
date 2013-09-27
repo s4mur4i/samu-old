@@ -42,10 +42,10 @@ sub generate_mac {
 
 sub generate_uniq_mac {
     &Log::debug("Starting Misc::generate_uniq_mac sub");
-    my $mac = &generate_mac( Opts::get_option('username') );
-    while ( &mac_compare($mac) ) {
+    my $mac = &Misc::generate_mac( Opts::get_option('username') );
+    while ( &Misc::mac_compare($mac) ) {
         &Log::debug("Generationing new mac and testing");
-        $mac = &generate_mac( Opts::get_option('username') );
+        $mac = &Misc::generate_mac( Opts::get_option('username') );
     }
     &Log::debug("Mac is uniq, mac=>'$mac'");
     return $mac;
@@ -127,9 +127,9 @@ sub increment_mac {
     }
     $mac_hex = sprintf( "%04X%08X", $mac_hi, $mac_lo );
     my $new_mac = join( ':', $mac_hex =~ /../sg );
-    if ( &mac_compare($new_mac) ) {
+    if ( &Misc::mac_compare($new_mac) ) {
         &Log::info("Incrementing mac again");
-        $new_mac = &increment_mac($new_mac);
+        $new_mac = &Misc::increment_mac($new_mac);
     }
     &Log::debug("Incrementd mac, mac=>'$new_mac'");
     return $new_mac;
@@ -143,7 +143,7 @@ sub vmname_splitter {
     my ( $ticket, $username, $template, $uniq ) =
       $vmname =~ /^([^-]*)-([^-]*)-([^-]*)-(\d{1,3})$/;
     if ( defined($template)
-        && $template =~ /^([^_]*)_([^_]*)_([^_]*)_([^_]*)_([^_]*)$/ )
+        and $template =~ /^([^_]*)_([^_]*)_([^_]*)_([^_]*)_([^_]*)$/ )
     {
         %return = (
             ticket   => $ticket,
@@ -156,7 +156,7 @@ sub vmname_splitter {
             type     => $5
         );
     }
-    elsif ( defined($template) && $template =~ /^([^_]*)_([^_]*)$/ ) {
+    elsif ( defined($template) and $template =~ /^([^_]*)_([^_]*)$/ ) {
         %return = (
             ticket   => $ticket,
             username => $username,
@@ -238,7 +238,7 @@ sub generate_vmname {
     &Log::debug(
 "Starting Misc::generate_vmname sub, ticket=>'$ticket', username=>'$username', os_temp=>'$os_temp'"
     );
-    return $ticket . "-" . $username . "-" . $os_temp . "-" . &random_3digit;
+    return $ticket . "-" . $username . "-" . $os_temp . "-" . &Misc::random_3digit;
 }
 
 sub uniq_vmname {
@@ -246,10 +246,10 @@ sub uniq_vmname {
     &Log::debug(
 "Starting Misc::uniq_vmname sub, ticket=>'$ticket', username=>'$username', os_temp=>'$os_temp'"
     );
-    my $vmname = &generate_vmname( $ticket, $username, $os_temp );
+    my $vmname = &Misc::generate_vmname( $ticket, $username, $os_temp );
     while ( &VCenter::exists_entity( $vmname, 'VirtualMachine' ) ) {
         &Log::debug("Generated name not uniq, regenerating");
-        $vmname = &generate_vmname( $ticket, $username, $os_temp );
+        $vmname = &Misc::generate_vmname( $ticket, $username, $os_temp );
     }
     return $vmname;
 }
@@ -263,7 +263,7 @@ sub ticket_list {
     );
     my %tickets = ();
     for my $machine (@$machines) {
-        my $hash = &vmname_splitter( $machine->name );
+        my $hash = &Misc::vmname_splitter( $machine->name );
         if ( $hash->{ticket} ne 'unknown'
             and !defined( $tickets{ $hash->{ticket} } ) )
         {

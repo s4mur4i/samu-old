@@ -230,7 +230,7 @@ sub get_key_info {
     my ( $hash, $key ) = @_;
     &Log::debug(
         "Starting Support::get_key_info sub, hash=>'$hash', key=>'$key'");
-    if ( grep /^$key$/, @{ &get_keys($hash) } ) {
+    if ( grep /^$key$/, @{ &Support::get_keys($hash) } ) {
         return $map_hash{$hash}->{$key};
     }
     else {
@@ -247,7 +247,7 @@ sub get_key_value {
     &Log::debug(
 "Starting Support::get_key_value sub, hash=>'$hash', key=>'$key', value=>'$value'"
     );
-    my $key_hash = &get_key_info( $hash, $key );
+    my $key_hash = &Support::get_key_info( $hash, $key );
     if ( defined( $$key_hash{$value} ) ) {
         return $$key_hash{$value};
     }

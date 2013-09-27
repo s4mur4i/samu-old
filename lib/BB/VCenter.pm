@@ -28,7 +28,7 @@ sub clonevm {
         spec   => $clone_spec
     );
     &Log::dumpobj( "Task object:" . Dumper($task) );
-    &Task_Status($task);
+    &VCenter::Task_Status($task);
     &Log::debug("Finished cloning vm");
     return 1;
 }
@@ -37,16 +37,12 @@ sub clonevm {
 sub create_test_vm {
     my ($name) = @_;
     &Log::debug("Starting VCenter::create_test_vm");
-    &num_check( 'test_1337', 'ResourcePool' );
+    &VCenter::num_check( 'test_1337', 'ResourcePool' );
     my $resource_pool = &Guest::entity_name_view( 'test_1337', 'ResourcePool' );
-    &num_check( 'test_1337', 'Folder' );
+    &VCenter::num_check( 'test_1337', 'Folder' );
     my $folder = &Guest::entity_name_view( 'test_1337', 'Folder' );
-    &num_check( 'test_1337', 'DistributedVirtualSwitch' );
-    my $host_view = Vim::find_entity_view(
-        view_type  => 'HostSystem',
-        properties => ['network'],
-        filter     => { name => 'vmware-it1.balabit' }
-    );
+    &VCenter::num_check( 'test_1337', 'DistributedVirtualSwitch' );
+    my $host_view = &Guest::entity_name_view( 'vmware-it1.balabit', 'HostSystem');
     my $network_list = Vim::get_views( mo_ref_array => $host_view->network );
     my @vm_devices;
     my $files = VirtualMachineFileInfo->new(
@@ -106,11 +102,7 @@ sub num_check {
     my ( $name, $type ) = @_;
     &Log::debug(
         "Starting VCenter::num_check sub, name=>'$name', type=>'$type'");
-    my $views = Vim::find_entity_views(
-        view_type  => $type,
-        properties => ['name'],
-        filter     => { name => $name }
-    );
+    my $views = &Guest::entity_name_view( $name, $type);
     &Log::dumpobj( "views", $views );
     if ( scalar(@$views) ne 1 ) {
         Entity::NumException->throw(
@@ -128,11 +120,7 @@ sub exists_entity {
     my ( $name, $type ) = @_;
     &Log::debug(
         "Starting VCenter::exists_entity sub, name=>'$name', type=>'$type'");
-    my $view = Vim::find_entity_view(
-        view_type  => $type,
-        properties => ['name'],
-        filter     => { name => $name }
-    );
+    my $view = &Guest::entity_name_view( $name, $type);
     &Log::dumpobj( "view", $view );
     if ( !defined($view) ) {
         &Log::debug("Entity does not exist");
@@ -154,7 +142,7 @@ sub path2name {
             path  => $path
         );
     }
-    my $view = &moref2view($moref);
+    my $view = &VCenter::moref2view($moref);
     return $view->name;
 }
 
@@ -195,7 +183,7 @@ sub linked_clone_folder {
     &Log::debug(
         "Starting VCenter::linked_clone_folder sub, temp_name=>'$temp_name'");
     my $temp_fol;
-    if ( &exists_entity( $temp_name, 'Folder' ) ) {
+    if ( &VCenter::exists_entity( $temp_name, 'Folder' ) ) {
         &Log::info("Linked clone folder already exists");
         $temp_fol = &Guest::entity_name_view( $temp_name, 'Folder' );
     }
@@ -206,8 +194,8 @@ sub linked_clone_folder {
             properties => ['parent'],
             filter     => { name => qr/$temp_name$/ }
         );
-        my $parent_view = &moref2view( $temp_view->parent );
-        $temp_fol = &create_folder( $temp_name, $parent_view->name );
+        my $parent_view = &VCenter::moref2view( $temp_view->parent );
+        $temp_fol = &VCenter::create_folder( $temp_name, $parent_view->name );
     }
     return $temp_fol;
 }
@@ -345,7 +333,7 @@ sub create_resource_pool {
           . $rp_parent
           . "'" );
     my $type = 'ResourcePool';
-    if ( &exists_entity( $rp_name, $type ) ) {
+    if ( &VCenter::exists_entity( $rp_name, $type ) ) {
         &Log::debug("Resource pool already exists on VCenter");
         Entity::NumException->throw(
             error  => 'Resource pool already exists. Cannot create',
@@ -353,7 +341,7 @@ sub create_resource_pool {
             count  => '1'
         );
     }
-    elsif ( !&exists_entity( $rp_parent, $type ) ) {
+    elsif ( !&VCenter::exists_entity( $rp_parent, $type ) ) {
         &Log::debug("Resource pool parent doesn't exists on VCenter");
         Entity::NumException->throw(
             error  => 'Resource pool parent doesn\'t exist. Cannot create',
@@ -361,11 +349,7 @@ sub create_resource_pool {
             count  => '0'
         );
     }
-    my $rp_parent_view = Vim::find_entity_view(
-        view_type  => $type,
-        properties => ['name'],
-        filter     => { name => $rp_parent }
-    );
+    my $rp_parent_view = &Guest::entity_name_view( $rp_parent, $type);
     ## Creation objects
     my $shareslevel = SharesLevel->new('normal');
     my $cpushares   = SharesInfo->new( shares => 4000, level => $shareslevel );
@@ -410,7 +394,7 @@ sub create_folder {
 "Starting VCenter::create_folder sub, fol_name=>'$fol_name', fol_parent=>'$fol_parent'"
     );
     my $type = 'Folder';
-    if ( &exists_entity( $fol_name, $type ) ) {
+    if ( &VCenter::exists_entity( $fol_name, $type ) ) {
         &Log::debug("Folder already exists on VCenter");
         Entity::NumException->throw(
             error  => 'Folder already exists. Cannot create',
@@ -418,7 +402,7 @@ sub create_folder {
             count  => '1'
         );
     }
-    elsif ( !&exists_entity( $fol_parent, $type ) ) {
+    elsif ( !&VCenter::exists_entity( $fol_parent, $type ) ) {
         &Log::debug("Folder parent doesn't exists on VCenter");
         Entity::NumException->throw(
             error  => 'Folder parent doesn\'t exist. Cannot create',
@@ -446,8 +430,8 @@ sub create_folder {
 sub create_switch {
     my ($name) = @_;
     &Log::debug("Starting VCenter::create_switch sub, name=>'$name'");
-    &num_check( 'network', 'Folder' );
-    if ( &exists_entity( $name, 'DistributedVirtualSwitch' ) ) {
+    &VCenter::num_check( 'network', 'Folder' );
+    if ( &VCenter::exists_entity( $name, 'DistributedVirtualSwitch' ) ) {
         Entity::NumException->throw(
             error  => 'Cannot create switch, already exists',
             entity => $name,
@@ -455,7 +439,7 @@ sub create_switch {
         );
     }
     my $network_folder = &Guest::entity_name_view( 'network', 'Folder' );
-    &num_check( 'vmware-it1.balabit', 'HostSystem' );
+    &VCenter::num_check( 'vmware-it1.balabit', 'HostSystem' );
     my $host_view =
       &Guest::entity_name_view( 'vmware-it1.balabit', 'HostSystem' );
     my $hostspec = DistributedVirtualSwitchHostMemberConfigSpec->new(
@@ -475,7 +459,7 @@ sub create_switch {
     &Log::dumpobj( "spec", $spec );
     my $task = $network_folder->CreateDVS_Task( spec => $spec );
     &Log::dumpobj( "task", $task );
-    &Task_Status($task);
+    &VCenter::Task_Status($task);
     &Log::debug("Finished creating switch");
     return 1;
 }
@@ -486,14 +470,14 @@ sub create_dvportgroup {
     &Log::debug(
 "Starting VCenter::create_dvportgroup sub, name=>'$name', switch=>'$switch'"
     );
-    if ( &exists_entity( $name, 'DistributedVirtualPortgroup' ) ) {
+    if ( &VCenter::exists_entity( $name, 'DistributedVirtualPortgroup' ) ) {
         Entity::NumException->throw(
             error  => 'Cannot create entity, already exists',
             entity => $name,
             count  => '1'
         );
     }
-    &num_check( $switch, 'DistributedVirtualSwitch' );
+    &VCenter::num_check( $switch, 'DistributedVirtualSwitch' );
     my $switch_view =
       &Guest::entity_name_view( $switch, 'DistributedVirtualSwitch' );
     &Log::dumpobj( "switch_view", $switch_view );
@@ -506,7 +490,7 @@ sub create_dvportgroup {
     &Log::dumpobj( "spec", $spec );
     my $task = $switch_view->AddDVPortgroup_Task( spec => $spec );
     &Log::dumpobj( "task", $task );
-    &Task_Status($task);
+    &VCenter::Task_Status($task);
     &Log::debug("Finished creating dv port group");
     return 1;
 }
@@ -516,15 +500,11 @@ sub destroy_entity {
     my ( $name, $type ) = @_;
     &Log::debug(
         "Starting VCenter::destroy_entity sub, name=>'$name', type=>'$type'");
-    &num_check( $name, $type );
+    &VCenter::num_check( $name, $type );
     my $view = &Guest::entity_name_view( $name, $type );
     my $task = $view->Destroy_Task;
-    &Task_Status($task);
-    $view = Vim::find_entity_view(
-        view_type  => $type,
-        properties => ['name'],
-        filter     => { name => $name }
-    );
+    &VCenter::Task_Status($task);
+    $view = &Guest::entity_name_view( $name, $type);
     if ( defined($view) ) {
         Entity::NumException->throw(
             error  => 'Could not delete entity',

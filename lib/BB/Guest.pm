@@ -14,7 +14,7 @@ sub entity_name_view {
     my ( $name, $type ) = @_;
     &Log::debug("Retrieving entity name view, name=>'$name', type=>'$type'");
     &VCenter::num_check( $name, $type );
-    my $view = &entity_property_view( $name, $type, 'name' );
+    my $view = &Guest::entity_property_view( $name, $type, 'name' );
     return $view;
 }
 
@@ -54,7 +54,7 @@ sub find_last_snapshot {
           . $snapshot_view->id
           . "'" );
     if ( defined( $snapshot_view->[0]->{'childSnapshotList'} ) ) {
-        &find_last_snapshot( $snapshot_view->[0]->{'childSnapshotList'} );
+        &Guest::find_last_snapshot( $snapshot_view->[0]->{'childSnapshotList'} );
     }
     else {
         &Log::debug(
@@ -68,12 +68,8 @@ sub get_altername {
     my ($vmname) = @_;
     &Log::debug("Starting Guest::get_altername sub, vmname=>'$vmname'");
     &VCenter::num_check( $vmname, 'VirtualMachine' );
-    my $view = Vim::find_entity_view(
-        view_type  => 'VirtualMachine',
-        properties => ['value'],
-        filter     => { name => $vmname }
-    );
-    my $key = &get_annotation_key( $vmname, "alternateName" );
+    my $view = &Guest::entity_name_view( $vmname, 'VirtualMachine');
+    my $key = &Guest::get_annotation_key( $vmname, "alternateName" );
     if ( defined( $view->value ) ) {
         foreach ( @{ $view->value } ) {
             if ( $_->key eq $key ) {
@@ -93,10 +89,10 @@ sub change_altername {
         "Starting Guest::change_altername sub, vmname=>'$vmname', name=>'$name'"
     );
     &VCenter::num_check( $vmname, 'VirtualMachine' );
-    my $view   = &entity_name_view( $vmname, 'VirtualMachine' );
+    my $view   = &Guest::entity_name_view( $vmname, 'VirtualMachine' );
     my $sc     = Vim::get_service_content();
     my $custom = Vim::get_view( mo_ref => $sc->customFieldsManager );
-    my $key    = &get_annotation_key( $vmname, "alternateName" );
+    my $key    = &Guest::get_annotation_key( $vmname, "alternateName" );
     $custom->SetField( entity => $view, key => $key, value => $name );
     &Log::debug("Finished changing altername");
     return 1;
@@ -134,7 +130,7 @@ sub add_interface_spec {
     );
     my @net_hw = @{ &Guest::get_hw( $vmname, 'VirtualEthernetCard' )};
     &VCenter::num_check( "VLAN21", "Network" );
-    my $switch  = &entity_name_view( 'VLAN21', 'Network' );
+    my $switch  = &Guest::entity_name_view( 'VLAN21', 'Network' );
     my $mac     = &Misc::increment_mac( $net_hw[-1]->{macAddress} );
     my $backing = VirtualEthernetCardNetworkBackingInfo->new(
         deviceName => $switch->name,
@@ -143,10 +139,10 @@ sub add_interface_spec {
     my $device;
 
     if ( $type eq "E1000" ) {
-        $device = &E1000_object( $backing, $mac );
+        $device = &Guest::E1000_object( $backing, $mac );
     }
     elsif ( $type eq "Vmxnet" ) {
-        $device = &Vmxnet_object( $backing, $mac );
+        $device = &Guest::Vmxnet_object( $backing, $mac );
     }
     else {
         Entity::HWError->throw(
@@ -217,8 +213,8 @@ sub add_disk_spec {
     my ( $vmname, $size ) = @_;
     &Log::debug(
         "Starting Guest::add_disk_spec sub, vmname=>'$vmname', size=>'$size'");
-    my @disk_hw    = @{ &get_hw( $vmname, 'VirtualDisk' ) };
-    my $scsi_con   = &get_scsi_controller($vmname);
+    my @disk_hw    = @{ &Guest::get_hw( $vmname, 'VirtualDisk' ) };
+    my $scsi_con   = &Guest::get_scsi_controller($vmname);
     my $unitnumber = $disk_hw[-1]->{unitNumber} + 1;
 
     if ( $unitnumber == 7 ) {
@@ -268,7 +264,7 @@ sub get_scsi_controller {
     my @controller = ();
     for my $type (@types) {
         &Log::debug1("Looping through $type");
-        my @cont = @{ &get_hw( $vmname, $type )};
+        my @cont = @{ &Guest::get_hw( $vmname, $type )};
         &Log::dumpobj( "get_hw_return", \@cont );
         if ( scalar(@cont) eq 1 ) {
             &Log::debug("Pushing controller to return array");
@@ -295,7 +291,7 @@ sub get_free_ide_controller {
     my ($vmname) = @_;
     &Log::debug(
         "Starting Guest::get_free_ide_controller sub, vmname=>'$vmname'");
-    my @controller = @{ &get_hw( $vmname, 'VirtualIDEController' ) };
+    my @controller = @{ &Guest::get_hw( $vmname, 'VirtualIDEController' ) };
     for ( my $i = 0 ; $i < scalar(@controller) ; $i++ ) {
         &Log::dumpobj( "ide_controller", $controller[$i] );
         if ( defined( $controller[$i]->device ) ) {
@@ -326,7 +322,7 @@ sub reconfig_vm {
     my ( $vmname, $spec ) = @_;
     &Log::debug("Starting Guest::reconfig_vm sub, vmname=>'$vmname'");
     &Log::dumpobj( "spec", $spec );
-    my $view = &entity_name_view( $vmname, 'VirtualMachine' );
+    my $view = &Guest::entity_name_view( $vmname, 'VirtualMachine' );
     my $task = $view->ReconfigVM_Task( spec => $spec );
     &VCenter::Task_Status($task);
     &Log::debug("Finished VM reconfig");
@@ -340,11 +336,7 @@ sub get_annotation_key {
 "Starting Guest::get_annotation_key sub, vmname=>'$vmname', key=>'$name'"
     );
     &VCenter::num_check( $vmname, 'VirtualMachine' );
-    my $view = Vim::find_entity_view(
-        view_type  => 'VirtualMachine',
-        properties => ['availableField'],
-        filter     => { name => $vmname }
-    );
+    my $view = &Guest::entity_property_view( $vmname, 'VirtualMachine', 'availableField');
     foreach ( @{ $view->availableField } ) {
         if ( $_->name eq $name ) {
             &Log::debug( "Found key returning value=>'" . $_->key . "'" );
@@ -360,11 +352,7 @@ sub network_interfaces {
     my ($vmname) = @_;
     &Log::debug("Starting Guest::network_interfaces sub, vmname=>'$vmname'");
     my %interfaces = ();
-    my $view       = Vim::find_entity_view(
-        view_type  => 'VirtualMachine',
-        properties => ['config.hardware.device'],
-        filter     => { name => $vmname }
-    );
+    my $view       = &Guest::entity_property_view( $vmname, 'VirtualMachine', 'config.hardware.device');
     my $devices = $view->get_property('config.hardware.device');
     for my $device (@$devices) {
         if ( !$device->isa('VirtualEthernetCard') ) {
@@ -427,7 +415,7 @@ sub generate_network_setup {
     my $os_temp_path = &Support::get_key_value( 'template', $os_temp, 'path' );
     my $os_temp_view =
       &VCenter::moref2view( &VCenter::path2moref($os_temp_path) );
-    my %keys = %{ &network_interfaces( $os_temp_view->name ) };
+    my %keys = %{ &Guest::network_interfaces( $os_temp_view->name ) };
     my @mac  = &Misc::generate_macs( scalar( keys %keys ) );
     for my $key ( keys %keys ) {
         my $ethernetcard;
@@ -484,7 +472,7 @@ sub CustomizationAdapterMapping_generator {
           . $vmname
           . "'" );
     my @return;
-    for my $key ( keys &network_interfaces($vmname) ) {
+    for my $key ( keys &Guest::network_interfaces($vmname) ) {
         &Log::debug("Generating $key Adapter mapping");
         my $ip      = CustomizationDhcpIpGenerator->new();
         my $adapter = CustomizationIPSettings->new(
@@ -513,11 +501,7 @@ sub get_hw {
           . "'" );
     &VCenter::num_check( $vmname, 'VirtualMachine' );
     my @hw   = ();
-    my $view = Vim::find_entity_view(
-        view_type  => 'VirtualMachine',
-        properties => ['config.hardware.device'],
-        filter     => { name => $vmname }
-    );
+    my $view = &Guest::entity_property_view( $vmname, 'VirtualMachine', 'config.hardware.device');
     &Log::debug("Starting loop through hardver");
     my $devices = $view->get_property('config.hardware.device');
     foreach ( @{$devices} ) {
@@ -538,7 +522,7 @@ sub poweron {
     &Log::debug("Starting Guest::poweron sub, vmname=>'$vmname'");
     &VCenter::num_check( $vmname, 'VirtualMachine' );
     my $view =
-      &entity_property_view( $vmname, 'VirtualMachine', 'runtime.powerState' );
+      &Guest::entity_property_view( $vmname, 'VirtualMachine', 'runtime.powerState' );
     my $powerstate = $view->get_property('runtime.powerState');
     if ( $powerstate->val ne "poweredOff" ) {
         &Log::warning("Machine is already powered on");
@@ -556,7 +540,7 @@ sub poweroff {
     &Log::debug("Starting Guest::poweroff sub, vmname=>'$vmname'");
     &VCenter::num_check( $vmname, 'VirtualMachine' );
     my $view =
-      &entity_property_view( $vmname, 'VirtualMachine', 'runtime.powerState' );
+      &Guest::entity_property_view( $vmname, 'VirtualMachine', 'runtime.powerState' );
     my $powerstate = $view->get_property('runtime.powerState');
     if ( $powerstate->val eq "poweredOff" ) {
         &Log::warning("Machine is already powered off");
@@ -574,7 +558,7 @@ sub revert_to_snapshot {
     &Log::debug(
         "Starting Guest::revert_to_snapshot sub, vmname=>'$vmname', id=>'$id'\n"
     );
-    my $view = &entity_property_view( $vmname, 'VirtualMachine', 'snapshot' );
+    my $view = &Guest::entity_property_view( $vmname, 'VirtualMachine', 'snapshot' );
     if ( !defined( $view->snapshot ) ) {
         Entity::Snapshot->throw(
             error    => "No snapshot found",
@@ -583,7 +567,7 @@ sub revert_to_snapshot {
         );
     }
     foreach ( @{ $view->snapshot->rootSnapshotList } ) {
-        my $snapshot = &find_snapshot_by_id( $_, $id );
+        my $snapshot = &Guest::find_snapshot_by_id( $_, $id );
         if ( defined($snapshot) ) {
             &Log::debug("Found Id reverting");
             my $moref = Vim::get_view( mo_ref => $snapshot->snapshot );
@@ -617,7 +601,7 @@ sub find_snapshot_by_id {
             if ( !defined($return) ) {
                 &Log::debug(
                     "We have not found the required snapshot searching");
-                $return = &find_snapshot_by_id( $_, $id );
+                $return = &Guest::find_snapshot_by_id( $_, $id );
             }
         }
     }
@@ -636,7 +620,7 @@ sub create_snapshot {
           . "', desc=>'"
           . $desc
           . "'" );
-    my $view = &entity_name_view( $vmname, 'VirtualMachine' );
+    my $view = &Guest::entity_name_view( $vmname, 'VirtualMachine' );
     my $task = $view->CreateSnapshot_Task(
         name        => $snap_name,
         description => $desc,
@@ -652,7 +636,7 @@ sub create_snapshot {
 sub remove_all_snapshots {
     my ($vmname) = @_;
     &Log::debug("Starting Guest::remove_all_snapshot sub, vmname=>'$vmname'");
-    my $view = &entity_property_view( $vmname, 'VirtualMachine', 'snapshot' );
+    my $view = &Guest::entity_property_view( $vmname, 'VirtualMachine', 'snapshot' );
     if ( !defined( $view->snapshot ) ) {
         Entity::Snapshot->throw(
             error    => "Entity has no snapshots defined",
@@ -672,7 +656,7 @@ sub remove_snapshot {
     my ( $vmname, $id ) = @_;
     &Log::debug(
         "Starting Guest::remove_snapshot sub, vmname=>'$vmname', id=>'$id'");
-    my $view = &entity_property_view( $vmname, 'VirtualMachine', 'snapshot' );
+    my $view = &Guest::entity_property_view( $vmname, 'VirtualMachine', 'snapshot' );
     if ( !defined( $view->snapshot ) ) {
         Entity::Snapshot->throw(
             error    => "Entity has no snapshots defined",
@@ -683,7 +667,7 @@ sub remove_snapshot {
     else {
         foreach ( @{ $view->snapshot->rootSnapshotList } ) {
             &Log::dumpobj( "snapshot", $_ );
-            my $snapshot = &find_snapshot_by_id( $_, $id );
+            my $snapshot = &Guest::find_snapshot_by_id( $_, $id );
             if ( defined($snapshot) ) {
                 my $view = &VCenter::moref2view( $snapshot->snapshot );
                 &Log::dumpobj( "view", $view );
@@ -707,7 +691,7 @@ sub remove_snapshot {
 sub list_snapshot {
     my ($vmname) = @_;
     &Log::debug("Starting Guest::list_snapshot sub, vmname=>'$vmname'");
-    my $view = &entity_property_view( $vmname, 'VirtualMachine', 'snapshot' );
+    my $view = &Guest::entity_property_view( $vmname, 'VirtualMachine', 'snapshot' );
     if (   !defined( $view->snapshot )
         or !defined( $view->snapshot->currentSnapshot ) )
     {
@@ -721,7 +705,7 @@ sub list_snapshot {
     &Log::debug1("My current snapshot is: $current_snapshot");
     foreach ( @{ $view->snapshot->rootSnapshotList } ) {
         &Log::debug("Traversing snapshot");
-        &traverse_snapshot( $_, $current_snapshot );
+        &Guest::traverse_snapshot( $_, $current_snapshot );
     }
     &Log::debug("Finished listing snapshot");
     return 1;
@@ -752,8 +736,11 @@ sub traverse_snapshot {
       . "', description => '"
       . $snapshot_moref->description . "'\n";
     if ( defined( $snapshot_moref->{'childSnapshotList'} ) ) {
+        &Log::debug("Found Child snapshot, traversing");
         foreach ( @{ $snapshot_moref->{'childSnapshotList'} } ) {
-            &traverse_snapshot( $_, $current_snapshot );
+            &Log::debug("Iterating through branch");
+            &Log::dumpobj( "childsnapshot", $_ );
+            &Guest::traverse_snapshot( $_, $current_snapshot );
         }
     }
     &Log::debug("Finished traverse_snapshot sub");

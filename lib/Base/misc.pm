@@ -34,7 +34,7 @@ sub option_parser {
     my $module_name = shift;
     if ( exists( $opts->{helper} ) ) {
         GetOptions( 'help|h' => \$help, );
-        $help && &call_pod2usage( $opts->{helper} );
+        $help && &misc::call_pod2usage( $opts->{helper} );
     }
     if ( exists $opts->{module} ) {
         my $module = 'Base::' . $opts->{module};
@@ -63,7 +63,7 @@ sub option_parser {
         my $arg = shift @ARGV;
         if ( defined $arg and exists $opts->{functions}->{$arg} ) {
             &Log::debug("Forwarding parsing to subfunction parser $arg");
-            &option_parser( $opts->{functions}->{$arg}, $arg );
+            &misc::option_parser( $opts->{functions}->{$arg}, $arg );
         }
         else {
             &Log::debug("Calling helper");

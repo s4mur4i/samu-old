@@ -103,7 +103,7 @@ sub emergency {
 
 sub dumpobj {
     my ( $name, $obj ) = @_;
-    ( verbosity() >= 10 ) and &debug2( "Dumping object $name:" . Dumper($obj) );
+    ( verbosity() >= 10 ) and debug2( "Dumping object $name:" . Dumper($obj) );
 }
 
 BEGIN {
