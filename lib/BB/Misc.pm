@@ -153,7 +153,8 @@ sub vmname_splitter {
             version  => $2,
             lang     => $3,
             arch     => $4,
-            type     => $5
+            type     => $5,
+            template => $template,
         );
     }
     elsif ( defined($template) and $template =~ /^([^_]*)_([^_]*)$/ ) {
@@ -165,7 +166,8 @@ sub vmname_splitter {
             version  => $2,
             lang     => 'en',
             arch     => 'x64',
-            type     => 'xcb'
+            type     => 'xcb',
+            template => $template,
         );
     }
     else {
@@ -178,7 +180,8 @@ sub vmname_splitter {
             version  => 'unknown',
             lang     => 'unknown',
             arch     => 'unknown',
-            type     => 'unknown'
+            type     => 'unknown',
+            template => 'unknown',
         );
     }
     return \%return;
