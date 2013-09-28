@@ -106,6 +106,11 @@ sub dumpobj {
     ( verbosity() >= 10 ) and debug2( "Dumping object $name:" . Dumper($obj) );
 }
 
+sub loghash {
+    my ( $msg, $hash ) = @_;
+    ( verbosity() >=8 ) and debug( $msg . ( join ',', ( map { "$_=>'" . $hash->{$_} . "'" } sort keys %{ $hash })));
+}
+
 BEGIN {
     use Exporter();
     our ( @ISA, @EXPORT );
