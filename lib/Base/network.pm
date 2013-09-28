@@ -32,6 +32,27 @@ our $module_opts = {
                 },
             },
         },
+        create => {
+            function => \&create_net,
+            opts     => {
+                type => {
+                    type     => "=s",
+                    help     => "Type of interface to create",
+                    required => 1,
+                },
+                ticket => {
+                    type     => "=s",
+                    help     => "Ticket to add network to",
+                    required => 1,
+                },
+                vms => {
+                    type => "=s",
+                    help =>
+"A comma seperated list of vms to add to interface, Ex: test1,test2,test3",
+                    required => 1,
+                },
+            },
+        },
         list_switch => {
             function => \&list_switch,
             opts     => {},
@@ -81,11 +102,16 @@ sub network_add {
 
 sub list_switch {
     &Log::debug("Starting network::list_switch sub");
-    my $views = Vim::find_entity_views( view_type => 'Network', properties => [ 'name' ] );
-    if ( !defined( $viewss ) ) {
-        Entity::NumException->throw( error => 'No switch found', entity => 'Network', count => '0' );
+    my $views =
+      Vim::find_entity_views( view_type => 'Network', properties => ['name'] );
+    if ( !defined($views) ) {
+        Entity::NumException->throw(
+            error  => 'No switch found',
+            entity => 'Network',
+            count  => '0'
+        );
     }
-    foreach( @$views ) {
+    foreach (@$views) {
         &Log::dumpobj( "switch", $_ );
         print "name:" . $_->name . "\n";
     }
@@ -93,11 +119,18 @@ sub list_switch {
 
 sub list_dvp {
     &Log::debug("Starting network::list_dvp sub");
-    my $networks = Vim::find_entity_views( view_type => 'DistributedVirtualPortgroup', properties => [ 'name' ] );
-    if ( !defined( $networks ) ) {
-        Entity::NumException->throw( error => 'No DVP found', entity => 'DistributedVirtualPortGroup', count => '0' );
+    my $networks = Vim::find_entity_views(
+        view_type  => 'DistributedVirtualPortgroup',
+        properties => ['name']
+    );
+    if ( !defined($networks) ) {
+        Entity::NumException->throw(
+            error  => 'No DVP found',
+            entity => 'DistributedVirtualPortGroup',
+            count  => '0'
+        );
     }
-    foreach( @$networks ) {
+    foreach (@$networks) {
         &Log::dumpobj( "dvp", $_ );
         print "name:" . $_->name . "\n";
     }
