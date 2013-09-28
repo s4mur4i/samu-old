@@ -385,17 +385,18 @@ sub network_interfaces {
         $interfaces{$key}->{unitnumber}    = $device->unitNumber;
         $interfaces{$key}->{label}         = $device->deviceInfo->label;
         $interfaces{$key}->{summary}       = $device->deviceInfo->summary;
-        &Log::debug(
-            "Interface gathered, information: "
-              . (
-                join ',',
-                (
-                    map { "$_=>'" . $interfaces{$key}->{$_} . "'" }
-                    sort keys %{ $interfaces{$key} }
-                ),
-                "key=>'$key'"
-              )
-        );
+#        &Log::debug(
+#            "Interface gathered, information: "
+#              . (
+#                join ',',
+#                (
+#                    map { "$_=>'" . $interfaces{$key}->{$_} . "'" }
+#                    sort keys %{ $interfaces{$key} }
+#                ),
+#                "key=>'$key'"
+#              )
+#        );
+        &Log::loghash( "Interface gathered, information, key=>'$key'", $interfaces{$key} );
     }
     &Log::debug("Returning interfaces hash");
     return \%interfaces;
