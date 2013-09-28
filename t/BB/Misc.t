@@ -7,7 +7,13 @@ use Test::Exception;
 use FindBin;
 use lib "$FindBin::Bin/../../lib";
 
-BEGIN { use_ok('BB::Misc'); use_ok('BB::Common'); }
+BEGIN {
+    use_ok('BB::Misc');
+    use_ok('BB::Common');
+    &Opts::parse();
+    &Opts::validate();
+    &Util::connect();
+}
 
 ok( &Misc::array_longest( [ "t", "te", "test", "tes" ] ) eq 4,
     'array_longest returned longest element' );
@@ -36,7 +42,8 @@ my %hash = (
     version  => 'unknown',
     lang     => 'unknown',
     arch     => 'unknown',
-    type     => 'unknown'
+    type     => 'unknown',
+    template => 'unknown',
 );
 is_deeply( &Misc::vmname_splitter('TEST'),
     \%hash, 'vmname_splitter returned hash for unknown name' );
@@ -48,7 +55,8 @@ is_deeply( &Misc::vmname_splitter('TEST'),
     version  => '123',
     lang     => 'en',
     arch     => 'x64',
-    type     => 'xcb'
+    type     => 'xcb',
+    template => 'xcb_123',
 );
 is_deeply( &Misc::vmname_splitter('ticket-username-xcb_123-1'),
     \%hash, 'vmname_splitter returned hash for xcb name' );
@@ -60,7 +68,8 @@ is_deeply( &Misc::vmname_splitter('ticket-username-xcb_123-1'),
     version  => '2008r2',
     lang     => 'en',
     arch     => 'x64',
-    type     => 'ent'
+    type     => 'ent',
+    template => 'win_2008r2_en_x64_ent',
 );
 is_deeply( &Misc::vmname_splitter('ticket-username-win_2008r2_en_x64_ent-123'),
     \%hash, 'vmname_splitter returned hash for standard name' );
@@ -96,3 +105,6 @@ like(
 );
 
 done_testing;
+END {
+    &Util::disconnect();
+}
