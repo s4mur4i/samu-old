@@ -818,11 +818,5 @@ sub guest_cred {
     return $guestAuth;
 }
 
-sub transfer_from_guest {
-    my ( $info ) = @_;
-    &Log::debug("Starting Guest::transfer_from_guest sub");
-    &Log::loghash( "Info options, ", $info);
-}
-
 1
 __END__
