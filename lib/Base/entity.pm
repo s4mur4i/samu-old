@@ -109,20 +109,21 @@ our $module_opts = {
                         },
                     },
                 },
-               interface => {
+                interface => {
                     function => \&add_interface,
                     opts     => {
                         vmname => {
                             type => "=s",
                             help =>
-"The vm's name where interface should be added",
+                              "The vm's name where interface should be added",
                             required => 1,
                         },
                         type => {
                             type => "=s",
-                            help => "Requested type of interface: E1000, Vmxnet",
+                            help =>
+                              "Requested type of interface: E1000, Vmxnet",
                             required => 0,
-                            default => "E1000",
+                            default  => "E1000",
                         },
                     },
                 },
@@ -360,52 +361,52 @@ our $module_opts = {
         },
         run => {
             prereq_module => "LWP::UserAgent",
-            function => \&run_command,
-            opts => {
+            function      => \&run_command,
+            opts          => {
                 vmname => {
                     type     => '=s',
                     help     => 'Which VMs should be used for running command',
                     required => '1',
                 },
                 guestusername => {
-                    type => "=s",
-                    help => "Custom username for guest OS",
+                    type     => "=s",
+                    help     => "Custom username for guest OS",
                     required => 0,
                 },
                 guestpassword => {
-                    type => "=s",
-                    help => "Custom password for guest OS",
+                    type     => "=s",
+                    help     => "Custom password for guest OS",
                     required => 0,
                 },
                 prog => {
-                    type => "=s",
-                    help => "Full path for program to run",
+                    type     => "=s",
+                    help     => "Full path for program to run",
                     required => 1,
                 },
                 prog_arg => {
-                    type => "=s",
-                    help => "Arguments to program",
+                    type     => "=s",
+                    help     => "Arguments to program",
                     required => 1,
                 },
                 workdir => {
-                    type => "=s",
-                    help => "Working directory to run program in",
+                    type     => "=s",
+                    help     => "Working directory to run program in",
                     required => 1,
                 },
                 env => {
-                    type => "=s",
-                    help => "ENV settings for program",
+                    type     => "=s",
+                    help     => "ENV settings for program",
                     required => 0,
-                    default => "",
+                    default  => "",
                 },
             },
         },
         transfer => {
             function => \&transfer,
-            opts => {
+            opts     => {
                 type => {
-                    type => '=s',
-                    help => 'Diretion of transfer, Values: to/from',
+                    type     => '=s',
+                    help     => 'Diretion of transfer, Values: to/from',
                     required => 1,
                 },
                 vmname => {
@@ -414,30 +415,30 @@ our $module_opts = {
                     required => '1',
                 },
                 guestusername => {
-                    type => "=s",
-                    help => "Custom username for guest OS",
+                    type     => "=s",
+                    help     => "Custom username for guest OS",
                     required => 0,
                 },
                 guestpassword => {
-                    type => "=s",
-                    help => "Custom password for guest OS",
+                    type     => "=s",
+                    help     => "Custom password for guest OS",
                     required => 0,
                 },
                 source => {
-                    type => "=s",
-                    help => "Source of file",
+                    type     => "=s",
+                    help     => "Source of file",
                     required => 1,
                 },
                 dest => {
-                    type => "=s",
-                    help => "Destination of file",
+                    type     => "=s",
+                    help     => "Destination of file",
                     required => 1,
                 },
                 overwrite => {
-                    type => "=s",
-                    help => "Should files be overwritten during transfer",
+                    type     => "=s",
+                    help     => "Should files be overwritten during transfer",
                     required => 0,
-                    default => 0,
+                    default  => 0,
                 },
             },
         },
@@ -454,7 +455,7 @@ sub list_cdrom {
     &Log::debug("Entity::list_cdrom sub started");
     my $vmname = Opts::get_option('vmname');
     &Log::debug("Requested options, vmname=>'$vmname'");
-    my @cdrom_hw = @{ &Guest::get_hw( $vmname, 'VirtualCdrom' )};
+    my @cdrom_hw = @{ &Guest::get_hw( $vmname, 'VirtualCdrom' ) };
     if ( @cdrom_hw eq 0 ) {
         &Log::debug("No cdroms on entity");
         print "Currently no cdroms attached to machine\n";
@@ -502,7 +503,7 @@ sub list_interface {
     &Log::debug("Entity::list_interface sub started");
     my $vmname = Opts::get_option('vmname');
     &Log::debug("Requested options, vmname=>'$vmname'");
-    my @net_hw = @{ &Guest::get_hw( $vmname, 'VirtualEthernetCard' )};
+    my @net_hw = @{ &Guest::get_hw( $vmname, 'VirtualEthernetCard' ) };
     for ( my $i = 0 ; $i < scalar(@net_hw) ; $i++ ) {
         &Log::debug("Iterating thorugh Network hardware '$i'");
         &Log::dumpobj( "interface $i", $net_hw[$i] );
@@ -533,7 +534,7 @@ sub list_disk {
     &Log::debug("Entity::list_disk sub started");
     my $vmname = Opts::get_option('vmname');
     &Log::debug("Requested options, vmname=>'$vmname'");
-    my @disk_hw = @{ &Guest::get_hw( $vmname, 'VirtualDisk' )};
+    my @disk_hw = @{ &Guest::get_hw( $vmname, 'VirtualDisk' ) };
     &Log::dumpobj( "disk_hw", \@disk_hw );
     for ( my $i = 0 ; $i < scalar(@disk_hw) ; $i++ ) {
         &Log::debug("Iterating thorugh disk hardware '$i'");
@@ -601,9 +602,9 @@ sub add_snapshot {
 sub add_interface {
     &Log::debug("Entity::add_interface sub started");
     my $vmname = Opts::get_option('vmname');
-    my $type = Opts::get_option('type');
+    my $type   = Opts::get_option('type');
     &Log::debug("Requested option, vmname=>'$vmname'");
-    my $spec = &Guest::add_interface_spec($vmname, $type);
+    my $spec = &Guest::add_interface_spec( $vmname, $type );
     &Guest::reconfig_vm( $vmname, $spec );
     &Log::info("Finished adding interface");
     return 1;
@@ -764,14 +765,18 @@ sub run_command {
     &Log::debug("Starting entity::run sub");
     my %opts = ();
     $opts{vmname} = Opts::get_option('vmname');
-    my $vm_info = &Misc::vmname_splitter($opts{vmname});
-    $opts{guestusername} = Opts::get_option('guestusername') || &Support::get_key_value( 'template', $vm_info->{template}, 'username' );
-    $opts{guestpassword} = Opts::get_option('guestpassword') || &Support::get_key_value( 'template', $vm_info->{template}, 'password' );
-    $opts{prog} = Opts::get_option('prog');
+    my $vm_info = &Misc::vmname_splitter( $opts{vmname} );
+    $opts{guestusername} = Opts::get_option('guestusername')
+      || &Support::get_key_value( 'template', $vm_info->{template},
+        'username' );
+    $opts{guestpassword} = Opts::get_option('guestpassword')
+      || &Support::get_key_value( 'template', $vm_info->{template},
+        'password' );
+    $opts{prog}     = Opts::get_option('prog');
     $opts{prog_arg} = Opts::get_option('prog_arg');
-    $opts{workdir} = Opts::get_option('workdir');
-    $opts{env} = Opts::get_option('env');
-    &Log::loghash( "Opts are, ", \%opts);
+    $opts{workdir}  = Opts::get_option('workdir');
+    $opts{env}      = Opts::get_option('env');
+    &Log::loghash( "Opts are, ", \%opts );
     my $pid = &Guest::run_command( \%opts );
     print "Pid of command:'$pid'\n";
     return 1;
@@ -780,21 +785,31 @@ sub run_command {
 sub transfer {
     &Log::debug("Starting entity::transfer sub");
     my %opts = ();
-    $opts{type} = Opts::get_option('type');
+    $opts{type}   = Opts::get_option('type');
     $opts{vmname} = Opts::get_option('vmname');
-    my $vm_info = &Misc::vmname_splitter($opts{vmname});
-    $opts{guestusername} = Opts::get_option('guestusername') || &Support::get_key_value( 'template', $vm_info->{template}, 'username' );
-    $opts{guestpassword} = Opts::get_option('guestpassword') || &Support::get_key_value( 'template', $vm_info->{template}, 'password' );
-    $opts{source} = Opts::get_option('source');
-    $opts{dest} = Opts::get_option('dest');
+    my $vm_info = &Misc::vmname_splitter( $opts{vmname} );
+    $opts{guestusername} = Opts::get_option('guestusername')
+      || &Support::get_key_value( 'template', $vm_info->{template},
+        'username' );
+    $opts{guestpassword} = Opts::get_option('guestpassword')
+      || &Support::get_key_value( 'template', $vm_info->{template},
+        'password' );
+    $opts{source}    = Opts::get_option('source');
+    $opts{dest}      = Opts::get_option('dest');
     $opts{overwrite} = Opts::get_option('overwrite');
-    &Log::loghash( "Opts are, ", \%opts);
+    &Log::loghash( "Opts are, ", \%opts );
+
     if ( $opts{type} eq "to" ) {
         &Guest::transfer_to_guest( \%opts );
-    } elsif ( $opts{type} eq "from" ) {
+    }
+    elsif ( $opts{type} eq "from" ) {
         &Guest::transfer_from_guest( \%opts );
-    } else {
-        Vcenter::Opt->throw( error => 'Unrecognized opt given type,', opt => $opts{type} );
+    }
+    else {
+        Vcenter::Opt->throw(
+            error => 'Unrecognized opt given type,',
+            opt   => $opts{type}
+        );
     }
     return 1;
 }

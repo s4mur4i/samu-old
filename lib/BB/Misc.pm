@@ -241,7 +241,11 @@ sub generate_vmname {
     &Log::debug(
 "Starting Misc::generate_vmname sub, ticket=>'$ticket', username=>'$username', os_temp=>'$os_temp'"
     );
-    return $ticket . "-" . $username . "-" . $os_temp . "-" . &Misc::random_3digit;
+    return
+        $ticket . "-"
+      . $username . "-"
+      . $os_temp . "-"
+      . &Misc::random_3digit;
 }
 
 sub uniq_vmname {

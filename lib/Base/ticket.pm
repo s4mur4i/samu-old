@@ -94,14 +94,22 @@ sub ticket_delete {
     }
     for my $type (qw(ResourcePool Folder)) {
         &Log::debug( "Deleting type '" . $type . "'" );
-        my $entities = Vim::find_entity_views( view_type => $type, properties => ['name'], filter => { name => qr/^$ticket/});
+        my $entities = Vim::find_entity_views(
+            view_type  => $type,
+            properties => ['name'],
+            filter     => { name => qr/^$ticket/ }
+        );
         for my $entity (@$entities) {
             &Log::debug(
                 "Deleting entity " . $entity->name . " in type " . $type );
             &VCenter::destroy_entity( $entity->name, $type );
         }
     }
-    my $switch_view = Vim::find_entity_view( view_type => 'DistributedVirtualSwitch', properties => ['name'], filter => { name => $ticket});
+    my $switch_view = Vim::find_entity_view(
+        view_type  => 'DistributedVirtualSwitch',
+        properties => ['name'],
+        filter     => { name => $ticket }
+    );
     if ( defined($switch_view) ) {
         &Log::debug("Found switch for ticket, deleting");
         &VCenter::destroy_entity( $switch_view->name,

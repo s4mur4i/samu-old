@@ -54,7 +54,8 @@ sub find_last_snapshot {
           . $snapshot_view->id
           . "'" );
     if ( defined( $snapshot_view->[0]->{'childSnapshotList'} ) ) {
-        &Guest::find_last_snapshot( $snapshot_view->[0]->{'childSnapshotList'} );
+        &Guest::find_last_snapshot(
+            $snapshot_view->[0]->{'childSnapshotList'} );
     }
     else {
         &Log::debug(
@@ -67,7 +68,8 @@ sub find_last_snapshot {
 sub get_altername {
     my ($vmname) = @_;
     &Log::debug("Starting Guest::get_altername sub, vmname=>'$vmname'");
-    my $view = &Guest::entity_property_view( $vmname, 'VirtualMachine', 'value');
+    my $view =
+      &Guest::entity_property_view( $vmname, 'VirtualMachine', 'value' );
     my $key = &Guest::get_annotation_key( $vmname, "alternateName" );
     if ( defined( $view->value ) ) {
         foreach ( @{ $view->value } ) {
@@ -127,7 +129,7 @@ sub add_interface_spec {
     &Log::debug(
 "Starting Guest::add_interface_spec sub, vmname=>'$vmname', type=>'$type'"
     );
-    my @net_hw = @{ &Guest::get_hw( $vmname, 'VirtualEthernetCard' )};
+    my @net_hw = @{ &Guest::get_hw( $vmname, 'VirtualEthernetCard' ) };
     &VCenter::num_check( "VLAN21", "Network" );
     my $switch  = &Guest::entity_name_view( 'VLAN21', 'Network' );
     my $mac     = &Misc::increment_mac( $net_hw[-1]->{macAddress} );
@@ -164,8 +166,7 @@ sub add_interface_spec {
 #tested
 sub E1000_object {
     my ( $backing, $mac ) = @_;
-    &Log::debug(
-        "Starting Guest::E1000_object sub, mac=>'$mac'");
+    &Log::debug("Starting Guest::E1000_object sub, mac=>'$mac'");
     &Log::dumpobj( "backing", $backing );
     my $device = VirtualE1000->new(
         connectable => VirtualDeviceConnectInfo->new(
@@ -180,15 +181,14 @@ sub E1000_object {
         backing          => $backing
     );
     &Log::debug("Returning E1000 object");
-    &Log::dumpobj( "device", $device);
+    &Log::dumpobj( "device", $device );
     return $device;
 }
 
 #tested
 sub Vmxnet_object {
     my ( $backing, $mac ) = @_;
-    &Log::debug(
-        "Starting Guest::Vmxnet_object sub, mac=>'$mac'");
+    &Log::debug("Starting Guest::Vmxnet_object sub, mac=>'$mac'");
     &Log::dumpobj( "backing", $backing );
     my $device = VirtualVmxnet->new(
         connectable => VirtualDeviceConnectInfo->new(
@@ -203,7 +203,7 @@ sub Vmxnet_object {
         backing          => $backing
     );
     &Log::debug("Returning Vmxnet object");
-    &Log::dumpobj( "device", $device);
+    &Log::dumpobj( "device", $device );
     return $device;
 }
 
@@ -263,7 +263,7 @@ sub get_scsi_controller {
     my @controller = ();
     for my $type (@types) {
         &Log::debug1("Looping through $type");
-        my @cont = @{ &Guest::get_hw( $vmname, $type )};
+        my @cont = @{ &Guest::get_hw( $vmname, $type ) };
         &Log::dumpobj( "get_hw_return", \@cont );
         if ( scalar(@cont) eq 1 ) {
             &Log::debug("Pushing controller to return array");
@@ -335,7 +335,8 @@ sub get_annotation_key {
 "Starting Guest::get_annotation_key sub, vmname=>'$vmname', key=>'$name'"
     );
     &VCenter::num_check( $vmname, 'VirtualMachine' );
-    my $view = &Guest::entity_property_view( $vmname, 'VirtualMachine', 'availableField');
+    my $view = &Guest::entity_property_view( $vmname, 'VirtualMachine',
+        'availableField' );
     foreach ( @{ $view->availableField } ) {
         if ( $_->name eq $name ) {
             &Log::debug( "Found key returning value=>'" . $_->key . "'" );
@@ -351,7 +352,8 @@ sub network_interfaces {
     my ($vmname) = @_;
     &Log::debug("Starting Guest::network_interfaces sub, vmname=>'$vmname'");
     my %interfaces = ();
-    my $view       = &Guest::entity_property_view( $vmname, 'VirtualMachine', 'config.hardware.device');
+    my $view       = &Guest::entity_property_view( $vmname, 'VirtualMachine',
+        'config.hardware.device' );
     my $devices = $view->get_property('config.hardware.device');
     for my $device (@$devices) {
         if ( !$device->isa('VirtualEthernetCard') ) {
@@ -384,7 +386,8 @@ sub network_interfaces {
         $interfaces{$key}->{unitnumber}    = $device->unitNumber;
         $interfaces{$key}->{label}         = $device->deviceInfo->label;
         $interfaces{$key}->{summary}       = $device->deviceInfo->summary;
-        &Log::loghash( "Interface gathered, information, key=>'$key',", $interfaces{$key} );
+        &Log::loghash( "Interface gathered, information, key=>'$key',",
+            $interfaces{$key} );
     }
     &Log::debug("Returning interfaces hash");
     return \%interfaces;
@@ -490,7 +493,8 @@ sub get_hw {
           . "'" );
     &VCenter::num_check( $vmname, 'VirtualMachine' );
     my @hw   = ();
-    my $view = &Guest::entity_property_view( $vmname, 'VirtualMachine', 'config.hardware.device');
+    my $view = &Guest::entity_property_view( $vmname, 'VirtualMachine',
+        'config.hardware.device' );
     &Log::debug("Starting loop through hardver");
     my $devices = $view->get_property('config.hardware.device');
     foreach ( @{$devices} ) {
@@ -511,7 +515,8 @@ sub poweron {
     &Log::debug("Starting Guest::poweron sub, vmname=>'$vmname'");
     &VCenter::num_check( $vmname, 'VirtualMachine' );
     my $view =
-      &Guest::entity_property_view( $vmname, 'VirtualMachine', 'runtime.powerState' );
+      &Guest::entity_property_view( $vmname, 'VirtualMachine',
+        'runtime.powerState' );
     my $powerstate = $view->get_property('runtime.powerState');
     if ( $powerstate->val ne "poweredOff" ) {
         &Log::warning("Machine is already powered on");
@@ -529,7 +534,8 @@ sub poweroff {
     &Log::debug("Starting Guest::poweroff sub, vmname=>'$vmname'");
     &VCenter::num_check( $vmname, 'VirtualMachine' );
     my $view =
-      &Guest::entity_property_view( $vmname, 'VirtualMachine', 'runtime.powerState' );
+      &Guest::entity_property_view( $vmname, 'VirtualMachine',
+        'runtime.powerState' );
     my $powerstate = $view->get_property('runtime.powerState');
     if ( $powerstate->val eq "poweredOff" ) {
         &Log::warning("Machine is already powered off");
@@ -547,7 +553,8 @@ sub revert_to_snapshot {
     &Log::debug(
         "Starting Guest::revert_to_snapshot sub, vmname=>'$vmname', id=>'$id'\n"
     );
-    my $view = &Guest::entity_property_view( $vmname, 'VirtualMachine', 'snapshot' );
+    my $view =
+      &Guest::entity_property_view( $vmname, 'VirtualMachine', 'snapshot' );
     if ( !defined( $view->snapshot ) ) {
         Entity::Snapshot->throw(
             error    => "No snapshot found",
@@ -625,7 +632,8 @@ sub create_snapshot {
 sub remove_all_snapshots {
     my ($vmname) = @_;
     &Log::debug("Starting Guest::remove_all_snapshot sub, vmname=>'$vmname'");
-    my $view = &Guest::entity_property_view( $vmname, 'VirtualMachine', 'snapshot' );
+    my $view =
+      &Guest::entity_property_view( $vmname, 'VirtualMachine', 'snapshot' );
     if ( !defined( $view->snapshot ) ) {
         Entity::Snapshot->throw(
             error    => "Entity has no snapshots defined",
@@ -645,7 +653,8 @@ sub remove_snapshot {
     my ( $vmname, $id ) = @_;
     &Log::debug(
         "Starting Guest::remove_snapshot sub, vmname=>'$vmname', id=>'$id'");
-    my $view = &Guest::entity_property_view( $vmname, 'VirtualMachine', 'snapshot' );
+    my $view =
+      &Guest::entity_property_view( $vmname, 'VirtualMachine', 'snapshot' );
     if ( !defined( $view->snapshot ) ) {
         Entity::Snapshot->throw(
             error    => "Entity has no snapshots defined",
@@ -680,7 +689,8 @@ sub remove_snapshot {
 sub list_snapshot {
     my ($vmname) = @_;
     &Log::debug("Starting Guest::list_snapshot sub, vmname=>'$vmname'");
-    my $view = &Guest::entity_property_view( $vmname, 'VirtualMachine', 'snapshot' );
+    my $view =
+      &Guest::entity_property_view( $vmname, 'VirtualMachine', 'snapshot' );
     if (   !defined( $view->snapshot )
         or !defined( $view->snapshot->currentSnapshot ) )
     {
@@ -737,82 +747,126 @@ sub traverse_snapshot {
 }
 
 sub run_command {
-    my ( $info ) = @_;
+    my ($info) = @_;
     &Log::debug("Starting Guest::run_command sub");
-    &Log::loghash( "Info options, ", $info);
+    &Log::loghash( "Info options, ", $info );
 }
 
 sub transfer_to_guest {
-    my ( $info ) = @_;
+    my ($info) = @_;
     &Log::debug("Starting Guest::transfer_to_guest sub");
-    &Log::loghash( "Info options, ", $info);
-    my $view = &Guest::entity_name_view( $info->{vmname});
-    my $guestCreds = &Guest::guest_cred( $info->{vmname}, $info->{guestusername}, $info->{guestpassword} );
+    &Log::loghash( "Info options, ", $info );
+    my $view       = &Guest::entity_name_view( $info->{vmname} );
+    my $guestCreds = &Guest::guest_cred(
+        $info->{vmname},
+        $info->{guestusername},
+        $info->{guestpassword}
+    );
     my $filemanager = &VCenter::file_manager;
-    my $fileattr = GuestFileAttributes->new();
-    my $size = -s $info->{path};
+    my $fileattr    = GuestFileAttributes->new();
+    my $size        = -s $info->{path};
     my $transferinfo;
     eval {
-        $transferinfo = $filemanager->InitiateFileTransferToGuest( vm => $view, auth => $guestCreds, guestFilePath => $info->{dest}, fileAttributes => $fileattr, fileSize => $size, overwrite => $info->{overwrite} );
+        $transferinfo = $filemanager->InitiateFileTransferToGuest(
+            vm             => $view,
+            auth           => $guestCreds,
+            guestFilePath  => $info->{dest},
+            fileAttributes => $fileattr,
+            fileSize       => $size,
+            overwrite      => $info->{overwrite}
+        );
     };
-    if( $@ ) {
-        Entity::TransferError->throw( error => 'Could not retrieve Transfer information', entity => $info->{vmname}, filename => $info->{dest} );
+
+    if ($@) {
+        Entity::TransferError->throw(
+            error    => 'Could not retrieve Transfer information',
+            entity   => $info->{vmname},
+            filename => $info->{dest}
+        );
     }
-    print "Information about file:'".$info->{path}."'\n";
+    print "Information about file:'" . $info->{path} . "'\n";
     print "Size of file: $size bytes";
-    my $ua  = LWP::UserAgent->new();
+    my $ua = LWP::UserAgent->new();
     $ua->ssl_opts( verify_hostname => 0 );
     open( my $fh, "<$info->{path}" );
-    my $content = do{ local $/; <$fh> } ;
+    my $content = do { local $/; <$fh> };
     my $req = $ua->put( $transferinfo, Content => $content );
+
     if ( $req->is_success() ) {
         &Log::debug( "OK: ", $req->content );
-    } else {
+    }
+    else {
         Entity::TransferError->throw( error => $req->as_string );
     }
     return 1;
 }
 
 sub transfer_from_guest {
-    my ( $info ) = @_;
+    my ($info) = @_;
     &Log::debug("Starting Guest::transfer_from_guest sub");
-    &Log::loghash( "Info options, ", $info);
+    &Log::loghash( "Info options, ", $info );
     my $view = &Guest::entity_name_view( $info->{vmname}, 'VirtualMachine' );
-    my $guestCreds = &Guest::guest_cred( $info->{vmname}, $info->{guestusername}, $info->{guestpassword} );
+    my $guestCreds = &Guest::guest_cred(
+        $info->{vmname},
+        $info->{guestusername},
+        $info->{guestpassword}
+    );
     my $filemanager = &VCenter::file_manager;
     my $transferinfo;
     eval {
-        $transferinfo = $filemanager->InitiateFileTransferFromGuest(vm=>$view, auth=>$guestCreds, guestFilePath=>$info->{path});
+        $transferinfo = $filemanager->InitiateFileTransferFromGuest(
+            vm            => $view,
+            auth          => $guestCreds,
+            guestFilePath => $info->{path}
+        );
     };
-    if($@) {
-        Entity::TransferError->throw( error => 'Could not retrieve Transfer information', entity => $info->{vmname}, filename => $info->{source} );
+
+    if ($@) {
+        Entity::TransferError->throw(
+            error    => 'Could not retrieve Transfer information',
+            entity   => $info->{vmname},
+            filename => $info->{source}
+        );
     }
     print "Information about file: $info->{path} \n";
-    print "Size: " . $transferinfo->size. " bytes\n";
-    print "modification Time: " . $transferinfo->attributes->modificationTime . " and access Time : " .$transferinfo->attributes->accessTime . "\n";
-    if ( !defined($info->{dest}) ) {
-        my $basename = basename($info->{path});
-        my $content = get($transferinfo->url);
-        open(my $fh, ">/tmp/$basename");
+    print "Size: " . $transferinfo->size . " bytes\n";
+    print "modification Time: "
+      . $transferinfo->attributes->modificationTime
+      . " and access Time : "
+      . $transferinfo->attributes->accessTime . "\n";
+    if ( !defined( $info->{dest} ) ) {
+        my $basename = basename( $info->{path} );
+        my $content  = get( $transferinfo->url );
+        open( my $fh, ">/tmp/$basename" );
         print $fh "$content";
         close($fh);
-    } else {
-        &Log::debug("Downloading file to: '".$info->{dest}."'");
-        my $status = getstore($transferinfo->url,$info->{dest});
+    }
+    else {
+        &Log::debug( "Downloading file to: '" . $info->{dest} . "'" );
+        my $status = getstore( $transferinfo->url, $info->{dest} );
     }
     return 1;
 }
 
 sub guest_cred {
     my ( $vmname, $guestusername, $guestpassword ) = @_;
-    my $authMgr = &VCenter::auth_manager;
-    my $guestAuth = NamePasswordAuthentication->new( username => $guestusername, password => $guestpassword, interactiveSession => 'false' );
+    my $authMgr   = &VCenter::auth_manager;
+    my $guestAuth = NamePasswordAuthentication->new(
+        username           => $guestusername,
+        password           => $guestpassword,
+        interactiveSession => 'false'
+    );
     my $view = &Guest::entity_name_view( $vmname, 'VirtualMachine' );
     eval {
         $authMgr->ValidateCredentialsInGuest( vm => $view, auth => $guestAuth );
     };
-    if( $@ ) {
-        Entity::Auth->throw( error => 'Could not aquire Guest authentication object', entity => $vmname, username => $guestusername, password => $guestpassword );
+    if ($@) {
+        Entity::Auth->throw(
+            error    => 'Could not aquire Guest authentication object',
+            entity   => $vmname,
+            username => $guestusername,
+            password => $guestpassword
+        );
     }
     return $guestAuth;
 }

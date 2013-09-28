@@ -108,7 +108,12 @@ sub dumpobj {
 
 sub loghash {
     my ( $msg, $hash ) = @_;
-    ( verbosity() >=8 ) and debug( $msg . ( join ',', ( map { "$_=>'" . $hash->{$_} . "'" } sort keys %{ $hash })));
+    ( verbosity() >= 8 ) and debug(
+        $msg
+          . (
+            join ',', ( map { "$_=>'" . $hash->{$_} . "'" } sort keys %{$hash} )
+          )
+    );
 }
 
 BEGIN {

@@ -44,7 +44,7 @@ sub option_parser {
         eval { load $module; };
         $module->import();
     }
-    if ( exists $opts->{prereq_module}) {
+    if ( exists $opts->{prereq_module} ) {
         my $module = $opts->{module};
         &Log::debug("loading module $module");
         eval { load $module; };

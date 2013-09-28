@@ -182,8 +182,7 @@ sub catch_ex {
             "Desc=>'" . $ex->error . "',path=>'" . $ex->path . "'" );
     }
     elsif ( $ex->isa('Vcenter::Opts') ) {
-        &Log::critical(
-            "Desc=>'" . $ex->error . "',opt=>'" . $ex->opt . "'" );
+        &Log::critical( "Desc=>'" . $ex->error . "',opt=>'" . $ex->opt . "'" );
     }
     elsif ( $ex->isa('Connection::Connect') ) {
         &Log::critical( "Desc=>'"
