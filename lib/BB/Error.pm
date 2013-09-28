@@ -179,11 +179,11 @@ sub catch_ex {
     }
     elsif ( $ex->isa('Vcenter::Path') ) {
         &Log::critical(
-            "Desc=>'" . $ex->error . "',opt=>'" . $ex->opt . "'" );
+            "Desc=>'" . $ex->error . "',path=>'" . $ex->path . "'" );
     }
     elsif ( $ex->isa('Vcenter::Opts') ) {
         &Log::critical(
-            "Desc=>'" . $ex->error . "',path=>'" . $ex->path . "'" );
+            "Desc=>'" . $ex->error . "',opt=>'" . $ex->opt . "'" );
     }
     elsif ( $ex->isa('Connection::Connect') ) {
         &Log::critical( "Desc=>'"

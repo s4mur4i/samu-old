@@ -171,32 +171,16 @@ stderr_like(
 );
 eval { Vcenter::ServiceContent->throw( error => 'test' ); };
 $ex = $@;
-stderr_like(
-    sub { &Error::catch_ex($ex) },
-    qr/^Error.pm\s\[CRITICAL\]:\sDesc=>'test';$/,
-    "VCenter ServiceContent exception output"
-);
+stderr_like( sub { &Error::catch_ex($ex) }, qr/^Error.pm\s\[CRITICAL\]:\sDesc=>'test';$/, "VCenter ServiceContent exception output");
 eval { Vcenter::Path->throw( error => 'test', path => '/some/path/to/gold' ); };
 $ex = $@;
-stderr_like(
-    sub { &Error::catch_ex($ex) },
-    qr@^Error.pm\s\[CRITICAL\]:\sDesc=>'test',path=>'/some/path/to/gold';$@,
-    "VCenter Path exception output"
-);
+stderr_like( sub { &Error::catch_ex($ex) }, qr/^Error.pm\s\[CRITICAL\]:\sDesc=>'test',path=>'\/some\/path\/to\/gold';$/, "VCenter Path exception output");
 eval { Vcenter::Opts->throw( error => 'test', opt => 'test2' ); };
 $ex = $@;
-stderr_like(
-    sub { &Error::catch_ex($ex) },
-    qr@^Error.pm\s\[CRITICAL\]:\sDesc=>'test',opt=>'test1';$@,
-    "VCenter Opts exception output"
-);
+stderr_like( sub { &Error::catch_ex($ex) }, qr/^Error.pm\s\[CRITICAL\]:\sDesc=>'test',opt=>'test2';$/, "VCenter Opts exception output");
 eval { Connection::Connect->throw( error => 'test1', type  => 'test2', dest  => 'test3'); };
 $ex = $@;
-stderr_like(
-    sub { &Error::catch_ex($ex) },
-    qr/^Error.pm\s\[CRITICAL\]:\sDesc=>'test1',type=>'test2',dest=>'test3';$/,
-    "Connection Connect exception output"
-);
+stderr_like( sub { &Error::catch_ex($ex) }, qr/^Error.pm\s\[CRITICAL\]:\sDesc=>'test1',type=>'test2',dest=>'test3';$/, "Connection Connect exception output");
 eval { Template::Status->throw( error => 'test', template => 'template' ); };
 $ex = $@;
 stderr_like(
