@@ -358,6 +358,88 @@ our $module_opts = {
                 },
             },
         },
+        run => {
+            function => \&run_command,
+            opts => {
+                vmname => {
+                    type     => '=s',
+                    help     => 'Which VMs should be used for running command',
+                    required => '1',
+                },
+                guestusername => {
+                    type => "=s",
+                    help => "Custom username for guest OS",
+                    required => 0,
+                },
+                guestpassword => {
+                    type => "=s",
+                    help => "Custom password for guest OS",
+                    required => 0,
+                },
+                prog => {
+                    type => "=s",
+                    help => "Full path for program to run",
+                    required => 1,
+                },
+                prog_arg => {
+                    type => "=s",
+                    help => "Arguments to program",
+                    required => 1,
+                },
+                workdir => {
+                    type => "=s",
+                    help => "Working directory to run program in",
+                    required => 1,
+                },
+                env => {
+                    type => "=s",
+                    help => "ENV settings for program",
+                    required => 0,
+                    default => "",
+                },
+            },
+        },
+        transfer => {
+            function => \&transfer,
+            opts => {
+                type => {
+                    type => '=s',
+                    help => 'Diretion of transfer, Values: to/from',
+                    required => 1,
+                },
+                vmname => {
+                    type     => '=s',
+                    help     => 'Which VMs should be used for transfer',
+                    required => '1',
+                },
+                guestusername => {
+                    type => "=s",
+                    help => "Custom username for guest OS",
+                    required => 0,
+                },
+                guestpassword => {
+                    type => "=s",
+                    help => "Custom password for guest OS",
+                    required => 0,
+                },
+                source => {
+                    type => "=s",
+                    help => "Source of file",
+                    required => 1,
+                },
+                dest => {
+                    type => "=s",
+                    help => "Destination of file",
+                    required => 1,
+                },
+                overwrite => {
+                    type => "=s",
+                    help => "Should files be overwritten during transfer",
+                    required => 0,
+                    default => 0,
+                },
+            },
+        },
     },
 };
 
@@ -675,6 +757,35 @@ sub info_runtime {
       &Guest::entity_property_view( $vmname, 'VirtualMachine', 'runtime' );
     print Dumper($view);
     return 1;
+}
+
+sub run_command {
+    &Log::debug("Starting entity::run sub");
+    my %opts = ();
+    $opts{vmname} = Opts::get_option('vmname');
+    my $vm_info = &Misc::vmname_splitter($opts{vmname});
+    $opts{guestusername} = Opts::get_option('guestusername') || &Support::get_key_value( 'template', $vm_info->{template}, 'username' );
+    $opts{guestpassword} = Opts::get_option('guestpassword') || &Support::get_key_value( 'template', $vm_info->{template}, 'password' );
+    $opts{prog} = Opts::get_option('prog');
+    $opts{prog_arg} = Opts::get_option('prog_arg');
+    $opts{workdir} = Opts::get_option('workdir');
+    $opts{env} = Opts::get_option('env');
+    &Log::loghash( "Opts are, ", \%opts);
+#    my $pid = &Guest::run_command_in_guest();
+}
+
+sub transfer {
+    &Log::debug("Starting entity::transfer sub");
+    my %opts = ();
+    $opts{type} = Opts::get_option('type');
+    $opts{vmname} = Opts::get_option('vmname');
+    my $vm_info = &Misc::vmname_splitter($opts{vmname});
+    $opts{guestusername} = Opts::get_option('guestusername') || &Support::get_key_value( 'template', $vm_info->{template}, 'username' );
+    $opts{guestpassword} = Opts::get_option('guestpassword') || &Support::get_key_value( 'template', $vm_info->{template}, 'password' );
+    $opts{source} = Opts::get_option('source');
+    $opts{dest} = Opts::get_option('dest');
+    $opts{overwrite} = Opts::get_option('overwrite');
+    &Log::loghash( "Opts are, ", \%opts);
 }
 
 #tested
