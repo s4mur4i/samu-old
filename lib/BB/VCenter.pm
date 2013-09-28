@@ -582,5 +582,38 @@ sub get_vim {
     return $vim;
 }
 
+sub operations_manager {
+    &Log::debug("Startin VCenter::operations_manager sub");
+    my $guestOM = Vim::get_view( mo_ref => &VCenter::service_content->{guestOperationsManager} );
+    if ( !defined($guestOM)) {
+        Vcenter::ServiceContent->throw( error => "Could not retrieve Operations Manager");
+    }
+    &Log::dumpobj( "Guest Operation manager", $guestOM );
+    &Log::debug("Returning guest operation manager object");
+    return $guestOM;
+}
+
+sub auth_manager {
+    &Log::debug("Startin VCenter::auth_manager sub");
+    my $authmanager = Vim::get_view( mo_ref => &VCenter::service_content->{authManager} );
+    if ( !defined($authmanager)) {
+        Vcenter::ServiceContent->throw( error => "Could not retrieve authanager");
+    }
+    &Log::dumpobj( "Guest Operation manager", $authmanager );
+    &Log::debug("Returning authmanager object");
+    return $authmanager;
+}
+
+sub file_manager {
+    &Log::debug("Startin VCenter::file_manager sub");
+    my $filemanager = Vim::get_view( mo_ref => &VCenter::service_content->{fileManager} );
+    if ( !defined($filemanager)) {
+        Vcenter::ServiceContent->throw( error => "Could not retrieve filemanager");
+    }
+    &Log::dumpobj( "filemanager", $filemanager );
+    &Log::debug("Returning filemanager object");
+    return $filemanager;
+}
+
 1
 __END__
