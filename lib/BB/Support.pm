@@ -185,18 +185,6 @@ my %map_hash = (
     'template' => \%template_hash,
 );
 
-=pod
-
-=head2 template_keys
-
-=head3 arguments
-
-=head3 return
-
-=head3 exception
-
-=cut
-
 #tested
 sub get_keys {
     my ($hash) = @_;
@@ -210,20 +198,6 @@ sub get_keys {
     my $req_hash = $map_hash{$hash};
     return [ keys %$req_hash ];
 }
-
-=pod
-
-=head2 get_key_info
-
-=head3 arguments
-
-=item template
-
-=head3 return
-
-=head3 exception
-
-=cut
 
 #tested
 sub get_key_info {
