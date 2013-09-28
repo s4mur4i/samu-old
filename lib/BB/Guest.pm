@@ -67,8 +67,7 @@ sub find_last_snapshot {
 sub get_altername {
     my ($vmname) = @_;
     &Log::debug("Starting Guest::get_altername sub, vmname=>'$vmname'");
-    &VCenter::num_check( $vmname, 'VirtualMachine' );
-    my $view = &Guest::entity_name_view( $vmname, 'VirtualMachine');
+    my $view = &Guest::entity_property_view( $vmname, 'VirtualMachine', 'value');
     my $key = &Guest::get_annotation_key( $vmname, "alternateName" );
     if ( defined( $view->value ) ) {
         foreach ( @{ $view->value } ) {
