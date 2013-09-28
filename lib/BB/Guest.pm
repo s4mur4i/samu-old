@@ -737,5 +737,92 @@ sub traverse_snapshot {
     return 1;
 }
 
+sub run_command {
+    my ( $info ) = @_;
+    &Log::debug("Starting Guest::run_command sub");
+    &Log::loghash( "Info options, ", $info);
+}
+
+sub transfer_to_guest {
+    my ( $info ) = @_;
+    &Log::debug("Starting Guest::transfer_to_guest sub");
+    &Log::loghash( "Info options, ", $info);
+    my $view = &Guest::entity_name_view( $info->{vmname});
+    my $guestCreds = &Guest::guest_cred( $info->{vmname}, $info->{guestusername}, $info->{guestpassword} );
+    my $filemanager = &VCenter::file_manager;
+    my $fileattr = GuestFileAttributes->new();
+    my $size = -s $info->{path};
+    my $transferinfo;
+    eval {
+        $transferinfo = $filemanager->InitiateFileTransferToGuest( vm => $view, auth => $guestCreds, guestFilePath => $info->{dest}, fileAttributes => $fileattr, fileSize => $size, overwrite => $info->{overwrite} );
+    };
+    if( $@ ) {
+        Entity::TransferError->throw( error => 'Could not retrieve Transfer information', entity => $info->{vmname}, filename => $info->{dest} );
+    }
+    print "Information about file:'".$info->{path}."'\n";
+    print "Size of file: $size bytes";
+    my $ua  = LWP::UserAgent->new();
+    $ua->ssl_opts( verify_hostname => 0 );
+    open( my $fh, "<$info->{path}" );
+    my $content = do{ local $/; <$fh> } ;
+    my $req = $ua->put( $transferinfo, Content => $content );
+    if ( $req->is_success() ) {
+        &Log::debug( "OK: ", $req->content );
+    } else {
+        Entity::TransferError->throw( error => $req->as_string );
+    }
+    return 1;
+}
+
+sub transfer_from_guest {
+    my ( $info ) = @_;
+    &Log::debug("Starting Guest::transfer_from_guest sub");
+    &Log::loghash( "Info options, ", $info);
+    my $view = &Guest::entity_name_view( $info->{vmname}, 'VirtualMachine' );
+    my $guestCreds = &Guest::guest_cred( $info->{vmname}, $info->{guestusername}, $info->{guestpassword} );
+    my $filemanager = &VCenter::file_manager;
+    my $transferinfo;
+    eval {
+        $transferinfo = $filemanager->InitiateFileTransferFromGuest(vm=>$view, auth=>$guestCreds, guestFilePath=>$info->{path});
+    };
+    if($@) {
+        Entity::TransferError->throw( error => 'Could not retrieve Transfer information', entity => $info->{vmname}, filename => $info->{source} );
+    }
+    print "Information about file: $info->{path} \n";
+    print "Size: " . $transferinfo->size. " bytes\n";
+    print "modification Time: " . $transferinfo->attributes->modificationTime . " and access Time : " .$transferinfo->attributes->accessTime . "\n";
+    if ( !defined($info->{dest}) ) {
+        my $basename = basename($info->{path});
+        my $content = get($transferinfo->url);
+        open(my $fh, ">/tmp/$basename");
+        print $fh "$content";
+        close($fh);
+    } else {
+        &Log::debug("Downloading file to: '".$info->{dest}."'");
+        my $status = getstore($transferinfo->url,$info->{dest});
+    }
+    return 1;
+}
+
+sub guest_cred {
+    my ( $vmname, $guestusername, $guestpassword ) = @_;
+    my $authMgr = &VCenter::auth_manager;
+    my $guestAuth = NamePasswordAuthentication->new( username => $guestusername, password => $guestpassword, interactiveSession => 'false' );
+    my $view = &Guest::entity_name_view( $vmname, 'VirtualMachine' );
+    eval {
+        $authMgr->ValidateCredentialsInGuest( vm => $view, auth => $guestAuth );
+    };
+    if( $@ ) {
+        Entity::Auth->throw( error => 'Could not aquire Guest authentication object', entity => $vmname, username => $guestusername, password => $guestpassword );
+    }
+    return $guestAuth;
+}
+
+sub transfer_from_guest {
+    my ( $info ) = @_;
+    &Log::debug("Starting Guest::transfer_from_guest sub");
+    &Log::loghash( "Info options, ", $info);
+}
+
 1
 __END__
