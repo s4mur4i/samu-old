@@ -359,6 +359,7 @@ our $module_opts = {
             },
         },
         run => {
+            prereq_module => "LWP::UserAgent",
             function => \&run_command,
             opts => {
                 vmname => {
@@ -771,7 +772,9 @@ sub run_command {
     $opts{workdir} = Opts::get_option('workdir');
     $opts{env} = Opts::get_option('env');
     &Log::loghash( "Opts are, ", \%opts);
-#    my $pid = &Guest::run_command_in_guest();
+    my $pid = &Guest::run_command( \%opts );
+    print "Pid of command:'$pid'\n";
+    return 1;
 }
 
 sub transfer {
@@ -786,6 +789,14 @@ sub transfer {
     $opts{dest} = Opts::get_option('dest');
     $opts{overwrite} = Opts::get_option('overwrite');
     &Log::loghash( "Opts are, ", \%opts);
+    if ( $opts{type} eq "to" ) {
+        &Guest::transfer_to_guest( \%opts );
+    } elsif ( $opts{type} eq "from" ) {
+        &Guest::transfer_from_guest( \%opts );
+    } else {
+        Vcenter::Opt->throw( error => 'Unrecognized opt given type,', opt => $opts{type} );
+    }
+    return 1;
 }
 
 #tested
