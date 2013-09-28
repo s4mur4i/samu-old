@@ -102,7 +102,7 @@ sub num_check {
     my ( $name, $type ) = @_;
     &Log::debug(
         "Starting VCenter::num_check sub, name=>'$name', type=>'$type'");
-    my $views = &Guest::entity_name_view( $name, $type);
+    my $views = Vim::find_entity_views( view_type => $type, properties => [ 'name' ], filter => { name => $name});
     &Log::dumpobj( "views", $views );
     if ( scalar(@$views) ne 1 ) {
         Entity::NumException->throw(
