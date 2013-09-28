@@ -44,6 +44,12 @@ sub option_parser {
         eval { load $module; };
         $module->import();
     }
+    if ( exists $opts->{prereq_module}) {
+        my $module = $opts->{module};
+        &Log::debug("loading module $module");
+        eval { load $module; };
+        $module->import();
+    }
     if ( exists $opts->{function} ) {
         if ( exists $opts->{opts} ) {
             &Log::debug("Parsing options to VMware SDK");
