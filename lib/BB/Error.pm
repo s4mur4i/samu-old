@@ -67,6 +67,11 @@ use Exception::Class (
         description => 'Path to entity Error',
         fields      => ['path'],
     },
+    'Vcenter::Opts' => {
+        isa         => 'Vcenter',
+        description => 'Requested opt is invalid',
+        fields      => ['opt'],
+    },
 
     ## Template Exceptions
     'Template::Status' => {
@@ -173,6 +178,10 @@ sub catch_ex {
         &Log::critical( "Desc=>'" . $ex->error . "'" );
     }
     elsif ( $ex->isa('Vcenter::Path') ) {
+        &Log::critical(
+            "Desc=>'" . $ex->error . "',opt=>'" . $ex->opt . "'" );
+    }
+    elsif ( $ex->isa('Vcenter::Opts') ) {
         &Log::critical(
             "Desc=>'" . $ex->error . "',path=>'" . $ex->path . "'" );
     }

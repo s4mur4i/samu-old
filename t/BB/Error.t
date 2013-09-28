@@ -65,6 +65,7 @@ throws_ok {
     Vcenter::Path->throw( error => 'test', path => '/path/to/inventory' );
 }
 'Vcenter', 'VCenter Path Exception';
+throws_ok { Vcenter::Opts->throw( error => 'test', opt => 'test1' ); } 'Vcenter', 'VCenter Opts Exception';
 throws_ok { Template::Status->throw( error => 'test', template => 'test' ) }
 'Template', 'Template Status Exception';
 throws_ok { Template::Error->throw( error => 'test', template => 'test' ) }
@@ -181,6 +182,13 @@ stderr_like(
     sub { &Error::catch_ex($ex) },
     qr@^Error.pm\s\[CRITICAL\]:\sDesc=>'test',path=>'/some/path/to/gold';$@,
     "VCenter Path exception output"
+);
+eval { Vcenter::Opts->throw( error => 'test', opt => 'test2' ); };
+$ex = $@;
+stderr_like(
+    sub { &Error::catch_ex($ex) },
+    qr@^Error.pm\s\[CRITICAL\]:\sDesc=>'test',opt=>'test1';$@,
+    "VCenter Opts exception output"
 );
 eval { Connection::Connect->throw( error => 'test1', type  => 'test2', dest  => 'test3'); };
 $ex = $@;
