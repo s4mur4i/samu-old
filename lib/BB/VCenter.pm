@@ -42,7 +42,8 @@ sub create_test_vm {
     &VCenter::num_check( 'test_1337', 'Folder' );
     my $folder = &Guest::entity_name_view( 'test_1337', 'Folder' );
     &VCenter::num_check( 'test_1337', 'DistributedVirtualSwitch' );
-    my $host_view = &Guest::entity_name_view( 'vmware-it1.balabit', 'HostSystem');
+    my $host_view =
+      &Guest::entity_name_view( 'vmware-it1.balabit', 'HostSystem' );
     my $network_list = Vim::get_views( mo_ref_array => $host_view->network );
     my @vm_devices;
     my $files = VirtualMachineFileInfo->new(
@@ -102,7 +103,11 @@ sub num_check {
     my ( $name, $type ) = @_;
     &Log::debug(
         "Starting VCenter::num_check sub, name=>'$name', type=>'$type'");
-    my $views = Vim::find_entity_views( view_type => $type, properties => [ 'name' ], filter => { name => $name});
+    my $views = Vim::find_entity_views(
+        view_type  => $type,
+        properties => ['name'],
+        filter     => { name => $name }
+    );
     &Log::dumpobj( "views", $views );
     if ( scalar(@$views) ne 1 ) {
         Entity::NumException->throw(
@@ -120,7 +125,11 @@ sub exists_entity {
     my ( $name, $type ) = @_;
     &Log::debug(
         "Starting VCenter::exists_entity sub, name=>'$name', type=>'$type'");
-    my $view = &Guest::entity_name_view( $name, $type);
+    my $view = Vim::find_entity_view(
+        view_type  => $type,
+        properties => ['name'],
+        filter     => { name => $name }
+    );
     &Log::dumpobj( "view", $view );
     if ( !defined($view) ) {
         &Log::debug("Entity does not exist");
@@ -349,7 +358,7 @@ sub create_resource_pool {
             count  => '0'
         );
     }
-    my $rp_parent_view = &Guest::entity_name_view( $rp_parent, $type);
+    my $rp_parent_view = &Guest::entity_name_view( $rp_parent, $type );
     ## Creation objects
     my $shareslevel = SharesLevel->new('normal');
     my $cpushares   = SharesInfo->new( shares => 4000, level => $shareslevel );
@@ -504,7 +513,7 @@ sub destroy_entity {
     my $view = &Guest::entity_name_view( $name, $type );
     my $task = $view->Destroy_Task;
     &VCenter::Task_Status($task);
-    $view = &Guest::entity_name_view( $name, $type);
+    $view = &Guest::entity_name_view( $name, $type );
     if ( defined($view) ) {
         Entity::NumException->throw(
             error  => 'Could not delete entity',
@@ -584,9 +593,11 @@ sub get_vim {
 
 sub operations_manager {
     &Log::debug("Startin VCenter::operations_manager sub");
-    my $guestOM = Vim::get_view( mo_ref => &VCenter::service_content->{guestOperationsManager} );
-    if ( !defined($guestOM)) {
-        Vcenter::ServiceContent->throw( error => "Could not retrieve Operations Manager");
+    my $guestOM = Vim::get_view(
+        mo_ref => &VCenter::service_content->{guestOperationsManager} );
+    if ( !defined($guestOM) ) {
+        Vcenter::ServiceContent->throw(
+            error => "Could not retrieve Operations Manager" );
     }
     &Log::dumpobj( "Guest Operation manager", $guestOM );
     &Log::debug("Returning guest operation manager object");
@@ -595,9 +606,11 @@ sub operations_manager {
 
 sub auth_manager {
     &Log::debug("Startin VCenter::auth_manager sub");
-    my $authmanager = Vim::get_view( mo_ref => &VCenter::service_content->{authManager} );
-    if ( !defined($authmanager)) {
-        Vcenter::ServiceContent->throw( error => "Could not retrieve authanager");
+    my $authmanager =
+      Vim::get_view( mo_ref => &VCenter::service_content->{authManager} );
+    if ( !defined($authmanager) ) {
+        Vcenter::ServiceContent->throw(
+            error => "Could not retrieve authanager" );
     }
     &Log::dumpobj( "Guest Operation manager", $authmanager );
     &Log::debug("Returning authmanager object");
@@ -606,9 +619,11 @@ sub auth_manager {
 
 sub file_manager {
     &Log::debug("Startin VCenter::file_manager sub");
-    my $filemanager = Vim::get_view( mo_ref => &VCenter::service_content->{fileManager} );
-    if ( !defined($filemanager)) {
-        Vcenter::ServiceContent->throw( error => "Could not retrieve filemanager");
+    my $filemanager =
+      Vim::get_view( mo_ref => &VCenter::service_content->{fileManager} );
+    if ( !defined($filemanager) ) {
+        Vcenter::ServiceContent->throw(
+            error => "Could not retrieve filemanager" );
     }
     &Log::dumpobj( "filemanager", $filemanager );
     &Log::debug("Returning filemanager object");
