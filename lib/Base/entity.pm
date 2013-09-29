@@ -897,7 +897,7 @@ sub delete_interface {
     my $id = &Opts::get_option('id');
     &Log::debug("Options, vmname=>'$vmname', id=>'$id'");
     my @net_hw = @{ &Guest::get_hw( $vmname, 'VirtualEthernetCard' ) };
-    &Guest::remove_hw( $vmname, $disk_hw[$id]);
+    &Guest::remove_hw( $vmname, $net_hw[$id]);
     return 1;
 }
 
