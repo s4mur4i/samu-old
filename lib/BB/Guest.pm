@@ -685,6 +685,21 @@ sub remove_snapshot {
     return 0;
 }
 
+sub remove_hw {
+    my ( $vmname, $hw ) = @_;
+    &Log::debug("Starting Guest::remove_hw sub");
+    &Log::dumpobj( "hw", $hw);
+    my $deviceconfig;
+    if ( $hw->isa('VirtualDisk')) {
+        $deviceconfig = VirtualDeviceConfigSpec->new( operation => VirtualDeviceConfigSpecOperation->new( 'remove' ), device => $hw, fileOperation => VirtualDeviceConfigSpecFileOperation->new( 'destroy' ) );
+    } else {
+        $deviceconfig = VirtualDeviceConfigSpec->new( operation => VirtualDeviceConfigSpecOperation->new( 'remove' ), device => $hw );
+    }
+    my $vmspec = VirtualMachineConfigSpec->new( deviceChange => [$deviceconfig] );
+    &Guest::reconfig_vm( $vmname, $vmspec);
+    return 1;
+}
+
 #tested
 sub list_snapshot {
     my ($vmname) = @_;

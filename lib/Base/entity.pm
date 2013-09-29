@@ -178,6 +178,11 @@ our $module_opts = {
                             help     => 'Which VMs cdrom to list.',
                             required => '1',
                         },
+                        id => {
+                            type     => '=s',
+                            help     => 'Which device to delete',
+                            required => '1',
+                        },
                     },
                 },
                 interface => {
@@ -188,6 +193,11 @@ our $module_opts = {
                             help     => 'Which VMs cdrom to list.',
                             required => '1',
                         },
+                        id => {
+                            type     => '=s',
+                            help     => 'Which device to delete',
+                            required => '1',
+                        },
                     },
                 },
                 disk => {
@@ -196,6 +206,11 @@ our $module_opts = {
                         vmname => {
                             type     => '=s',
                             help     => 'Which VMs cdrom to list.',
+                            required => '1',
+                        },
+                        id => {
+                            type     => '=s',
+                            help     => 'Which device to delete',
                             required => '1',
                         },
                     },
@@ -853,6 +868,36 @@ sub delete_snapshot {
         &Log::warning("Please give either all or id");
     }
     &Log::info("Snapshot delete sub completed");
+    return 1;
+}
+
+sub delete_cdrom {
+    &Log::debug("Starting entity::delete_cdrom sub");
+    my $vmname = &Opts::get_option('vmname');
+    my $id = &Opts::get_option('id');
+    &Log::debug("Options, vmname=>'$vmname', id=>'$id'");
+    my @cdrom_hw = @{ &Guest::get_hw( $vmname, 'VirtualCdrom' ) };
+    &Guest::remove_hw($vmname, $cdrom_hw[$id]);
+    return 1;
+}
+
+sub delete_disk {
+    &Log::debug("Starting entity::delete_disk sub");
+    my $vmname = &Opts::get_option('vmname');
+    my $id = &Opts::get_option('id');
+    &Log::debug("Options, vmname=>'$vmname', id=>'$id'");
+    my @disk_hw = @{ &Guest::get_hw( $vmname, 'VirtualDisk' ) };
+    &Guest::remove_hw($vmname, $disk_hw[$id]);
+    return 1;
+}
+
+sub delete_interface {
+    &Log::debug("Starting entity::delete_cdrom sub");
+    my $vmname = &Opts::get_option('vmname');
+    my $id = &Opts::get_option('id');
+    &Log::debug("Options, vmname=>'$vmname', id=>'$id'");
+    my @net_hw = @{ &Guest::get_hw( $vmname, 'VirtualEthernetCard' ) };
+    &Guest::remove_hw( $vmname, $disk_hw[$id]);
     return 1;
 }
 
