@@ -360,7 +360,7 @@ our $module_opts = {
             },
         },
         run => {
-            prereq_module => "LWP::UserAgent",
+            prereq_module => [ qw(LWP::UserAgent)],
             function      => \&run_command,
             opts          => {
                 vmname => {
@@ -403,6 +403,7 @@ our $module_opts = {
         },
         transfer => {
             function => \&transfer,
+            prereq_module => [ qw(LWP::Simple HTTP::Request LWP::UserAgent) ],
             opts     => {
                 type => {
                     type     => '=s',
