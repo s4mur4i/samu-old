@@ -57,6 +57,47 @@ our $module_opts = {
                 },
             },
         },
+        list => {
+            helper => 'ADMIN/ADMIN_list_functions',
+            functions => {
+                folder => {
+                    function => \&list_folder,
+                    opts => {
+                        all => {
+                            type     => "=s",
+                            help     => "List all Folders",
+                            required => 0,
+                        },
+                        name => {
+                            type     => "=s",
+                            help     => "List a specific Folder",
+                            required => 0,
+                        },
+
+                    },
+                },
+                resourcepool => {
+                    function => \&list_resourcepool,
+                    opts => {
+                        user => {
+                            type     => "=s",
+                            help     => "Which users resourcepool to list",
+                            required => 0,
+                        },
+                        all => {
+                            type     => "=s",
+                            help     => "List all resourcepools",
+                            required => 0,
+                        },
+                        name => {
+                            type     => "=s",
+                            help     => "List a specific resourcepool",
+                            required => 0,
+                        },
+                    },
+                },
+            },
+        },
     },
 };
 
@@ -134,6 +175,46 @@ sub pod2wiki {
       );
     $parser->output_fh($OUT);
     $parser->parse_file($IN);
+}
+
+sub list_resourcepool {
+    &Log::debug("Starting admin::list_resourcepool sub");
+    my $user = &Opts::get_option('user') || &Opts::get_option('username');
+    my @request = ();
+    if ( &Opts::get_option('all')) {
+        my $views = Vim::find_entity_views( view_type => 'ResourcePool', properties => ['name'] );
+        foreach ( @$views ) {
+            push( @request, $_->name);
+        }
+    } elsif ( &Opts::get_option('name') ) {
+        push( @request, &Opts::get_option('name') );
+    } else {
+        my $tickets = &Misc::user_ticket_list( $user );
+        for my $ticket ( keys %$tickets ) {
+            push(@request, $ticket);
+        }
+    }
+    ## FIXME: mit is szeretnenk itt latni
+    # VM count, resource use, power status
+    # Text table!!!!
+}
+
+sub list_folder {
+    &Log::debug("Starting admin::list_folder sub");
+    my @folder=();
+    if ( &Opts::get_option('all')) {
+        my $vm_folder_view = Vim::find_entity_view( view_type => 'Folder', properties => ['name'],filter => { name => 'vm'} );
+        my $folders = Vim::find_entity_view( view_type => 'Folder', begin_entity => $vm_folder_view, properties => ['name']);
+        foreach (@$folders) {
+            push(@folder, $_->name);
+        }
+    } elsif (&Opts::get_option('name')) {
+        push(@folder, &Opts::get_option('name'));
+    } else {
+        &Log::warning("No option requested");
+        exit;
+    }
+    ## FIXME: mit es hogy printelni ide
 }
 
 1
