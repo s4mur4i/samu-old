@@ -64,3 +64,7 @@ shiftjis
 login
 iso
 prereq
+samu
+portgroups
+Krisztian
+Banhidy
