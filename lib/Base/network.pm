@@ -66,8 +66,20 @@ our $module_opts = {
             opts     => {
                 name => {
                     type     => "=s",
-                    help     => "Name of switch to delete",
+                    help     => "Name of device to delete",
                     required => 1,
+                },
+                switch => {
+                    type => "",
+                    help => "Delete switch",
+                    required => 0,
+                    default => 0,
+                },
+                dvp => {
+                    type => "",
+                    help => "Delete Distributed virtual Portgroup",
+                    required => 0,
+                    default => 0,
                 },
             },
         },
@@ -103,18 +115,19 @@ sub network_add {
 sub list_switch {
     &Log::debug("Starting network::list_switch sub");
     my $views =
-      Vim::find_entity_views( view_type => 'Network', properties => ['name'] );
+      Vim::find_entity_views( view_type => 'DistributedVirtualSwitch', properties => ['name'] );
     if ( !defined($views) ) {
         Entity::NumException->throw(
             error  => 'No switch found',
-            entity => 'Network',
+            entity => 'DistributedVirtualSwitch',
             count  => '0'
         );
     }
     foreach (@$views) {
         &Log::dumpobj( "switch", $_ );
-        print "name:" . $_->name . "\n";
+        print "switch_name:" . $_->name . "\n";
     }
+    return 1;
 }
 
 sub list_dvp {
@@ -132,13 +145,35 @@ sub list_dvp {
     }
     foreach (@$networks) {
         &Log::dumpobj( "dvp", $_ );
-        print "name:" . $_->name . "\n";
+        print "dvp_name:" . $_->name . "\n";
     }
-
+    return 1;
 }
 
 sub network_delete {
     &Log::debug("Starting network::network_delete sub");
+    my $name = &Opts::get_option('name');
+    if ( &Opts::get_option('switch')) {
+        &Log::debug("Going to delete switch");
+        &VCenter::destroy_entity( $name, 'DistributedVirtualSwitch' );
+    } elsif (&Opts::get_option('dvp')) {
+        &Log::debug("Going to delete distributed virtual portgroup");
+        my $moref = &Guest::entity_property_view( $name, 'DistributedVirtualPortgroup', 'config.distributedVirtualSwitch');
+        my $switch_view = &VCenter::moref2view( $moref->get_property('config.distributedVirtualSwitch') );
+        &VCenter::destroy_entity( $name, 'DistributedVirtualPortgroup');
+        if ( &VCenter::check_if_empty_entity( $switch_view->name, 'DistributedVirtualSwitch') ) {
+            &VCenter::destroy_entity( $switch_view->name, 'DistributedVirtualSwitch' );
+        } else {
+            &Log::debug("Switch not empty");
+        }
+    } else {
+        &Log::warning("No option specified, Please give either one");
+    }
+    return 1;
+}
+
+sub create_net {
+
 }
 
 1;
