@@ -278,6 +278,28 @@ sub ticket_list {
         }
     }
     &Log::debug("Finished collecting ticket list");
+    &Log::dumpobj( "tickets", %tickets);
+    return \%tickets;
+}
+
+sub user_ticket_list {
+    my ($name) = @_;
+    &Log::debug("Starting Misc::user_ticket_list sub, name=>'$name'");
+    my $machines = Vim::find_entity_views(
+        view_type  => 'VirtualMachine',
+        properties => ['name'],
+        filter => { name => qr/^[^-]*-$name-/ }
+    );
+    &Log::dumpobj( "machines", $machines );
+    my %tickets = ();
+    for my $machine (@$machines) {
+        my $hash = &Misc::vmname_splitter( $machine->name );
+        if ( $hash->{username} eq $name and !defined($tickets{ $hash->{ticket}})  ) {
+            $tickets{ $hash->{ticket}} = 1;
+        }
+    }
+    &Log::debug("Finished collecting user ticket list");
+    &Log::dumpobj( "tickets", %tickets);
     return \%tickets;
 }
 
