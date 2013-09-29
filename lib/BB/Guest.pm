@@ -788,7 +788,7 @@ sub transfer_to_guest {
     print "Size of file: $size bytes";
     my $ua = LWP::UserAgent->new();
     $ua->ssl_opts( verify_hostname => 0 );
-    open( my $fh, "<$info->{path}" );
+    open( my $fh, "<", "$info->{path}" );
     my $content = do { local $/; <$fh> };
     my $req = $ua->put( $transferinfo, Content => $content );
 
@@ -837,7 +837,7 @@ sub transfer_from_guest {
     if ( !defined( $info->{dest} ) ) {
         my $basename = basename( $info->{path} );
         my $content  = get( $transferinfo->url );
-        open( my $fh, ">/tmp/$basename" );
+        open( my $fh, ">", "/tmp/$basename" );
         print $fh "$content";
         close($fh);
     }
