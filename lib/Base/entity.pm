@@ -165,6 +165,38 @@ our $module_opts = {
                         },
                     },
                 },
+                folder => {
+                    function => \&add_folder,
+                    opts => {
+                        name => {
+                            type     => "=s",
+                            help     => "Name of folder to create",
+                            required => 1,
+                        },
+                        parent => {
+                            type     => "=s",
+                            help     => "Name of parent to create in",
+                            required => 0,
+                            default => "vm",
+                        },
+                    },
+                },
+                resourcepool => {
+                    function => \&add_resourcepool,
+                    opts => {
+                        name => {
+                            type     => "=s",
+                            help     => "Name of folder to create",
+                            required => 1,
+                        },
+                        parent => {
+                            type     => "=s",
+                            help     => "Name of parent to create in",
+                            required => 0,
+                            default => "resources",
+                        },
+                    },
+                },
             },
         },
         delete => {
@@ -242,6 +274,26 @@ our $module_opts = {
                         vmname => {
                             type     => '=s',
                             help     => "Name of vm to delete",
+                            required => 1,
+                        },
+                    },
+                },
+                resourcepool => {
+                    function => \&delete_resourcepool,
+                    opts => {
+                        name => {
+                            type     => '=s',
+                            help     => "Name of resource pool to delete",
+                            required => 1,
+                        },
+                    },
+                },
+                folder => {
+                    function => \&delete_folder,
+                    opts => {
+                        name => {
+                            type     => '=s',
+                            help     => "Name of folder to delete",
                             required => 1,
                         },
                     },
@@ -898,6 +950,44 @@ sub delete_interface {
     &Log::debug("Options, vmname=>'$vmname', id=>'$id'");
     my @net_hw = @{ &Guest::get_hw( $vmname, 'VirtualEthernetCard' ) };
     &Guest::remove_hw( $vmname, $net_hw[$id]);
+    return 1;
+}
+
+sub delete_resourcepool {
+    &Log::debug("Starting entity::delete_resourcepool sub");
+    my $name = &Opts::get_option('name');
+    &Log::debug("Opts: name=>'$name'");
+    if ( &VCenter::check_if_empty_entity( $name, 'ResourcePool') ) {
+        &VCenter::destroy_entity( $name, 'ResourcePool' );
+    } else {
+        &Log::critical("ResourcePool is not empty");
+        exit;
+    }
+    return 1;
+}
+
+sub delete_folder {
+    &Log::debug("Starting entity::delete_folder sub");
+    my $name = &Opts::get_option('name');
+    &Log::debug("Opts: name=>'$name'");
+    if ( &VCenter::check_if_empty_entity( $name, 'Folder') ) {
+        &VCenter::destroy_entity( $name, 'Folder' );
+    } else {
+        &Log::critical("Folder is not empty");
+        exit;
+    }
+    return 1;
+}
+
+sub add_folder {
+    &Log::debug("Starting entity::add_folder sub");
+    &VCenter::create_folder( &Opts::get_option('name'), &Opts::get_option('parent') );
+    return 1;
+}
+
+sub add_resourcepool {
+    &Log::debug("Starting entity::add_resourcepool sub");
+    &VCenter::create_resource_pool( &Opts::get_option('name'), &Opts::get_option('parent') );
     return 1;
 }
 
