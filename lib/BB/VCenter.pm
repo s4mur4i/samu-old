@@ -641,7 +641,7 @@ sub vm_last_snapshot_view {
     if (   defined( $view->snapshot ) && defined( $view->snapshot->rootSnapshotList ) )
     {
         $snapshot_view = $view->snapshot->rootSnapshotList;
-
+    }
     else {
         Entity::Snapshot->throw(
             error    => 'VM has no snapshots defined',
@@ -676,6 +676,22 @@ sub find_vms_with_disk {
         }
     }
     return \@vms;
+}
+
+sub datastore_file_exists {
+    my ( $filename ) = @_;
+    &Log::debug("Starting VCenter::datastore_file_exists sub");
+    &Log::debug("Opts are, filename=>'$filename'");
+    my ( $datas, $folder, $image ) = @{ &Misc::filename_splitter( $filename )};
+    my $datastore = &Guest::entity_property_view( $datas, 'Datastore', 'browser');
+    my $browser =  &VCenter::moref2view( $datastore->browser );
+    my $files = FileQueryFlags->new( fileSize => 0, fileType => 1, modification => 0, fileOwner => 0 );
+    my $searchspec = HostDatastoreBrowserSearchSpec->new( details => $files, matchPattern => [ $image ] );
+    my $return = $browser->SearchDatastoreSubFolders( datastorePath => "[$datas] $folder", searchSpec => $searchspec );
+    if ( !defined( $return->[ 0 ]->file ) ) {
+        return 0;
+    }
+    return 1;
 }
 
 1

@@ -353,8 +353,23 @@ our $module_opts = {
                     opts     => {
                         vmname => {
                             type     => '=s',
-                            help     => 'Which VMs disk to list.',
+                            help     => 'Which VMs disk to list',
                             required => '1',
+                        },
+                        num => {
+                            type     => '=s',
+                            help     => 'Which cdrom to change',
+                            required => '1',
+                        },
+                        iso => {
+                            type     => '=s',
+                            help     => 'Which iso to add',
+                            required => '0',
+                        },
+                        unmount => {
+                            type     => '',
+                            help     => 'Unmount and iso',
+                            required => '0',
                         },
                     },
                 },
@@ -639,9 +654,34 @@ sub change_altername {
     return 1;
 }
 
+sub change_cdrom {
+    &Log::debug("Starting entity::change_cdrom sub");
+    my $vmname = Opts::get_option('vmname');
+    my $num = Opts::get_option('num');
+    my $iso = Opts::get_option('iso') || 0;
+    my $unmount = Opts::get_option('unmount') || 0;
+    &Log::debug("Requested options, vmname=>'$vmname', num=>'$num', iso=>'$iso', unmount=>'$unmount'");
+    if ( $unmount and $iso ) {
+        Vcenter::Opts->throw( error => 'iso and unmount both specified', opt => "unmount and iso");
+    } elsif ( $unmount ) {
+        my $spec = &Guest::remove_cdrom_iso_spec( $vmname, $num );
+        &Guest::reconfig_vm( $vmname ,$spec );
+    } elsif ( $iso ) {
+        if ( &VCenter::datastore_file_exists( $iso) ) {
+            my $spec = &Guest::change_cdrom_iso_spec( $vmname, $num, $iso );
+            &Guest::reconfig_vm( $vmname ,$spec );
+        } else {
+            Vcenter::Path->throw( error => 'Datastore file could not be found', path => $iso);
+        }
+    } else {
+        Vcenter::Opts->throw( error => 'iso or unmount not specified', opt => "unmount and iso");
+    }
+    return 1;
+}
+
 #tested
 sub change_snapshot {
-    &Log::debug("Entity::list_snapshot sub started");
+    &Log::debug("Entity::change_snapshot sub started");
     my $vmname = Opts::get_option('vmname');
     my $id     = Opts::get_option('id');
     &Log::debug("Requested options, vmname=>'$vmname', id=>'$id'");

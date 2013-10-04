@@ -99,6 +99,36 @@ sub change_altername {
     return 1;
 }
 
+sub remove_cdrom_iso_spec {
+    my ($vmname, $num) = @_;
+    &Log::debug("Starting Guest::add_cdrom_spec sub");
+    &Log::debug("Opts are, vmname=>'$vmname', num=>'$num'");
+    my @cdrom_hw = @{ &Guest::get_hw( $vmname, 'VirtualCdrom' ) };
+    my $controller = &Guest::key2hw( $vmname, $cdrom_hw[$num]->{controllerKey} );
+    my $normbacking = VirtualCdromRemotePassthroughBackingInfo->new( exclusive => 0, deviceName => '' );
+    my $device = VirtualCdrom->new( backing => $normbacking, key => $cdrom_hw[$num]->{key}, controllerKey => $controller->{key} );
+    my $configspec = VirtualDeviceConfigSpec->new( device => $device, operation => VirtualDeviceConfigSpecOperation->new( 'edit' ) );
+    my $spec = VirtualMachineConfigSpec->new( deviceChange => [ $configspec ] );
+    return $spec
+}
+
+sub change_cdrom_iso_spec {
+    my ( $vmname, $num, $iso ) = @_;
+    &Log::debug("Starting Guest::add_cdrom_spec sub");
+    &Log::debug("Opts are, vmname=>'$vmname', num=>'$num', iso=>'$iso'");
+    if ( !&VCenter::datastore_file_exists( $iso )) {
+        Vcenter::Path->throw( error => 'Datastore file could not be found', path => $iso);
+    }
+    my ( $datas, $folder, $image ) = &Misc::filename_splitter( $iso );
+    my @cdrom_hw = @{ &Guest::get_hw( $vmname, 'VirtualCdrom' ) };
+    my $controller = &Guest::key2hw( $vmname, $cdrom_hw[$num]->{controllerKey} );
+    my $isobacking = VirtualCdromIsoBackingInfo->new( fileName => $iso );
+    my $device = VirtualCdrom->new( backing => $isobacking, key => $cdrom_hw[$num]->{key}, controllerKey => $controller->{key} );
+    my $configspec = VirtualDeviceConfigSpec->new( device => $device, operation => VirtualDeviceConfigSpecOperation->new( 'edit' ) );
+    my $spec = VirtualMachineConfigSpec->new( deviceChange => [ $configspec ] );
+    return $spec;
+}
+
 #tested
 sub add_cdrom_spec {
     my ($vmname) = @_;
@@ -491,7 +521,6 @@ sub get_hw {
           . "', hw=>'"
           . $hw
           . "'" );
-    &VCenter::num_check( $vmname, 'VirtualMachine' );
     my @hw   = ();
     my $view = &Guest::entity_property_view( $vmname, 'VirtualMachine',
         'config.hardware.device' );
@@ -507,6 +536,30 @@ sub get_hw {
     &Log::debug( "Returning count=>'" . scalar(@hw) . "'" );
     &Log::dumpobj( $hw, \@hw );
     return \@hw;
+}
+
+sub key2hw {
+    my ( $vmname, $key ) = @_;
+    &Log::debug( "Starting Guest::key2hw sub, vmname=>'"
+          . $vmname
+          . "', key=>'"
+          . $key
+          . "'" );
+    my $hw;
+    my $view = &Guest::entity_property_view( $vmname, 'VirtualMachine',
+        'config.hardware.device' );
+    &Log::debug("Starting loop through hardver");
+    my $devices = $view->get_property('config.hardware.device');
+    foreach ( @{$devices} ) {
+
+        if ( $_->{key} eq $key ) {
+            &Log::debug("Found requrested hardver pushing to return");
+            $hw = $_;
+        }
+    }
+    &Log::debug("Returning requested hw");
+    &Log::dumpobj( 'hw', $hw );
+    return $hw;
 }
 
 #tested
