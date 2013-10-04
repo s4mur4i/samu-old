@@ -634,5 +634,49 @@ sub file_manager {
     return $filemanager;
 }
 
+sub vm_last_snapshot_view {
+    my ($vmname) = @_;
+    my $view = &Guest::entity_property_view( $vmname, 'VirtualMachine', 'snapshot');
+    my $snapshot_view;
+    if (   defined( $view->snapshot ) && defined( $view->snapshot->rootSnapshotList ) )
+    {
+        $snapshot_view = $view->snapshot->rootSnapshotList;
+
+    else {
+        Entity::Snapshot->throw(
+            error    => 'VM has no snapshots defined',
+            entity   => $vmname,
+            snapshot => 'none'
+        );
+    }
+    if ( defined( $snapshot_view->[0]->{'childSnapshotList'} ) ) {
+        &Log::debug("Recursion for last snapshot");
+        $snapshot_view =
+          &Guest::find_last_snapshot(
+            $snapshot_view->[0]->{'childSnapshotList'} );
+        &Log::debug("End of recursion");
+    }
+    my $snapshot = &VCenter::moref2view( $snapshot_view->[0]->{'snapshot'} );
+    return $snapshot;
+}
+
+sub find_vms_with_disk {
+    my ( $disk ) = @_;
+    my @vms = ();
+    my $machine_views = Vim::find_entity_views(view_type => 'VirtualMachine', properties => ['layout.disk', 'name']);
+    foreach (@$machine_views) {
+        my $machine_view = $_;
+        my $disks = $machine_view->get_property('layout.disk');
+        foreach my $vdisk (@$disks) {
+            foreach my $diskfile ( @{$vdisk->{'diskFile'}}) {
+                if ( $diskfile eq $disk) {
+                    push( @vms, $machine_view->get_property('name') );
+                }
+            }
+        }
+    }
+    return \@vms;
+}
+
 1
 __END__

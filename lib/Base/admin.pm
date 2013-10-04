@@ -58,11 +58,11 @@ our $module_opts = {
             },
         },
         list => {
-            helper => 'ADMIN/ADMIN_list_functions',
+            helper    => 'ADMIN/ADMIN_list_functions',
             functions => {
                 folder => {
                     function => \&list_folder,
-                    opts => {
+                    opts     => {
                         all => {
                             type     => "=s",
                             help     => "List all Folders",
@@ -78,7 +78,7 @@ our $module_opts = {
                 },
                 resourcepool => {
                     function => \&list_resourcepool,
-                    opts => {
+                    opts     => {
                         user => {
                             type     => "=s",
                             help     => "Which users resourcepool to list",
@@ -93,6 +93,16 @@ our $module_opts = {
                             type     => "=s",
                             help     => "List a specific resourcepool",
                             required => 0,
+                        },
+                    },
+                },
+                linked_clones => {
+                    function => \&list_linked_clones,
+                    opts     => {
+                        template => {
+                            type     => "=s",
+                            help     => "Which templates linked clones to list",
+                            required => 1,
                         },
                     },
                 },
@@ -181,17 +191,22 @@ sub list_resourcepool {
     &Log::debug("Starting admin::list_resourcepool sub");
     my $user = &Opts::get_option('user') || &Opts::get_option('username');
     my @request = ();
-    if ( &Opts::get_option('all')) {
-        my $views = Vim::find_entity_views( view_type => 'ResourcePool', properties => ['name'] );
-        foreach ( @$views ) {
-            push( @request, $_->name);
+    if ( &Opts::get_option('all') ) {
+        my $views = Vim::find_entity_views(
+            view_type  => 'ResourcePool',
+            properties => ['name']
+        );
+        foreach (@$views) {
+            push( @request, $_->name );
         }
-    } elsif ( &Opts::get_option('name') ) {
+    }
+    elsif ( &Opts::get_option('name') ) {
         push( @request, &Opts::get_option('name') );
-    } else {
-        my $tickets = &Misc::user_ticket_list( $user );
+    }
+    else {
+        my $tickets = &Misc::user_ticket_list($user);
         for my $ticket ( keys %$tickets ) {
-            push(@request, $ticket);
+            push( @request, $ticket );
         }
     }
     ## FIXME: mit is szeretnenk itt latni
@@ -201,20 +216,50 @@ sub list_resourcepool {
 
 sub list_folder {
     &Log::debug("Starting admin::list_folder sub");
-    my @folder=();
-    if ( &Opts::get_option('all')) {
-        my $vm_folder_view = Vim::find_entity_view( view_type => 'Folder', properties => ['name'],filter => { name => 'vm'} );
-        my $folders = Vim::find_entity_view( view_type => 'Folder', begin_entity => $vm_folder_view, properties => ['name']);
+    my @folder = ();
+    if ( &Opts::get_option('all') ) {
+        my $vm_folder_view = Vim::find_entity_view(
+            view_type  => 'Folder',
+            properties => ['name'],
+            filter     => { name => 'vm' }
+        );
+        my $folders = Vim::find_entity_view(
+            view_type    => 'Folder',
+            begin_entity => $vm_folder_view,
+            properties   => ['name']
+        );
         foreach (@$folders) {
-            push(@folder, $_->name);
+            push( @folder, $_->name );
         }
-    } elsif (&Opts::get_option('name')) {
-        push(@folder, &Opts::get_option('name'));
-    } else {
+    }
+    elsif ( &Opts::get_option('name') ) {
+        push( @folder, &Opts::get_option('name') );
+    }
+    else {
         &Log::warning("No option requested");
         exit;
     }
     ## FIXME: mit es hogy printelni ide
+}
+
+sub list_linked_clones {
+    &Log::debug("Starting admin:list_linked_clones sub");
+    my $name = &Opts::get_option('template');
+    my $vmname = &VCenter::path2name( &Support::get_key_value( 'template', $name, 'path' ));
+    my $snapshot_view = &VCenter::vm_last_snapshot_view( $vmname );
+    my $devices = $snapshot_view->{'config'}->{'hardware'}->{'device'};
+    my $disk;
+    foreach my $device (@$devices) {
+        if ( defined($device->{'backing'}->{'fileName'})) {
+            $disk = $device->{'backing'}->{'fileName'};
+            last;
+        }
+    }
+    my @vms = @{ &VCenter::find_vms_with_disk( $disk ) };
+    print "Vms linked to $name\n";
+    foreach ( @vms ) {
+        print "$_\n" unless $_ eq $vmname;
+    }
 }
 
 1
