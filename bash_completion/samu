@@ -14,25 +14,30 @@ _samu() {
 	default_opts="-v -q -h --help"
     sdk_opts="--config --credstore --encoding --passthroughauth --passthroughauthpackage --password --portnumber --protocol --savesessionfile --server --servicepath --sessionfile --url --username --version --verbose"
 
-    vm="clone list delete add change info"
+    vm="clone list delete add change info convert_full run transfer"
     vm_clone="--cpu --domain --memory --os_temp --parent_pool --ticket"
+    vm_convert_full="--vmname"
 
     vm_info="dumper runtime"
     vm_info_dumper="--vmname"
     vm_info_runtime="--vmname"
 
-    vm_add="cdrom interface disk snapshot"
-    vm_add_cdrom=""
-    vm_add_disk=""
-    vm_add_interface=""
-    vm_add_snapshot=""
+    vm_add="cdrom interface disk snapshot folder resourcepool"
+    vm_add_cdrom="--vmname"
+    vm_add_disk="--vmname --size"
+    vm_add_interface="--vmname --type"
+    vm_add_snapshot="--vmname --snap_name --desc"
+    vm_add_folder="--name --parent"
+    vm_add_resourcepool="--name --parent"
 
-    vm_delete="cdrom interface disk snapshot vm"
-    vm_delete_cdrom="--vmname"
-    vm_delete_disk="--vmname"
-    vm_delete_interface="--vmname"
-    vm_delete_snapshot="--vmname"
+    vm_delete="cdrom interface disk snapshot vm resoucepool folder"
+    vm_delete_cdrom="--vmname --id"
+    vm_delete_disk="--vmname --id"
+    vm_delete_interface="--vmname --id"
+    vm_delete_snapshot="--vmname --id --all"
     vm_delete_vm="--vmname"
+    vm_delete_folder="--name"
+    vm_delete_resourcepool="--name"
 
     vm_list="cdrom interface disk snapshot"
     vm_list_cdrom="--vmname"
@@ -41,12 +46,18 @@ _samu() {
     vm_list_snapshot="--vmname"
 
     vm_change="cdrom interface disk altername snapshot power"
-    vm_change_cdrom="--vmname"
-    vm_change_interface="--vmname"
-    vm_change_disk="--vmname"
+    vm_change_cdrom="--vmname --num --iso --unmount"
+    vm_change_interface="--vmname --num --network"
+    vm_change_disk="--vmname --num --size"
     vm_change_altername="--vmname --name"
     vm_change_snapshot="--vmname --id"
     vm_change_power="--vmname --state"
+
+    vm_convert_full="--vmname"
+
+    vm_run="--vmname --guestusername --guestpassword --prog --prog_arg --env --workdir"
+
+    vm_transfer="--type --vmname --guestusername --guestpassword --source --dest --overwrite"
 
     ticket="info list on off delete"
 
@@ -96,6 +107,7 @@ _samu() {
     _vm_options="${vm}"
 
     _vm_clone_options="${sdk_opts} ${vm_clone}"
+    _vm_convert_full_options="${sdk_opts} ${vm_convert_full}"
 
     _vm_info_options="${vm_info}"
     _vm_info_dumper_options="${vm_info_dumper} ${sdk_opts}"
@@ -106,6 +118,8 @@ _samu() {
     _vm_add_disk_options="${vm_add_disk} ${sdk_opts}"
     _vm_add_interface_options="${vm_add_network} ${sdk_opts}"
     _vm_add_snapshot_options="${vm_add_snapshot} ${sdk_opts}"
+    _vm_add_folder_options="${vm_add_folder} ${sdk_opts}"
+    _vm_add_resourcepool_options="${vm_add_resourcepool} ${sdk_opts}"
 
     _vm_delete_options="${vm_delete}"
     _vm_delete_cdrom_options="${vm_delete_cdrom} ${sdk_opts}"
@@ -113,6 +127,8 @@ _samu() {
     _vm_delete_interface_options="${vm_delete_network} ${sdk_opts}"
     _vm_delete_snapshot_options="${vm_delete_snapshot} ${sdk_opts}"
     _vm_delete_vm_options="${vm_delete_vm} ${sdk_opts}"
+    _vm_delete_folder_options="${vm_delete_folder} ${sdk_opts}"
+    _vm_delete_resourcepool_options="${vm_delete_resourcepool} ${sdk_opts}"
 
     _vm_list_options="${vm_list}"
     _vm_list_cdrom_options="${vm_list_cdrom} ${sdk_opts}"
@@ -127,6 +143,10 @@ _samu() {
     _vm_change_altername_options="${vm_change_altername} ${sdk_opts}"
     _vm_change_snapshot_options="${vm_change_snapshot} ${sdk_opts}"
     _vm_change_power_options="${vm_change_power} ${sdk_opts}"
+
+    _vm_run_options="${vm_run} ${sdk_opts}"
+
+    _vm_transfer_options="${vm_transfer} ${sdk_opts}"
 
     _ticket_options="${ticket}"
 

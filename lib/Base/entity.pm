@@ -3,7 +3,6 @@ package entity;
 use strict;
 use warnings;
 use Base::misc;
-use Data::Dumper;
 
 my $help = 0;
 
@@ -12,20 +11,8 @@ BEGIN {
     our ( @ISA, @EXPORT );
 
     @ISA    = qw(Exporter);
-    @EXPORT = qw(&main);
+    @EXPORT = qw();
 }
-
-### subs
-
-=pod
-
-=head1 ENTITY_MAIN
-
-=head2 DESCRIPTION
-
-    This is the main entry sub to the vm (entity) functions. All further functions can be reached from here
-
-=cut
 
 our $module_opts = {
     helper    => 'VM',
@@ -84,6 +71,7 @@ our $module_opts = {
             functions => {
                 dumper => {
                     function => \&info_dumper,
+                    prereq_module => [ qw(Data::Dumper) ];
                     opts     => {
                         vmname => {
                             type => "=s",
@@ -95,6 +83,7 @@ our $module_opts = {
                 },
                 runtime => {
                     function => \&info_runtime,
+                    prereq_module => [ qw(Data::Dumper) ];
                     opts     => {
                         vmname => {
                             type => "=s",
@@ -388,7 +377,7 @@ our $module_opts = {
                     opts     => {
                         vmname => {
                             type     => '=s',
-                            help     => 'Which VMs cdrom to list.',
+                            help     => 'Name of vm',
                             required => '1',
                         },
                         num => {
@@ -409,8 +398,18 @@ our $module_opts = {
                     opts     => {
                         vmname => {
                             type     => '=s',
-                            help     => 'Which VMs cdrom to list.',
-                            required => '1',
+                            help     => 'Which VMs disk to change.',
+                            required => 1,
+                        },
+                        num => {
+                            type => '=s',
+                            help => "Number of device",
+                            required => 1,
+                        },
+                        size => {
+                            type => '=s',
+                            help => "Size of requested disk",
+                            required => 1,
                         },
                     },
                 },
@@ -449,7 +448,7 @@ our $module_opts = {
                     opts     => {
                         vmname => {
                             type     => '=s',
-                            help     => 'Which VMs cdrom to list.',
+                            help     => 'Name of vm',
                             required => '1',
                         },
                         state => {
@@ -549,16 +548,73 @@ our $module_opts = {
     },
 };
 
+=pod
+
+=head1 main
+
+=head2 PURPOSE
+
+This is main entry point for Entity module
+
+=head2 PARAMETERS
+
+=back
+
+=over
+
+=head2 RETURNS
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
+
 sub main {
-    &Log::debug("Entity::main sub started");
+    &Log::debug("Starting Entity::main sub");
     &misc::option_parser( $module_opts, "main" );
+    &Log::debug("Finishing Entity::main sub");
+    return 1;
 }
 
-#tested
+=pod
+
+=head1 list_cdrom
+
+=head2 PURPOSE
+
+List all cdroms attached to a vm
+
+=head2 PARAMETERS
+
+=back
+
+=item vmname
+
+=over
+
+=head2 RETURNS
+
+True on success
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
+
 sub list_cdrom {
-    &Log::debug("Entity::list_cdrom sub started");
+    &Log::debug("Starting Entity::list_cdrom sub");
     my $vmname = Opts::get_option('vmname');
-    &Log::debug("Requested options, vmname=>'$vmname'");
+    &Log::debug1("Opts are: vmname=>'$vmname'");
     my @cdrom_hw = @{ &Guest::get_hw( $vmname, 'VirtualCdrom' ) };
     if ( @cdrom_hw eq 0 ) {
         &Log::debug("No cdroms on entity");
@@ -598,11 +654,10 @@ sub list_cdrom {
           . "', label=>'"
           . $label . "'\n";
     }
-    &Log::debug("Finished list_cdrom sub");
+    &Log::debug("Finishing Entity::list_cdrom sub");
     return 1;
 }
 
-#tested
 sub list_interface {
     &Log::debug("Entity::list_interface sub started");
     my $vmname = Opts::get_option('vmname');
@@ -761,7 +816,7 @@ sub add_cdrom {
     return 1;
 }
 
-#teted
+#tested
 sub add_disk {
     &Log::debug("Entity::add_cdrom sub started");
     my $vmname = Opts::get_option('vmname');
@@ -1069,6 +1124,13 @@ sub promote {
     &Log::debug("Opts are, vmname=>'$vmname'");
     &Guest::promote( $vmname );
     &Log::debug("Finished Entity::promote sub");
+    return 1;
+}
+
+sub change_disk {
+    &Log::debug("Starting Entity::change_disk sub");
+    print "Not implemented\n";
+    &Log::debug("Finishing Entity::change_disk sub");
     return 1;
 }
 

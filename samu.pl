@@ -22,7 +22,7 @@ BEGIN {
     $ENV{PERL_LWP_SSL_VERIFY_HOSTNAME} = 0;
 }
 
-my $herring_opts = {
+my $samu_opts = {
     helper    => [qw(SYNOPSIS OPTIONS FUNCTIONS)],
     functions => {
         vm => {
@@ -88,16 +88,15 @@ sub podhelp {
 }
 
 ### Main
-&Log::debug("Starting Script");
+&Log::debug("Starting Samu");
 
 GetOptions(
     'help|h' => \&podhelp,
     'man|m'  => \&podman,
 );
 
-eval { &misc::option_parser( $herring_opts, "jew_main" ); };
+eval { &misc::option_parser( $samu_opts, "samu_main" ); };
 if ($@) {
     &Log::debug("There was an error need to run the catch_ex sub");
     &Error::catch_ex($@);
 }
-__END__
