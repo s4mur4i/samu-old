@@ -921,6 +921,10 @@ samu.pl ticket info [options]
 
 =over
 
+=item ticket
+
+Ticket to gather information about
+
 =back
 
 =head2 TICKET_on_function
@@ -933,9 +937,9 @@ samu.pl ticket on [options]
 
 =over
 
-=item --help|-h
+=item ticket
 
-Print the help page
+Power all machines on from ticket
 
 =back
 
@@ -949,6 +953,10 @@ samu.pl ticket off [options]
 
 =over
 
+=item ticket
+
+Power all machines off from ticket
+
 =back
 
 =head2 TICKET_delete_function
@@ -960,6 +968,10 @@ samu.pl ticket delete [options]
 =head3 OPTIONS
 
 =over
+
+=item ticket
+
+Delete all machines from ticket
 
 =back
 
@@ -1021,6 +1033,10 @@ samu.pl datastore add [options]
 
 =over
 
+=item datastore
+
+Datastore name to add
+
 =back
 
 =head2 DATASTORE_delete_function
@@ -1033,6 +1049,10 @@ samu.pl datastore delete [options]
 
 =over
 
+=item datastore
+
+Datastore name to delete
+
 =back
 
 =head2 DATASTORE_info_function
@@ -1044,6 +1064,10 @@ samu.pl datastore info [options]
 =head3 OPTIONS
 
 =over
+
+=item datastore
+
+Datastore name to gather info about
 
 =back
 
@@ -1067,13 +1091,29 @@ Print the help page
 
 =over
 
-=item TBD
+=item info
 
-To Be Defined
+Gather information about ticket
 
 =back
 
 =head1 KAYAKO_functions
+
+=head2 KAYAKO_info_function
+
+=head3 SYNOPSIS
+
+samu.pl kayako [options]
+
+=head3 OPTIONS
+
+=over
+
+=item ticket
+
+Number of ticket to get information
+
+=back
 
 =head1 BUGZILLA
 
@@ -1095,13 +1135,29 @@ Print the help page
 
 =over
 
-=item TBD
+=item info
 
-To Be Defined
+Gather information about bugzilla ticket
 
 =back
 
 =head1 BUGZILLA_functions
+
+=head2 BUGZILLA_info_function
+
+=head3 SYNOPSIS
+
+samu.pl bugzilla [options]
+
+=head3 OPTIONS
+
+=over
+
+=item ticket
+
+The ticket number to gather information about
+
+=back
 
 =head1 ADMIN
 
@@ -1283,6 +1339,10 @@ samu.pl admin list linked_clone [options]
 
 =over
 
+=item template
+
+Name of template to list linked clones of
+
 =back
 
 =head1 NETWORK
@@ -1311,6 +1371,10 @@ Print the help page
 
 Add a distributed virtual switch to VCenter
 
+=item create
+
+Create a network interface with vms
+
 =item list_switch
 
 List switches on VCenter
@@ -1337,13 +1401,33 @@ samu.pl network add [options]
 
 =over
 
+=item ticket
+
+Ticket to add network to
+
+=item type
+
+Type of network to add
+
 =back
 
-=head2 NETWORK_list_function
+=head2 NETWORK_list_switch_function
 
 =head3 SYNOPSIS
 
-samu.pl network list [options]
+samu.pl network list_switch [options]
+
+=head3 OPTIONS
+
+=over
+
+=back
+
+=head2 NETWORK_list_dvp_function
+
+=head3 SYNOPSIS
+
+samu.pl network list_dvp [options]
 
 =head3 OPTIONS
 
@@ -1360,6 +1444,18 @@ samu.pl network delete [options]
 =head3 OPTIONS
 
 =over
+
+=item name
+
+Name of device to delete
+
+=item switch
+
+Delete switch
+
+=item dvp
+
+Delete DVP
 
 =back
 
