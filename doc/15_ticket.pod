@@ -65,6 +65,10 @@ samu.pl ticket info [options]
 
 =over
 
+=item ticket
+
+Ticket to gather information about
+
 =back
 
 =head2 TICKET_on_function
@@ -77,9 +81,9 @@ samu.pl ticket on [options]
 
 =over
 
-=item --help|-h
+=item ticket
 
-Print the help page
+Power all machines on from ticket
 
 =back
 
@@ -93,6 +97,10 @@ samu.pl ticket off [options]
 
 =over
 
+=item ticket
+
+Power all machines off from ticket
+
 =back
 
 =head2 TICKET_delete_function
@@ -104,5 +112,9 @@ samu.pl ticket delete [options]
 =head3 OPTIONS
 
 =over
+
+=item ticket
+
+Delete all machines from ticket
 
 =back
