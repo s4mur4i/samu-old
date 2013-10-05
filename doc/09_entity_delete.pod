@@ -1,0 +1,177 @@
+=head2 VM_delete_function
+
+=head3 SYNOPSIS
+
+samu.pl vm delete [options] [function]
+
+=head3 OPTIONS
+
+=over
+
+=back
+
+=head3 FUNCTIONS
+
+=over
+
+=item cdrom
+
+Delete a cdrom drive to a vm
+
+=item interface
+
+Delete a network interface to a vm
+
+=item disk
+
+Delete a hard disk from a vm
+
+=item snapshot
+
+Delete a snapshot attached to a vm
+
+=item vm
+
+Delete a vm
+
+=item folder
+
+Deletes a inventory folder
+
+=item resourcepool
+
+Deletes a resourcepool
+
+=back
+
+=head2 VM_delete_cdrom_function
+
+=head3 SYNOPSIS
+
+samu.pl vm delete cdrom [options]
+
+=head3 OPTIONS
+
+=over
+
+=item vmname
+
+Name of vm
+
+=item id
+
+ID of cdrom to delete
+
+=back
+
+=head2 VM_delete_interface_function
+
+=head3 SYNOPSIS
+
+samu.pl vm delete interface [options]
+
+=head3 OPTIONS
+
+=over
+
+=item vmname
+
+Name of vm
+
+=item id
+
+Id of interface to delete
+
+=back
+
+=head2 VM_delete_disk_function
+
+=head3 SYNOPSIS
+
+samu.pl vm delete disk [options]
+
+=head3 OPTIONS
+
+=over
+
+=item vmname
+
+Name of vm
+
+=item id
+
+Id of disk to delete
+
+=back
+
+=head2 VM_delete_snapshot_function
+
+=head3 SYNOPSIS
+
+samu.pl vm delete snapshot [options]
+
+=head3 OPTIONS
+
+=over
+
+=item vmname
+
+Name of vm
+
+=item id
+
+ID of snapshot to delete
+
+=item all
+
+Delete all snapshots
+
+=back
+
+=head2 VM_delete_vm_function
+
+=head3 SYNOPSIS
+
+samu.pl vm delete vm [options]
+
+=head3 OPTIONS
+
+=over
+
+=item vmname
+
+Name of vm
+
+=back
+
+=head2 VM_delete_folder_function
+
+=head3 SYNOPSIS
+
+samu.pl vm delete folder [options]
+
+=head3 OPTIONS
+
+=over
+
+=item name
+
+Name of folder
+
+=back
+
+=head2 VM_delete_resourcepool_function
+
+=head3 SYNOPSIS
+
+samu.pl vm delete resourcepool [options]
+
+=head3 OPTIONS
+
+=over
+
+=item name
+
+Name of resourcepool
+
+=back

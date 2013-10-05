@@ -1,0 +1,161 @@
+=head2 VM_add_function
+
+=head3 SYNOPSIS
+
+samu.pl vm add [options] [function]
+
+=head3 OPTIONS
+
+=over
+
+=back
+
+=head3 FUNCTIONS
+
+=over
+
+=item cdrom
+
+Add a cdrom drive to a vm
+
+=item interface
+
+Add a network interface to a vm
+
+=item disk
+
+Add a thin provisioned hard disk to a vm
+
+=item snapshot
+
+Add snapshots to a vm
+
+=item folder
+
+Create inventory folder on VCenter
+
+=item resourcepool
+
+Create resourcepool on VCenter
+
+=back
+
+=head2 VM_add_cdrom_function
+
+=head3 SYNOPSIS
+
+samu.pl vm add cdrom [options]
+
+=head3 OPTIONS
+
+=over
+
+=item vmname
+
+Name of vm
+
+=back
+
+=head2 VM_add_interface_function
+
+=head3 SYNOPSIS
+
+samu.pl vm add interface [options]
+
+=head3 OPTIONS
+
+=over
+
+=item vmname
+
+Name of vm
+
+=item type
+
+Type of interface to add
+
+=back
+
+=head2 VM_add_disk_function
+
+=head3 SYNOPSIS
+
+samu.pl vm add disk [options]
+
+=head3 OPTIONS
+
+=over
+
+=item vmname
+
+Name of vm
+
+=item size
+
+Requested size of disk
+
+=back
+
+=head2 VM_add_snapshot_function
+
+=head3 SYNOPSIS
+
+samu.pl vm add function [options]
+
+=head3 OPTIONS
+
+=over
+
+=item vmname
+
+Name of vm
+
+=item snap_name
+
+Requested name of snapshot
+
+=item desc
+
+Snapshot description
+
+=back
+
+=head2 VM_add_folder_function
+
+=head3 SYNOPSIS
+
+samu.pl vm add folder [options]
+
+=head3 OPTIONS
+
+=over
+
+=item name
+
+Name of requested folder
+
+=item parent
+
+Name of requeted parent. Defaults to vm folder
+
+=back
+
+=head2 VM_add_resourcepool_function
+
+=head3 SYNOPSIS
+
+samu.pl vm add resourcepool [options]
+
+=head3 OPTIONS
+
+=over
+
+=item name
+
+Name of resourcepool
+
+=item parent
+
+Name of requested parent. Default to Resources folder
+
+=back

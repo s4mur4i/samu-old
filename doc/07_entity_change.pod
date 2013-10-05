@@ -1,0 +1,177 @@
+=head2 VM_change_function
+
+=head3 SYNOPSIS
+
+samu.pl vm change [options] [function]
+
+=head3 OPTIONS
+
+=over
+
+=back
+
+=head3 FUNCTIONS
+
+=over
+
+=item cdrom
+
+Change the backend iso to a cdrom drive
+
+=item interface
+
+Change the network connected to a network
+
+=item altername
+
+Change the alternative name of a vm
+
+=item snapshot
+
+Revert to snapshot attached to a vm
+
+=item power
+
+Change the power state of a vm
+
+=item disk
+
+Change the size of harddrive
+
+=back
+
+=head2 VM_change_cdrom_function
+
+=head3 SYNOPSIS
+
+samu.pl vm change cdrom [options]
+
+=head3 OPTIONS
+
+=over
+
+=item vmname
+
+Name of vm
+
+=item num
+
+Number of cdrom
+
+=item iso
+
+VMware path to iso
+
+=item unmoun
+
+Unmount the attached iso
+
+=back
+
+=head2 VM_change_interface_function
+
+=head3 SYNOPSIS
+
+samu.pl vm change interface [options]
+
+=head3 OPTIONS
+
+=over
+
+=item vmname
+
+Name of vm
+
+=item num
+
+Number of interface
+
+=item network
+
+Name of network to change to
+
+=back
+
+=head2 VM_change_altername_function
+
+=head3 SYNOPSIS
+
+samu.pl vm change altername [options]
+
+=head3 OPTIONS
+
+=over
+
+=item vmname
+
+Name of vm
+
+=item name
+
+New alternative vm name
+
+=back
+
+=head2 VM_change_snapshot_function
+
+=head3 SYNOPSIS
+
+samu.pl vm change snapshot [options]
+
+=head3 OPTIONS
+
+=over
+
+=item vmname
+
+Name of vm
+
+=item id
+
+ID of snapshot
+
+=back
+
+=head2 VM_change_power_function
+
+=head3 SYNOPSIS
+
+samu.pl vm change power [options]
+
+=head3 OPTIONS
+
+=over
+
+=item vmname
+
+Name of vm
+
+=item state
+
+Power state on/off
+
+=back
+
+=head2 VM_change_disk_function
+
+=head3 SYNOPSIS
+
+samu.pl vm change disk [options]
+
+=head3 OPTIONS
+
+=over
+
+=item vmname
+
+Name of vm
+
+=item num
+
+Number of harddrive
+
+=item size
+
+Requested new size
+
+=back

@@ -1,7 +1,7 @@
 
 =head1 NAME
 
-samu.pl -- Support automatisation script
+samu.pl -- Support Automatisation Management Util
 
 =head1 DESCRIPTION
 
@@ -68,10 +68,6 @@ Network related functions
 
 =back
 
-=head1 SUBS
-
-List of defined functions, each can be called with it's own help and detailed information. Each sub has their own help defined.
-
 =head1 VM
 
 =head3 SYNOPSIS
@@ -116,6 +112,18 @@ Sub to change settings of a guest
 
 Sub used to dump information about a vm
 
+=item convert_full
+
+Converts a linked clone to a full clone
+
+=item run
+
+Run a command in a guest that has vmware tools
+
+=item transfer
+
+Transfers file from or to a guest
+
 =back
 
 =head1 VM_functions
@@ -129,6 +137,104 @@ samu.pl vm clone [options]
 =head3 OPTIONS
 
 =over
+
+=item ticket
+
+The ticket attached to the envirnoment
+
+=item os_temp
+
+Which template to use
+
+=item parent_pool
+
+The machine should not be created at standard pool
+
+=item memory
+
+The machine should have different amount of memory than template
+
+=item cpu
+
+The machine cpu count should be different than template
+
+=item domain
+
+By default machine is created in workgroup, this option changes it to be added to support domain (only win)
+
+=back
+
+=head2 VM_convert_full_function
+
+=head3 SYNOPSIS
+
+samu.pl vm convert_full [options]
+
+=head3 OPTIONS
+
+=over
+
+=item vmname
+
+Name of vm
+
+=back
+
+=head2 VM_info_function
+
+=head3 SYNOPSIS
+
+samu.pl vm info [options] [function]
+
+=head3 OPTIONS
+
+=over
+
+=back
+
+=head3 FUNCTIONS
+
+=over
+
+=item dumper
+
+This information is used for development purposes, It dumps all object information about vm to STDOUT
+
+=item runtime
+
+Information about runtime environment
+
+=back
+
+=head2 VM_info_dumper_function
+
+=head3 SYNOPSIS
+
+samu.pl vm info dumper [options]
+
+=head3 OPTIONS
+
+=over
+
+=item vmname
+
+Which machines information should we dump (dumps raw hash)
+
+=back
+
+=head2 VM_info_runtime_function
+
+=head3 SYNOPSIS
+
+samu.pl vm info runtime [options]
+
+=head3 OPTIONS
+
+=over
+
+=item vmname
+
+Whcih machines runtime information should we dump (dumps raw hash)
 
 =back
 
@@ -150,15 +256,15 @@ samu.pl vm list [options] [function]
 
 =item interface
 
-List network interfaces attached to a vm
+List networks interfaces attached to a vm
 
 =item cdrom
 
-List cdrom-s attached to a vm
+List cdroms attached to a vm
 
 =item disk
 
-List disk-s attached to a vm
+List disks attached to a vm
 
 =item snapshot
 
@@ -166,71 +272,67 @@ List snapshots attached to a vm
 
 =back
 
-=head2 VM_add_function
+=head2 VM_list_interface_function
 
 =head3 SYNOPSIS
 
-samu.pl vm add [options] [function]
+samu.pl vm list interface [options] [function]
 
 =head3 OPTIONS
 
 =over
 
-=back
+=item vmname
 
-=head3 FUNCTIONS
-
-=over
-
-=item cdrom
-
-Add a cdrom drive to a vm
-
-=item interface
-
-Add a network interface to a vm
-
-=item disk
-
-Add a thin provisioned hard disk to a vm
-
-=item snapshot
-
-List snapshots attached to a vm
+Name of vm
 
 =back
 
-=head2 VM_delete_function
+=head2 VM_list_cdrom_function
 
 =head3 SYNOPSIS
 
-samu.pl vm delete [options] [function]
+samu.pl vm list cdrom [options] [function]
 
 =head3 OPTIONS
 
 =over
 
+=item vmname
+
+Name of vm
+
 =back
 
-=head3 FUNCTIONS
+=head2 VM_list_snapshot_function
+
+=head3 SYNOPSIS
+
+samu.pl vm list snapshot [options] [function]
+
+=head3 OPTIONS
 
 =over
 
-=item cdrom
+=item vmname
 
-Delete a cdrom drive to a vm
+Name of vm
 
-=item interface
+=back
 
-Delete a network interface to a vm
+=head2 VM_list_disk_function
 
-=item disk
+=head3 SYNOPSIS
 
-Delete a hard disk from a vm
+samu.pl vm list disk [options] [function]
 
-=item snapshot
+=head3 OPTIONS
 
-Delete a snapshot attached to a vm
+=over
+
+=item vmname
+
+Name of vm
 
 =back
 
@@ -270,13 +372,153 @@ Revert to snapshot attached to a vm
 
 Change the power state of a vm
 
+=item disk
+
+Change the size of harddrive
+
 =back
 
-=head2 VM_info_function
+=head2 VM_change_cdrom_function
 
 =head3 SYNOPSIS
 
-samu.pl vm info [options] [function]
+samu.pl vm change cdrom [options]
+
+=head3 OPTIONS
+
+=over
+
+=item vmname
+
+Name of vm
+
+=item num
+
+Number of cdrom
+
+=item iso
+
+VMware path to iso
+
+=item unmoun
+
+Unmount the attached iso
+
+=back
+
+=head2 VM_change_interface_function
+
+=head3 SYNOPSIS
+
+samu.pl vm change interface [options]
+
+=head3 OPTIONS
+
+=over
+
+=item vmname
+
+Name of vm
+
+=item num
+
+Number of interface
+
+=item network
+
+Name of network to change to
+
+=back
+
+=head2 VM_change_altername_function
+
+=head3 SYNOPSIS
+
+samu.pl vm change altername [options]
+
+=head3 OPTIONS
+
+=over
+
+=item vmname
+
+Name of vm
+
+=item name
+
+New alternative vm name
+
+=back
+
+=head2 VM_change_snapshot_function
+
+=head3 SYNOPSIS
+
+samu.pl vm change snapshot [options]
+
+=head3 OPTIONS
+
+=over
+
+=item vmname
+
+Name of vm
+
+=item id
+
+ID of snapshot
+
+=back
+
+=head2 VM_change_power_function
+
+=head3 SYNOPSIS
+
+samu.pl vm change power [options]
+
+=head3 OPTIONS
+
+=over
+
+=item vmname
+
+Name of vm
+
+=item state
+
+Power state on/off
+
+=back
+
+=head2 VM_change_disk_function
+
+=head3 SYNOPSIS
+
+samu.pl vm change disk [options]
+
+=head3 OPTIONS
+
+=over
+
+=item vmname
+
+Name of vm
+
+=item num
+
+Number of harddrive
+
+=item size
+
+Requested new size
+
+=back
+
+=head2 VM_add_function
+
+=head3 SYNOPSIS
+
+samu.pl vm add [options] [function]
 
 =head3 OPTIONS
 
@@ -288,21 +530,157 @@ samu.pl vm info [options] [function]
 
 =over
 
-=item dumper
+=item cdrom
 
-This information is used for development purposes, It dumps all object information about vm to STDOUT
+Add a cdrom drive to a vm
 
-=item runtime
+=item interface
 
-Information about runtime environment
+Add a network interface to a vm
+
+=item disk
+
+Add a thin provisioned hard disk to a vm
+
+=item snapshot
+
+Add snapshots to a vm
+
+=item folder
+
+Create inventory folder on VCenter
+
+=item resourcepool
+
+Create resourcepool on VCenter
 
 =back
 
-=head2 VM_dumper_function
+=head2 VM_add_cdrom_function
 
 =head3 SYNOPSIS
 
-samu.pl vm info dumper [options]
+samu.pl vm add cdrom [options]
+
+=head3 OPTIONS
+
+=over
+
+=item vmname
+
+Name of vm
+
+=back
+
+=head2 VM_add_interface_function
+
+=head3 SYNOPSIS
+
+samu.pl vm add interface [options]
+
+=head3 OPTIONS
+
+=over
+
+=item vmname
+
+Name of vm
+
+=item type
+
+Type of interface to add
+
+=back
+
+=head2 VM_add_disk_function
+
+=head3 SYNOPSIS
+
+samu.pl vm add disk [options]
+
+=head3 OPTIONS
+
+=over
+
+=item vmname
+
+Name of vm
+
+=item size
+
+Requested size of disk
+
+=back
+
+=head2 VM_add_snapshot_function
+
+=head3 SYNOPSIS
+
+samu.pl vm add function [options]
+
+=head3 OPTIONS
+
+=over
+
+=item vmname
+
+Name of vm
+
+=item snap_name
+
+Requested name of snapshot
+
+=item desc
+
+Snapshot description
+
+=back
+
+=head2 VM_add_folder_function
+
+=head3 SYNOPSIS
+
+samu.pl vm add folder [options]
+
+=head3 OPTIONS
+
+=over
+
+=item name
+
+Name of requested folder
+
+=item parent
+
+Name of requeted parent. Defaults to vm folder
+
+=back
+
+=head2 VM_add_resourcepool_function
+
+=head3 SYNOPSIS
+
+samu.pl vm add resourcepool [options]
+
+=head3 OPTIONS
+
+=over
+
+=item name
+
+Name of resourcepool
+
+=item parent
+
+Name of requested parent. Default to Resources folder
+
+=back
+
+=head2 VM_delete_function
+
+=head3 SYNOPSIS
+
+samu.pl vm delete [options] [function]
 
 =head3 OPTIONS
 
@@ -310,15 +688,169 @@ samu.pl vm info dumper [options]
 
 =back
 
-=head2 VM_runtime_function
+=head3 FUNCTIONS
+
+=over
+
+=item cdrom
+
+Delete a cdrom drive to a vm
+
+=item interface
+
+Delete a network interface to a vm
+
+=item disk
+
+Delete a hard disk from a vm
+
+=item snapshot
+
+Delete a snapshot attached to a vm
+
+=item vm
+
+Delete a vm
+
+=item folder
+
+Deletes a inventory folder
+
+=item resourcepool
+
+Deletes a resourcepool
+
+=back
+
+=head2 VM_delete_cdrom_function
 
 =head3 SYNOPSIS
 
-samu.pl vm info runtime [options]
+samu.pl vm delete cdrom [options]
 
 =head3 OPTIONS
 
 =over
+
+=item vmname
+
+Name of vm
+
+=item id
+
+ID of cdrom to delete
+
+=back
+
+=head2 VM_delete_interface_function
+
+=head3 SYNOPSIS
+
+samu.pl vm delete interface [options]
+
+=head3 OPTIONS
+
+=over
+
+=item vmname
+
+Name of vm
+
+=item id
+
+Id of interface to delete
+
+=back
+
+=head2 VM_delete_disk_function
+
+=head3 SYNOPSIS
+
+samu.pl vm delete disk [options]
+
+=head3 OPTIONS
+
+=over
+
+=item vmname
+
+Name of vm
+
+=item id
+
+Id of disk to delete
+
+=back
+
+=head2 VM_delete_snapshot_function
+
+=head3 SYNOPSIS
+
+samu.pl vm delete snapshot [options]
+
+=head3 OPTIONS
+
+=over
+
+=item vmname
+
+Name of vm
+
+=item id
+
+ID of snapshot to delete
+
+=item all
+
+Delete all snapshots
+
+=back
+
+=head2 VM_delete_vm_function
+
+=head3 SYNOPSIS
+
+samu.pl vm delete vm [options]
+
+=head3 OPTIONS
+
+=over
+
+=item vmname
+
+Name of vm
+
+=back
+
+=head2 VM_delete_folder_function
+
+=head3 SYNOPSIS
+
+samu.pl vm delete folder [options]
+
+=head3 OPTIONS
+
+=over
+
+=item name
+
+Name of folder
+
+=back
+
+=head2 VM_delete_resourcepool_function
+
+=head3 SYNOPSIS
+
+samu.pl vm delete resourcepool [options]
+
+=head3 OPTIONS
+
+=over
+
+=item name
+
+Name of resourcepool
 
 =back
 

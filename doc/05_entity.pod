@@ -1,0 +1,169 @@
+=head1 VM
+
+=head3 SYNOPSIS
+
+samu.pl vm [options] [function]
+
+=head3 OPTIONS
+
+=over
+
+=item --help|-h
+
+Print the help page
+
+=back
+
+=head3 FUNCTIONS
+
+=over
+
+=item clone
+
+Sub used to provision vm guests from templates.
+
+=item add
+
+Sub to add different hardware to a guest
+
+=item list
+
+Sub to list different hardware of a guest
+
+=item delete
+
+Sub to delete/remove different hardware of a guest
+
+=item change
+
+Sub to change settings of a guest
+
+=item info
+
+Sub used to dump information about a vm
+
+=item convert_full
+
+Converts a linked clone to a full clone
+
+=item run
+
+Run a command in a guest that has vmware tools
+
+=item transfer
+
+Transfers file from or to a guest
+
+=back
+
+=head1 VM_functions
+
+=head2 VM_clone_function
+
+=head3 SYNOPSIS
+
+samu.pl vm clone [options]
+
+=head3 OPTIONS
+
+=over
+
+=item ticket
+
+The ticket attached to the envirnoment
+
+=item os_temp
+
+Which template to use
+
+=item parent_pool
+
+The machine should not be created at standard pool
+
+=item memory
+
+The machine should have different amount of memory than template
+
+=item cpu
+
+The machine cpu count should be different than template
+
+=item domain
+
+By default machine is created in workgroup, this option changes it to be added to support domain (only win)
+
+=back
+
+=head2 VM_convert_full_function
+
+=head3 SYNOPSIS
+
+samu.pl vm convert_full [options]
+
+=head3 OPTIONS
+
+=over
+
+=item vmname
+
+Name of vm
+
+=back
+
+=head2 VM_info_function
+
+=head3 SYNOPSIS
+
+samu.pl vm info [options] [function]
+
+=head3 OPTIONS
+
+=over
+
+=back
+
+=head3 FUNCTIONS
+
+=over
+
+=item dumper
+
+This information is used for development purposes, It dumps all object information about vm to STDOUT
+
+=item runtime
+
+Information about runtime environment
+
+=back
+
+=head2 VM_info_dumper_function
+
+=head3 SYNOPSIS
+
+samu.pl vm info dumper [options]
+
+=head3 OPTIONS
+
+=over
+
+=item vmname
+
+Which machines information should we dump (dumps raw hash)
+
+=back
+
+=head2 VM_info_runtime_function
+
+=head3 SYNOPSIS
+
+samu.pl vm info runtime [options]
+
+=head3 OPTIONS
+
+=over
+
+=item vmname
+
+Whcih machines runtime information should we dump (dumps raw hash)
+
+=back
