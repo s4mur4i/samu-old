@@ -11,23 +11,11 @@ BEGIN {
     our ( @ISA, @EXPORT );
 
     @ISA    = qw(Exporter);
-    @EXPORT = qw(&main);
+    @EXPORT = qw();
 }
 
-### subs
-
-=pod
-
-=head1 TICKET_MAIN
-
-=head2 DESCRIPTION
-
-    This is the main entry sub to the datastore functions. All further functions can be reached from here
-
-=cut
-
 our $module_opts = {
-    helper    => 'TICKET',
+    helper    => "TICKET",
     functions => {
         info => {
             function => \&ticket_info,
@@ -76,15 +64,69 @@ our $module_opts = {
     },
 };
 
+=pod
+
+=head1 main
+
+=head2 PURPOSE
+
+
+
+=head2 PARAMETERS
+
+=back
+
+=over
+
+=head2 RETURNS
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
+
 sub main {
-    &Log::debug("Ticket::main sub started");
+    &Log::debug("Starting Ticket::main sub");
     &misc::option_parser( $module_opts, "main" );
+    &Log::debug("Finishing Ticket::main sub");
+    return 1;
 }
+
+=pod
+
+=head1 ticket_delete
+
+=head2 PURPOSE
+
+
+
+=head2 PARAMETERS
+
+=back
+
+=over
+
+=head2 RETURNS
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
 
 sub ticket_delete {
     &Log::debug("Starting Ticket::ticket_delete sub");
     my $ticket = Opts::get_option('ticket');
-    &Log::debug("Delete ticket=>'$ticket'");
+    &Log::debug1("Opts are: ticket=>'$ticket'");
     my $machines = &VCenter::ticket_vms_name($ticket);
     for my $vm (@$machines) {
         &Log::debug("Powering off VM if not already powered off");
@@ -119,13 +161,40 @@ sub ticket_delete {
         &Log::debug("No switch present for ticket");
     }
     print "Ticket deleted succesfully\n";
+    &Log::debug("Finishing Ticket::ticket_delete sub");
     return 1;
 }
+
+=pod
+
+=head1 ticket_info
+
+=head2 PURPOSE
+
+
+
+=head2 PARAMETERS
+
+=back
+
+=over
+
+=head2 RETURNS
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
 
 sub ticket_info {
     &Log::debug("Starting Ticket::ticket_info sub");
     my $ticket = Opts::get_option('ticket');
-    &Log::debug("Information about ticket=>'$ticket'");
+    &Log::debug1("Opts are: ticket=>'$ticket'");
     my $machines = &VCenter::ticket_vms_name($ticket);
     for my $vm (@$machines) {
         &Log::debug( "Getting information about '" . $vm . "'" );
@@ -197,32 +266,113 @@ sub ticket_info {
             print "\tVmname not standard name => '$vm'\n";
         }
     }
+    &Log::debug("Finishing Ticket::ticket_info sub");
     return 1;
 }
 
+=pod
+
+=head1 ticket_on
+
+=head2 PURPOSE
+
+
+
+=head2 PARAMETERS
+
+=back
+
+=over
+
+=head2 RETURNS
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
+
 sub ticket_on {
-    &Log::debug("Starting Ticket::on sub");
+    &Log::debug("Starting Ticket::ticket_on sub");
     my $ticket = Opts::get_option('ticket');
-    &Log::debug("Powering on ticket, ticket=>'$ticket'");
+    &Log::debug1("Opts are: ticket=>'$ticket'");
     my $machines = &VCenter::ticket_vms_name($ticket);
     for my $vm (@$machines) {
         print "Powering on '" . $vm->name . "'\n";
         &Guest::poweron( $vm->name );
     }
+    &Log::debug("Finishing Ticket::ticket_on sub");
     return 1;
 }
 
+=pod
+
+=head1 ticket_off
+
+=head2 PURPOSE
+
+
+
+=head2 PARAMETERS
+
+=back
+
+=over
+
+=head2 RETURNS
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
+
 sub ticket_off {
-    &Log::debug("Starting Ticket::off sub");
+    &Log::debug("Starting Ticket::ticket_off sub");
     my $ticket = Opts::get_option('ticket');
-    &Log::debug("Powering off ticket, ticket=>'$ticket'");
+    &Log::debug1("Opts are: ticket=>'$ticket'");
     my $machines = &VCenter::ticket_vms_name($ticket);
     for my $vm (@$machines) {
         print "Powering off '" . $vm->name . "'\n";
         &Guest::poweroff( $vm->name );
     }
+    &Log::debug("Finishing Ticket::ticket_off sub");
     return 1;
 }
+
+=pod
+
+=head1 ticket_list
+
+=head2 PURPOSE
+
+
+
+=head2 PARAMETERS
+
+=back
+
+=over
+
+=head2 RETURNS
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
 
 sub ticket_list {
     &Log::debug("Starting Ticket::ticket_list sub");
@@ -275,6 +425,8 @@ sub ticket_list {
     }
     &Log::debug("Finished printing ticket information");
     &Kayako::disconnect_kayako($dbh);
+    &Log::debug("Finishing Ticket::ticket_list sub");
+    return 1;
 }
-1;
-__END__
+
+1

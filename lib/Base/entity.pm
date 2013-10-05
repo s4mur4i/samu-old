@@ -34,7 +34,7 @@ our $module_opts = {
                 parent_pool => {
                     type     => "=s",
                     help     => "Parent resource pool. Defaults to users pool.",
-                    default  => 'Resources',
+                    default  => "Resources",
                     required => 0,
                 },
                 memory => {
@@ -67,7 +67,7 @@ our $module_opts = {
             },
         },
         info => {
-            helper    => 'VM_functions/VM_info_function',
+            helper    => "VM_functions/VM_info_function",
             functions => {
                 dumper => {
                     function => \&info_dumper,
@@ -96,7 +96,7 @@ our $module_opts = {
             },
         },
         add => {
-            helper    => 'VM_functions/VM_add_function',
+            helper    => "VM_functions/VM_add_function",
             functions => {
                 cdrom => {
                     function => \&add_cdrom,
@@ -205,14 +205,14 @@ our $module_opts = {
                     function => \&delete_cdrom,
                     opts     => {
                         vmname => {
-                            type     => '=s',
-                            help     => 'Which VMs cdrom to list.',
-                            required => '1',
+                            type     => "=s",
+                            help     => "Which VMs cdrom to list",
+                            required => 1,
                         },
                         id => {
-                            type     => '=s',
-                            help     => 'Which device to delete',
-                            required => '1',
+                            type     => "=s",
+                            help     => "Which device to delete",
+                            required => 1,
                         },
                     },
                 },
@@ -220,14 +220,14 @@ our $module_opts = {
                     function => \&delete_interface,
                     opts     => {
                         vmname => {
-                            type     => '=s',
-                            help     => 'Which VMs cdrom to list.',
-                            required => '1',
+                            type     => "=s",
+                            help     => "Which VMs cdrom to list",
+                            required => 1,
                         },
                         id => {
-                            type     => '=s',
-                            help     => 'Which device to delete',
-                            required => '1',
+                            type     => "=s",
+                            help     => "Which device to delete",
+                            required => 1,
                         },
                     },
                 },
@@ -235,14 +235,14 @@ our $module_opts = {
                     function => \&delete_disk,
                     opts     => {
                         vmname => {
-                            type     => '=s',
-                            help     => 'Which VMs cdrom to list.',
-                            required => '1',
+                            type     => "=s",
+                            help     => "Which VMs cdrom to list",
+                            required => 1,
                         },
                         id => {
-                            type     => '=s',
-                            help     => 'Which device to delete',
-                            required => '1',
+                            type     => "=s",
+                            help     => "Which device to delete",
+                            required => 1,
                         },
                     },
                 },
@@ -250,19 +250,19 @@ our $module_opts = {
                     function => \&delete_snapshot,
                     opts     => {
                         vmname => {
-                            type     => '=s',
-                            help     => 'Which VMs snapshot to delete',
-                            required => '1',
+                            type     => "=s",
+                            help     => "Which VMs snapshot to delete",
+                            required => 1,
                         },
                         id => {
-                            type     => '=s',
-                            help     => 'Id of snapshot to delete',
-                            required => '0',
+                            type     => "=s",
+                            help     => "Id of snapshot to delete",
+                            required => 0,
                         },
                         all => {
-                            type     => '',
-                            help     => 'Delete all snapshots',
-                            required => '0',
+                            type     => "",
+                            help     => "Delete all snapshots",
+                            required => 0,
                             default  => 0,
                         },
                     },
@@ -271,7 +271,7 @@ our $module_opts = {
                     function => \&delete_vm,
                     opts     => {
                         vmname => {
-                            type     => '=s',
+                            type     => "=s",
                             help     => "Name of vm to delete",
                             required => 1,
                         },
@@ -281,7 +281,7 @@ our $module_opts = {
                     function => \&delete_resourcepool,
                     opts => {
                         name => {
-                            type     => '=s',
+                            type     => "=s",
                             help     => "Name of resource pool to delete",
                             required => 1,
                         },
@@ -291,7 +291,7 @@ our $module_opts = {
                     function => \&delete_folder,
                     opts => {
                         name => {
-                            type     => '=s',
+                            type     => "=s",
                             help     => "Name of folder to delete",
                             required => 1,
                         },
@@ -300,15 +300,15 @@ our $module_opts = {
             },
         },
         list => {
-            helper    => 'VM_functions/VM_list_function',
+            helper    => "VM_functions/VM_list_function",
             functions => {
                 cdrom => {
                     function => \&list_cdrom,
                     opts     => {
                         vmname => {
-                            type     => '=s',
-                            help     => 'Which VMs cdrom to list.',
-                            required => '1',
+                            type     => "=s",
+                            help     => "Which VMs cdrom to list",
+                            required => 1,
                         },
                     },
                 },
@@ -316,9 +316,9 @@ our $module_opts = {
                     function => \&list_interface,
                     opts     => {
                         vmname => {
-                            type     => '=s',
-                            help     => 'Which VMs interface to list.',
-                            required => '1',
+                            type     => "=s",
+                            help     => "Which VMs interface to list",
+                            required => 1,
                         },
                     },
                 },
@@ -326,9 +326,9 @@ our $module_opts = {
                     function => \&list_disk,
                     opts     => {
                         vmname => {
-                            type     => '=s',
-                            help     => 'Which VMs disk to list.',
-                            required => '1',
+                            type     => "=s",
+                            help     => "Which VMs disk to list",
+                            required => 1,
                         },
                     },
                 },
@@ -336,8 +336,8 @@ our $module_opts = {
                     function => \&list_snapshot,
                     opts     => {
                         vmname => {
-                            type     => '=s',
-                            help     => 'Name of vm to list snapshot',
+                            type     => "=s",
+                            help     => "Name of vm to list snapshot",
                             required => 1,
                         },
                     },
@@ -345,30 +345,30 @@ our $module_opts = {
             },
         },
         change => {
-            helper    => 'VM_functions/VM_change_function',
+            helper    => "VM_functions/VM_change_function",
             functions => {
                 cdrom => {
                     function => \&change_cdrom,
                     opts     => {
                         vmname => {
-                            type     => '=s',
-                            help     => 'Which VMs disk to list',
-                            required => '1',
+                            type     => "=s",
+                            help     => "Which VMs disk to list",
+                            required => 1,
                         },
                         num => {
-                            type     => '=s',
-                            help     => 'Which cdrom to change',
-                            required => '1',
+                            type     => "=s",
+                            help     => "Which cdrom to change",
+                            required => 1,
                         },
                         iso => {
-                            type     => '=s',
-                            help     => 'Which iso to add',
-                            required => '0',
+                            type     => "=s",
+                            help     => "Which iso to add",
+                            required => 0,
                         },
                         unmount => {
-                            type     => '',
-                            help     => 'Unmount and iso',
-                            required => '0',
+                            type     => "",
+                            help     => "Unmount and iso",
+                            required => 0,
                         },
                     },
                 },
@@ -376,20 +376,20 @@ our $module_opts = {
                     function => \&change_interface,
                     opts     => {
                         vmname => {
-                            type     => '=s',
-                            help     => 'Name of vm',
-                            required => '1',
+                            type     => "=s",
+                            help     => "Name of vm",
+                            required => 1,
                         },
                         num => {
-                            type     => '=s',
-                            help     => 'Which interface to manage',
-                            required => '1',
+                            type     => "=s",
+                            help     => "Which interface to manage",
+                            required => 1,
                         },
                         network => {
-                            type     => '=s',
-                            help     => 'Which network to change to',
-                            required => '0',
-                            default => 'VLAN21',
+                            type     => "=s",
+                            help     => "Which network to change to",
+                            required => 0,
+                            default => "VLAN21",
                         },
                     },
                 },
@@ -397,17 +397,17 @@ our $module_opts = {
                     function => \&change_disk,
                     opts     => {
                         vmname => {
-                            type     => '=s',
-                            help     => 'Which VMs disk to change.',
+                            type     => "=s",
+                            help     => "Which VMs disk to change.",
                             required => 1,
                         },
                         num => {
-                            type => '=s',
+                            type => "=s",
                             help => "Number of device",
                             required => 1,
                         },
                         size => {
-                            type => '=s',
+                            type => "=s",
                             help => "Size of requested disk",
                             required => 1,
                         },
@@ -417,13 +417,13 @@ our $module_opts = {
                     function => \&change_altername,
                     opts     => {
                         vmname => {
-                            type     => '=s',
-                            help     => 'Name of vm',
+                            type     => "=s",
+                            help     => "Name of vm",
                             required => 1,
                         },
                         name => {
-                            type     => '=s',
-                            help     => 'Name of new alternate name for vm',
+                            type     => "=s",
+                            help     => "Name of new alternate name for vm",
                             required => 1,
                         },
                     },
@@ -432,13 +432,13 @@ our $module_opts = {
                     function => \&change_snapshot,
                     opts     => {
                         vmname => {
-                            type     => '=s',
-                            help     => 'Name of vm',
+                            type     => "=s",
+                            help     => "Name of vm",
                             required => 1,
                         },
                         id => {
-                            type     => '=s',
-                            help     => 'ID of snapshot to revert to',
+                            type     => "=s",
+                            help     => "ID of snapshot to revert to",
                             required => 1,
                         },
                     },
@@ -447,15 +447,15 @@ our $module_opts = {
                     function => \&change_power,
                     opts     => {
                         vmname => {
-                            type     => '=s',
-                            help     => 'Name of vm',
-                            required => '1',
+                            type     => "=s",
+                            help     => "Name of vm",
+                            required => 1,
                         },
                         state => {
-                            type => '=s',
+                            type => "=s",
                             help =>
-'What state should the vm be put in. Possible: on/off',
-                            required => '1',
+"What state should the vm be put in. Possible: on/off",
+                            required => 1,
                         },
                     },
                 },
@@ -466,9 +466,9 @@ our $module_opts = {
             function      => \&run_command,
             opts          => {
                 vmname => {
-                    type     => '=s',
-                    help     => 'Which VMs should be used for running command',
-                    required => '1',
+                    type     => "=s",
+                    help     => "Which VMs should be used for running command",
+                    required => 1,
                 },
                 guestusername => {
                     type     => "=s",
@@ -508,14 +508,14 @@ our $module_opts = {
             prereq_module => [ qw(LWP::Simple HTTP::Request LWP::UserAgent) ],
             opts     => {
                 type => {
-                    type     => '=s',
-                    help     => 'Diretion of transfer, Values: to/from',
+                    type     => "=s",
+                    help     => "Diretion of transfer, Values: to/from",
                     required => 1,
                 },
                 vmname => {
-                    type     => '=s',
-                    help     => 'Which VMs should be used for transfer',
-                    required => '1',
+                    type     => "=s",
+                    help     => "Which VMs should be used for transfer",
+                    required => 1,
                 },
                 guestusername => {
                     type     => "=s",
@@ -658,11 +658,41 @@ sub list_cdrom {
     return 1;
 }
 
+=pod
+
+=head1 list_interface
+
+=head2 PURPOSE
+
+
+
+=head2 PARAMETERS
+
+=back
+
+=over
+
+=head2 RETURNS
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
+
 sub list_interface {
     &Log::debug("Entity::list_interface sub started");
     my $vmname = Opts::get_option('vmname');
-    &Log::debug("Requested options, vmname=>'$vmname'");
+    &Log::debug1("Opts are: vmname=>'$vmname'");
     my @net_hw = @{ &Guest::get_hw( $vmname, 'VirtualEthernetCard' ) };
+    if ( @net_hw eq 0 ) {
+        &Log::debug("No interface on entity");
+        print "Currently no interfaces attached to machine\n";
+    }
     for ( my $i = 0 ; $i < scalar(@net_hw) ; $i++ ) {
         &Log::debug("Iterating thorugh Network hardware '$i'");
         &Log::dumpobj( "interface $i", $net_hw[$i] );
@@ -685,16 +715,46 @@ sub list_interface {
           . "', label=>'"
           . $net_hw[$i]->{deviceInfo}->{label} . "'\n";
     }
+    &Log::debug("Finishing Entity::list_interface sub");
     return 1;
 }
 
-#tested
+=pod
+
+=head1 list_disk
+
+=head2 PURPOSE
+
+
+
+=head2 PARAMETERS
+
+=back
+
+=over
+
+=head2 RETURNS
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
+
 sub list_disk {
-    &Log::debug("Entity::list_disk sub started");
+    &Log::debug("Starting Entity::list_disk sub");
     my $vmname = Opts::get_option('vmname');
-    &Log::debug("Requested options, vmname=>'$vmname'");
+    &Log::debug1("Opts are: vmname=>'$vmname'");
     my @disk_hw = @{ &Guest::get_hw( $vmname, 'VirtualDisk' ) };
     &Log::dumpobj( "disk_hw", \@disk_hw );
+    if ( @disk_hw eq 0 ) {
+        &Log::debug("No disks on entity");
+        print "Currently no disk attached to machine\n";
+    }
     for ( my $i = 0 ; $i < scalar(@disk_hw) ; $i++ ) {
         &Log::debug("Iterating thorugh disk hardware '$i'");
         &Log::dumpobj( "disk $i", $disk_hw[$i] );
@@ -707,36 +767,114 @@ sub list_disk {
           . "' KB, path=>'"
           . $disk_hw[$i]->{backing}->{fileName} . "'\n";
     }
-    &Log::debug("Finished list_disk sub");
+    &Log::debug("Finishing list_disk sub");
     return 1;
 }
 
-#tested
+=pod
+
+=head1 list_snapshot
+
+=head2 PURPOSE
+
+
+
+=head2 PARAMETERS
+
+=back
+
+=over
+
+=head2 RETURNS
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
+
 sub list_snapshot {
-    &Log::debug("Entity::list_snapshot sub started");
+    &Log::debug("Starting Entity::list_snapshot sub");
     my $vmname = Opts::get_option('vmname');
-    &Log::debug("Requested options, vmname=>'$vmname'");
+    &Log::debug1("Opts are: vmname=>'$vmname'");
     &Guest::list_snapshot($vmname);
+    &Log::debug("Finishing Entity::list_snapshot sub");
     return 1;
 }
 
-#tested
+=pod
+
+=head1 change_altername
+
+=head2 PURPOSE
+
+
+
+=head2 PARAMETERS
+
+=back
+
+=over
+
+=head2 RETURNS
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
+
 sub change_altername {
-    &Log::debug("Entity::change_altername sub started");
+    &Log::debug("Starting Entity::change_altername sub");
     my $vmname = Opts::get_option('vmname');
     my $name   = Opts::get_option('name');
-    &Log::debug("Requested options, vmname=>'$vmname', name=>'$name'");
+    &Log::debug1("Opts are: vmname=>'$vmname', name=>'$name'");
     &Guest::change_altername( $vmname, $name );
+    &Log::debug("Finishing Entity::change_altername sub");
     return 1;
 }
 
+=pod
+
+=head1 change_cdrom
+
+=head2 PURPOSE
+
+
+
+=head2 PARAMETERS
+
+=back
+
+=over
+
+=head2 RETURNS
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
+
 sub change_cdrom {
-    &Log::debug("Starting entity::change_cdrom sub");
+    &Log::debug("Starting Entity::change_cdrom sub");
     my $vmname = Opts::get_option('vmname');
     my $num = Opts::get_option('num');
     my $iso = Opts::get_option('iso') || 0;
     my $unmount = Opts::get_option('unmount') || 0;
-    &Log::debug("Requested options, vmname=>'$vmname', num=>'$num', iso=>'$iso', unmount=>'$unmount'");
+    &Log::debug1("Opts are: vmname=>'$vmname', num=>'$num', iso=>'$iso', unmount=>'$unmount'");
     if ( $unmount and $iso ) {
         Vcenter::Opts->throw( error => 'iso and unmount both specified', opt => "unmount and iso");
     } elsif ( $unmount ) {
@@ -752,37 +890,117 @@ sub change_cdrom {
     } else {
         Vcenter::Opts->throw( error => 'iso or unmount not specified', opt => "unmount and iso");
     }
+    &Log::debug("Finishing Entity::change_cdrom sub");
     return 1;
 }
+
+=pod
+
+=head1 change_interface
+
+=head2 PURPOSE
+
+
+
+=head2 PARAMETERS
+
+=back
+
+=over
+
+=head2 RETURNS
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
 
 sub change_interface {
     &Log::debug("Starting Entity::change_interface sub");
     my $vmname = Opts::get_option('vmname');
     my $num = Opts::get_option('num');
     my $network = Opts::get_option('network');
-    &Log::debug("Opts are, vmname=>'$vmname', num=>'$num', network=>'$network'");
+    &Log::debug1("Opts are: vmname=>'$vmname', num=>'$num', network=>'$network'");
     my $spec = &Guest::change_interface_spec( $vmname, $num, $network);
-#    &Guest::reconfig_vm( $vmname ,$spec );
+    &Guest::reconfig_vm( $vmname ,$spec );
+#FIXME there is some issue here
+    &Log::debug("Finishing Entity::change_interface sub");
     return 1;
 }
 
-#tested
+=pod
+
+=head1 change_snapshot
+
+=head2 PURPOSE
+
+
+
+=head2 PARAMETERS
+
+=back
+
+=over
+
+=head2 RETURNS
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
+
 sub change_snapshot {
-    &Log::debug("Entity::change_snapshot sub started");
+    &Log::debug("Starting Entity::change_snapshot sub");
     my $vmname = Opts::get_option('vmname');
     my $id     = Opts::get_option('id');
-    &Log::debug("Requested options, vmname=>'$vmname', id=>'$id'");
+    &Log::debug1("Opts are: vmname=>'$vmname', id=>'$id'");
     &Guest::revert_to_snapshot( $vmname, $id );
+    &Log::debug("Finishing Entity::change_snapshot sub");
     return 1;
 }
 
-#tested
+=pod
+
+=head1 add_snapshot
+
+=head2 PURPOSE
+
+
+
+=head2 PARAMETERS
+
+=back
+
+=over
+
+=head2 RETURNS
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
+
 sub add_snapshot {
-    &Log::debug("Entity::add_snapshot sub started");
+    &Log::debug("Starting Entity::add_snapshot sub");
     my $vmname    = Opts::get_option('vmname');
     my $snap_name = Opts::get_option('snap_name');
     my $desc      = Opts::get_option('desc');
-    &Log::debug( "Requested options, vmname=>'"
+    &Log::debug1( "Opts are: vmname=>'"
           . $vmname
           . "', snap_name=>'"
           . $snap_name
@@ -790,55 +1008,154 @@ sub add_snapshot {
           . $desc
           . "'" );
     &Guest::create_snapshot( $vmname, $snap_name, $desc );
-    &Log::info("Finished creating snapshot");
+    &Log::info("Finishing Entity::add_snapshot sub");
     return 1;
 }
+
+=pod
+
+=head1 add_interface
+
+=head2 PURPOSE
+
+
+
+=head2 PARAMETERS
+
+=back
+
+=over
+
+=head2 RETURNS
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
 
 sub add_interface {
-    &Log::debug("Entity::add_interface sub started");
+    &Log::debug("Starting Entity::add_interface sub");
     my $vmname = Opts::get_option('vmname');
     my $type   = Opts::get_option('type');
-    &Log::debug("Requested option, vmname=>'$vmname'");
+    &Log::debug1("Opts are: vmname=>'$vmname'");
     my $spec = &Guest::add_interface_spec( $vmname, $type );
     &Guest::reconfig_vm( $vmname, $spec );
-    &Log::info("Finished adding interface");
+    &Log::info("Finishing Entity::add_interface sub");
     return 1;
 }
 
-#tested
+=pod
+
+=head1 add_cdrom
+
+=head2 PURPOSE
+
+
+
+=head2 PARAMETERS
+
+=back
+
+=over
+
+=head2 RETURNS
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
+
 sub add_cdrom {
-    &Log::debug("Entity::add_cdrom sub started");
+    &Log::debug("Starting Entity::add_cdrom sub");
     my $vmname = Opts::get_option('vmname');
-    &Log::debug("Requested option, vmname=>'$vmname'");
+    &Log::debug1("Opts are: vmname=>'$vmname'");
     my $spec = &Guest::add_cdrom_spec($vmname);
     &Guest::reconfig_vm( $vmname, $spec );
-    &Log::info("Finished adding cdrom");
+    &Log::info("Finishing Entity::add_cdrom sub");
     return 1;
 }
 
-#tested
+=pod
+
+=head1 add_disk
+
+=head2 PURPOSE
+
+
+
+=head2 PARAMETERS
+
+=back
+
+=over
+
+=head2 RETURNS
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
+
 sub add_disk {
-    &Log::debug("Entity::add_cdrom sub started");
+    &Log::debug("Starting Entity::add_cdrom sub");
     my $vmname = Opts::get_option('vmname');
     my $size   = Opts::get_option('size') * 1024;
-    &Log::debug("Requested option, vmname=>'$vmname', size=>'$size'");
+    &Log::debug1("Opts are: vmname=>'$vmname', size=>'$size'");
     my $spec = &Guest::add_disk_spec( $vmname, $size );
     &Guest::reconfig_vm( $vmname, $spec );
-    &Log::info("Finished adding disk");
+    &Log::info("Finishing Entity::add_cdrom sub");
     return 1;
 }
 
-#tested
+=pod
+
+=head1 clone_vm
+
+=head2 PURPOSE
+
+
+
+=head2 PARAMETERS
+
+=back
+
+=over
+
+=head2 RETURNS
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
+
 sub clone_vm {
-    &Log::debug("Entity::clone sub started");
+    &Log::debug("Starting Entity::clone_vm sub");
     my $parent_pool = Opts::get_option('parent_pool');
     my $ticket      = Opts::get_option('ticket');
     my $os_temp     = Opts::get_option('os_temp');
     &Support::get_key_info( 'template', $os_temp );
     my $domain = Opts::get_option('domain');
-    &Log::info(
-"Arguments: parent_pool=>'$parent_pool', ticket=>'$ticket', os_temp=>'$os_temp', domain=>'$domain'"
-    );
+    &Log::debug1("Opts are: parent_pool=>'$parent_pool', ticket=>'$ticket', os_temp=>'$os_temp', domain=>'$domain'");
     &Log::debug("Get os_temp object for cloning and information");
     my $os_temp_path = &Support::get_key_value( 'template', $os_temp, 'path' );
     my $os_temp_view =
@@ -934,30 +1251,111 @@ sub clone_vm {
       . &Support::get_key_value( 'template', $os_temp, 'username' ) . "'/'"
       . &Support::get_key_value( 'template', $os_temp, 'password' ) . "'\n";
     print "Unique name of vm: $vmname\n";
+    &Log::debug("Finishing Entity::clone_vm sub");
     return 1;
 }
+
+=pod
+
+=head1 info_dumper
+
+=head2 PURPOSE
+
+
+
+=head2 PARAMETERS
+
+=back
+
+=over
+
+=head2 RETURNS
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
 
 sub info_dumper {
-    &Log::debug("Entity::info_dumper sub started");
+    &Log::debug("Starting Entity::info_dumper sub");
     my $vmname = Opts::get_option('vmname');
-    &Log::debug("Vmname requested=>'$vmname'");
+    &Log::debug1("Opts are: vmname=>'$vmname'");
     my $view = &Guest::entity_full_view( $vmname, 'VirtualMachine' );
     print Dumper($view);
+    &Log::debug("Finishing Entity::info_dumper sub");
     return 1;
 }
 
+=pod
+
+=head1 info_runtime
+
+=head2 PURPOSE
+
+
+
+=head2 PARAMETERS
+
+=back
+
+=over
+
+=head2 RETURNS
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
+
 sub info_runtime {
-    &Log::debug("Entity::info_runtime sub started");
+    &Log::debug("Starting Entity::info_runtime sub");
     my $vmname = Opts::get_option('vmname');
-    &Log::debug("Vmname requested=>'$vmname'");
+    &Log::debug1("Opts are: vmname=>'$vmname'");
     my $view =
       &Guest::entity_property_view( $vmname, 'VirtualMachine', 'runtime' );
     print Dumper($view);
+    &Log::debug("Finishing Entity::info_runtime sub");
     return 1;
 }
 
+=pod
+
+=head1 run_command
+
+=head2 PURPOSE
+
+
+
+=head2 PARAMETERS
+
+=back
+
+=over
+
+=head2 RETURNS
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
+
 sub run_command {
-    &Log::debug("Starting entity::run sub");
+    &Log::debug("Starting Entity::run_command sub");
     my %opts = ();
     $opts{vmname} = Opts::get_option('vmname');
     my $vm_info = &Misc::vmname_splitter( $opts{vmname} );
@@ -974,11 +1372,38 @@ sub run_command {
     &Log::loghash( "Opts are, ", \%opts );
     my $pid = &Guest::run_command( \%opts );
     print "Pid of command:'$pid'\n";
+    &Log::debug("Finishing Entity::run_command sub");
     return 1;
 }
 
+=pod
+
+=head1 transfer
+
+=head2 PURPOSE
+
+
+
+=head2 PARAMETERS
+
+=back
+
+=over
+
+=head2 RETURNS
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
+
 sub transfer {
-    &Log::debug("Starting entity::transfer sub");
+    &Log::debug("Starting Entity::transfer sub");
     my %opts = ();
     $opts{type}   = Opts::get_option('type');
     $opts{vmname} = Opts::get_option('vmname');
@@ -1006,14 +1431,41 @@ sub transfer {
             opt   => $opts{type}
         );
     }
+    &Log::debug("Finishing Entity::transfer sub");
     return 1;
 }
 
-#tested
+
+=pod
+
+=head1 delete_vm
+
+=head2 PURPOSE
+
+
+
+=head2 PARAMETERS
+
+=back
+
+=over
+
+=head2 RETURNS
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
+
 sub delete_vm {
-    &Log::debug("Entity::delete_vm sub started");
+    &Log::debug("Starting Entity::delete_vm sub");
     my $vmname = Opts::get_option('vmname');
-    &Log::debug("Vmname requested=>'$vmname'");
+    &Log::debug("Opts are: vmname=>'$vmname'");
     &VCenter::destroy_entity( $vmname, 'VirtualMachine' );
     if ( &VCenter::exists_entity( $vmname, 'VirtualMachine' ) ) {
         Entity::NumException->throw(
@@ -1025,16 +1477,42 @@ sub delete_vm {
     else {
         &Log::info("Entity deleted succesfully");
     }
+    &Log::debug("Finishing Entity::delete_vm sub");
     return 1;
 }
 
-#tested
+=pod
+
+=head1 delete_snapshot
+
+=head2 PURPOSE
+
+
+
+=head2 PARAMETERS
+
+=back
+
+=over
+
+=head2 RETURNS
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
+
 sub delete_snapshot {
-    &Log::debug("Entity::delete_snapshot sub started");
+    &Log::debug("Starting Entity::delete_snapshot sub");
     my $vmname = Opts::get_option('vmname');
     my $id     = Opts::get_option('id') || 0;
     my $all    = Opts::get_option('all');
-    &Log::debug("Arguments are, vmname=>'$vmname', id=>'$id', all=>'$all'");
+    &Log::debug("Opts are: vmname=>'$vmname', id=>'$id', all=>'$all'");
     if ($all) {
         &Log::debug("All snapshots need to be removed");
         &Guest::remove_all_snapshots($vmname);
@@ -1046,93 +1524,334 @@ sub delete_snapshot {
     else {
         &Log::warning("Please give either all or id");
     }
-    &Log::info("Snapshot delete sub completed");
+    &Log::info("Finishing Entity::delete_snapshot sub");
     return 1;
 }
+
+=pod
+
+=head1 delete_cdrom
+
+=head2 PURPOSE
+
+
+
+=head2 PARAMETERS
+
+=back
+
+=over
+
+=head2 RETURNS
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
 
 sub delete_cdrom {
-    &Log::debug("Starting entity::delete_cdrom sub");
+    &Log::debug("Starting Entity::delete_cdrom sub");
     my $vmname = &Opts::get_option('vmname');
     my $id = &Opts::get_option('id');
-    &Log::debug("Options, vmname=>'$vmname', id=>'$id'");
+    &Log::debug1("Opts are: vmname=>'$vmname', id=>'$id'");
     my @cdrom_hw = @{ &Guest::get_hw( $vmname, 'VirtualCdrom' ) };
     &Guest::remove_hw($vmname, $cdrom_hw[$id]);
+    &Log::debug("Finishing Entity::delete_cdrom sub");
     return 1;
 }
+
+=pod
+
+=head1 delete_disk
+
+=head2 PURPOSE
+
+
+
+=head2 PARAMETERS
+
+=back
+
+=over
+
+=head2 RETURNS
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
 
 sub delete_disk {
-    &Log::debug("Starting entity::delete_disk sub");
+    &Log::debug("Starting Entity::delete_disk sub");
     my $vmname = &Opts::get_option('vmname');
     my $id = &Opts::get_option('id');
-    &Log::debug("Options, vmname=>'$vmname', id=>'$id'");
+    &Log::debug1("Opts are: vmname=>'$vmname', id=>'$id'");
     my @disk_hw = @{ &Guest::get_hw( $vmname, 'VirtualDisk' ) };
     &Guest::remove_hw($vmname, $disk_hw[$id]);
+    &Log::debug("Finishing Entity::delete_disk sub");
     return 1;
 }
+
+=pod
+
+=head1 delete_interface
+
+=head2 PURPOSE
+
+
+
+=head2 PARAMETERS
+
+=back
+
+=over
+
+=head2 RETURNS
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
 
 sub delete_interface {
-    &Log::debug("Starting entity::delete_cdrom sub");
+    &Log::debug("Starting Entity::delete_cdrom sub");
     my $vmname = &Opts::get_option('vmname');
     my $id = &Opts::get_option('id');
-    &Log::debug("Options, vmname=>'$vmname', id=>'$id'");
+    &Log::debug1("Opts are: vmname=>'$vmname', id=>'$id'");
     my @net_hw = @{ &Guest::get_hw( $vmname, 'VirtualEthernetCard' ) };
     &Guest::remove_hw( $vmname, $net_hw[$id]);
+    &Log::debug("Finishing Entity::delete_cdrom sub");
     return 1;
 }
 
+=pod
+
+=head1 delete_resourcepool
+
+=head2 PURPOSE
+
+
+
+=head2 PARAMETERS
+
+=back
+
+=over
+
+=head2 RETURNS
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
+
 sub delete_resourcepool {
-    &Log::debug("Starting entity::delete_resourcepool sub");
+    &Log::debug("Starting Entity::delete_resourcepool sub");
     my $name = &Opts::get_option('name');
-    &Log::debug("Opts: name=>'$name'");
+    &Log::debug1("Opts are: name=>'$name'");
     if ( &VCenter::check_if_empty_entity( $name, 'ResourcePool') ) {
         &VCenter::destroy_entity( $name, 'ResourcePool' );
     } else {
         &Log::critical("ResourcePool is not empty");
         exit;
     }
+    &Log::debug("Finishing Entity::delete_resourcepool sub");
     return 1;
 }
 
+=pod
+
+=head1 delete_folder
+
+=head2 PURPOSE
+
+
+
+=head2 PARAMETERS
+
+=back
+
+=over
+
+=head2 RETURNS
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
+
 sub delete_folder {
-    &Log::debug("Starting entity::delete_folder sub");
+    &Log::debug("Starting Entity::delete_folder sub");
     my $name = &Opts::get_option('name');
-    &Log::debug("Opts: name=>'$name'");
+    &Log::debug1("Opts are: name=>'$name'");
     if ( &VCenter::check_if_empty_entity( $name, 'Folder') ) {
         &VCenter::destroy_entity( $name, 'Folder' );
     } else {
         &Log::critical("Folder is not empty");
         exit;
     }
+    &Log::debug("Finishing Entity::delete_folder sub");
     return 1;
 }
+
+=pod
+
+=head1 add_folder
+
+=head2 PURPOSE
+
+
+
+=head2 PARAMETERS
+
+=back
+
+=over
+
+=head2 RETURNS
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
 
 sub add_folder {
-    &Log::debug("Starting entity::add_folder sub");
+    &Log::debug("Starting Entity::add_folder sub");
     &VCenter::create_folder( &Opts::get_option('name'), &Opts::get_option('parent') );
+    &Log::debug("Finishing Entity::add_folder sub");
     return 1;
 }
 
+=pod
+
+=head1 add_resourcepool
+
+=head2 PURPOSE
+
+
+
+=head2 PARAMETERS
+
+=back
+
+=over
+
+=head2 RETURNS
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
+
 sub add_resourcepool {
-    &Log::debug("Starting entity::add_resourcepool sub");
+    &Log::debug("Starting Entity::add_resourcepool sub");
     &VCenter::create_resource_pool( &Opts::get_option('name'), &Opts::get_option('parent') );
+    &Log::debug("Finishing Entity::add_resourcepool sub");
     return 1;
 }
+
+=pod
+
+=head1 promote
+
+=head2 PURPOSE
+
+
+
+=head2 PARAMETERS
+
+=back
+
+=over
+
+=head2 RETURNS
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
 
 sub promote {
     &Log::debug("Starting Entity::promote sub");
     my $vmname = &Opts::get_option('vmname');
-    &Log::debug("Opts are, vmname=>'$vmname'");
+    &Log::debug1("Opts are: vmname=>'$vmname'");
     &Guest::promote( $vmname );
     &Log::debug("Finished Entity::promote sub");
     return 1;
 }
 
+=pod
+
+=head1 change_disk
+
+=head2 PURPOSE
+
+
+
+=head2 PARAMETERS
+
+=back
+
+=over
+
+=head2 RETURNS
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
+
 sub change_disk {
     &Log::debug("Starting Entity::change_disk sub");
     print "Not implemented\n";
+#FIXME Implement
     &Log::debug("Finishing Entity::change_disk sub");
     return 1;
 }
 
 1;
-__END__

@@ -11,20 +11,8 @@ BEGIN {
     our ( @ISA, @EXPORT );
 
     @ISA    = qw(Exporter);
-    @EXPORT = qw(&main);
+    @EXPORT = qw();
 }
-
-### subs
-
-=pod
-
-=head1 KAYAKO_MAIN
-
-=head2 DESCRIPTION
-
-    This is the main entry sub to the kayako functions. All further functions can be reached from here
-
-=cut
 
 our $module_opts = {
     helper    => 'KAYAKO',
@@ -42,9 +30,37 @@ our $module_opts = {
     },
 };
 
+=pod
+
+=head1 main
+
+=head2 PURPOSE
+
+
+
+=head2 PARAMETERS
+
+=back
+
+=over
+
+=head2 RETURNS
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
+
 sub main {
-    &Log::debug("Kayako::main sub started");
+    &Log::debug("Starting Kayako::main sub");
     &misc::option_parser( $module_opts, "main" );
+    &Log::debug("Finishing Kayako::main sub");
+    return 1;
 }
 
 1;

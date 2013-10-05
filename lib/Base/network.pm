@@ -9,10 +9,8 @@ BEGIN() {
     our ( @ISA, @EXPORT );
 
     @ISA    = qw(Exporter);
-    @EXPORT = qw(&main);
+    @EXPORT = qw();
 }
-
-### subs
 
 our $module_opts = {
     helper    => 'NETWORK',
@@ -86,16 +84,70 @@ our $module_opts = {
     },
 };
 
+=pod
+
+=head1 main
+
+=head2 PURPOSE
+
+
+
+=head2 PARAMETERS
+
+=back
+
+=over
+
+=head2 RETURNS
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
+
 sub main {
-    &Log::debug("network::main sub started");
+    &Log::debug("Starting Network::main sub");
     &misc::option_parser( $module_opts, "main" );
+    &Log::debug("Finishing Network::main sub");
+    return 1;
 }
 
+=pod
+
+=head1 network_add
+
+=head2 PURPOSE
+
+
+
+=head2 PARAMETERS
+
+=back
+
+=over
+
+=head2 RETURNS
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
+
 sub network_add {
-    &Log::debug("Starting network::network_add sub");
+    &Log::debug("Starting Network::network_add sub");
     my $ticket = Opts::get_option('ticket');
     my $type   = Opts::get_option('type');
-    &Log::debug("Requested options, ticket=>'$ticket', type=>'$type'");
+    &Log::debug1("Opts are: ticket=>'$ticket', type=>'$type'");
     my $name = $ticket . "-" . $type . "-" . &Misc::random_3digit;
     while ( &VCenter::exists_entity( $name, 'DistributedVirtualPortgroup' ) ) {
         $name = $ticket . "-" . $type . "-" . &Misc::random_3digit;
@@ -108,12 +160,38 @@ sub network_add {
         &Log::debug("Switch already exists");
     }
     &VCenter::create_dvportgroup( $name, $ticket );
-    &Log::debug("Finished creating port group");
+    &Log::debug("Finishing Network::network_add sub");
     return 1;
 }
 
+=pod
+
+=head1 list_switch
+
+=head2 PURPOSE
+
+
+
+=head2 PARAMETERS
+
+=back
+
+=over
+
+=head2 RETURNS
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
+
 sub list_switch {
-    &Log::debug("Starting network::list_switch sub");
+    &Log::debug("Starting Network::list_switch sub");
     my $views =
       Vim::find_entity_views( view_type => 'DistributedVirtualSwitch', properties => ['name'] );
     if ( !defined($views) ) {
@@ -127,11 +205,38 @@ sub list_switch {
         &Log::dumpobj( "switch", $_ );
         print "switch_name:" . $_->name . "\n";
     }
+    &Log::debug("Finishing Network::list_switch sub");
     return 1;
 }
 
+=pod
+
+=head1 list_dvp
+
+=head2 PURPOSE
+
+
+
+=head2 PARAMETERS
+
+=back
+
+=over
+
+=head2 RETURNS
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
+
 sub list_dvp {
-    &Log::debug("Starting network::list_dvp sub");
+    &Log::debug("Starting Network::list_dvp sub");
     my $networks = Vim::find_entity_views(
         view_type  => 'DistributedVirtualPortgroup',
         properties => ['name']
@@ -147,12 +252,40 @@ sub list_dvp {
         &Log::dumpobj( "dvp", $_ );
         print "dvp_name:" . $_->name . "\n";
     }
+    &Log::debug("Finishing Network::list_dvp sub");
     return 1;
 }
 
+=pod
+
+=head1 network_delete
+
+=head2 PURPOSE
+
+
+
+=head2 PARAMETERS
+
+=back
+
+=over
+
+=head2 RETURNS
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
+
 sub network_delete {
-    &Log::debug("Starting network::network_delete sub");
+    &Log::debug("Starting Network::network_delete sub");
     my $name = &Opts::get_option('name');
+    &Log::debug1("Opts are: name=>'$name'");
     if ( &Opts::get_option('switch')) {
         &Log::debug("Going to delete switch");
         &VCenter::destroy_entity( $name, 'DistributedVirtualSwitch' );
@@ -169,11 +302,41 @@ sub network_delete {
     } else {
         &Log::warning("No option specified, Please give either one");
     }
+    &Log::debug("Finishing Network::network_delete sub");
     return 1;
 }
 
-sub create_net {
+=pod
 
+=head1 create_net
+
+=head2 PURPOSE
+
+
+
+=head2 PARAMETERS
+
+=back
+
+=over
+
+=head2 RETURNS
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
+
+sub create_net {
+    &Log::debug("Starting Network::create_net sub");
+    print "Not implemented yet\n";
+    &Log::debug("Finishing Network::create_net sub");
+    return 1;
 }
 
 1;

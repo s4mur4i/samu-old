@@ -11,20 +11,8 @@ BEGIN() {
     our ( @ISA, @EXPORT );
 
     @ISA    = qw(Exporter);
-    @EXPORT = qw(&main);
+    @EXPORT = qw();
 }
-
-### subs
-
-=pod
-
-=head1 DATASTORE_MAIN
-
-=head2 DESCRIPTION
-
-    This is the main entry sub to the datastore functions. All further functions can be reached from here
-
-=cut
 
 our $module_opts = {
     helper    => 'DATASTORE',
@@ -68,21 +56,166 @@ our $module_opts = {
     },
 };
 
+=pod
+
+=head1 main
+
+=head2 PURPOSE
+
+
+
+=head2 PARAMETERS
+
+=back
+
+=over
+
+=head2 RETURNS
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
+
 sub main {
-    &Log::debug("Datastore::main sub started");
+    &Log::debug("Starting Datastore::main sub");
     &misc::option_parser( $module_opts, "main" );
+    &Log::debug("Finishing Datastore::main sub");
+    return 1;
 }
+
+=pod
+
+=head1 datastore_add
+
+=head2 PURPOSE
+
+
+
+=head2 PARAMETERS
+
+=back
+
+=over
+
+=head2 RETURNS
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
 
 sub datastore_add {
-
+    &Log::debug("Starting Datastore::datastore_add sub");
+    &Log::debug("Finishing Datastore::datastore_add sub");
+    return 1;
 }
+
+=pod
+
+=head1 datastore_delete
+
+=head2 PURPOSE
+
+
+
+=head2 PARAMETERS
+
+=back
+
+=over
+
+=head2 RETURNS
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
 
 sub datastore_delete {
-
+    &Log::debug("Starting Datastore::datastore_delete sub");
+    &Log::debug("Finishing Datastore::datastore_delete sub");
+    return 1;
 }
+
+=pod
+
+=head1 datastore_list
+
+=head2 PURPOSE
+
+
+
+=head2 PARAMETERS
+
+=back
+
+=over
+
+=head2 RETURNS
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
 
 sub datastore_list {
-
+    &Log::debug("Starting Datastore::datastore_list sub");
+    &Log::debug("Finishing Datastore::datastore_list sub");
+    return 1;
 }
+
+
+=pod
+
+=head1 datastore_info
+
+=head2 PURPOSE
+
+
+=head2 PARAMETERS
+
+=back
+
+=over
+
+=head2 RETURNS
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
+
+sub datastore_info {
+    &Log::debug("Starting Datastore::datastore_info sub");
+    &Log::debug("Finishing Datastore::datastore_info sub");
+    return 1;
+}
+
 1;
 __END__

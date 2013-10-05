@@ -49,7 +49,7 @@ our $module_opts = {
             },
         },
         list => {
-            helper    => 'ADMIN/ADMIN_list_functions',
+            helper    => "ADMIN/ADMIN_list_functions",
             functions => {
                 folder => {
                     function => \&list_folder,
@@ -354,9 +354,23 @@ List requested resourcepool information
 
 =back
 
+=item user
+
+List user resourcepool
+
+=item all
+
+List all resourcepools
+
+=item name
+
+List a specific resourcepool
+
 =over
 
 =head2 RETURNS
+
+True on success
 
 =head2 DESCRIPTION
 
@@ -416,9 +430,19 @@ List requested folders information
 
 =back
 
+=item all
+
+List all inventory folders
+
+=item name
+
+List a specific folder
+
 =over
 
 =head2 RETURNS
+
+True on success
 
 =head2 DESCRIPTION
 
@@ -475,9 +499,15 @@ List all linked clones to a template
 
 =back
 
+=item template
+
+Name of template to list information about
+
 =over
 
 =head2 RETURNS
+
+True on success
 
 =head2 DESCRIPTION
 

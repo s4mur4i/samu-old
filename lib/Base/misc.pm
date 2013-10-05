@@ -17,6 +17,32 @@ BEGIN {
 
 our $help;
 
+=pod
+
+=head1 call_pod2usage
+
+=head2 PURPOSE
+
+
+
+=head2 PARAMETERS
+
+=back
+
+=over
+
+=head2 RETURNS
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
+
 sub call_pod2usage {
     my $helper = shift;
     pod2usage(
@@ -28,8 +54,34 @@ sub call_pod2usage {
     );
 }
 
+=pod
+
+=head1 option_parser
+
+=head2 PURPOSE
+
+
+
+=head2 PARAMETERS
+
+=back
+
+=over
+
+=head2 RETURNS
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
+
 sub option_parser {
-    &Log::debug("Misc::option_parser sub starting");
+    &Log::debug("Starting Misc::option_parser sub");
     my $opts        = shift;
     my $module_name = shift;
     if ( exists( $opts->{helper} ) ) {
@@ -77,9 +129,8 @@ sub option_parser {
             call_pod2usage( $opts->{helper} );
         }
     }
+    &Log::debug("Finishing Misc::option_parser sub");
+    return 1;
 }
 
-sub test {
-    return 0;
-}
 1
