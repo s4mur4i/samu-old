@@ -24,6 +24,10 @@ Print the help page
 
 Add a distributed virtual switch to VCenter
 
+=item create
+
+Create a network interface with vms
+
 =item list_switch
 
 List switches on VCenter
@@ -50,13 +54,33 @@ samu.pl network add [options]
 
 =over
 
+=item ticket
+
+Ticket to add network to
+
+=item type
+
+Type of network to add
+
 =back
 
-=head2 NETWORK_list_function
+=head2 NETWORK_list_switch_function
 
 =head3 SYNOPSIS
 
-samu.pl network list [options]
+samu.pl network list_switch [options]
+
+=head3 OPTIONS
+
+=over
+
+=back
+
+=head2 NETWORK_list_dvp_function
+
+=head3 SYNOPSIS
+
+samu.pl network list_dvp [options]
 
 =head3 OPTIONS
 
@@ -73,5 +97,17 @@ samu.pl network delete [options]
 =head3 OPTIONS
 
 =over
+
+=item name
+
+Name of device to delete
+
+=item switch
+
+Delete switch
+
+=item dvp
+
+Delete DVP
 
 =back
