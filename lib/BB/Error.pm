@@ -76,13 +76,13 @@ use Exception::Class (
         isa         => 'Vcenter',
         description => 'Requested Module cannot be loaded',
         fields      => ['module'],
-      }
+    },
 
-      ## Template Exceptions
-      'Template::Status' => {
+     ## Template Exceptions
+    'Template::Status' => {
         isa         => 'Template',
         description => 'Template does not exist',
-      },
+    },
     'Template::Error' => {
         isa         => 'Template',
         description => 'Error with tempalte',
