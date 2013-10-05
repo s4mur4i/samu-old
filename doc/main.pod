@@ -667,6 +667,92 @@ The output file
 
 =back
 
+=head2 ADMIN_list_function
+
+=head3 SYNOPSIS
+
+samu.pl admin list [options] [functions]
+
+=head3 OPTIONS
+
+=over
+
+=back
+
+=head3 FUNCTIONS
+
+=over
+
+=item folder
+
+List information about requested folders
+
+=item resourcepool
+
+list information about requested resourcepools
+
+=item linked_clones
+
+list all linked clones to a template
+
+=back
+
+=head2 ADMIN_list_folder_function
+
+=head3 SYNOPSIS
+
+samu.pl admin list folder [options]
+
+=head3 OPTIONS
+
+=over
+
+=item all
+
+List content of all folders
+
+=item name
+
+List content of one folder
+
+=back
+
+=head2 ADMIN_list_resourcepool_function
+
+=head3 SYNOPSIS
+
+samu.pl admin list resourcepool [options]
+
+=head3 OPTIONS
+
+=over
+
+=item user
+
+List resourcepool information of user
+
+=item all
+
+List all resourcepool information
+
+=item name
+
+List information of only one requested resourcepool
+
+=back
+
+=head2 ADMIN_list_linked_clone_function
+
+=head3 SYNOPSIS
+
+samu.pl admin list linked_clone [options]
+
+=head3 OPTIONS
+
+=over
+
+=back
+
 =head1 NETWORK
 
 Network related functions

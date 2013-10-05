@@ -129,8 +129,10 @@ This is main entry point for Admin module
 =cut
 
 sub main {
-    &Log::debug("Admin::main sub started");
+    &Log::debug("Starting Admin::main sub");
     &misc::option_parser( $module_opts, "main" );
+    &Log::debug("Finishing Admin::main sub");
+    return 1;
 }
 
 =pod
