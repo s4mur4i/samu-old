@@ -72,12 +72,17 @@ use Exception::Class (
         description => 'Requested opt is invalid',
         fields      => ['opt'],
     },
+    'Vcenter::Module' => {
+        isa         => 'Vcenter',
+        description => 'Requested Module cannot be loaded',
+        fields      => ['module'],
+      }
 
-    ## Template Exceptions
-    'Template::Status' => {
+      ## Template Exceptions
+      'Template::Status' => {
         isa         => 'Template',
         description => 'Template does not exist',
-    },
+      },
     'Template::Error' => {
         isa         => 'Template',
         description => 'Error with tempalte',
@@ -183,6 +188,10 @@ sub catch_ex {
     }
     elsif ( $ex->isa('Vcenter::Opts') ) {
         &Log::critical( "Desc=>'" . $ex->error . "',opt=>'" . $ex->opt . "'" );
+    }
+    elsif ( $ex->isa('Vcenter::Module') ) {
+        &Log::critical(
+            "Desc=>'" . $ex->error . "',module=>'" . $ex->module . "'" );
     }
     elsif ( $ex->isa('Connection::Connect') ) {
         &Log::critical( "Desc=>'"
