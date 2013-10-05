@@ -178,4 +178,8 @@ samu.pl admin list linked_clone [options]
 
 =over
 
+=item template
+
+Name of template to list linked clones of
+
 =back
