@@ -11,35 +11,94 @@ BEGIN() {
     our ( @ISA, @EXPORT );
 
     @ISA    = qw(Exporter);
-    @EXPORT = qw(&main);
+    @EXPORT = qw();
 }
 
 ### subs
-
-=pod
-
-=head1 BUGZILLA_MAIN
-
-=head2 DESCRIPTION
-
-    This is the main entry sub to the bugzillz functions. All further functions can be reached from here
-
-=cut
 
 our $module_opts = {
     helper    => 'BUGZILLA',
     functions => {
         info => {
-            helper   => 'BUGZILLA_info_function',
             function => \&info,
+            opts => {
+                ticket => {
+                    type => "=s",
+                    help => "The bugzilla ticket to list information about",
+                    required => 1,
+                },
+            },
         },
     },
 };
 
+
+=pod
+
+=head1 main
+
+=head2 PURPOSE
+
+Main entry for Bugzilla functions
+
+=head2 PARAMETERS
+
+=back
+
+=over
+
+=head2 RETURNS
+
+True on succcess
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
+
 sub main {
-    &Log::debug("Bugzilla::main sub started");
+    &Log::debug("Starting Bugzilla::main sub");
     &misc::option_parser( $module_opts, "main" );
+    &Log::debug("Finishing Bugzilla:main sub");
+    return 1;
+}
+
+=pod
+
+=head1 info
+
+=head2 PURPOSE
+
+Information about bugzilla ticket
+
+=head2 PARAMETERS
+
+=back
+
+=over
+
+=head2 RETURNS
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
+
+sub info {
+    &Log::debug("Starting Bugzilla::info sub");
+    print "Not implemented yet";
+    &Log::debug("Finishing Bugzolla::info sub");
+    return 1;
 }
 
 1;
-__END__
