@@ -10,10 +10,46 @@ BEGIN {
     our @EXPORT = qw( );
 }
 
-#tested
+=pod
+
+=head1 bugzilla_status
+
+=head2 PURPOSE
+
+Retrieve Status of bugzilla
+
+=head2 PARAMETERS
+
+=back
+
+=item ticket
+
+The Bugzilla ticket number to retrieve
+
+=over
+
+=head2 RETURNS
+
+Unknown if no information is returned, else the returned value
+
+=head2 DESCRIPTION
+
+Sub retrieves the bugzilla ticket status with regexp matching the html page.
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+Very fragile, the backend can cange any time. Need to upgrade bugzilla so we can do API calls
+
+=head2 SEE ALSO
+
+=cut
+
 sub bugzilla_status {
     my ($ticket) = @_;
-    &Log::debug("Starting Bugzilla::bugzilla_status sub, ticket=>'$ticket'");
+    &Log::debug("Starting Bugzilla::bugzilla_status sub");
+    &Log::debug1("Opts are: ticket=>'$ticket'");
     my $url = "http://bugzilla.balabit/bugzilla-3.0/show_bug.cgi?id=$ticket";
     &Log::debug1("URL is:'$url'");
     my $content;
@@ -27,9 +63,9 @@ sub bugzilla_status {
         $content = "Unknown";
     }
     &Log::debug(
-        "Finishing Bugzilla::bugzilla_status sub, returning=>'$content'");
+        "Finishing Bugzilla::bugzilla_status sub");
+    &Log::debug("Return=>'$content'");
     return $content;
 }
 
-#### We need to end with success
 1
