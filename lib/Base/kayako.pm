@@ -30,8 +30,14 @@ our $module_opts = {
     helper    => 'KAYAKO',
     functions => {
         info => {
-            helper   => 'KAYAKO_info_function',
             function => \&info,
+            opts => {
+                ticket => {
+                    type => '=s',
+                    help => "Number of ticket to gather info",
+                    required => 1,
+                },
+            },
         },
     },
 };

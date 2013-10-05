@@ -18,10 +18,26 @@ Print the help page
 
 =over
 
-=item TBD
+=item info
 
-To Be Defined
+Gather information about ticket
 
 =back
 
 =head1 KAYAKO_functions
+
+=head2 KAYAKO_info_function
+
+=head3 SYNOPSIS
+
+samu.pl kayako [options]
+
+=head3 OPTIONS
+
+=over
+
+=item ticket
+
+Number of ticket to get information
+
+=back

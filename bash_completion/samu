@@ -80,7 +80,7 @@ _samu() {
 
     kayako="info"
 
-    kayako_info=""
+    kayako_info="--ticket"
 
     admin="test cleanup templates pod2wiki list"
 
@@ -166,6 +166,7 @@ _samu() {
     _datastore_add_options="${datastore_add} ${sdk_opts}"
     _datastore_delete_options="${datastore_delete} ${sdk_opts}"
     _datastore_list_options="${datastore_list} ${sdk_opts}"
+    _datastore_info_options="${datastore_info} ${sdk_opts}"
 
     _kayako_options="${kayako}"
 
