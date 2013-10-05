@@ -1,0 +1,27 @@
+=head1 KAYAKO
+
+=head3 SYNOPSIS
+
+samu.pl kayako [options] [functions]
+
+=head3 OPTIONS
+
+=over
+
+=item -help|-h
+
+Print the help page
+
+=back
+
+=head3 FUNCTIONS
+
+=over
+
+=item TBD
+
+To Be Defined
+
+=back
+
+=head1 KAYAKO_functions

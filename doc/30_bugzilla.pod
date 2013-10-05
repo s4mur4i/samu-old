@@ -1,0 +1,27 @@
+=head1 BUGZILLA
+
+=head3 SYNOPSIS
+
+samu.pl bugzilla [options] [functions]
+
+=head3 OPTIONS
+
+=over
+
+=item -help|-h
+
+Print the help page
+
+=back
+
+=head3 FUNCTIONS
+
+=over
+
+=item TBD
+
+To Be Defined
+
+=back
+
+=head1 BUGZILLA_functions

@@ -1,0 +1,51 @@
+=head1 LOGLEVEL
+
+In the framework we use 10 levels for logs. Default is 6
+
+=over
+
+=item 10 DEBUG2
+
+Very Verbose information, mostly variables and objects are dumped at this level
+
+=item 9  DEBUG1
+
+Variables are dumped at this level
+
+=item 8  DEBUG
+
+Subroutine entries and exists are logged
+
+=item 7  INFO
+
+Information messages printed
+
+=item 6  NOTICE
+
+Notice messages are printed. This is default level
+
+=item 5  WARNING
+
+Warning messages are printed
+
+=item 4  ERROR
+
+Errors are printed
+
+=item 3  CRITICAL
+
+Critical messages are printed
+
+=item 2  ALERT
+
+Alert messages are printed
+
+=item 1  EMERGENCY
+
+Emergency messages are printed
+
+=item 0
+
+At this level no information is printed. This level should very rarely be used
+
+=back

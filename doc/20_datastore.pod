@@ -1,0 +1,83 @@
+=head1 DATASTORE
+
+=head3 SYNOPSIS
+
+samu.pl datastore [options] [function]
+
+=head3 OPTIONS
+
+=over
+
+=back
+
+=head3 FUNCTIONS
+
+=over
+
+=item list
+
+List datastores mounted on VCenter
+
+=item add
+
+Add a datastore to the VCenter
+
+=item delete
+
+Unmount and delete a datastore from the VCenter
+
+=item info
+
+Information about a datastore
+
+=back
+
+=head1 DATASTORE_functions
+
+=head2 DATASTORE_list_function
+
+=head3 SYNOPSIS
+
+samu.pl datastore list [options]
+
+=head3 OPTIONS
+
+=over
+
+=back
+
+=head2 DATASTORE_add_function
+
+=head3 SYNOPSIS
+
+samu.pl datastore add [options]
+
+=head3 OPTIONS
+
+=over
+
+=back
+
+=head2 DATASTORE_delete_function
+
+=head3 SYNOPSIS
+
+samu.pl datastore delete [options]
+
+=head3 OPTIONS
+
+=over
+
+=back
+
+=head2 DATASTORE_info_function
+
+=head3 SYNOPSIS
+
+samu.pl datastore info [options]
+
+=head3 OPTIONS
+
+=over
+
+=back

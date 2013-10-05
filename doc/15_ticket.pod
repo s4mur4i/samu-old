@@ -1,0 +1,108 @@
+=head1 TICKET
+
+=head3 SYNOPSIS
+
+samu.pl ticket [options] [function]
+
+
+=head3 OPTIONS
+
+=over
+
+=item --help|-h
+
+Print the help page
+
+=back
+
+=head3 FUNCTIONS
+
+=over
+
+=item list
+
+List all ticket on the ESXi, their owner, the kayako status currently, and if possible the Bugzilla status
+
+=item info
+
+List all machines attached to a ticket, and their login information
+
+=item on
+
+Turn all machines on attached to a ticket
+
+=item off
+
+Turn all machines off attached to a ticket
+
+=item delete
+
+Delete all entities attached to a ticket
+
+=back
+
+=head1 TICKET_functions
+
+=head2 TICKET_list_function
+
+=head3 SYNOPSIS
+
+samu.pl ticket list [options]
+
+=head3 OPTIONS
+
+=over
+
+=back
+
+=head2 TICKET_info_function
+
+=head3 SYNOPSIS
+
+samu.pl ticket info [options]
+
+=head3 OPTIONS
+
+=over
+
+=back
+
+=head2 TICKET_on_function
+
+=head3 SYNOPSIS
+
+samu.pl ticket on [options]
+
+=head3 OPTIONS
+
+=over
+
+=item --help|-h
+
+Print the help page
+
+=back
+
+=head2 TICKET_off_function
+
+=head3 SYNOPSIS
+
+samu.pl ticket off [options]
+
+=head3 OPTIONS
+
+=over
+
+=back
+
+=head2 TICKET_delete_function
+
+=head3 SYNOPSIS
+
+samu.pl ticket delete [options]
+
+=head3 OPTIONS
+
+=over
+
+=back

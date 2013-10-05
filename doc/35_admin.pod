@@ -1,0 +1,181 @@
+=head1 ADMIN
+
+=head3 SYNOPSIS
+
+samu.pl admin [functions] [options]
+
+=head3 OPTIONS
+
+=over
+
+=item --help|-h
+
+Print the help page
+
+=back
+
+=head3 FUNCTIONS
+
+=over
+
+=item cleanup
+
+Start the cleanup task to remove empty entities on the VCenter
+
+=item templates
+
+List template names and paths
+
+=item test
+
+Test connection to VCenter. Prints the Server time
+
+=item pod2wiki
+
+Transfer a pod file to Dokuwiki format
+
+=back
+
+=head1 ADMIN_functions
+
+=head2 ADMIN_cleanup_function
+
+=head3 SYNOPSIS
+
+samu.pl admin cleanup [options]
+
+=head3 OPTIONS
+
+=over
+
+=back
+
+=head2 ADMIN_templates_function
+
+=head3 SYNOPSIS
+
+samu.pl admin templates [options]
+
+=head3 OPTIONS
+
+=over
+
+=back
+
+=head2 ADMIN_test_function
+
+=head3 SYNOPSIS
+
+samu.pl admin test [options]
+
+=head3 OPTIONS
+
+=over
+
+=back
+
+=head2 ADMIN_pod2wiki_function
+
+=head3 SYNOPSIS
+
+samu.pl admin pod2wiki [options]
+
+=head3 OPTIONS
+
+=over
+
+=item in
+
+The POD file to transfer
+
+=item out
+
+The output file
+
+=back
+
+=head2 ADMIN_list_function
+
+=head3 SYNOPSIS
+
+samu.pl admin list [options] [functions]
+
+=head3 OPTIONS
+
+=over
+
+=back
+
+=head3 FUNCTIONS
+
+=over
+
+=item folder
+
+List information about requested folders
+
+=item resourcepool
+
+list information about requested resourcepools
+
+=item linked_clones
+
+list all linked clones to a template
+
+=back
+
+=head2 ADMIN_list_folder_function
+
+=head3 SYNOPSIS
+
+samu.pl admin list folder [options]
+
+=head3 OPTIONS
+
+=over
+
+=item all
+
+List content of all folders
+
+=item name
+
+List content of one folder
+
+=back
+
+=head2 ADMIN_list_resourcepool_function
+
+=head3 SYNOPSIS
+
+samu.pl admin list resourcepool [options]
+
+=head3 OPTIONS
+
+=over
+
+=item user
+
+List resourcepool information of user
+
+=item all
+
+List all resourcepool information
+
+=item name
+
+List information of only one requested resourcepool
+
+=back
+
+=head2 ADMIN_list_linked_clone_function
+
+=head3 SYNOPSIS
+
+samu.pl admin list linked_clone [options]
+
+=head3 OPTIONS
+
+=over
+
+=back

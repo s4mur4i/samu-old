@@ -1,0 +1,203 @@
+=head1 VM_functions
+
+=head2 VM_clone_function
+
+=head3 SYNOPSIS
+
+samu.pl vm clone [options]
+
+=head3 OPTIONS
+
+=over
+
+=back
+
+=head2 VM_list_function
+
+=head3 SYNOPSIS
+
+samu.pl vm list [options] [function]
+
+=head3 OPTIONS
+
+=over
+
+=back
+
+=head3 FUNCTIONS
+
+=over
+
+=item interface
+
+List network interfaces attached to a vm
+
+=item cdrom
+
+List cdrom-s attached to a vm
+
+=item disk
+
+List disk-s attached to a vm
+
+=item snapshot
+
+List snapshots attached to a vm
+
+=back
+
+=head2 VM_add_function
+
+=head3 SYNOPSIS
+
+samu.pl vm add [options] [function]
+
+=head3 OPTIONS
+
+=over
+
+=back
+
+=head3 FUNCTIONS
+
+=over
+
+=item cdrom
+
+Add a cdrom drive to a vm
+
+=item interface
+
+Add a network interface to a vm
+
+=item disk
+
+Add a thin provisioned hard disk to a vm
+
+=item snapshot
+
+List snapshots attached to a vm
+
+=back
+
+=head2 VM_delete_function
+
+=head3 SYNOPSIS
+
+samu.pl vm delete [options] [function]
+
+=head3 OPTIONS
+
+=over
+
+=back
+
+=head3 FUNCTIONS
+
+=over
+
+=item cdrom
+
+Delete a cdrom drive to a vm
+
+=item interface
+
+Delete a network interface to a vm
+
+=item disk
+
+Delete a hard disk from a vm
+
+=item snapshot
+
+Delete a snapshot attached to a vm
+
+=back
+
+=head2 VM_change_function
+
+=head3 SYNOPSIS
+
+samu.pl vm change [options] [function]
+
+=head3 OPTIONS
+
+=over
+
+=back
+
+=head3 FUNCTIONS
+
+=over
+
+=item cdrom
+
+Change the backend iso to a cdrom drive
+
+=item interface
+
+Change the network connected to a network
+
+=item altername
+
+Change the alternative name of a vm
+
+=item snapshot
+
+Revert to snapshot attached to a vm
+
+=item power
+
+Change the power state of a vm
+
+=back
+
+=head2 VM_info_function
+
+=head3 SYNOPSIS
+
+samu.pl vm info [options] [function]
+
+=head3 OPTIONS
+
+=over
+
+=back
+
+=head3 FUNCTIONS
+
+=over
+
+=item dumper
+
+This information is used for development purposes, It dumps all object information about vm to STDOUT
+
+=item runtime
+
+Information about runtime environment
+
+=back
+
+=head2 VM_dumper_function
+
+=head3 SYNOPSIS
+
+samu.pl vm info dumper [options]
+
+=head3 OPTIONS
+
+=over
+
+=back
+
+=head2 VM_runtime_function
+
+=head3 SYNOPSIS
+
+samu.pl vm info runtime [options]
+
+=head3 OPTIONS
+
+=over
+
+=back

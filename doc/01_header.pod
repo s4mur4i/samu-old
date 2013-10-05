@@ -1,0 +1,118 @@
+=head1 NAME
+
+samu.pl -- Support automatisation script
+
+=head1 DESCRIPTION
+
+This script is used as a wrapper script for automatisation task used by support.
+To get information about any sub module call any option with help. Documentation and information can be reached under the respective sub module help.
+
+=head1 SYNOPSIS
+
+samu.pl [options] [function]
+
+=head1 OPTIONS
+
+=over
+
+=item --help|-h
+
+Print the help page
+
+=item --man|-m
+
+Print the man page with information about all modules
+
+=item -v|-vv|-vvv|-vvvv
+
+Increase verbosity of printing
+
+=item -q|-qq|-qqq|-qqqq|-qqqqq|-qqqqqq
+
+Decrease verbosity of printing
+
+=back
+
+=head1 FUNCTIONS
+
+=over
+
+=item vm
+
+Access VM Entity functions
+
+=item datastore
+
+Access Datastore functions
+
+=item ticket
+
+Access ticket functions
+
+=item kayako
+
+Access kayako functions
+
+=item bugzilla
+
+Access bugzilla functions
+
+=item admin
+
+Higher level commands for administering or maintenance of the VCenter and environment
+
+=item network
+
+Network related functions
+
+=back
+
+=head1 SUBS
+
+List of defined functions, each can be called with it's own help and detailed information. Each sub has their own help defined.
+
+=head1 VM
+
+=head3 SYNOPSIS
+
+samu.pl vm [options] [function]
+
+=head3 OPTIONS
+
+=over
+
+=item --help|-h
+
+Print the help page
+
+=back
+
+=head3 FUNCTIONS
+
+=over
+
+=item clone
+
+Sub used to provision vm guests from templates.
+
+=item add
+
+Sub to add different hardware to a guest
+
+=item list
+
+Sub to list different hardware of a guest
+
+=item delete
+
+Sub to delete/remove different hardware of a guest
+
+=item change
+
+Sub to change settings of a guest
+
+=item info
+
+Sub used to dump information about a vm
+
+=back

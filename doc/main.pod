@@ -847,7 +847,7 @@ Name of the credential store file defaults to <HOME>/.vmware/credstore/vicredent
 
 Encoding: utf8, cp936 (Simplified Chinese), iso-8859-1 (German), shiftjis (Japanese)
 
-=item --help
+=item --help or -h
 
 Display usage information for the script
 
@@ -902,16 +902,6 @@ Display additional debugging information
 =item --version
 
 Display version information for the script
-
-=back
-
-=head1 BUGS
-
-Known Bugs:
-
-=over
-
-=item * There is a lot of anal sex happening at my desk
 
 =back
 
@@ -1090,6 +1080,16 @@ Emergency messages are printed
 =item 0
 
 At this level no information is printed. This level should very rarely be used
+
+=back
+
+=head1 BUGS
+
+Known Bugs:
+
+=over
+
+=item * There is a lot of anal sex happening at my desk
 
 =back
 
