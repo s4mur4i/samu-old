@@ -71,11 +71,12 @@ _samu() {
 
     bugzilla_info=""
 
-    datastore="add delete list"
+    datastore="add delete list info"
 
-    datastore_add=""
-    datastore_delete=""
+    datastore_add="--datastore"
+    datastore_delete="--datastore"
     datastore_list=""
+    datastore_info="--datastore"
 
     kayako="info"
 

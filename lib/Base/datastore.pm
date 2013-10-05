@@ -30,16 +30,40 @@ our $module_opts = {
     helper    => 'DATASTORE',
     functions => {
         add => {
-            helper   => 'DATASTORE_add_function',
             function => \&datastore_add,
+            opts => {
+                datastore => {
+                    type => "=s",
+                    help => "Name of datastore",
+                    required => 1,
+                },
+            },
         },
         delete => {
-            helper   => 'DATASTORE_delete_function',
             function => \&datastore_delete,
+            opts => {
+                datastore => {
+                    type => "=s",
+                    help => "Name of datastore",
+                    required => 1,
+                },
+            },
         },
         list => {
-            helper   => 'DATASTORE_list_function',
-            function => \&datastore_list
+            function => \&datastore_list,
+            opts => {
+            },
+        },
+        info => {
+            function => \&datastore_info,
+            opts => {
+                datastore => {
+                    type => "=s",
+                    help => "Name of datastore",
+                    required => 0,
+                    default => 0,
+                },
+            },
         },
     },
 };

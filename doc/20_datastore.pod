@@ -56,6 +56,10 @@ samu.pl datastore add [options]
 
 =over
 
+=item datastore
+
+Datastore name to add
+
 =back
 
 =head2 DATASTORE_delete_function
@@ -68,6 +72,10 @@ samu.pl datastore delete [options]
 
 =over
 
+=item datastore
+
+Datastore name to delete
+
 =back
 
 =head2 DATASTORE_info_function
@@ -79,5 +87,9 @@ samu.pl datastore info [options]
 =head3 OPTIONS
 
 =over
+
+=item datastore
+
+Datastore name to gather info about
 
 =back
