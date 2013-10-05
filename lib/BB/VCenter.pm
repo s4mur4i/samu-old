@@ -582,6 +582,24 @@ sub service_content {
     return $sc;
 }
 
+sub move_into_folder {
+    my ($vmname) = @_;
+    &Log::debug("Starting VCenter::move_into_folder sub");
+    &Log::debug("Opts are, vmname=>'$vmname'");
+    my $splitted = &Misc::vmname_splitter( $vmname );
+    if ( !&VCenter::exists_entity( $splitted->{ticket}, 'Folder') ) {
+        &VCenter::create_folder( $splitted->{ticket}, 'vm' );
+    } else {
+        &Log::debug("Folder already exists");
+    }
+    my $view = &Guest::entity_name_view( $vmname, 'VirtualMachine' );
+    my $folder_view = &Guest::enity_name_view( $splitted->{ticket}, 'Folder');
+    my $task = $folder_view->MoveIntoFolder_Task( list => [ $view ] );
+    &VCenter::Task_Status( $task );
+    &Log::debug("Finishing VCenter::move_into folder sub");
+    return 1;
+}
+
 #tested
 sub get_vim {
     &Log::debug("Starting VCenter::Vim object retrieve");
@@ -632,6 +650,19 @@ sub file_manager {
     &Log::dumpobj( "filemanager", $filemanager );
     &Log::debug("Returning filemanager object");
     return $filemanager;
+}
+
+sub process_manager {
+    &Log::debug("Startin VCenter::process_manager sub");
+    my $processmanager =
+      Vim::get_view( mo_ref => &VCenter::service_content->{processManager} );
+    if ( !defined($processmanager) ) {
+        Vcenter::ServiceContent->throw(
+            error => "Could not retrieve processmanager" );
+    }
+    &Log::dumpobj( "processmanager", $processmanager );
+    &Log::debug("Returning processmanager object");
+    return $processmanager;
 }
 
 sub vm_last_snapshot_view {

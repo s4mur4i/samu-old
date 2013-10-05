@@ -129,6 +129,36 @@ sub change_cdrom_iso_spec {
     return $spec;
 }
 
+sub change_interface_spec {
+    my ( $vmname, $num, $network) = @_;
+    &Log::debug("Starting Guest::change_interface_spec");
+    &Log::debug("Opts are, vmname=>'$vmname', num=>'$num', network=>'$network'");
+    my @net_hw = @{ &Guest::get_hw( $vmname, 'VirtualEthernetCard' ) };
+    my $network_view = &Guest::entity_property_view( $network, 'Network', 'name');
+    my $name = $network_view->{name};
+    &Log::debug("Name is $name");
+    my $backing;
+    if ( $network_view->{mo_ref}->{type} eq 'Network' ) {
+        &Log::debug("Network is a normal network");
+        $backing = VirtualEthernetCardNetworkBackingInfo->new( deviceName => $name, network => $network );
+    } elsif ($network_view->{mo_ref}->{type} eq 'DistributedVirtualPortgroup' ) {
+        &Log::debug("Network is a normal DVP");
+        $network_view = &Guest::entity_full_view( $network, 'DistributedVirtualPortgroup');
+        my $switch = Vim::get_view( mo_ref => $network_view->{config}->{distributedVirtualSwitch} );
+        my $port = DistributedVirtualSwitchPortConnection->new( portgroupKey => $network_view->{key}, switchUuid => $switch->{uuid} );
+        $backing = VirtualEthernetCardDistributedVirtualPortBackingInfo->new( port => $port );
+    } else {
+        &Log::debug("Unkown network type");
+        #FIXME Implement exception
+    }
+    my $device = VirtualE1000->new( connectable => VirtualDeviceConnectInfo->new( startConnected => '1', allowGuestControl => '1', connected => '1' ) , wakeOnLanEnabled => 1, macAddress => $net_hw[$num]->{macAddress} , addressType => "Manual", key => $net_hw[$num]->{key} , backing => $backing, deviceInfo => Description->new( summary => $name, label => $name ) );
+    my $deviceconfig = VirtualDeviceConfigSpec->new( operation => VirtualDeviceConfigSpecOperation->new( 'edit' ), device => $device );
+    my $spec = VirtualMachineConfigSpec->new( deviceChange => [$deviceconfig] );
+    &Log::debug("Returning spec from change_interface_spec");
+    &Log::dumpobj( 'spec', $spec);
+    return $spec;
+}
+
 #tested
 sub add_cdrom_spec {
     my ($vmname) = @_;
@@ -753,6 +783,19 @@ sub remove_hw {
     return 1;
 }
 
+sub promote {
+    my ( $vmname ) = @_;
+    &Log::debug("Starting Guest::promote sub");
+    &Log::debug("Opts are, vmname=>'$vmname'");
+    &Guest::poweroff( $vmname );
+    my $view = &Guest::entity_name_view( $vmname, 'VirtualMachine');
+    my $task = $view->PromoteDisks_Task(unlink=>1);
+    &VCenter::Task_Status( $task );
+    &VCenter::move_into_folder( $vmname );
+    &Log::debug("Finished Guest::promote sub");
+    return 1;
+}
+
 #tested
 sub list_snapshot {
     my ($vmname) = @_;
@@ -818,6 +861,17 @@ sub run_command {
     my ($info) = @_;
     &Log::debug("Starting Guest::run_command sub");
     &Log::loghash( "Info options, ", $info );
+    my $view       = &Guest::entity_name_view( $info->{vmname} );
+    my $guestCreds = &Guest::guest_cred(
+        $info->{vmname},
+        $info->{guestusername},
+        $info->{guestpassword}
+    );
+    my $guestProcMan = &VCenter::process_manager;
+    my $guestProgSpec = GuestProgramSpec->new( workingDirectory => $info->{workdir}, programPath=> $info->{prog}, arguments => $info->{prog_arg}, envVariables => [$info->{env}] );
+    my $pid = $guestProcMan->StartProgramInGuest( vm => $view, auth => $guestCreds, spec => $guestProgSpec );
+    &Log::debug("Returning pid $pid");
+    return $pid;
 }
 
 sub transfer_to_guest {
@@ -866,6 +920,7 @@ sub transfer_to_guest {
     else {
         Entity::TransferError->throw( error => $req->as_string );
     }
+    &Log::debug("Returning success");
     return 1;
 }
 
@@ -913,11 +968,14 @@ sub transfer_from_guest {
         &Log::debug( "Downloading file to: '" . $info->{dest} . "'" );
         my $status = getstore( $transferinfo->url, $info->{dest} );
     }
+    &Log::debug("Returning success");
     return 1;
 }
 
 sub guest_cred {
     my ( $vmname, $guestusername, $guestpassword ) = @_;
+    &Log::debug("Starting Guest::guest_cred sub");
+    &Log::debug("Opts are, vmname=>'$vmname', guestusername=>'$guestusername', guestpassword=>'$guestpassword'");
     my $authMgr   = &VCenter::auth_manager;
     my $guestAuth = NamePasswordAuthentication->new(
         username           => $guestusername,
@@ -936,6 +994,8 @@ sub guest_cred {
             password => $guestpassword
         );
     }
+    &Log::debug("Returning guestAuth");
+    &Log::dumpobj( "guestauth", $guestAuth);
     return $guestAuth;
 }
 

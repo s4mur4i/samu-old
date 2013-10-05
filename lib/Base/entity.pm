@@ -69,6 +69,16 @@ our $module_opts = {
                 },
             },
         },
+        convert_full => {
+            function => \&promote,
+            opts => {
+                vmname => {
+                    type => "=s",
+                    help => "Which machine to convert",
+                    required => 1,
+                },
+            },
+        },
         info => {
             helper    => 'VM_functions/VM_info_function',
             functions => {
@@ -381,6 +391,17 @@ our $module_opts = {
                             help     => 'Which VMs cdrom to list.',
                             required => '1',
                         },
+                        num => {
+                            type     => '=s',
+                            help     => 'Which interface to manage',
+                            required => '1',
+                        },
+                        network => {
+                            type     => '=s',
+                            help     => 'Which network to change to',
+                            required => '0',
+                            default => 'VLAN21',
+                        },
                     },
                 },
                 disk => {
@@ -676,6 +697,17 @@ sub change_cdrom {
     } else {
         Vcenter::Opts->throw( error => 'iso or unmount not specified', opt => "unmount and iso");
     }
+    return 1;
+}
+
+sub change_interface {
+    &Log::debug("Starting Entity::change_interface sub");
+    my $vmname = Opts::get_option('vmname');
+    my $num = Opts::get_option('num');
+    my $network = Opts::get_option('network');
+    &Log::debug("Opts are, vmname=>'$vmname', num=>'$num', network=>'$network'");
+    my $spec = &Guest::change_interface_spec( $vmname, $num, $network);
+#    &Guest::reconfig_vm( $vmname ,$spec );
     return 1;
 }
 
@@ -1028,6 +1060,15 @@ sub add_folder {
 sub add_resourcepool {
     &Log::debug("Starting entity::add_resourcepool sub");
     &VCenter::create_resource_pool( &Opts::get_option('name'), &Opts::get_option('parent') );
+    return 1;
+}
+
+sub promote {
+    &Log::debug("Starting Entity::promote sub");
+    my $vmname = &Opts::get_option('vmname');
+    &Log::debug("Opts are, vmname=>'$vmname'");
+    &Guest::promote( $vmname );
+    &Log::debug("Finished Entity::promote sub");
     return 1;
 }
 
