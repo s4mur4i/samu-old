@@ -18,10 +18,26 @@ Print the help page
 
 =over
 
-=item TBD
+=item info
 
-To Be Defined
+Gather information about bugzilla ticket
 
 =back
 
 =head1 BUGZILLA_functions
+
+=head2 BUGZILLA_info_function
+
+=head3 SYNOPSIS
+
+samu.pl bugzilla [options]
+
+=head3 OPTIONS
+
+=over
+
+=item ticket
+
+The ticket number to gather information about
+
+=back
