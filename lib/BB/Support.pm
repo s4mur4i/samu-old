@@ -32,19 +32,19 @@ my %template_hash = (
         os       => 'xcb'
     },
     'scb_341' => {
-        path     => 'Support/vm/templates/SCB/3.4/T_scb_341',
+        path     => 'Support/vm/templates/SCB/scb_3.4/T_scb_341',
         username => 'root',
         password => 'titkos',
         os       => 'xcb'
     },
     'scb_342' => {
-        path     => 'Support/vm/templates/SCB/3.4/T_scb_342',
+        path     => 'Support/vm/templates/SCB/scb_3.4/T_scb_342',
         username => 'root',
         password => 'titkos',
         os       => 'xcb'
     },
     'scb_350' => {
-        path     => 'Support/vm/templates/SCB/3.5/T_scb_350',
+        path     => 'Support/vm/templates/SCB/scb_3.5/T_scb_350',
         username => 'root',
         password => 'titkos',
         os       => 'xcb'
