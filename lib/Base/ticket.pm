@@ -19,6 +19,7 @@ our $module_opts = {
     functions => {
         info => {
             function => \&ticket_info,
+            vcenter_connect => 1,
             opts     => {
                 ticket => {
                     type     => "=s",
@@ -29,10 +30,12 @@ our $module_opts = {
         },
         list => {
             function => \&ticket_list,
+            vcenter_connect => 1,
             opts     => {},
         },
         on => {
             function => \&ticket_on,
+            vcenter_connect => 1,
             opts     => {
                 ticket => {
                     type     => "=s",
@@ -43,6 +46,7 @@ our $module_opts = {
         },
         off => {
             function => \&ticket_off,
+            vcenter_connect => 1,
             opts     => {
                 ticket => {
                     type     => "=s",
@@ -53,6 +57,7 @@ our $module_opts = {
         },
         delete => {
             function => \&ticket_delete,
+            vcenter_connect => 1,
             opts     => {
                 ticket => {
                     type     => "=s",

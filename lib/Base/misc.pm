@@ -107,16 +107,22 @@ sub option_parser {
         if ( exists $opts->{opts} ) {
             &Log::debug("Parsing options to VMware SDK");
             &VCenter::SDK_options( $opts->{opts} );
-            eval {
-                &Log::debug("Connecting to VCenter");
-                &VCenter::connect_vcenter();
-            };
-            if ($@) { &Error::catch_ex($@) }
+            if ( $opts->{vcenter_connect} ) {
+                eval {
+                    &Log::debug("Connecting to VCenter");
+                    &VCenter::connect_vcenter();
+                };
+                if ($@) { &Error::catch_ex($@) }
+            } else {
+                &Log::debug("No connection is required to VCenter");
+            }
         }
         &Log::debug("Invoking handler function of $module_name");
         &{ $opts->{function} };
-        &Log::debug("Disconnecting from VCenter");
-        &VCenter::disconnect_vcenter();
+        if ( $opts->{vcenter_connect} ) {
+            &Log::debug("Disconnecting from VCenter");
+            &VCenter::disconnect_vcenter();
+        }
     }
     else {
         my $arg = shift @ARGV;

@@ -22,18 +22,22 @@ our $module_opts = {
     functions => {
         cleanup => {
             function => \&cleanup,
+            vcenter_connect => 1,
             opts     => {},
         },
         templates => {
             function => \&templates,
+            vcenter_connect => 0,
             opts     => {},
         },
         test => {
             function => \&test,
+            vcenter_connect => 1,
             opts     => {},
         },
         pod2wiki => {
             function      => \&pod2wiki,
+            vcenter_connect => 0,
             prereq_module => [qw(Pod::Simple::Wiki::Dokuwiki)],
             opts          => {
                 in => {
@@ -53,6 +57,7 @@ our $module_opts = {
             functions => {
                 folder => {
                     function => \&list_folder,
+                    vcenter_connect => 1,
                     opts     => {
                         all => {
                             type     => "=s",
@@ -69,6 +74,7 @@ our $module_opts = {
                 },
                 resourcepool => {
                     function => \&list_resourcepool,
+                    vcenter_connect => 1,
                     opts     => {
                         user => {
                             type     => "=s",
@@ -89,6 +95,7 @@ our $module_opts = {
                 },
                 linked_clones => {
                     function => \&list_linked_clones,
+                    vcenter_connect => 1,
                     opts     => {
                         template => {
                             type     => "=s",

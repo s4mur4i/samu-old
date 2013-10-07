@@ -17,6 +17,7 @@ our $module_opts = {
     functions => {
         add => {
             function => \&network_add,
+            vcenter_connect => 1,
             opts     => {
                 ticket => {
                     type     => "=s",
@@ -32,6 +33,7 @@ our $module_opts = {
         },
         create => {
             function => \&create_net,
+            vcenter_connect => 1,
             opts     => {
                 type => {
                     type     => "=s",
@@ -53,14 +55,17 @@ our $module_opts = {
         },
         list_switch => {
             function => \&list_switch,
+            vcenter_connect => 1,
             opts     => {},
         },
         list_dvp => {
             function => \&list_dvp,
+            vcenter_connect => 1,
             opts     => {},
         },
         delete => {
             function => \&network_delete,
+            vcenter_connect => 1,
             opts     => {
                 name => {
                     type     => "=s",

@@ -21,6 +21,7 @@ our $module_opts = {
     functions => {
         info => {
             function => \&info,
+            vcenter_connect => 0,
             opts     => {
                 ticket => {
                     type     => "=s",

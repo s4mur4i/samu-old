@@ -171,7 +171,7 @@ sub vmname_splitter {
         );
     }
     else {
-        &Log::warning("vmname is not standard. Returning unknown");
+        &Log::info("vmname is not standard. Returning unknown");
         %return = (
             ticket   => 'unknown',
             username => 'unknown',

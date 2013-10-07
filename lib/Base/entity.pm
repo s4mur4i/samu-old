@@ -19,6 +19,7 @@ our $module_opts = {
     functions => {
         clone => {
             function => \&clone_vm,
+            vcenter_connect => 1,
             opts     => {
                 ticket => {
                     type => "=s",
@@ -58,6 +59,7 @@ our $module_opts = {
         },
         convert_full => {
             function => \&promote,
+            vcenter_connect => 1,
             opts     => {
                 vmname => {
                     type     => "=s",
@@ -68,6 +70,7 @@ our $module_opts = {
         },
         info => {
             helper    => "VM_functions/VM_info_function",
+            vcenter_connect => 1,
             functions => {
                 dumper => {
                     function      => \&info_dumper,
@@ -100,6 +103,7 @@ our $module_opts = {
             functions => {
                 cdrom => {
                     function => \&add_cdrom,
+                    vcenter_connect => 1,
                     opts     => {
                         vmname => {
                             type => "=s",
@@ -110,6 +114,7 @@ our $module_opts = {
                 },
                 interface => {
                     function => \&add_interface,
+                    vcenter_connect => 1,
                     opts     => {
                         vmname => {
                             type => "=s",
@@ -128,6 +133,7 @@ our $module_opts = {
                 },
                 disk => {
                     function => \&add_disk,
+                    vcenter_connect => 1,
                     opts     => {
                         vmname => {
                             type => "=s",
@@ -143,6 +149,7 @@ our $module_opts = {
                 },
                 snapshot => {
                     function => \&add_snapshot,
+                    vcenter_connect => 1,
                     opts     => {
                         vmname => {
                             type => "=s",
@@ -166,6 +173,7 @@ our $module_opts = {
                 },
                 folder => {
                     function => \&add_folder,
+                    vcenter_connect => 1,
                     opts     => {
                         name => {
                             type     => "=s",
@@ -182,6 +190,7 @@ our $module_opts = {
                 },
                 resourcepool => {
                     function => \&add_resourcepool,
+                    vcenter_connect => 1,
                     opts     => {
                         name => {
                             type     => "=s",
@@ -203,6 +212,7 @@ our $module_opts = {
             functions => {
                 cdrom => {
                     function => \&delete_cdrom,
+                    vcenter_connect => 1,
                     opts     => {
                         vmname => {
                             type     => "=s",
@@ -218,6 +228,7 @@ our $module_opts = {
                 },
                 interface => {
                     function => \&delete_interface,
+                    vcenter_connect => 1,
                     opts     => {
                         vmname => {
                             type     => "=s",
@@ -233,6 +244,7 @@ our $module_opts = {
                 },
                 disk => {
                     function => \&delete_disk,
+                    vcenter_connect => 1,
                     opts     => {
                         vmname => {
                             type     => "=s",
@@ -248,6 +260,7 @@ our $module_opts = {
                 },
                 snapshot => {
                     function => \&delete_snapshot,
+                    vcenter_connect => 1,
                     opts     => {
                         vmname => {
                             type     => "=s",
@@ -269,6 +282,7 @@ our $module_opts = {
                 },
                 vm => {
                     function => \&delete_vm,
+                    vcenter_connect => 1,
                     opts     => {
                         vmname => {
                             type     => "=s",
@@ -279,6 +293,7 @@ our $module_opts = {
                 },
                 resourcepool => {
                     function => \&delete_resourcepool,
+                    vcenter_connect => 1,
                     opts     => {
                         name => {
                             type     => "=s",
@@ -289,6 +304,7 @@ our $module_opts = {
                 },
                 folder => {
                     function => \&delete_folder,
+                    vcenter_connect => 1,
                     opts     => {
                         name => {
                             type     => "=s",
@@ -304,6 +320,7 @@ our $module_opts = {
             functions => {
                 cdrom => {
                     function => \&list_cdrom,
+                    vcenter_connect => 1,
                     opts     => {
                         vmname => {
                             type     => "=s",
@@ -314,6 +331,7 @@ our $module_opts = {
                 },
                 interface => {
                     function => \&list_interface,
+                    vcenter_connect => 1,
                     opts     => {
                         vmname => {
                             type     => "=s",
@@ -324,6 +342,7 @@ our $module_opts = {
                 },
                 disk => {
                     function => \&list_disk,
+                    vcenter_connect => 1,
                     opts     => {
                         vmname => {
                             type     => "=s",
@@ -334,6 +353,7 @@ our $module_opts = {
                 },
                 snapshot => {
                     function => \&list_snapshot,
+                    vcenter_connect => 1,
                     opts     => {
                         vmname => {
                             type     => "=s",
@@ -349,6 +369,7 @@ our $module_opts = {
             functions => {
                 cdrom => {
                     function => \&change_cdrom,
+                    vcenter_connect => 1,
                     opts     => {
                         vmname => {
                             type     => "=s",
@@ -374,6 +395,7 @@ our $module_opts = {
                 },
                 interface => {
                     function => \&change_interface,
+                    vcenter_connect => 1,
                     opts     => {
                         vmname => {
                             type     => "=s",
@@ -395,6 +417,7 @@ our $module_opts = {
                 },
                 disk => {
                     function => \&change_disk,
+                    vcenter_connect => 1,
                     opts     => {
                         vmname => {
                             type     => "=s",
@@ -415,6 +438,7 @@ our $module_opts = {
                 },
                 altername => {
                     function => \&change_altername,
+                    vcenter_connect => 1,
                     opts     => {
                         vmname => {
                             type     => "=s",
@@ -430,6 +454,7 @@ our $module_opts = {
                 },
                 snapshot => {
                     function => \&change_snapshot,
+                    vcenter_connect => 1,
                     opts     => {
                         vmname => {
                             type     => "=s",
@@ -445,6 +470,7 @@ our $module_opts = {
                 },
                 power => {
                     function => \&change_power,
+                    vcenter_connect => 1,
                     opts     => {
                         vmname => {
                             type     => "=s",
@@ -463,6 +489,7 @@ our $module_opts = {
         },
         run => {
             prereq_module => [qw(LWP::UserAgent)],
+            vcenter_connect => 1,
             function      => \&run_command,
             opts          => {
                 vmname => {
@@ -505,6 +532,7 @@ our $module_opts = {
         },
         transfer => {
             function      => \&transfer,
+            vcenter_connect => 1,
             prereq_module => [qw(LWP::Simple HTTP::Request LWP::UserAgent)],
             opts          => {
                 type => {
