@@ -654,7 +654,7 @@ sub poweron {
         'runtime.powerState' );
     my $powerstate = $view->get_property('runtime.powerState');
     if ( $powerstate->val ne "poweredOff" ) {
-        &Log::warning("Machine is already powered on");
+        &Log::info("Machine is already powered on");
         return 0;
     }
     my $task = $view->PowerOnVM_Task;
@@ -673,7 +673,7 @@ sub poweroff {
         'runtime.powerState' );
     my $powerstate = $view->get_property('runtime.powerState');
     if ( $powerstate->val eq "poweredOff" ) {
-        &Log::warning("Machine is already powered off");
+        &Log::info("Machine is already powered off");
         return 0;
     }
     my $task = $view->PowerOffVM_Task;

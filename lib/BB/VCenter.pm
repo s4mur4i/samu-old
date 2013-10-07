@@ -318,6 +318,8 @@ sub ticket_vms_name {
     for my $vm (@$vms) {
         push( @return, $vm->name );
     }
+    &Log::debug("Finishing VCenter::ticket_vms_name");
+    &Log::dumpobj("return_names", @return);
     return \@return;
 }
 

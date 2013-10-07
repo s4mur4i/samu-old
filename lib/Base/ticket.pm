@@ -307,8 +307,8 @@ sub ticket_on {
     &Log::debug1("Opts are: ticket=>'$ticket'");
     my $machines = &VCenter::ticket_vms_name($ticket);
     for my $vm (@$machines) {
-        print "Powering on '" . $vm->name . "'\n";
-        &Guest::poweron( $vm->name );
+        print "Powering on '" . $vm . "'\n";
+        &Guest::poweron( $vm );
     }
     &Log::debug("Finishing Ticket::ticket_on sub");
     return 1;
@@ -346,8 +346,8 @@ sub ticket_off {
     &Log::debug1("Opts are: ticket=>'$ticket'");
     my $machines = &VCenter::ticket_vms_name($ticket);
     for my $vm (@$machines) {
-        print "Powering off '" . $vm->name . "'\n";
-        &Guest::poweroff( $vm->name );
+        print "Powering off '" . $vm . "'\n";
+        &Guest::poweroff( $vm );
     }
     &Log::debug("Finishing Ticket::ticket_off sub");
     return 1;
