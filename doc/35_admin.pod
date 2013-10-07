@@ -34,6 +34,10 @@ Test connection to VCenter. Prints the Server time
 
 Transfer a pod file to Dokuwiki format
 
+=item list
+
+List information about environment
+
 =back
 
 =head1 ADMIN_functions
@@ -94,7 +98,7 @@ The output file
 
 =back
 
-=head2 ADMIN_list_function
+=head2 ADMIN_list_functions
 
 =head3 SYNOPSIS
 

@@ -16,23 +16,23 @@ samu.pl vm delete [options] [function]
 
 =item cdrom
 
-Delete a cdrom drive to a vm
+Delete a cdrom drive to a virtual machine
 
 =item interface
 
-Delete a network interface to a vm
+Delete a network interface to a virtual machine
 
 =item disk
 
-Delete a hard disk from a vm
+Delete a hard disk from a virtual machine
 
 =item snapshot
 
-Delete a snapshot attached to a vm
+Delete a snapshot attached to a virtual machine
 
 =item vm
 
-Delete a vm
+Delete a virtual machine
 
 =item folder
 
@@ -56,7 +56,7 @@ samu.pl vm delete cdrom [options]
 
 =item vmname
 
-Name of vm
+Name of virtual machine
 
 =item id
 
@@ -76,7 +76,7 @@ samu.pl vm delete interface [options]
 
 =item vmname
 
-Name of vm
+Name of virtual machine
 
 =item id
 
@@ -96,7 +96,7 @@ samu.pl vm delete disk [options]
 
 =item vmname
 
-Name of vm
+Name of virtual machine
 
 =item id
 
@@ -116,7 +116,7 @@ samu.pl vm delete snapshot [options]
 
 =item vmname
 
-Name of vm
+Name of virtual machine
 
 =item id
 
@@ -140,7 +140,7 @@ samu.pl vm delete vm [options]
 
 =item vmname
 
-Name of vm
+Name of virtual machine
 
 =back
 

@@ -19,37 +19,36 @@ our $module_opts = {
     functions => {
         add => {
             function => \&datastore_add,
-            opts => {
+            opts     => {
                 datastore => {
-                    type => "=s",
-                    help => "Name of datastore",
+                    type     => "=s",
+                    help     => "Name of datastore",
                     required => 1,
                 },
             },
         },
         delete => {
             function => \&datastore_delete,
-            opts => {
+            opts     => {
                 datastore => {
-                    type => "=s",
-                    help => "Name of datastore",
+                    type     => "=s",
+                    help     => "Name of datastore",
                     required => 1,
                 },
             },
         },
         list => {
             function => \&datastore_list,
-            opts => {
-            },
+            opts     => {},
         },
         info => {
             function => \&datastore_info,
-            opts => {
+            opts     => {
                 datastore => {
-                    type => "=s",
-                    help => "Name of datastore",
+                    type     => "=s",
+                    help     => "Name of datastore",
                     required => 0,
-                    default => 0,
+                    default  => 0,
                 },
             },
         },
@@ -184,7 +183,6 @@ sub datastore_list {
     &Log::debug("Finishing Datastore::datastore_list sub");
     return 1;
 }
-
 
 =pod
 

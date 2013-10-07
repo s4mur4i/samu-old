@@ -49,7 +49,7 @@ our $module_opts = {
             },
         },
         list => {
-            helper    => "ADMIN/ADMIN_list_functions",
+            helper    => "ADMIN_functions/ADMIN_list_functions",
             functions => {
                 folder => {
                     function => \&list_folder,

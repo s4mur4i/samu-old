@@ -78,7 +78,7 @@ use Exception::Class (
         fields      => ['module'],
     },
 
-     ## Template Exceptions
+    ## Template Exceptions
     'Template::Status' => {
         isa         => 'Template',
         description => 'Template does not exist',

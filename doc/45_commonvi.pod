@@ -60,7 +60,7 @@ VI SDK URL to connect to. Required if server is not present
 
 =item --username (variable VI_USERNAME)
 
-Username
+User name
 
 =item --verbose (variable VI_VERBOSE)
 

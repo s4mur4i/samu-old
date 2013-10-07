@@ -58,10 +58,10 @@ our $module_opts = {
         },
         convert_full => {
             function => \&promote,
-            opts => {
+            opts     => {
                 vmname => {
-                    type => "=s",
-                    help => "Which machine to convert",
+                    type     => "=s",
+                    help     => "Which machine to convert",
                     required => 1,
                 },
             },
@@ -70,9 +70,9 @@ our $module_opts = {
             helper    => "VM_functions/VM_info_function",
             functions => {
                 dumper => {
-                    function => \&info_dumper,
-                    prereq_module => [ qw(Data::Dumper) ];
-                    opts     => {
+                    function      => \&info_dumper,
+                    prereq_module => [qw(Data::Dumper)],
+                    opts          => {
                         vmname => {
                             type => "=s",
                             help =>
@@ -82,9 +82,9 @@ our $module_opts = {
                     },
                 },
                 runtime => {
-                    function => \&info_runtime,
-                    prereq_module => [ qw(Data::Dumper) ];
-                    opts     => {
+                    function      => \&info_runtime,
+                    prereq_module => [qw(Data::Dumper)],
+                    opts          => {
                         vmname => {
                             type => "=s",
                             help =>
@@ -166,7 +166,7 @@ our $module_opts = {
                 },
                 folder => {
                     function => \&add_folder,
-                    opts => {
+                    opts     => {
                         name => {
                             type     => "=s",
                             help     => "Name of folder to create",
@@ -176,13 +176,13 @@ our $module_opts = {
                             type     => "=s",
                             help     => "Name of parent to create in",
                             required => 0,
-                            default => "vm",
+                            default  => "vm",
                         },
                     },
                 },
                 resourcepool => {
                     function => \&add_resourcepool,
-                    opts => {
+                    opts     => {
                         name => {
                             type     => "=s",
                             help     => "Name of folder to create",
@@ -192,7 +192,7 @@ our $module_opts = {
                             type     => "=s",
                             help     => "Name of parent to create in",
                             required => 0,
-                            default => "resources",
+                            default  => "resources",
                         },
                     },
                 },
@@ -279,7 +279,7 @@ our $module_opts = {
                 },
                 resourcepool => {
                     function => \&delete_resourcepool,
-                    opts => {
+                    opts     => {
                         name => {
                             type     => "=s",
                             help     => "Name of resource pool to delete",
@@ -289,7 +289,7 @@ our $module_opts = {
                 },
                 folder => {
                     function => \&delete_folder,
-                    opts => {
+                    opts     => {
                         name => {
                             type     => "=s",
                             help     => "Name of folder to delete",
@@ -389,7 +389,7 @@ our $module_opts = {
                             type     => "=s",
                             help     => "Which network to change to",
                             required => 0,
-                            default => "VLAN21",
+                            default  => "VLAN21",
                         },
                     },
                 },
@@ -402,13 +402,13 @@ our $module_opts = {
                             required => 1,
                         },
                         num => {
-                            type => "=s",
-                            help => "Number of device",
+                            type     => "=s",
+                            help     => "Number of device",
                             required => 1,
                         },
                         size => {
-                            type => "=s",
-                            help => "Size of requested disk",
+                            type     => "=s",
+                            help     => "Size of requested disk",
                             required => 1,
                         },
                     },
@@ -462,7 +462,7 @@ our $module_opts = {
             },
         },
         run => {
-            prereq_module => [ qw(LWP::UserAgent)],
+            prereq_module => [qw(LWP::UserAgent)],
             function      => \&run_command,
             opts          => {
                 vmname => {
@@ -504,9 +504,9 @@ our $module_opts = {
             },
         },
         transfer => {
-            function => \&transfer,
-            prereq_module => [ qw(LWP::Simple HTTP::Request LWP::UserAgent) ],
-            opts     => {
+            function      => \&transfer,
+            prereq_module => [qw(LWP::Simple HTTP::Request LWP::UserAgent)],
+            opts          => {
                 type => {
                     type     => "=s",
                     help     => "Diretion of transfer, Values: to/from",
@@ -870,25 +870,40 @@ sub change_altername {
 
 sub change_cdrom {
     &Log::debug("Starting Entity::change_cdrom sub");
-    my $vmname = Opts::get_option('vmname');
-    my $num = Opts::get_option('num');
-    my $iso = Opts::get_option('iso') || 0;
+    my $vmname  = Opts::get_option('vmname');
+    my $num     = Opts::get_option('num');
+    my $iso     = Opts::get_option('iso') || 0;
     my $unmount = Opts::get_option('unmount') || 0;
-    &Log::debug1("Opts are: vmname=>'$vmname', num=>'$num', iso=>'$iso', unmount=>'$unmount'");
+    &Log::debug1(
+"Opts are: vmname=>'$vmname', num=>'$num', iso=>'$iso', unmount=>'$unmount'"
+    );
     if ( $unmount and $iso ) {
-        Vcenter::Opts->throw( error => 'iso and unmount both specified', opt => "unmount and iso");
-    } elsif ( $unmount ) {
+        Vcenter::Opts->throw(
+            error => 'iso and unmount both specified',
+            opt   => "unmount and iso"
+        );
+    }
+    elsif ($unmount) {
         my $spec = &Guest::remove_cdrom_iso_spec( $vmname, $num );
-        &Guest::reconfig_vm( $vmname ,$spec );
-    } elsif ( $iso ) {
-        if ( &VCenter::datastore_file_exists( $iso) ) {
+        &Guest::reconfig_vm( $vmname, $spec );
+    }
+    elsif ($iso) {
+        if ( &VCenter::datastore_file_exists($iso) ) {
             my $spec = &Guest::change_cdrom_iso_spec( $vmname, $num, $iso );
-            &Guest::reconfig_vm( $vmname ,$spec );
-        } else {
-            Vcenter::Path->throw( error => 'Datastore file could not be found', path => $iso);
+            &Guest::reconfig_vm( $vmname, $spec );
         }
-    } else {
-        Vcenter::Opts->throw( error => 'iso or unmount not specified', opt => "unmount and iso");
+        else {
+            Vcenter::Path->throw(
+                error => 'Datastore file could not be found',
+                path  => $iso
+            );
+        }
+    }
+    else {
+        Vcenter::Opts->throw(
+            error => 'iso or unmount not specified',
+            opt   => "unmount and iso"
+        );
     }
     &Log::debug("Finishing Entity::change_cdrom sub");
     return 1;
@@ -922,13 +937,15 @@ sub change_cdrom {
 
 sub change_interface {
     &Log::debug("Starting Entity::change_interface sub");
-    my $vmname = Opts::get_option('vmname');
-    my $num = Opts::get_option('num');
+    my $vmname  = Opts::get_option('vmname');
+    my $num     = Opts::get_option('num');
     my $network = Opts::get_option('network');
-    &Log::debug1("Opts are: vmname=>'$vmname', num=>'$num', network=>'$network'");
-    my $spec = &Guest::change_interface_spec( $vmname, $num, $network);
-    &Guest::reconfig_vm( $vmname ,$spec );
-#FIXME there is some issue here
+    &Log::debug1(
+        "Opts are: vmname=>'$vmname', num=>'$num', network=>'$network'");
+    my $spec = &Guest::change_interface_spec( $vmname, $num, $network );
+    &Guest::reconfig_vm( $vmname, $spec );
+
+    #FIXME there is some issue here
     &Log::debug("Finishing Entity::change_interface sub");
     return 1;
 }
@@ -1155,7 +1172,9 @@ sub clone_vm {
     my $os_temp     = Opts::get_option('os_temp');
     &Support::get_key_info( 'template', $os_temp );
     my $domain = Opts::get_option('domain');
-    &Log::debug1("Opts are: parent_pool=>'$parent_pool', ticket=>'$ticket', os_temp=>'$os_temp', domain=>'$domain'");
+    &Log::debug1(
+"Opts are: parent_pool=>'$parent_pool', ticket=>'$ticket', os_temp=>'$os_temp', domain=>'$domain'"
+    );
     &Log::debug("Get os_temp object for cloning and information");
     my $os_temp_path = &Support::get_key_value( 'template', $os_temp, 'path' );
     my $os_temp_view =
@@ -1435,7 +1454,6 @@ sub transfer {
     return 1;
 }
 
-
 =pod
 
 =head1 delete_vm
@@ -1557,10 +1575,10 @@ sub delete_snapshot {
 sub delete_cdrom {
     &Log::debug("Starting Entity::delete_cdrom sub");
     my $vmname = &Opts::get_option('vmname');
-    my $id = &Opts::get_option('id');
+    my $id     = &Opts::get_option('id');
     &Log::debug1("Opts are: vmname=>'$vmname', id=>'$id'");
     my @cdrom_hw = @{ &Guest::get_hw( $vmname, 'VirtualCdrom' ) };
-    &Guest::remove_hw($vmname, $cdrom_hw[$id]);
+    &Guest::remove_hw( $vmname, $cdrom_hw[$id] );
     &Log::debug("Finishing Entity::delete_cdrom sub");
     return 1;
 }
@@ -1594,10 +1612,10 @@ sub delete_cdrom {
 sub delete_disk {
     &Log::debug("Starting Entity::delete_disk sub");
     my $vmname = &Opts::get_option('vmname');
-    my $id = &Opts::get_option('id');
+    my $id     = &Opts::get_option('id');
     &Log::debug1("Opts are: vmname=>'$vmname', id=>'$id'");
     my @disk_hw = @{ &Guest::get_hw( $vmname, 'VirtualDisk' ) };
-    &Guest::remove_hw($vmname, $disk_hw[$id]);
+    &Guest::remove_hw( $vmname, $disk_hw[$id] );
     &Log::debug("Finishing Entity::delete_disk sub");
     return 1;
 }
@@ -1631,10 +1649,10 @@ sub delete_disk {
 sub delete_interface {
     &Log::debug("Starting Entity::delete_cdrom sub");
     my $vmname = &Opts::get_option('vmname');
-    my $id = &Opts::get_option('id');
+    my $id     = &Opts::get_option('id');
     &Log::debug1("Opts are: vmname=>'$vmname', id=>'$id'");
     my @net_hw = @{ &Guest::get_hw( $vmname, 'VirtualEthernetCard' ) };
-    &Guest::remove_hw( $vmname, $net_hw[$id]);
+    &Guest::remove_hw( $vmname, $net_hw[$id] );
     &Log::debug("Finishing Entity::delete_cdrom sub");
     return 1;
 }
@@ -1669,9 +1687,10 @@ sub delete_resourcepool {
     &Log::debug("Starting Entity::delete_resourcepool sub");
     my $name = &Opts::get_option('name');
     &Log::debug1("Opts are: name=>'$name'");
-    if ( &VCenter::check_if_empty_entity( $name, 'ResourcePool') ) {
+    if ( &VCenter::check_if_empty_entity( $name, 'ResourcePool' ) ) {
         &VCenter::destroy_entity( $name, 'ResourcePool' );
-    } else {
+    }
+    else {
         &Log::critical("ResourcePool is not empty");
         exit;
     }
@@ -1709,9 +1728,10 @@ sub delete_folder {
     &Log::debug("Starting Entity::delete_folder sub");
     my $name = &Opts::get_option('name');
     &Log::debug1("Opts are: name=>'$name'");
-    if ( &VCenter::check_if_empty_entity( $name, 'Folder') ) {
+    if ( &VCenter::check_if_empty_entity( $name, 'Folder' ) ) {
         &VCenter::destroy_entity( $name, 'Folder' );
-    } else {
+    }
+    else {
         &Log::critical("Folder is not empty");
         exit;
     }
@@ -1747,7 +1767,8 @@ sub delete_folder {
 
 sub add_folder {
     &Log::debug("Starting Entity::add_folder sub");
-    &VCenter::create_folder( &Opts::get_option('name'), &Opts::get_option('parent') );
+    &VCenter::create_folder( &Opts::get_option('name'),
+        &Opts::get_option('parent') );
     &Log::debug("Finishing Entity::add_folder sub");
     return 1;
 }
@@ -1780,7 +1801,8 @@ sub add_folder {
 
 sub add_resourcepool {
     &Log::debug("Starting Entity::add_resourcepool sub");
-    &VCenter::create_resource_pool( &Opts::get_option('name'), &Opts::get_option('parent') );
+    &VCenter::create_resource_pool( &Opts::get_option('name'),
+        &Opts::get_option('parent') );
     &Log::debug("Finishing Entity::add_resourcepool sub");
     return 1;
 }
@@ -1815,7 +1837,7 @@ sub promote {
     &Log::debug("Starting Entity::promote sub");
     my $vmname = &Opts::get_option('vmname');
     &Log::debug1("Opts are: vmname=>'$vmname'");
-    &Guest::promote( $vmname );
+    &Guest::promote($vmname);
     &Log::debug("Finished Entity::promote sub");
     return 1;
 }
@@ -1849,7 +1871,8 @@ sub promote {
 sub change_disk {
     &Log::debug("Starting Entity::change_disk sub");
     print "Not implemented\n";
-#FIXME Implement
+
+    #FIXME Implement
     &Log::debug("Finishing Entity::change_disk sub");
     return 1;
 }

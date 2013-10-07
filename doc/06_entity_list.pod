@@ -16,19 +16,19 @@ samu.pl vm list [options] [function]
 
 =item interface
 
-List networks interfaces attached to a vm
+List networks interfaces attached to a virtual machine
 
 =item cdrom
 
-List cdroms attached to a vm
+List cdroms attached to a virtual machine
 
 =item disk
 
-List disks attached to a vm
+List disks attached to a virtual machine
 
 =item snapshot
 
-List snapshots attached to a vm
+List snapshots attached to a virtual machine
 
 =back
 
@@ -44,7 +44,7 @@ samu.pl vm list interface [options] [function]
 
 =item vmname
 
-Name of vm
+Name of virtual machine
 
 =back
 
@@ -60,7 +60,7 @@ samu.pl vm list cdrom [options] [function]
 
 =item vmname
 
-Name of vm
+Name of virtual machine
 
 =back
 
@@ -76,7 +76,7 @@ samu.pl vm list snapshot [options] [function]
 
 =item vmname
 
-Name of vm
+Name of virtual machine
 
 =back
 
@@ -92,6 +92,6 @@ samu.pl vm list disk [options] [function]
 
 =item vmname
 
-Name of vm
+Name of virtual machine
 
 =back

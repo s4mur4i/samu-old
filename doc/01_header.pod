@@ -1,6 +1,6 @@
 =head1 NAME
 
-samu.pl -- Support Automatisation Management Util
+samu.pl -- Support Automatisation Management Utility
 
 =head1 DESCRIPTION
 

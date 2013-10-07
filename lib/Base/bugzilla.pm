@@ -21,17 +21,16 @@ our $module_opts = {
     functions => {
         info => {
             function => \&info,
-            opts => {
+            opts     => {
                 ticket => {
-                    type => "=s",
-                    help => "The bugzilla ticket to list information about",
+                    type     => "=s",
+                    help     => "The bugzilla ticket to list information about",
                     required => 1,
                 },
             },
         },
     },
 };
-
 
 =pod
 

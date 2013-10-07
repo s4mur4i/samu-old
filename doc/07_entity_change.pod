@@ -24,19 +24,19 @@ Change the network connected to a network
 
 =item altername
 
-Change the alternative name of a vm
+Change the alternative name of a virtual machine
 
 =item snapshot
 
-Revert to snapshot attached to a vm
+Revert to snapshot attached to a virtual machine
 
 =item power
 
-Change the power state of a vm
+Change the power state of a virtual machine
 
 =item disk
 
-Change the size of harddrive
+Change the size of hard disk
 
 =back
 
@@ -52,7 +52,7 @@ samu.pl vm change cdrom [options]
 
 =item vmname
 
-Name of vm
+Name of virtual machine
 
 =item num
 
@@ -60,9 +60,9 @@ Number of cdrom
 
 =item iso
 
-VMware path to iso
+Datastore path to iso
 
-=item unmoun
+=item unmount
 
 Unmount the attached iso
 
@@ -80,7 +80,7 @@ samu.pl vm change interface [options]
 
 =item vmname
 
-Name of vm
+Name of virtual machine
 
 =item num
 
@@ -104,11 +104,11 @@ samu.pl vm change altername [options]
 
 =item vmname
 
-Name of vm
+Name of virtual machine
 
 =item name
 
-New alternative vm name
+New alternative virtual machine name
 
 =back
 
@@ -124,7 +124,7 @@ samu.pl vm change snapshot [options]
 
 =item vmname
 
-Name of vm
+Name of virtual machine
 
 =item id
 
@@ -144,7 +144,7 @@ samu.pl vm change power [options]
 
 =item vmname
 
-Name of vm
+Name of virtual machine
 
 =item state
 
@@ -164,11 +164,11 @@ samu.pl vm change disk [options]
 
 =item vmname
 
-Name of vm
+Name of virtual machine
 
 =item num
 
-Number of harddrive
+Number of hard disk
 
 =item size
 

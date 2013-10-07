@@ -16,19 +16,19 @@ samu.pl vm add [options] [function]
 
 =item cdrom
 
-Add a cdrom drive to a vm
+Add a cdrom drive to a virtual machine
 
 =item interface
 
-Add a network interface to a vm
+Add a network interface to a virtual machine
 
 =item disk
 
-Add a thin provisioned hard disk to a vm
+Add a thin provisioned hard disk to a virtual machine
 
 =item snapshot
 
-Add snapshots to a vm
+Add snapshots to a virtual machine
 
 =item folder
 
@@ -52,7 +52,7 @@ samu.pl vm add cdrom [options]
 
 =item vmname
 
-Name of vm
+Name of virtual machine
 
 =back
 
@@ -68,7 +68,7 @@ samu.pl vm add interface [options]
 
 =item vmname
 
-Name of vm
+Name of virtual machine
 
 =item type
 
@@ -88,7 +88,7 @@ samu.pl vm add disk [options]
 
 =item vmname
 
-Name of vm
+Name of virtual machine
 
 =item size
 
@@ -108,7 +108,7 @@ samu.pl vm add function [options]
 
 =item vmname
 
-Name of vm
+Name of virtual machine
 
 =item snap_name
 
@@ -136,7 +136,7 @@ Name of requested folder
 
 =item parent
 
-Name of requeted parent. Defaults to vm folder
+Name of requested parent. Defaults to virtual machine folder
 
 =back
 

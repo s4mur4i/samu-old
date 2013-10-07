@@ -62,8 +62,7 @@ sub bugzilla_status {
         &Log::debug("Content could not be understood returning Unknown");
         $content = "Unknown";
     }
-    &Log::debug(
-        "Finishing Bugzilla::bugzilla_status sub");
+    &Log::debug("Finishing Bugzilla::bugzilla_status sub");
     &Log::debug("Return=>'$content'");
     return $content;
 }

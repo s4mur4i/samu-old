@@ -20,7 +20,7 @@ Print the help page
 
 =item clone
 
-Sub used to provision vm guests from templates.
+Sub used to provision virtual machine guests from templates.
 
 =item add
 
@@ -40,7 +40,7 @@ Sub to change settings of a guest
 
 =item info
 
-Sub used to dump information about a vm
+Sub used to dump information about a virtual machine
 
 =item convert_full
 
@@ -70,7 +70,7 @@ samu.pl vm clone [options]
 
 =item ticket
 
-The ticket attached to the envirnoment
+The ticket attached to the environment
 
 =item os_temp
 
@@ -106,7 +106,7 @@ samu.pl vm convert_full [options]
 
 =item vmname
 
-Name of vm
+Name of virtual machine
 
 =back
 
@@ -128,7 +128,7 @@ samu.pl vm info [options] [function]
 
 =item dumper
 
-This information is used for development purposes, It dumps all object information about vm to STDOUT
+This information is used for development purposes, It dumps all object information about virtual machine to STDOUT
 
 =item runtime
 
@@ -164,6 +164,6 @@ samu.pl vm info runtime [options]
 
 =item vmname
 
-Whcih machines runtime information should we dump (dumps raw hash)
+Which machines runtime information should we dump (dumps raw hash)
 
 =back

@@ -18,8 +18,6 @@ pod_file_spelling_ok( "$FindBin::Bin/../../doc/main.pod",
 done_testing;
 ## Need to see how to handle some exceptions
 __END__
-vv
-vvv
 DATASTORE
 KAYAKO
 TBD
@@ -33,13 +31,9 @@ https
 kayako
 passthroughauth
 passthroughauthpackage
-portnumber
-runtime
 savesessionfile
-servicepath
 sessionfile
 url
-username
 utf
 vm
 DNS
@@ -52,7 +46,6 @@ README
 SDK
 STDOUT
 VCenter
-automatisation
 backend
 balabit
 bashrc
@@ -68,3 +61,20 @@ samu
 portgroups
 Krisztian
 Banhidy
+automatisation
+Automatisation
+username
+cpu
+desc
+Portgroup
+dvp
+num
+portnumber
+vmname
+vmware
+servicepath
+runtime
+workgroup
+cdroms
+resourcepool
+resourcepools

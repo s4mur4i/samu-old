@@ -19,10 +19,10 @@ our $module_opts = {
     functions => {
         info => {
             function => \&info,
-            opts => {
+            opts     => {
                 ticket => {
-                    type => '=s',
-                    help => "Number of ticket to gather info",
+                    type     => '=s',
+                    help     => "Number of ticket to gather info",
                     required => 1,
                 },
             },

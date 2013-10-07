@@ -48,19 +48,18 @@ sub entity_property_view {
 
 sub find_last_snapshot {
     my ($snapshot_view) = @_;
-    &Log::debug( "Starting Guest::find_last_snapshot sub, name=>'"
-          . $snapshot_view->name
-          . "',id=>'"
-          . $snapshot_view->id
-          . "'" );
-    if ( defined( $snapshot_view->[0]->{'childSnapshotList'} ) ) {
-        &Guest::find_last_snapshot(
-            $snapshot_view->[0]->{'childSnapshotList'} );
-    }
-    else {
-        &Log::debug(
-            "Found snapshot returning, name=>'" . $snapshot_view->name . "'" );
-        return $snapshot_view;
+    &Log::dumpobj( "snapshot", $snapshot_view );
+    &Log::debug("Starting Guest::find_last_snapshot sub");
+##FIXME atgondolni a rekurziot
+    foreach (@$snapshot_view) {
+        if ( defined( $_->{'childSnapshotList'} ) ) {
+            &Guest::find_last_snapshot( $_->{'childSnapshotList'} );
+        }
+        else {
+            &Log::debug( "Found snapshot returning, name=>'" . $_->name . "'" );
+            &Log::dumpobj( "return_snapshot", $_ );
+            return $_;
+        }
     }
 }
 
@@ -100,62 +99,115 @@ sub change_altername {
 }
 
 sub remove_cdrom_iso_spec {
-    my ($vmname, $num) = @_;
+    my ( $vmname, $num ) = @_;
     &Log::debug("Starting Guest::add_cdrom_spec sub");
     &Log::debug("Opts are, vmname=>'$vmname', num=>'$num'");
     my @cdrom_hw = @{ &Guest::get_hw( $vmname, 'VirtualCdrom' ) };
-    my $controller = &Guest::key2hw( $vmname, $cdrom_hw[$num]->{controllerKey} );
-    my $normbacking = VirtualCdromRemotePassthroughBackingInfo->new( exclusive => 0, deviceName => '' );
-    my $device = VirtualCdrom->new( backing => $normbacking, key => $cdrom_hw[$num]->{key}, controllerKey => $controller->{key} );
-    my $configspec = VirtualDeviceConfigSpec->new( device => $device, operation => VirtualDeviceConfigSpecOperation->new( 'edit' ) );
-    my $spec = VirtualMachineConfigSpec->new( deviceChange => [ $configspec ] );
-    return $spec
+    my $controller =
+      &Guest::key2hw( $vmname, $cdrom_hw[$num]->{controllerKey} );
+    my $normbacking = VirtualCdromRemotePassthroughBackingInfo->new(
+        exclusive  => 0,
+        deviceName => ''
+    );
+    my $device = VirtualCdrom->new(
+        backing       => $normbacking,
+        key           => $cdrom_hw[$num]->{key},
+        controllerKey => $controller->{key}
+    );
+    my $configspec = VirtualDeviceConfigSpec->new(
+        device    => $device,
+        operation => VirtualDeviceConfigSpecOperation->new('edit')
+    );
+    my $spec = VirtualMachineConfigSpec->new( deviceChange => [$configspec] );
+    return $spec;
 }
 
 sub change_cdrom_iso_spec {
     my ( $vmname, $num, $iso ) = @_;
     &Log::debug("Starting Guest::add_cdrom_spec sub");
     &Log::debug("Opts are, vmname=>'$vmname', num=>'$num', iso=>'$iso'");
-    if ( !&VCenter::datastore_file_exists( $iso )) {
-        Vcenter::Path->throw( error => 'Datastore file could not be found', path => $iso);
+    if ( !&VCenter::datastore_file_exists($iso) ) {
+        Vcenter::Path->throw(
+            error => 'Datastore file could not be found',
+            path  => $iso
+        );
     }
-    my ( $datas, $folder, $image ) = &Misc::filename_splitter( $iso );
+    my ( $datas, $folder, $image ) = &Misc::filename_splitter($iso);
     my @cdrom_hw = @{ &Guest::get_hw( $vmname, 'VirtualCdrom' ) };
-    my $controller = &Guest::key2hw( $vmname, $cdrom_hw[$num]->{controllerKey} );
+    my $controller =
+      &Guest::key2hw( $vmname, $cdrom_hw[$num]->{controllerKey} );
     my $isobacking = VirtualCdromIsoBackingInfo->new( fileName => $iso );
-    my $device = VirtualCdrom->new( backing => $isobacking, key => $cdrom_hw[$num]->{key}, controllerKey => $controller->{key} );
-    my $configspec = VirtualDeviceConfigSpec->new( device => $device, operation => VirtualDeviceConfigSpecOperation->new( 'edit' ) );
-    my $spec = VirtualMachineConfigSpec->new( deviceChange => [ $configspec ] );
+    my $device = VirtualCdrom->new(
+        backing       => $isobacking,
+        key           => $cdrom_hw[$num]->{key},
+        controllerKey => $controller->{key}
+    );
+    my $configspec = VirtualDeviceConfigSpec->new(
+        device    => $device,
+        operation => VirtualDeviceConfigSpecOperation->new('edit')
+    );
+    my $spec = VirtualMachineConfigSpec->new( deviceChange => [$configspec] );
     return $spec;
 }
 
 sub change_interface_spec {
-    my ( $vmname, $num, $network) = @_;
+    my ( $vmname, $num, $network ) = @_;
     &Log::debug("Starting Guest::change_interface_spec");
-    &Log::debug("Opts are, vmname=>'$vmname', num=>'$num', network=>'$network'");
+    &Log::debug(
+        "Opts are, vmname=>'$vmname', num=>'$num', network=>'$network'");
     my @net_hw = @{ &Guest::get_hw( $vmname, 'VirtualEthernetCard' ) };
-    my $network_view = &Guest::entity_property_view( $network, 'Network', 'name');
+    my $network_view =
+      &Guest::entity_property_view( $network, 'Network', 'name' );
     my $name = $network_view->{name};
     &Log::debug("Name is $name");
     my $backing;
+
     if ( $network_view->{mo_ref}->{type} eq 'Network' ) {
         &Log::debug("Network is a normal network");
-        $backing = VirtualEthernetCardNetworkBackingInfo->new( deviceName => $name, network => $network );
-    } elsif ($network_view->{mo_ref}->{type} eq 'DistributedVirtualPortgroup' ) {
+        $backing = VirtualEthernetCardNetworkBackingInfo->new(
+            deviceName => $name,
+            network    => $network
+        );
+    }
+    elsif ( $network_view->{mo_ref}->{type} eq 'DistributedVirtualPortgroup' ) {
         &Log::debug("Network is a normal DVP");
-        $network_view = &Guest::entity_full_view( $network, 'DistributedVirtualPortgroup');
-        my $switch = Vim::get_view( mo_ref => $network_view->{config}->{distributedVirtualSwitch} );
-        my $port = DistributedVirtualSwitchPortConnection->new( portgroupKey => $network_view->{key}, switchUuid => $switch->{uuid} );
-        $backing = VirtualEthernetCardDistributedVirtualPortBackingInfo->new( port => $port );
-    } else {
+        $network_view =
+          &Guest::entity_full_view( $network, 'DistributedVirtualPortgroup' );
+        my $switch = Vim::get_view(
+            mo_ref => $network_view->{config}->{distributedVirtualSwitch} );
+        my $port = DistributedVirtualSwitchPortConnection->new(
+            portgroupKey => $network_view->{key},
+            switchUuid   => $switch->{uuid}
+        );
+        $backing =
+          VirtualEthernetCardDistributedVirtualPortBackingInfo->new(
+            port => $port );
+    }
+    else {
         &Log::debug("Unkown network type");
+
         #FIXME Implement exception
     }
-    my $device = VirtualE1000->new( connectable => VirtualDeviceConnectInfo->new( startConnected => '1', allowGuestControl => '1', connected => '1' ) , wakeOnLanEnabled => 1, macAddress => $net_hw[$num]->{macAddress} , addressType => "Manual", key => $net_hw[$num]->{key} , backing => $backing, deviceInfo => Description->new( summary => $name, label => $name ) );
-    my $deviceconfig = VirtualDeviceConfigSpec->new( operation => VirtualDeviceConfigSpecOperation->new( 'edit' ), device => $device );
+    my $device = VirtualE1000->new(
+        connectable => VirtualDeviceConnectInfo->new(
+            startConnected    => '1',
+            allowGuestControl => '1',
+            connected         => '1'
+        ),
+        wakeOnLanEnabled => 1,
+        macAddress       => $net_hw[$num]->{macAddress},
+        addressType      => "Manual",
+        key              => $net_hw[$num]->{key},
+        backing          => $backing,
+        deviceInfo       => Description->new( summary => $name, label => $name )
+    );
+    my $deviceconfig = VirtualDeviceConfigSpec->new(
+        operation => VirtualDeviceConfigSpecOperation->new('edit'),
+        device    => $device
+    );
     my $spec = VirtualMachineConfigSpec->new( deviceChange => [$deviceconfig] );
     &Log::debug("Returning spec from change_interface_spec");
-    &Log::dumpobj( 'spec', $spec);
+    &Log::dumpobj( 'spec', $spec );
     return $spec;
 }
 
@@ -771,27 +823,37 @@ sub remove_snapshot {
 sub remove_hw {
     my ( $vmname, $hw ) = @_;
     &Log::debug("Starting Guest::remove_hw sub");
-    &Log::dumpobj( "hw", $hw);
+    &Log::dumpobj( "hw", $hw );
     my $deviceconfig;
-    if ( $hw->isa('VirtualDisk')) {
-        $deviceconfig = VirtualDeviceConfigSpec->new( operation => VirtualDeviceConfigSpecOperation->new( 'remove' ), device => $hw, fileOperation => VirtualDeviceConfigSpecFileOperation->new( 'destroy' ) );
-    } else {
-        $deviceconfig = VirtualDeviceConfigSpec->new( operation => VirtualDeviceConfigSpecOperation->new( 'remove' ), device => $hw );
+    if ( $hw->isa('VirtualDisk') ) {
+        $deviceconfig = VirtualDeviceConfigSpec->new(
+            operation => VirtualDeviceConfigSpecOperation->new('remove'),
+            device    => $hw,
+            fileOperation =>
+              VirtualDeviceConfigSpecFileOperation->new('destroy')
+        );
     }
-    my $vmspec = VirtualMachineConfigSpec->new( deviceChange => [$deviceconfig] );
-    &Guest::reconfig_vm( $vmname, $vmspec);
+    else {
+        $deviceconfig = VirtualDeviceConfigSpec->new(
+            operation => VirtualDeviceConfigSpecOperation->new('remove'),
+            device    => $hw
+        );
+    }
+    my $vmspec =
+      VirtualMachineConfigSpec->new( deviceChange => [$deviceconfig] );
+    &Guest::reconfig_vm( $vmname, $vmspec );
     return 1;
 }
 
 sub promote {
-    my ( $vmname ) = @_;
+    my ($vmname) = @_;
     &Log::debug("Starting Guest::promote sub");
     &Log::debug("Opts are, vmname=>'$vmname'");
-    &Guest::poweroff( $vmname );
-    my $view = &Guest::entity_name_view( $vmname, 'VirtualMachine');
-    my $task = $view->PromoteDisks_Task(unlink=>1);
-    &VCenter::Task_Status( $task );
-    &VCenter::move_into_folder( $vmname );
+    &Guest::poweroff($vmname);
+    my $view = &Guest::entity_name_view( $vmname, 'VirtualMachine' );
+    my $task = $view->PromoteDisks_Task( unlink => 1 );
+    &VCenter::Task_Status($task);
+    &VCenter::move_into_folder($vmname);
     &Log::debug("Finished Guest::promote sub");
     return 1;
 }
@@ -867,9 +929,18 @@ sub run_command {
         $info->{guestusername},
         $info->{guestpassword}
     );
-    my $guestProcMan = &VCenter::process_manager;
-    my $guestProgSpec = GuestProgramSpec->new( workingDirectory => $info->{workdir}, programPath=> $info->{prog}, arguments => $info->{prog_arg}, envVariables => [$info->{env}] );
-    my $pid = $guestProcMan->StartProgramInGuest( vm => $view, auth => $guestCreds, spec => $guestProgSpec );
+    my $guestProcMan  = &VCenter::process_manager;
+    my $guestProgSpec = GuestProgramSpec->new(
+        workingDirectory => $info->{workdir},
+        programPath      => $info->{prog},
+        arguments        => $info->{prog_arg},
+        envVariables     => [ $info->{env} ]
+    );
+    my $pid = $guestProcMan->StartProgramInGuest(
+        vm   => $view,
+        auth => $guestCreds,
+        spec => $guestProgSpec
+    );
     &Log::debug("Returning pid $pid");
     return $pid;
 }
@@ -975,7 +1046,9 @@ sub transfer_from_guest {
 sub guest_cred {
     my ( $vmname, $guestusername, $guestpassword ) = @_;
     &Log::debug("Starting Guest::guest_cred sub");
-    &Log::debug("Opts are, vmname=>'$vmname', guestusername=>'$guestusername', guestpassword=>'$guestpassword'");
+    &Log::debug(
+"Opts are, vmname=>'$vmname', guestusername=>'$guestusername', guestpassword=>'$guestpassword'"
+    );
     my $authMgr   = &VCenter::auth_manager;
     my $guestAuth = NamePasswordAuthentication->new(
         username           => $guestusername,
@@ -986,6 +1059,7 @@ sub guest_cred {
     eval {
         $authMgr->ValidateCredentialsInGuest( vm => $view, auth => $guestAuth );
     };
+
     if ($@) {
         Entity::Auth->throw(
             error    => 'Could not aquire Guest authentication object',
@@ -995,7 +1069,7 @@ sub guest_cred {
         );
     }
     &Log::debug("Returning guestAuth");
-    &Log::dumpobj( "guestauth", $guestAuth);
+    &Log::dumpobj( "guestauth", $guestAuth );
     return $guestAuth;
 }
 

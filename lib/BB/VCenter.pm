@@ -586,16 +586,17 @@ sub move_into_folder {
     my ($vmname) = @_;
     &Log::debug("Starting VCenter::move_into_folder sub");
     &Log::debug("Opts are, vmname=>'$vmname'");
-    my $splitted = &Misc::vmname_splitter( $vmname );
-    if ( !&VCenter::exists_entity( $splitted->{ticket}, 'Folder') ) {
+    my $splitted = &Misc::vmname_splitter($vmname);
+    if ( !&VCenter::exists_entity( $splitted->{ticket}, 'Folder' ) ) {
         &VCenter::create_folder( $splitted->{ticket}, 'vm' );
-    } else {
+    }
+    else {
         &Log::debug("Folder already exists");
     }
     my $view = &Guest::entity_name_view( $vmname, 'VirtualMachine' );
-    my $folder_view = &Guest::enity_name_view( $splitted->{ticket}, 'Folder');
-    my $task = $folder_view->MoveIntoFolder_Task( list => [ $view ] );
-    &VCenter::Task_Status( $task );
+    my $folder_view = &Guest::entity_name_view( $splitted->{ticket}, 'Folder' );
+    my $task = $folder_view->MoveIntoFolder_Task( list => [$view] );
+    &VCenter::Task_Status($task);
     &Log::debug("Finishing VCenter::move_into folder sub");
     return 1;
 }
@@ -667,9 +668,11 @@ sub process_manager {
 
 sub vm_last_snapshot_view {
     my ($vmname) = @_;
-    my $view = &Guest::entity_property_view( $vmname, 'VirtualMachine', 'snapshot');
+    my $view =
+      &Guest::entity_property_view( $vmname, 'VirtualMachine', 'snapshot' );
     my $snapshot_view;
-    if (   defined( $view->snapshot ) && defined( $view->snapshot->rootSnapshotList ) )
+    if (   defined( $view->snapshot )
+        && defined( $view->snapshot->rootSnapshotList ) )
     {
         $snapshot_view = $view->snapshot->rootSnapshotList;
     }
@@ -680,6 +683,7 @@ sub vm_last_snapshot_view {
             snapshot => 'none'
         );
     }
+## FIXME atgondolni a recurszit multi depthnel
     if ( defined( $snapshot_view->[0]->{'childSnapshotList'} ) ) {
         &Log::debug("Recursion for last snapshot");
         $snapshot_view =
@@ -687,20 +691,25 @@ sub vm_last_snapshot_view {
             $snapshot_view->[0]->{'childSnapshotList'} );
         &Log::debug("End of recursion");
     }
+    &Log::dumpobj( "snapshot_view", $snapshot_view );
     my $snapshot = &VCenter::moref2view( $snapshot_view->[0]->{'snapshot'} );
+    &Log::dumpobj( "snapshot", $snapshot );
     return $snapshot;
 }
 
 sub find_vms_with_disk {
-    my ( $disk ) = @_;
-    my @vms = ();
-    my $machine_views = Vim::find_entity_views(view_type => 'VirtualMachine', properties => ['layout.disk', 'name']);
+    my ($disk)        = @_;
+    my @vms           = ();
+    my $machine_views = Vim::find_entity_views(
+        view_type  => 'VirtualMachine',
+        properties => [ 'layout.disk', 'name' ]
+    );
     foreach (@$machine_views) {
         my $machine_view = $_;
-        my $disks = $machine_view->get_property('layout.disk');
+        my $disks        = $machine_view->get_property('layout.disk');
         foreach my $vdisk (@$disks) {
-            foreach my $diskfile ( @{$vdisk->{'diskFile'}}) {
-                if ( $diskfile eq $disk) {
+            foreach my $diskfile ( @{ $vdisk->{'diskFile'} } ) {
+                if ( $diskfile eq $disk ) {
                     push( @vms, $machine_view->get_property('name') );
                 }
             }
@@ -710,16 +719,29 @@ sub find_vms_with_disk {
 }
 
 sub datastore_file_exists {
-    my ( $filename ) = @_;
+    my ($filename) = @_;
     &Log::debug("Starting VCenter::datastore_file_exists sub");
     &Log::debug("Opts are, filename=>'$filename'");
-    my ( $datas, $folder, $image ) = @{ &Misc::filename_splitter( $filename )};
-    my $datastore = &Guest::entity_property_view( $datas, 'Datastore', 'browser');
-    my $browser =  &VCenter::moref2view( $datastore->browser );
-    my $files = FileQueryFlags->new( fileSize => 0, fileType => 1, modification => 0, fileOwner => 0 );
-    my $searchspec = HostDatastoreBrowserSearchSpec->new( details => $files, matchPattern => [ $image ] );
-    my $return = $browser->SearchDatastoreSubFolders( datastorePath => "[$datas] $folder", searchSpec => $searchspec );
-    if ( !defined( $return->[ 0 ]->file ) ) {
+    my ( $datas, $folder, $image ) = @{ &Misc::filename_splitter($filename) };
+    my $datastore =
+      &Guest::entity_property_view( $datas, 'Datastore', 'browser' );
+    my $browser = &VCenter::moref2view( $datastore->browser );
+    my $files   = FileQueryFlags->new(
+        fileSize     => 0,
+        fileType     => 1,
+        modification => 0,
+        fileOwner    => 0
+    );
+    my $searchspec = HostDatastoreBrowserSearchSpec->new(
+        details      => $files,
+        matchPattern => [$image]
+    );
+    my $return = $browser->SearchDatastoreSubFolders(
+        datastorePath => "[$datas] $folder",
+        searchSpec    => $searchspec
+    );
+
+    if ( !defined( $return->[0]->file ) ) {
         return 0;
     }
     return 1;
