@@ -17,7 +17,7 @@ BEGIN {
 }
 diag("Check if any entity exists for our test_1337 ticket");
 my @types = ( 'VirtualMachine', 'ResourcePool', 'Folder', 'DistributedVirtualSwitch' );
-is( &admin::cleanup, '',"Admin cleanup sub ran succesfully" );
+is( &admin::cleanup, 1,"Admin cleanup sub ran succesfully" );
 for my $type ( @types ) {
     my $view = Vim::find_entity_view( view_type => $type, properties => [ 'name' ], filter => { name => qr/^test_1337/ } );
     if ( defined( $view ) ) {
@@ -35,7 +35,7 @@ for my $type ( qw(ResourcePool Folder DistributedVirtualSwitch) ) {
 }
 diag("Creating resources and calling cleanup to see if deleted");
 &VCenter::create_test_entities;
-is( &admin::cleanup, '' ,"Admin cleanup sub deletes resource Pool" );
+is( &admin::cleanup, 1 ,"Admin cleanup sub deletes resource Pool" );
 for my $type ( @types ) {
     is( Vim::find_entity_view( view_type =>$type, properties => [ 'name' ], filter => { name => 'test_1337' } ), undef, "test_1337 $type doesn't exist after cleanup" );
 }
