@@ -8,6 +8,7 @@ use FindBin;
 use lib "$FindBin::Bin/../../lib/";
 use lib "$FindBin::Bin/../../vmware_lib/";
 use BB::Common;
+use BB::Test;
 use Base::entity;
 
 BEGIN {
@@ -22,7 +23,7 @@ BEGIN {
             plan( skip_all => "test_1337 $type exists. Delete it before test can be run" );
         }
     }
-    &VCenter::create_test_entities;
+    &Test::create_test_entities;
 }
 my @types = qw(VirtualMachine ResourcePool DistributedVirtualSwitch Folder);
 diag("Test ticket functions");
@@ -31,7 +32,7 @@ throws_ok { &VCenter::create_resource_pool( 'test_1337', 'Resources2' ) } 'Entit
 throws_ok { &VCenter::create_folder( 'test_1337', 'vm' ) } 'Entity::NumException', 'Same name folder cannot be created twice';
 throws_ok { &VCenter::create_folder( 'test_1337', 'vm2' ) } 'Entity::NumException', 'Exception is thrown if no parent exists';
 throws_ok { &VCenter::create_switch( 'test_1337' ) } 'Entity::NumException', 'Same name switch cannot be created twice';
-&VCenter::create_test_vm( 'test_1337-test-test_test-123' );
+&Test::create_test_vm( 'test_1337-test-test_test-123' );
 my $vmname = &VCenter::ticket_vms_name( 'test_1337' );
 is( scalar(@$vmname), 1, "ticket_vms_name returned one name" );
 like( $$vmname[0], qr/^test_1337-[^-]*-[^-]*-\d{1,3}/, "ticket_vms_name is a valid vmname" );

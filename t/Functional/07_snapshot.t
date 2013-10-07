@@ -9,6 +9,7 @@ use FindBin;
 use lib "$FindBin::Bin/../../lib/";
 use lib "$FindBin::Bin/../../vmware_lib/";
 use BB::Common;
+use BB::Test;
 use Base::entity;
 
 BEGIN {
@@ -23,9 +24,9 @@ BEGIN {
     }
 }
 diag("Test snapshot functions");
-&Util::connect();
-&VCenter::create_test_entities;
-&VCenter::create_test_vm( 'test_1337' );
+#&Util::connect();
+&Test::create_test_entities;
+&Test::create_test_vm( 'test_1337' );
 my $view = Vim::find_entity_views( view_type => 'VirtualMachine', properties => [ 'name', 'snapshot' ], filter => { name => qr/^test_1337/ } );
 ok( scalar(@$view) eq 1, "There is only one entity for snapshot test" );
 $view= $$view[0];
