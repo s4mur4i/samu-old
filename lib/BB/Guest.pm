@@ -9,33 +9,141 @@ BEGIN {
     our @EXPORT = qw( );
 }
 
-#tested
+=pod
+
+=head1 entity_name_view
+
+=head2 PURPOSE
+
+Returns a managed object containing the requested entities name hash
+
+=head2 PARAMETERS
+
+=over
+
+=item name
+
+Name of the requested entity
+
+=item type
+
+Type of the requested entity
+
+=back
+
+=head2 RETURNS
+
+Managed object with name property
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
+
 sub entity_name_view {
     my ( $name, $type ) = @_;
-    &Log::debug("Retrieving entity name view, name=>'$name', type=>'$type'");
+    &Log::debug("Starting Guest::entity_name_view sub");
+    &Log::debug1("Opts are: name=>'$name', type=>'$type'");
     &VCenter::num_check( $name, $type );
     my $view = &Guest::entity_property_view( $name, $type, 'name' );
+    &Log::dumpobj("view", $view);
+    &Log::debug("Finishing Guest::entity_name_view sub");
     return $view;
 }
 
-#tested
+=pod
+
+=head1 entity_full_view
+
+=head2 PURPOSE
+
+Returns a managed object containing the requested entities full hash
+
+=head2 PARAMETERS
+
+=over
+
+=item name
+
+Name of requested entity
+
+=item type
+
+Type of requested entity
+
+=back
+
+=head2 RETURNS
+
+Managed object with all property
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
+
 sub entity_full_view {
     my ( $name, $type ) = @_;
-    &Log::debug(
-        "Retrieving entity full view sub, name=>'$name', type=>'$type'");
+    &Log::debug("Starting Guest::entity_full_view sub");
+    &Log::debug1( "Opts are: name=>'$name', type=>'$type'");
     &VCenter::num_check( $name, $type );
     my $view =
       Vim::find_entity_view( view_type => $type, filter => { name => $name } );
     &Log::dumpobj( "full_view", $view );
+    &Log::debug("Finishing Guest::entity_full_view sub");
     return $view;
 }
 
-#tested
+=pod
+
+=head1 entity_property_view
+
+=head2 PURPOSE
+
+Returns a managed object containing the requested entities property hash
+
+=head2 PARAMETERS
+
+=over
+
+=item name
+
+Name of requested entity
+
+=item type
+
+Type of requested entity
+
+=back
+
+=head2 RETURNS
+
+Managed object with requested property
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
+
 sub entity_property_view {
     my ( $name, $type, $property ) = @_;
-    &Log::debug(
-"Retrieving entity property view sub, name=>'$name', type=>'$type', property=>'$property'"
-    );
+    &Log::debug("Starting Guest::entity_property_view sub");
+    &Log::debug1( "Opts are: name=>'$name', type=>'$type', property=>'$property'");
     &VCenter::num_check( $name, $type );
     my $view = Vim::find_entity_view(
         view_type  => $type,
@@ -43,65 +151,203 @@ sub entity_property_view {
         filter     => { name => $name }
     );
     &Log::dumpobj( "property_view", $view );
+    &Log::debug("Finishing Guest::entity_property_vuew sub");
     return $view;
 }
 
+=pod
+
+=head1 find_last_snapshot
+
+=head2 PURPOSE
+
+Retrieve last snapshot
+
+=head2 PARAMETERS
+
+=over
+
+=item snapshot_view
+
+Rootsnapshotlist hash
+
+=back
+
+=head2 RETURNS
+
+Last rootsnapshot is returned
+
+=head2 DESCRIPTION
+
+Multi level snapshots are not supported since it is fubar. Snapshots should be used with care, and should
+not be used with multi level setup
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
+
 sub find_last_snapshot {
     my ($snapshot_view) = @_;
-    &Log::dumpobj( "snapshot", $snapshot_view );
     &Log::debug("Starting Guest::find_last_snapshot sub");
-##FIXME atgondolni a rekurziot
+    &Log::dumpobj( "snapshot", $snapshot_view );
     foreach (@$snapshot_view) {
         if ( defined( $_->{'childSnapshotList'} ) ) {
             &Guest::find_last_snapshot( $_->{'childSnapshotList'} );
         }
         else {
-            &Log::debug( "Found snapshot returning, name=>'" . $_->name . "'" );
+            &Log::debug( "Finishing Guest::find_last_snapshot sub");
             &Log::dumpobj( "return_snapshot", $_ );
             return $_;
         }
     }
 }
 
-#tested
+=pod
+
+=head1 get_altername
+
+=head2 PURPOSE
+
+Retrieves the altername of an entity
+
+=head2 PARAMETERS
+
+=over
+
+=item vmname
+
+Name of virtual machine
+
+=back
+
+=head2 RETURNS
+
+Altername or empty string
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
+
 sub get_altername {
     my ($vmname) = @_;
-    &Log::debug("Starting Guest::get_altername sub, vmname=>'$vmname'");
+    &Log::debug("Starting Guest::get_altername sub");
+    &Log::debug1("Opts are: vmname=>'$vmname'");
     my $view =
       &Guest::entity_property_view( $vmname, 'VirtualMachine', 'value' );
     my $key = &Guest::get_annotation_key( $vmname, "alternateName" );
+    my $altername = "";
     if ( defined( $view->value ) ) {
         foreach ( @{ $view->value } ) {
             if ( $_->key eq $key ) {
                 &Log::debug( "Found altername value=>'" . $_->value . "'" );
-                return $_->value;
+                $altername = $_->value;
             }
         }
     }
-    &Log::debug("No altername was found, returning empty string");
-    return "";
+    &Log::denug("Returning=>'$altername'");
+    &Log::debug("Finishing Guest::get_altername sub");
+    return $altername;
 }
 
-#tested
+=pod
+
+=head1 change_altername
+
+=head2 PURPOSE
+
+Changes the altername of a virtual machine
+
+=head2 PARAMETERS
+
+=over
+
+=item vmname
+
+Name of Virtual machine
+
+=item name
+
+Name of alternate name
+
+=back
+
+=head2 RETURNS
+
+Returns true on success
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
+
 sub change_altername {
     my ( $vmname, $name ) = @_;
-    &Log::debug(
-        "Starting Guest::change_altername sub, vmname=>'$vmname', name=>'$name'"
-    );
+    &Log::debug( "Starting Guest::change_altername sub");
+    &Log::debug1( "Opts are: vmname=>'$vmname', name=>'$name'");
     &VCenter::num_check( $vmname, 'VirtualMachine' );
     my $view   = &Guest::entity_name_view( $vmname, 'VirtualMachine' );
-    my $sc     = Vim::get_service_content();
-    my $custom = Vim::get_view( mo_ref => $sc->customFieldsManager );
+    my $custom = &VCenter::get_manager( "customFieldsManager" );
     my $key    = &Guest::get_annotation_key( $vmname, "alternateName" );
     $custom->SetField( entity => $view, key => $key, value => $name );
-    &Log::debug("Finished changing altername");
+    &Log::debug("Finishing Guest::change_altername sub");
     return 1;
 }
+
+=pod
+
+=head1 remove_cdrom_iso_spec
+
+=head2 PURPOSE
+
+Creates a spec for removing a cdrom iso
+
+=head2 PARAMETERS
+
+=over
+
+=item vmname
+
+Name of virtual machine
+
+=item num
+
+Number of cdrom
+
+=back
+
+=head2 RETURNS
+
+A spec for removing cdrom iso
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
 
 sub remove_cdrom_iso_spec {
     my ( $vmname, $num ) = @_;
     &Log::debug("Starting Guest::add_cdrom_spec sub");
-    &Log::debug("Opts are, vmname=>'$vmname', num=>'$num'");
+    &Log::debug("Opts are: vmname=>'$vmname', num=>'$num'");
     my @cdrom_hw = @{ &Guest::get_hw( $vmname, 'VirtualCdrom' ) };
     my $controller =
       &Guest::key2hw( $vmname, $cdrom_hw[$num]->{controllerKey} );
@@ -119,12 +365,54 @@ sub remove_cdrom_iso_spec {
         operation => VirtualDeviceConfigSpecOperation->new('edit')
     );
     my $spec = VirtualMachineConfigSpec->new( deviceChange => [$configspec] );
+    &Log::dumpobj("spec", $spec);
+    &Log::debug("Finishing Guest::remove_cdrom_iso_spec sub");
     return $spec;
 }
 
+=pod
+
+=head1 change_cdrom_iso_spec
+
+=head2 PURPOSE
+
+Returns a spec for changing an iso backend
+
+=head2 PARAMETERS
+
+=over
+
+=item vmname
+
+Name of Virtual Machine
+
+=item num
+
+Number of cdrom
+
+=item iso
+
+Datastore iso path
+
+=back
+
+=head2 RETURNS
+
+A spec for changing the iso of a cdrom
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
+
 sub change_cdrom_iso_spec {
     my ( $vmname, $num, $iso ) = @_;
-    &Log::debug("Starting Guest::add_cdrom_spec sub");
+    &Log::debug("Starting Guest::change_cdrom_iso_spec sub");
     &Log::debug("Opts are, vmname=>'$vmname', num=>'$num', iso=>'$iso'");
     if ( !&VCenter::datastore_file_exists($iso) ) {
         Vcenter::Path->throw(
@@ -147,21 +435,61 @@ sub change_cdrom_iso_spec {
         operation => VirtualDeviceConfigSpecOperation->new('edit')
     );
     my $spec = VirtualMachineConfigSpec->new( deviceChange => [$configspec] );
+    &Log::dumpobj("spec", $spec);
+    &Log::debug("Finishing Guest::change_cdrom_iso_spec sub");
     return $spec;
 }
+
+=pod
+
+=head1 change_interface_spec
+
+=head2 PURPOSE
+
+Returns a network interface change spec
+
+=head2 PARAMETERS
+
+=over
+
+=item vmname
+
+Nanme of Virtual Machine
+
+=item num
+
+Number of interface
+
+=item network
+
+Name of requested network
+
+=back
+
+=head2 RETURNS
+
+A spec for changing the interface
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
 
 sub change_interface_spec {
     my ( $vmname, $num, $network ) = @_;
     &Log::debug("Starting Guest::change_interface_spec");
     &Log::debug(
-        "Opts are, vmname=>'$vmname', num=>'$num', network=>'$network'");
+        "Opts are: vmname=>'$vmname', num=>'$num', network=>'$network'");
     my @net_hw = @{ &Guest::get_hw( $vmname, 'VirtualEthernetCard' ) };
     my $network_view =
       &Guest::entity_property_view( $network, 'Network', 'name' );
     my $name = $network_view->{name};
-    &Log::debug("Name is $name");
     my $backing;
-
     if ( $network_view->{mo_ref}->{type} eq 'Network' ) {
         &Log::debug("Network is a normal network");
         $backing = VirtualEthernetCardNetworkBackingInfo->new(
@@ -173,8 +501,7 @@ sub change_interface_spec {
         &Log::debug("Network is a normal DVP");
         $network_view =
           &Guest::entity_full_view( $network, 'DistributedVirtualPortgroup' );
-        my $switch = Vim::get_view(
-            mo_ref => $network_view->{config}->{distributedVirtualSwitch} );
+        my $switch = &VCenter::moref2view( $network_view->{config}->{distributedVirtualSwitch} );
         my $port = DistributedVirtualSwitchPortConnection->new(
             portgroupKey => $network_view->{key},
             switchUuid   => $switch->{uuid}
@@ -206,15 +533,47 @@ sub change_interface_spec {
         device    => $device
     );
     my $spec = VirtualMachineConfigSpec->new( deviceChange => [$deviceconfig] );
-    &Log::debug("Returning spec from change_interface_spec");
+    &Log::debug("Finishing Guest::change_interface_spec sub");
     &Log::dumpobj( 'spec', $spec );
     return $spec;
 }
 
-#tested
+=pod
+
+=head1 add_cdrom_spec
+
+=head2 PURPOSE
+
+Returns a spec for adding a new cdrom
+
+=head2 PARAMETERS
+
+=over
+
+=item vmname
+
+Name of Virtual Machine
+
+=back
+
+=head2 RETURNS
+
+A spec for adding a cdrom
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
+
 sub add_cdrom_spec {
     my ($vmname) = @_;
-    &Log::debug("Starting Guest::add_cdrom_spec sub, vmname=>'$vmname'");
+    &Log::debug("Starting Guest::add_cdrom_spec sub");
+    &Log::debug1("Opts are: vmname=>'$vmname'");
     my $ide_key      = &get_free_ide_controller->{key};
     my $cdrombacking = VirtualCdromRemotePassthroughBackingInfo->new(
         exclusive  => 0,
@@ -230,17 +589,53 @@ sub add_cdrom_spec {
         device    => $cdrom,
     );
     my $vmspec = VirtualMachineConfigSpec->new( deviceChange => [$devspec] );
-    &Log::debug("Returning config spec");
+    &Log::debug("Finishing Gueset::add_cdrom_spec sub");
     &Log::dumpobj( "vmspec", $vmspec );
     return $vmspec;
 }
 
-#tested
+=pod
+
+=head1 add_interface_spec
+
+=head2 PURPOSE
+
+Returns a spec for adding interfaces
+
+=head2 PARAMETERS
+
+=over
+
+=item vmname
+
+Name of Virtual Machine
+
+=item type
+
+Type of interface to add
+
+=back
+
+=head2 RETURNS
+
+A spec for adding an interface
+
+=head2 DESCRIPTION
+
+Default network used is VLAN21
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
+
 sub add_interface_spec {
     my ( $vmname, $type ) = @_;
-    &Log::debug(
-"Starting Guest::add_interface_spec sub, vmname=>'$vmname', type=>'$type'"
-    );
+    &Log::debug( "Starting Guest::add_interface_spec sub");
+    &Log::debug1( "Opts are: vmname=>'$vmname', type=>'$type'");
     my @net_hw = @{ &Guest::get_hw( $vmname, 'VirtualEthernetCard' ) };
     &VCenter::num_check( "VLAN21", "Network" );
     my $switch  = &Guest::entity_name_view( 'VLAN21', 'Network' );
@@ -268,17 +663,53 @@ sub add_interface_spec {
         operation => VirtualDeviceConfigSpecOperation->new('add'),
         device    => $device
     );
-    my $vmspec =
+    my $spec =
       VirtualMachineConfigSpec->new( deviceChange => [$deviceconfig] );
-    &Log::debug("Returning config spec");
-    &Log::dumpobj( "vmspec", $vmspec );
-    return $vmspec;
+    &Log::debug("Finishing Guest::add_interface_spec sub");
+    &Log::dumpobj( "spec", $spec );
+    return $spec;
 }
 
-#tested
+=pod
+
+=head1 E1000_object
+
+=head2 PURPOSE
+
+Returns a E1000 object
+
+=head2 PARAMETERS
+
+=over
+
+=item backing
+
+A managed object for backing information
+
+=item mac
+
+The requested mac address
+
+=back
+
+=head2 RETURNS
+
+A VirtualE1000 managed object
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
+
 sub E1000_object {
     my ( $backing, $mac ) = @_;
-    &Log::debug("Starting Guest::E1000_object sub, mac=>'$mac'");
+    &Log::debug("Starting Guest::E1000_object sub");
+    &Log::debug("Opts are: mac=>'$mac'");
     &Log::dumpobj( "backing", $backing );
     my $device = VirtualE1000->new(
         connectable => VirtualDeviceConnectInfo->new(
@@ -292,15 +723,51 @@ sub E1000_object {
         key              => -1,
         backing          => $backing
     );
-    &Log::debug("Returning E1000 object");
+    &Log::debug("Finishing Guest::E1000_object sub");
     &Log::dumpobj( "device", $device );
     return $device;
 }
 
-#tested
+=pod
+
+=head1 Vmxnet_object
+
+=head2 PURPOSE
+
+Returns a Vmxnet object
+
+=head2 PARAMETERS
+
+=over
+
+=item backing
+
+A managed object for backing information
+
+=item mac
+
+Requested mac address
+
+=back
+
+=head2 RETURNS
+
+A VirtualVmxnet object
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
+
 sub Vmxnet_object {
     my ( $backing, $mac ) = @_;
-    &Log::debug("Starting Guest::Vmxnet_object sub, mac=>'$mac'");
+    &Log::debug("Starting Guest::Vmxnet_object sub");
+    &Log::debug1("Opts are: mac=>'$mac'");
     &Log::dumpobj( "backing", $backing );
     my $device = VirtualVmxnet->new(
         connectable => VirtualDeviceConnectInfo->new(
@@ -314,7 +781,7 @@ sub Vmxnet_object {
         key              => -1,
         backing          => $backing
     );
-    &Log::debug("Returning Vmxnet object");
+    &Log::debug("Finishing Guest::Vmxnet_object sub");
     &Log::dumpobj( "device", $device );
     return $device;
 }
