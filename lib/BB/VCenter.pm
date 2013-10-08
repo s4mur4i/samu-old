@@ -19,7 +19,7 @@ Checks if the entity only exists once
 
 =head2 PARAMETERS
 
-=back
+=over
 
 =item name
 
@@ -29,7 +29,7 @@ Name of the entity
 
 Type of entity
 
-=over
+=back
 
 =head2 RETURNS
 
@@ -78,7 +78,7 @@ Checks if entity exists or not with true or false
 
 =head2 PARAMETERS
 
-=back
+=over
 
 =item name
 
@@ -88,7 +88,7 @@ Name of the entity
 
 Type of entity
 
-=over
+=back
 
 =head2 RETURNS
 
@@ -134,13 +134,13 @@ Converts a VCenter inventory path to Name
 
 =head2 PARAMETERS
 
-=back
+=over
 
 =item path
 
 VCenter inventory path
 
-=over
+=back
 
 =head2 RETURNS
 
@@ -184,13 +184,13 @@ Converts a VCenter inventory path to a Managed object reference
 
 =head2 PARAMETERS
 
-=back
+=over
 
 =item path
 
 VCenter inventory path
 
-=over
+=back
 
 =head2 RETURNS
 
@@ -233,13 +233,13 @@ Converts a moref to a view
 
 =head2 PARAMETERS
 
-=back
+=over
 
 =item moref
 
 A managed object reference
 
-=over
+=back
 
 =head2 RETURNS
 
@@ -280,13 +280,13 @@ Creates a folder for the template where the linked clones can be stored
 
 =head2 PARAMETERS
 
-=back
+=over
 
 =item temp_name
 
 The template name
 
-=over
+=back
 
 =head2 RETURNS
 
@@ -336,7 +336,7 @@ Checks if the entity is empty or has children
 
 =head2 PARAMETERS
 
-=back
+=over
 
 =item name
 
@@ -346,7 +346,7 @@ Name of entity
 
 Type of entity
 
-=over
+=back
 
 =head2 RETURNS
 
@@ -449,13 +449,13 @@ Checks task status and prints progress
 
 =head2 PARAMETERS
 
-=back
+=over
 
 =item taskRef
 
 A Managed object reference to a task
 
-=over
+=back
 
 =head2 RETURNS
 
@@ -521,13 +521,13 @@ Returns array ref with vmnames attached to a ticket
 
 =head2 PARAMETERS
 
-=back
+=over
 
 =item ticket
 
 Ticket number to return names of
 
-=over
+=back
 
 =head2 RETURNS
 
@@ -571,13 +571,13 @@ Converts an entity name to VCenter inventory path
 
 =head2 PARAMETERS
 
-=back
+=over
 
 =item name
 
 Name of entity whoes name should be converted
 
-=over
+=back
 
 =head2 RETURNS
 
@@ -615,7 +615,7 @@ Creating a resourcepool in requested parent resourcepool
 
 =head2 PARAMETERS
 
-=back
+=over
 
 =item rp_name
 
@@ -625,7 +625,7 @@ Name of requested resourcepool
 
 Name of requested resourcepool parent
 
-=over
+=back
 
 =head2 RETURNS
 
@@ -710,7 +710,7 @@ Create an inventory folder with requested name
 
 =head2 PARAMETERS
 
-=back
+=over
 
 =item fol_name
 
@@ -720,7 +720,7 @@ Name of requested folder
 
 Parent of requested folder
 
-=over
+=back
 
 =head2 RETURNS
 
@@ -783,13 +783,13 @@ Creates aerquested Distributed Virtual Switch
 
 =head2 PARAMETERS
 
-=back
+=over
 
 =item name
 
 Name of requested switch name
 
-=over
+=back
 
 =head2 RETURNS
 
@@ -853,7 +853,7 @@ Create a requested Distributed Virtual Portgroup
 
 =head2 PARAMETERS
 
-=back
+=over
 
 =item name
 
@@ -863,7 +863,7 @@ Requested name for distributed virtual Portgroup
 
 Parent switch for portgroup
 
-=over
+=back
 
 =head2 RETURNS
 
@@ -921,7 +921,7 @@ Destroy a requested entity type
 
 =head2 PARAMETERS
 
-=back
+=over
 
 =item name
 
@@ -931,7 +931,7 @@ Name of entity to destroy
 
 Type of entity
 
-=over
+=back
 
 =head2 RETURNS
 
@@ -987,13 +987,13 @@ Returns last snapshot for a vm
 
 =head2 PARAMETERS
 
-=back
+=over
 
 =item vmname
 
 Virtual Machine name
 
-=over
+=back
 
 =head2 RETURNS
 
@@ -1061,13 +1061,13 @@ Returns array ref with all machines linked to a vmdk disk
 
 =head2 PARAMETERS
 
-=back
+=over
 
 =item disk
 
 A datastore path to a vmdk file
 
-=over
+=back
 
 =head2 RETURNS
 
@@ -1127,13 +1127,13 @@ Checks if datastore file exists
 
 =head2 PARAMETERS
 
-=back
+=over
 
 =item filename
 
 Datastore path to file
 
-=over
+=back
 
 =head2 RETURNS
 
@@ -1172,8 +1172,8 @@ sub datastore_file_exists {
         datastorePath => "[$datas] $folder",
         searchSpec    => $searchspec
     );
-    my $ret = 0
-      if ( defined( $return->[0]->file ) ) {
+    my $ret = 0;
+    if ( defined( $return->[0]->file ) ) {
         &Log::debug("Datastore file exists");
         $ret = 1;
     }
@@ -1194,13 +1194,13 @@ For parsing SDK options and feeding the
 
 =head2 PARAMETERS
 
-=back
+=over
 
 =item opts
 
 A hash ref to the options that should be added
 
-=over
+=back
 
 =head2 RETURNS
 
@@ -1236,9 +1236,9 @@ Connecting to a VCenter
 
 =head2 PARAMETERS
 
-=back
-
 =over
+
+=back
 
 =head2 RETURNS
 
@@ -1286,9 +1286,9 @@ Disconnects from VCenter
 
 =head2 PARAMETERS
 
-=back
-
 =over
+
+=back
 
 =head2 RETURNS
 
@@ -1321,9 +1321,9 @@ Retrieves service content
 
 =head2 PARAMETERS
 
-=back
-
 =over
+
+=back
 
 =head2 RETURNS
 
@@ -1363,7 +1363,7 @@ Moves a Virtual Machine into a folder
 
 =head2 PARAMETERS
 
-=back
+=over
 
 =item vmname
 
@@ -1373,7 +1373,7 @@ Virtual Machine name
 
 The requested folder
 
-=over
+=back
 
 =head2 RETURNS
 
@@ -1411,9 +1411,9 @@ Retrieves a vim object
 
 =head2 PARAMETERS
 
-=back
-
 =over
+
+=back
 
 =head2 RETURNS
 
@@ -1453,7 +1453,7 @@ Retrieve SErvice content manager
 
 =head2 PARAMETERS
 
-=back
+=over
 
 =item type
 
@@ -1464,7 +1464,7 @@ setting, snmpSystem, storageResourceManager, taskManager, userDirectory, viewMan
 
 Undocumented : guestOperationsManager
 
-=over
+=back
 
 =head2 RETURNS
 
@@ -1488,11 +1488,12 @@ sub get_manager {
     &Log::debug1("Opts are: type=>'$type'");
     my $manager = &VCenter::moref2view( &VCenter::service_content->{$type} );
     &Log::dumpobj( $type, $manager );
-    if ( !defined($guestOM) ) {
+    if ( !defined($manager) ) {
         Vcenter::ServiceContent->throw(
             error => "Could not retrieve $type Manager" );
     }
     &Log::debug("Finishing VCenter::get_manager sub");
+    &Log::dumpobj("$type manager", $manager);
     return $manager;
 }
 
