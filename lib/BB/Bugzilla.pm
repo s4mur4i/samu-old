@@ -20,13 +20,13 @@ Retrieve Status of bugzilla
 
 =head2 PARAMETERS
 
-=back
+=over
 
 =item ticket
 
 The Bugzilla ticket number to retrieve
 
-=over
+=back
 
 =head2 RETURNS
 

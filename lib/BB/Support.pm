@@ -9,15 +9,6 @@ BEGIN {
     our @EXPORT = qw( );
 }
 
-=pod
-
-=head1 template_hash
-
-=head2 description
-
-    This hash contains information about our templates.
-=cut
-
 my %template_hash = (
     'scb_300' => {
         path     => 'Support/vm/templates/SCB/scb_3.0/T_scb_300',
