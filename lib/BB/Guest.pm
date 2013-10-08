@@ -853,7 +853,11 @@ sub promote {
     my $view = &Guest::entity_name_view( $vmname, 'VirtualMachine' );
     my $task = $view->PromoteDisks_Task( unlink => 1 );
     &VCenter::Task_Status($task);
-    &VCenter::move_into_folder($vmname);
+    my $splitted = &Misc::vmname_splitter($vmname);
+    if ( !&VCenter::exists_entity( $splitted->{ticket}, 'Folder' ) ) {
+        &VCenter::create_folder( $splitted->{ticket}, 'vm' );
+    }
+    &VCenter::move_into_folder($vmname, $splitted->{ticket});
     &Log::debug("Finished Guest::promote sub");
     return 1;
 }
@@ -929,7 +933,7 @@ sub run_command {
         $info->{guestusername},
         $info->{guestpassword}
     );
-    my $guestProcMan  = &VCenter::process_manager;
+    my $guestProcMan  = &VCenter::get_manager("processManager");
     my $guestProgSpec = GuestProgramSpec->new(
         workingDirectory => $info->{workdir},
         programPath      => $info->{prog},
@@ -955,7 +959,7 @@ sub transfer_to_guest {
         $info->{guestusername},
         $info->{guestpassword}
     );
-    my $filemanager = &VCenter::file_manager;
+    my $filemanager = &VCenter::get_manager("fileManager");
     my $fileattr    = GuestFileAttributes->new();
     my $size        = -s $info->{path};
     my $transferinfo;
@@ -1005,7 +1009,7 @@ sub transfer_from_guest {
         $info->{guestusername},
         $info->{guestpassword}
     );
-    my $filemanager = &VCenter::file_manager;
+    my $filemanager = &VCenter::get_manager("fileManager");
     my $transferinfo;
     eval {
         $transferinfo = $filemanager->InitiateFileTransferFromGuest(
@@ -1049,7 +1053,7 @@ sub guest_cred {
     &Log::debug(
 "Opts are, vmname=>'$vmname', guestusername=>'$guestusername', guestpassword=>'$guestpassword'"
     );
-    my $authMgr   = &VCenter::auth_manager;
+    my $authMgr   = &VCenter::get_manager("authManager");
     my $guestAuth = NamePasswordAuthentication->new(
         username           => $guestusername,
         password           => $guestpassword,
