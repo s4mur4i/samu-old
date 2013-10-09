@@ -3,6 +3,14 @@ package Misc;
 use strict;
 use warnings;
 
+=pod
+
+=head1 Misc.pm
+
+Subroutines from BB/Misc.pm
+
+=cut
+
 BEGIN {
     use Exporter;
     our @ISA    = qw( Exporter );
@@ -11,13 +19,13 @@ BEGIN {
 
 =pod
 
-=head1 array_longest
+=head2 array_longest
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Returns longest element length of an array
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -27,17 +35,17 @@ Array ref to array
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 Max length of longest element
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -58,29 +66,29 @@ sub array_longest {
 
 =pod
 
-=head1 random_3digit
+=head2 random_3digit
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Returns a a random number between 1-999
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 A number between 1 and 999
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -94,13 +102,13 @@ sub random_3digit {
 
 =pod
 
-=head1 generate_mac
+=head2 generate_mac
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Generates a mac from agents pool
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -110,20 +118,20 @@ Username to take mac pool from
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 A valid mac address
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
 If user is unknown we should implement a fallback method
 Also username should be check to mac it take from VMWare SDK options hash
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -141,29 +149,29 @@ sub generate_mac {
 
 =pod
 
-=head1 generate_uniq_mac
+=head2 generate_uniq_mac
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Generates a uniq mac not found on the VCenter
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 A uniq mac
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -181,13 +189,13 @@ sub generate_uniq_mac {
 
 =pod
 
-=head1 generate_macs
+=head2 generate_macs
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Generates the requested of number of mac addresses that follow each other as possible
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -197,17 +205,17 @@ The number of mac addresses required
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 Array ref of mac addresses
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -247,13 +255,13 @@ sub generate_macs {
 
 =pod
 
-=head1 mac_compare
+=head2 mac_compare
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Compares if mac is uniq on VCenter
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -263,18 +271,18 @@ Mac address to test if uniq
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 True if mac found
 False if mac is uniq
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -306,13 +314,13 @@ sub mac_compare {
 
 =pod
 
-=head1 increment_mac
+=head2 increment_mac
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Increments one on the mac address
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -322,21 +330,21 @@ Mac address
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 Incremented Mac address
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
 Increment 1 on the last 3 bytes of the MAC. if overflow occurrs, then throw error
 
-=head2 THROWS
+=head3 THROWS
 
 Entity::Mac if mac pool end reached
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -369,13 +377,13 @@ sub increment_mac {
 
 =pod
 
-=head1 vmname_splitter
+=head2 vmname_splitter
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Virtual Machine name to split
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -385,19 +393,19 @@ Name of virtual machine to split
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 Hash with extracted information
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
 If standard is not recognised by regex than unkown is returned for all elements
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -459,13 +467,13 @@ sub vmname_splitter {
 
 =pod
 
-=head1 increment_disk_name
+=head2 increment_disk_name
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Increments a datastore path for new disk creation
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -475,19 +483,19 @@ Disk path to increment
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 Incremented datastore name
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
 test should be implemented if incremented disk name already exists on datastore
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -524,13 +532,13 @@ sub increment_disk_name {
 
 =pod
 
-=head1 filename_splitter
+=head2 filename_splitter
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Splits a datastore path to datastore folder and image string
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -540,19 +548,19 @@ Datastore path
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 Array containing the splitted variables
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
 Vcenter::Path if path is not a valid path
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -575,13 +583,13 @@ sub filename_splitter {
 
 =pod
 
-=head1 generate_vmname
+=head2 generate_vmname
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Generates a virtual machine name according to standards
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -599,17 +607,17 @@ The os_template being used
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 A standard virtual machine name
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -625,13 +633,13 @@ sub generate_vmname {
 
 =pod
 
-=head1 uniq_vmname
+=head2 uniq_vmname
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Generates a uniq virtual machine name according to standards
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -649,17 +657,17 @@ The os_template being used
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 An uniq virtual machine name
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -679,31 +687,31 @@ sub uniq_vmname {
 
 =pod
 
-=head1 ticket_list
+=head2 ticket_list
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Generates a list with all provisioned tickets on VCenter
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 Hash ref containing ticket and first seen owner
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
 Machine names are used to idetify unseen tickets and added to hash
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -730,13 +738,13 @@ sub ticket_list {
 
 =pod
 
-=head1 user_ticket_list
+=head2 user_ticket_list
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Generates hash with users provisioned tickets
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -746,17 +754,17 @@ Username to get tickets of
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 Hash ref containing tickets
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 

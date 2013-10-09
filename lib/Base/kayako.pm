@@ -4,6 +4,14 @@ use strict;
 use warnings;
 use Base::misc;
 
+=pod
+
+=head1 kayako.pm
+
+Subroutines from Base/kayako.pm
+
+=cut
+
 my $help = 0;
 
 BEGIN {
@@ -41,9 +49,9 @@ our $module_opts = {
 
 =head2 PARAMETERS
 
-=back
-
 =over
+
+=back
 
 =head2 RETURNS
 
@@ -64,5 +72,4 @@ sub main {
     return 1;
 }
 
-1;
-__END__
+1

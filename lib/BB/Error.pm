@@ -3,6 +3,14 @@ package Error;
 use strict;
 use warnings;
 
+=pod
+
+=head1 Error.pm
+
+Subroutines from BB/Error.pm
+
+=cut
+
 use Data::Dumper;
 use Exception::Class (
     'BaseException',
@@ -120,13 +128,13 @@ use overload
 
 =pod
 
-=head1 catch_ex
+=head2 catch_ex
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 To implement a global catch Exception
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -136,17 +144,17 @@ The thrown exception
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 True on success
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 

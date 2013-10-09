@@ -11,22 +11,14 @@ BEGIN {
 ## These subs help the testing framework. They are not tested and should not be fiddled by mortal souls
 sub clonevm {
     my ( $template, $vmname, $folder, $clone_spec ) = @_;
-    &Log::debug(
-        "Starting Test::clonevm sub, vmname=>'$vmname', folder=>'$folder'");
-    &Log::dumpobj( "clone_spec", $clone_spec );
     my $template_view = &Guest::entity_name_view( $template, 'VirtualMachine' );
-    &Log::debug2( "template_view", $template_view );
     my $folder_view = &Guest::entity_name_view( $folder, 'Folder' );
-    &Log::dumpobj( "folder_view", $folder_view );
-    &Log::info("Starting Clone task");
     my $task = $template_view->CloneVM_Task(
         folder => $folder_view,
         name   => $vmname,
         spec   => $clone_spec
     );
-    &Log::dumpobj( "task", $task );
     &VCenter::Task_Status($task);
-    &Log::debug("Finished cloning vm");
     return 1;
 }
 

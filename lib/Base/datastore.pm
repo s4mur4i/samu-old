@@ -6,6 +6,14 @@ use Base::misc;
 
 my $help = 0;
 
+=pod
+
+=head1 datastore.pm
+
+Subroutines from Base/datastore.pm
+
+=cut
+
 BEGIN() {
     use Exporter();
     our ( @ISA, @EXPORT );
@@ -61,27 +69,27 @@ our $module_opts = {
 
 =pod
 
-=head1 main
+=head2 main
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 
 
-=head2 PARAMETERS
-
-=back
+=head3 PARAMETERS
 
 =over
 
-=head2 RETURNS
+=back
 
-=head2 DESCRIPTION
+=head3 RETURNS
 
-=head2 THROWS
+=head3 DESCRIPTION
 
-=head2 COMMENTS
+=head3 THROWS
 
-=head2 SEE ALSO
+=head3 COMMENTS
+
+=head3 SEE ALSO
 
 =cut
 
@@ -94,27 +102,27 @@ sub main {
 
 =pod
 
-=head1 datastore_add
+=head2 datastore_add
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 
 
-=head2 PARAMETERS
-
-=back
+=head3 PARAMETERS
 
 =over
 
-=head2 RETURNS
+=back
 
-=head2 DESCRIPTION
+=head3 RETURNS
 
-=head2 THROWS
+=head3 DESCRIPTION
 
-=head2 COMMENTS
+=head3 THROWS
 
-=head2 SEE ALSO
+=head3 COMMENTS
+
+=head3 SEE ALSO
 
 =cut
 
@@ -126,27 +134,27 @@ sub datastore_add {
 
 =pod
 
-=head1 datastore_delete
+=head2 datastore_delete
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 
 
-=head2 PARAMETERS
-
-=back
+=head3 PARAMETERS
 
 =over
 
-=head2 RETURNS
+=back
 
-=head2 DESCRIPTION
+=head3 RETURNS
 
-=head2 THROWS
+=head3 DESCRIPTION
 
-=head2 COMMENTS
+=head3 THROWS
 
-=head2 SEE ALSO
+=head3 COMMENTS
+
+=head3 SEE ALSO
 
 =cut
 
@@ -158,27 +166,27 @@ sub datastore_delete {
 
 =pod
 
-=head1 datastore_list
+=head2 datastore_list
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 
 
-=head2 PARAMETERS
-
-=back
+=head3 PARAMETERS
 
 =over
 
-=head2 RETURNS
+=back
 
-=head2 DESCRIPTION
+=head3 RETURNS
 
-=head2 THROWS
+=head3 DESCRIPTION
 
-=head2 COMMENTS
+=head3 THROWS
 
-=head2 SEE ALSO
+=head3 COMMENTS
+
+=head3 SEE ALSO
 
 =cut
 
@@ -190,26 +198,26 @@ sub datastore_list {
 
 =pod
 
-=head1 datastore_info
+=head2 datastore_info
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 
-=head2 PARAMETERS
-
-=back
+=head3 PARAMETERS
 
 =over
 
-=head2 RETURNS
+=back
 
-=head2 DESCRIPTION
+=head3 RETURNS
 
-=head2 THROWS
+=head3 DESCRIPTION
 
-=head2 COMMENTS
+=head3 THROWS
 
-=head2 SEE ALSO
+=head3 COMMENTS
+
+=head3 SEE ALSO
 
 =cut
 
@@ -219,5 +227,4 @@ sub datastore_info {
     return 1;
 }
 
-1;
-__END__
+1

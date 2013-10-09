@@ -4,6 +4,14 @@ use strict;
 use warnings;
 use DBI;
 
+=pod
+
+=head1 Kayako.pm
+
+Subroutines from BB/Kayako.pm
+
+=cut
+
 BEGIN {
     use Exporter;
     our @ISA    = qw( Exporter );
@@ -12,31 +20,31 @@ BEGIN {
 
 =pod
 
-=head1 connect_kayako
+=head2 connect_kayako
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Connects to the local kayako Database server
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 A DBI handle
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
 Connection::Connect if connection fails to server
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -59,13 +67,13 @@ sub connect_kayako {
 
 =pod
 
-=head1 disconnect_kayako
+=head2 disconnect_kayako
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Disconnects from kayako server
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -75,17 +83,17 @@ A DBI handle
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 True on success
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -101,13 +109,13 @@ sub disconnect_kayako {
 
 =pod
 
-=head1 run_query
+=head2 run_query
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Runs a requested query on DBI handle
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -121,17 +129,17 @@ The requested query to run
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 The results of the query in a hashref
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 

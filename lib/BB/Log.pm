@@ -8,37 +8,45 @@ use Sys::Syslog qw(:standard :macros);
 use File::Basename;
 use Data::Dumper;
 
+=pod
+
+=head1 Log.pm
+
+Subroutines from BB/Log.pm
+
+=cut
+
 my $verbose;
 my $quiet;
 my $verbosity;
 
 =pod
 
-=head1 verbostiy
+=head2 verbostiy
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Returns verbosity level
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 Returns verbosity level
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
 Getter sub for verbosity
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -48,13 +56,13 @@ sub verbosity {
 
 =pod
 
-=head1 log2line
+=head2 log2line
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Formats a log message
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -68,17 +76,17 @@ The requested log information
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 The formatted log message
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -122,13 +130,13 @@ sub log2line {
 
 =pod
 
-=head1 debug2
+=head2 debug2
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 debug 2 for printing information at log level 10
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -138,15 +146,15 @@ Message to print
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -156,13 +164,13 @@ sub debug2 {
 
 =pod
 
-=head1 debug1
+=head2 debug1
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 debug 1 for printing information at log level 9
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -172,15 +180,15 @@ Message to print
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -190,13 +198,13 @@ sub debug1 {
 
 =pod
 
-=head1 debug
+=head2 debug
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 debug for printing information at log level 8
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -206,15 +214,15 @@ Message to print
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -224,13 +232,13 @@ sub debug {
 
 =pod
 
-=head1 info
+=head2 info
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 info for printing information at log level 7
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -240,15 +248,15 @@ Message to print
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -258,13 +266,13 @@ sub info {
 
 =pod
 
-=head1 notice
+=head2 notice
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 notice for printing information at log level 6
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -274,15 +282,15 @@ Message to print
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -292,13 +300,13 @@ sub notice {
 
 =pod
 
-=head1 warning
+=head2 warning
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 warning for printing information at log level 5
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -308,15 +316,15 @@ Message to print
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -326,13 +334,13 @@ sub warning {
 
 =pod
 
-=head1 error
+=head2 error
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 error for printing information at log level 4
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -342,15 +350,15 @@ Message to print
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -360,13 +368,13 @@ sub error {
 
 =pod
 
-=head1 ciritical
+=head2 ciritical
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Critical for printing information at log level 3
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -376,15 +384,15 @@ Message to print
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -394,13 +402,13 @@ sub critical {
 
 =pod
 
-=head1 alert
+=head2 alert
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 alert for printing information at log level 2
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -410,15 +418,15 @@ Message to print
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -428,13 +436,13 @@ sub alert {
 
 =pod
 
-=head1 emergency
+=head2 emergency
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 emergency for printing information at log level 1
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -444,15 +452,15 @@ Message to print
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -462,13 +470,13 @@ sub emergency {
 
 =pod
 
-=head1 dumpobj
+=head2 dumpobj
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Dumps an object for debugging
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -482,15 +490,15 @@ Object to dump
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -501,13 +509,13 @@ sub dumpobj {
 
 =pod
 
-=head1 loghash
+=head2 loghash
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Logs a hash to readable format
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -521,15 +529,15 @@ Hashref to log
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 

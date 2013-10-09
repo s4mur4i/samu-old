@@ -3,6 +3,14 @@ package Support;
 use strict;
 use warnings;
 
+=pod
+
+=head1 Support.pm
+
+Subroutines from BB/Support.pm
+
+=cut
+
 BEGIN {
     use Exporter;
     our @ISA    = qw( Exporter );
@@ -178,13 +186,13 @@ my %map_hash = (
 
 =pod
 
-=head1 get_keys
+=head2 get_keys
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Returns keys of hash
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -194,19 +202,19 @@ Name of hash
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 Array ref with keys
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
 Template::Status if no hash is found
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -229,13 +237,13 @@ sub get_keys {
 
 =pod
 
-=head1 get_key_info
+=head2 get_key_info
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Returns hash with information
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -249,19 +257,19 @@ Key of hash to return
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 Hash reference with information
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
 Template::Status if no information is found
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -282,13 +290,13 @@ sub get_key_info {
 
 =pod
 
-=head1 get_key_value
+=head2 get_key_value
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Returns a value from hash of hash
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -306,19 +314,19 @@ The key of hash of hash
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 Value of hash of hash
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
 Template::Status if no information found
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -340,13 +348,13 @@ sub get_key_value {
 
 =pod
 
-=head1 RelocateSpec
+=head2 RelocateSpec
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Returns a VirtualMachineRelocateSpec managed object for installation
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -356,17 +364,17 @@ The ticket number
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 VirtualMachineRelocateSpec managed object
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -390,13 +398,13 @@ sub RelocateSpec {
 
 =pod
 
-=head1 ConfigSpec
+=head2 ConfigSpec
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Generates VirtualMachineConfigSpec managed object for installation
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -414,17 +422,17 @@ The template that is being used to clone machine
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 VirtualMachineConfigSpec Managd object
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -444,27 +452,27 @@ sub ConfigSpec {
 
 =pod
 
-=head1 CustomizationPassword
+=head2 CustomizationPassword
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Returns a CustomizationPassword managed object for Standard password use
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -478,29 +486,29 @@ sub CustomizationPassword {
 
 =pod
 
-=head1 identification_domain
+=head2 identification_domain
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Returns CustomizationIdentification managed object for domain join
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 CustomizationIdentification managed object
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -518,29 +526,29 @@ sub identification_domain {
 
 =pod
 
-=head1 identification_workgroup
+=head2 identification_workgroup
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Returns a CustomizationIdetification managed object for workgroup join
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 CustomizationIdetification managed object
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -558,13 +566,13 @@ sub identification_workgroup {
 
 =pod
 
-=head1 win_CloneSpec
+=head2 win_CloneSpec
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Returns a Clonespec for cloneing
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -586,17 +594,17 @@ Config spec for creation of Virtual Machine
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 A VirtualMachineCloneSpec managed object
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -683,13 +691,13 @@ sub win_CloneSpec {
 
 =pod
 
-=head1 lin_CloneSpec
+=head2 lin_CloneSpec
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Returns a Clonespec for cloneing
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -711,17 +719,17 @@ Config spec for creation of Virtual Machine
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 A VirtualMachineCloneSpec managed object
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -761,13 +769,13 @@ sub lin_CloneSpec {
 
 =pod
 
-=head1 oth_CloneSpec
+=head2 oth_CloneSpec
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Returns a Clonespec for cloneing
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -785,17 +793,17 @@ Config spec for creation of Virtual Machine
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 A VirtualMachineCloneSpec managed object
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 

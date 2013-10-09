@@ -4,6 +4,14 @@ use strict;
 use warnings;
 use Base::misc;
 
+=pod
+
+=head1 network.pm
+
+Subroutines from Base/network.pm
+
+=cut
+
 BEGIN() {
     use Exporter();
     our ( @ISA, @EXPORT );
@@ -91,27 +99,27 @@ our $module_opts = {
 
 =pod
 
-=head1 main
+=head2 main
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 
 
-=head2 PARAMETERS
-
-=back
+=head3 PARAMETERS
 
 =over
 
-=head2 RETURNS
+=back
 
-=head2 DESCRIPTION
+=head3 RETURNS
 
-=head2 THROWS
+=head3 DESCRIPTION
 
-=head2 COMMENTS
+=head3 THROWS
 
-=head2 SEE ALSO
+=head3 COMMENTS
+
+=head3 SEE ALSO
 
 =cut
 
@@ -124,27 +132,27 @@ sub main {
 
 =pod
 
-=head1 network_add
+=head2 network_add
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 
 
-=head2 PARAMETERS
-
-=back
+=head3 PARAMETERS
 
 =over
 
-=head2 RETURNS
+=back
 
-=head2 DESCRIPTION
+=head3 RETURNS
 
-=head2 THROWS
+=head3 DESCRIPTION
 
-=head2 COMMENTS
+=head3 THROWS
 
-=head2 SEE ALSO
+=head3 COMMENTS
+
+=head3 SEE ALSO
 
 =cut
 
@@ -171,27 +179,27 @@ sub network_add {
 
 =pod
 
-=head1 list_switch
+=head2 list_switch
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 
 
-=head2 PARAMETERS
-
-=back
+=head3 PARAMETERS
 
 =over
 
-=head2 RETURNS
+=back
 
-=head2 DESCRIPTION
+=head3 RETURNS
 
-=head2 THROWS
+=head3 DESCRIPTION
 
-=head2 COMMENTS
+=head3 THROWS
 
-=head2 SEE ALSO
+=head3 COMMENTS
+
+=head3 SEE ALSO
 
 =cut
 
@@ -218,27 +226,27 @@ sub list_switch {
 
 =pod
 
-=head1 list_dvp
+=head2 list_dvp
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 
 
-=head2 PARAMETERS
-
-=back
+=head3 PARAMETERS
 
 =over
 
-=head2 RETURNS
+=back
 
-=head2 DESCRIPTION
+=head3 RETURNS
 
-=head2 THROWS
+=head3 DESCRIPTION
 
-=head2 COMMENTS
+=head3 THROWS
 
-=head2 SEE ALSO
+=head3 COMMENTS
+
+=head3 SEE ALSO
 
 =cut
 
@@ -265,27 +273,27 @@ sub list_dvp {
 
 =pod
 
-=head1 network_delete
+=head2 network_delete
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 
 
-=head2 PARAMETERS
-
-=back
+=head3 PARAMETERS
 
 =over
 
-=head2 RETURNS
+=back
 
-=head2 DESCRIPTION
+=head3 RETURNS
 
-=head2 THROWS
+=head3 DESCRIPTION
 
-=head2 COMMENTS
+=head3 THROWS
 
-=head2 SEE ALSO
+=head3 COMMENTS
+
+=head3 SEE ALSO
 
 =cut
 
@@ -328,27 +336,27 @@ sub network_delete {
 
 =pod
 
-=head1 create_net
+=head2 create_net
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 
 
-=head2 PARAMETERS
-
-=back
+=head3 PARAMETERS
 
 =over
 
-=head2 RETURNS
+=back
 
-=head2 DESCRIPTION
+=head3 RETURNS
 
-=head2 THROWS
+=head3 DESCRIPTION
 
-=head2 COMMENTS
+=head3 THROWS
 
-=head2 SEE ALSO
+=head3 COMMENTS
+
+=head3 SEE ALSO
 
 =cut
 
@@ -359,5 +367,4 @@ sub create_net {
     return 1;
 }
 
-1;
-__END__
+1

@@ -7,6 +7,14 @@ use BB::Common;
 
 my $help = 0;
 
+=pod
+
+=head1 admin.pm
+
+Subroutines from Base/admin.pm
+
+=cut
+
 BEGIN {
     use Exporter();
     our ( @ISA, @EXPORT );
@@ -111,27 +119,27 @@ our $module_opts = {
 
 =pod
 
-=head1 main
+=head2 main
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 This is main entry point for Admin module
 
-=head2 PARAMETERS
-
-=back
+=head3 PARAMETERS
 
 =over
 
-=head2 RETURNS
+=back
 
-=head2 DESCRIPTION
+=head3 RETURNS
 
-=head2 THROWS
+=head3 DESCRIPTION
 
-=head2 COMMENTS
+=head3 THROWS
 
-=head2 SEE ALSO
+=head3 COMMENTS
+
+=head3 SEE ALSO
 
 =cut
 
@@ -144,31 +152,31 @@ sub main {
 
 =pod
 
-=head1 cleanup
+=head2 cleanup
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 This sub cleans up orphaned entites on the VCenter
 
-=head2 PARAMETERS
-
-=back
+=head3 PARAMETERS
 
 =over
 
-=head2 RETURNS
+=back
+
+=head3 RETURNS
 
 True on success
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
 Resourcepool, Folder and DistributedVirtualSwitch are tested to see if it has any children
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -201,29 +209,29 @@ sub cleanup {
 
 =pod
 
-=head1 templates
+=head2 templates
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 List all usable templates
 
-=head2 PARAMETERS
-
-=back
+=head3 PARAMETERS
 
 =over
 
-=head2 RETURNS
+=back
+
+=head3 RETURNS
 
 True on success
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -245,31 +253,31 @@ sub templates {
 
 =pod
 
-=head1 test
+=head2 test
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Sub is for testing correct functionality to VCenter
 
-=head2 PARAMETERS
-
-=back
+=head3 PARAMETERS
 
 =over
 
-=head2 RETURNS
+=back
+
+=head3 RETURNS
 
 True on success
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
 The function only prints the current time on VCenter
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -287,15 +295,15 @@ sub test {
 
 =pod
 
-=head1 pod2wiki
+=head2 pod2wiki
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Converts pod information to Dokuwiki formatted file
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
-=back
+=over
 
 =item in
 
@@ -305,23 +313,23 @@ The file that contains pod information
 
 The output file localtion
 
-=over
+=back
 
-=head2 RETURNS
+=head3 RETURNS
 
 True on success
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
 The function extracts all dokuwiki information from a file, and converts it to Dokuwiki formatted text
 
-=head2 THROWS
+=head3 THROWS
 
 Connection::Connect when files cannot be opened
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -351,15 +359,15 @@ sub pod2wiki {
 
 =pod
 
-=head1 list_resourcepool
+=head2 list_resourcepool
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 List requested resourcepool information
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
-=back
+=over
 
 =item user
 
@@ -373,19 +381,19 @@ List all resourcepools
 
 List a specific resourcepool
 
-=over
+=back
 
-=head2 RETURNS
+=head3 RETURNS
 
 True on success
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -427,15 +435,15 @@ sub list_resourcepool {
 
 =pod
 
-=head1 list_folder
+=head2 list_folder
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 List requested folders information
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
-=back
+=over
 
 =item all
 
@@ -445,19 +453,19 @@ List all inventory folders
 
 List a specific folder
 
-=over
+=back
 
-=head2 RETURNS
+=head3 RETURNS
 
 True on success
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -496,35 +504,35 @@ sub list_folder {
 
 =pod
 
-=head1 list_linked_clones
+=head2 list_linked_clones
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 List all linked clones to a template
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
-=back
+=over
 
 =item template
 
 Name of template to list information about
 
-=over
+=back
 
-=head2 RETURNS
+=head3 RETURNS
 
 True on success
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
 List the vm names that are linked to the linked clone
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 

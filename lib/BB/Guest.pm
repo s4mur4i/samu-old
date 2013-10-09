@@ -3,6 +3,14 @@ package Guest;
 use strict;
 use warnings;
 
+=pod
+
+=head1 Guest.pm
+
+Subroutines from BB/Guest.pm
+
+=cut
+
 BEGIN {
     use Exporter;
     our @ISA    = qw( Exporter );
@@ -11,13 +19,13 @@ BEGIN {
 
 =pod
 
-=head1 entity_name_view
+=head2 entity_name_view
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Returns a managed object containing the requested entities name hash
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -31,17 +39,17 @@ Type of the requested entity
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 Managed object with name property
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -57,13 +65,13 @@ sub entity_name_view {
 
 =pod
 
-=head1 entity_full_view
+=head2 entity_full_view
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Returns a managed object containing the requested entities full hash
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -77,17 +85,17 @@ Type of requested entity
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 Managed object with all property
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -105,13 +113,13 @@ sub entity_full_view {
 
 =pod
 
-=head1 entity_property_view
+=head2 entity_property_view
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Returns a managed object containing the requested entities property hash
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -125,17 +133,17 @@ Type of requested entity
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 Managed object with requested property
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -157,13 +165,13 @@ sub entity_property_view {
 
 =pod
 
-=head1 find_last_snapshot
+=head2 find_last_snapshot
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Retrieve last snapshot
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -173,20 +181,20 @@ Rootsnapshotlist hash
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 Last rootsnapshot is returned
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
 Multi level snapshots are not supported since it is fubar. Snapshots should be used with care, and should
 not be used with multi level setup
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -208,13 +216,13 @@ sub find_last_snapshot {
 
 =pod
 
-=head1 get_altername
+=head2 get_altername
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Retrieves the altername of an entity
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -224,17 +232,17 @@ Name of virtual machine
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 Altername or empty string
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -261,13 +269,13 @@ sub get_altername {
 
 =pod
 
-=head1 change_altername
+=head2 change_altername
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Changes the altername of a virtual machine
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -281,17 +289,17 @@ Name of alternate name
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 Returns true on success
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -309,13 +317,13 @@ sub change_altername {
 
 =pod
 
-=head1 remove_cdrom_iso_spec
+=head2 remove_cdrom_iso_spec
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Creates a spec for removing a cdrom iso
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -329,17 +337,17 @@ Number of cdrom
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 A spec for removing cdrom iso
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -371,13 +379,13 @@ sub remove_cdrom_iso_spec {
 
 =pod
 
-=head1 change_cdrom_iso_spec
+=head2 change_cdrom_iso_spec
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Returns a spec for changing an iso backend
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -395,17 +403,17 @@ Datastore iso path
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 A spec for changing the iso of a cdrom
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -441,13 +449,13 @@ sub change_cdrom_iso_spec {
 
 =pod
 
-=head1 change_interface_spec
+=head2 change_interface_spec
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Returns a network interface change spec
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -465,17 +473,17 @@ Name of requested network
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 A spec for changing the interface
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -541,13 +549,13 @@ sub change_interface_spec {
 
 =pod
 
-=head1 add_cdrom_spec
+=head2 add_cdrom_spec
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Returns a spec for adding a new cdrom
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -557,17 +565,17 @@ Name of Virtual Machine
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 A spec for adding a cdrom
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -597,13 +605,13 @@ sub add_cdrom_spec {
 
 =pod
 
-=head1 add_interface_spec
+=head2 add_interface_spec
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Returns a spec for adding interfaces
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -617,19 +625,19 @@ Type of interface to add
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 A spec for adding an interface
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
 Default network used is VLAN21
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -671,13 +679,13 @@ sub add_interface_spec {
 
 =pod
 
-=head1 E1000_object
+=head2 E1000_object
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Returns a E1000 object
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -691,17 +699,17 @@ The requested mac address
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 A VirtualE1000 managed object
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -729,13 +737,13 @@ sub E1000_object {
 
 =pod
 
-=head1 Vmxnet_object
+=head2 Vmxnet_object
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Returns a Vmxnet object
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -749,17 +757,17 @@ Requested mac address
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 A VirtualVmxnet object
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -787,13 +795,13 @@ sub Vmxnet_object {
 
 =pod
 
-=head1 add_disk_spec
+=head2 add_disk_spec
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Returns a spec for adding a harddisk
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -807,19 +815,19 @@ Size of requested disk
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 A spec for adding a disk
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
 Disk is a thin provisioned disk.
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -869,13 +877,13 @@ sub add_disk_spec {
 
 =pod
 
-=head1 get_scsi_controller
+=head2 get_scsi_controller
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Returns the scsi controllers attributes
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -885,21 +893,21 @@ Name of Virtual Machine
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 Managed object of the Scsi controller
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
 Virtual Machines should have only only 1 type of scsi controller, of there are multiple we throw an exception
 
-=head2 THROWS
+=head3 THROWS
 
 Entity::HWError if there are multiple scsi controllers
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -937,13 +945,13 @@ sub get_scsi_controller {
 
 =pod
 
-=head1 get_free_ide_controller
+=head2 get_free_ide_controller
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Returns the first free ide controller
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -953,19 +961,19 @@ Name of virtual machine
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 Ide controller managed object
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
 Entity::HWError if no free ide controllers found
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -1007,13 +1015,13 @@ sub get_free_ide_controller {
 
 =pod
 
-=head1 reconfig_vm
+=head2 reconfig_vm
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Runs a reconfigvm task with requested spec
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -1027,17 +1035,17 @@ A VirtualMachineConfigSpec for reconfiguring the vm
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 True on success
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -1055,13 +1063,13 @@ sub reconfig_vm {
 
 =pod
 
-=head1 get_annotation_key
+=head2 get_annotation_key
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Returns a key of a customfield
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -1075,17 +1083,17 @@ Name of Customfield
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 The key number if found
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -1110,13 +1118,13 @@ sub get_annotation_key {
 
 =pod
 
-=head1 network_interfaces
+=head2 network_interfaces
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Returns all network interface information in hash format
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -1126,17 +1134,17 @@ Name of virtual machine
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 Hash with all network interfaces and their information
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -1190,13 +1198,13 @@ sub network_interfaces {
 
 =pod
 
-=head1 generate_network_setup
+=head2 generate_network_setup
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Generates a network DeviceConfigSpec for all interfaces for installation
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -1206,20 +1214,20 @@ The name of the template
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 A DeviceConfigSpec for reconfiguring the network interfaces
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
 Template::Status if no template is found
 Entity::HWError if unkown interface type is found
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -1289,13 +1297,13 @@ sub generate_network_setup {
 
 =pod
 
-=head1 CustomizationAdapterMapping_generator
+=head2 CustomizationAdapterMapping_generator
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Generates a CustomizationAdapterMapping for installation
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -1305,17 +1313,17 @@ Name of Virtual Machine
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 Array ref with CustomizationAdapterMapping created for all interfaces
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -1347,13 +1355,13 @@ sub CustomizationAdapterMapping_generator {
 
 =pod
 
-=head1 get_hw
+=head2 get_hw
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Returns all requested hardwares of a vm
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -1367,17 +1375,17 @@ Type of hardware to search for
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 Array ref with all hardwares as managed objects
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -1404,13 +1412,13 @@ sub get_hw {
 
 =pod
 
-=head1 key2hw
+=head2 key2hw
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Returns hardware object according to requested key
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -1424,17 +1432,17 @@ Hardware key number
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 A managed object containing the requested hardware
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -1461,13 +1469,13 @@ sub key2hw {
 
 =pod
 
-=head1 poweron
+=head2 poweron
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Powers on a Virtual Machine
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -1477,18 +1485,18 @@ Name of Virtual Machine
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 True on success
 False if machine is already powered on
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -1512,13 +1520,13 @@ sub poweron {
 
 =pod
 
-=head1 poweroff
+=head2 poweroff
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Poweres off a Virtual Machine
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -1528,18 +1536,18 @@ Name of Virtual Machine
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 True on success
 False if machine is already powered on
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -1563,13 +1571,13 @@ sub poweroff {
 
 =pod
 
-=head1 revert_to_snapshot
+=head2 revert_to_snapshot
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Reverts a Virtual Machine to requested snapshot
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -1583,20 +1591,20 @@ Id of snapshot to revert to
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 True on success
 False on failure
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
 Entity::Snapshot if no snapshots are found
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -1630,13 +1638,13 @@ sub revert_to_snapshot {
 
 =pod
 
-=head1 find_snapshot_by_id
+=head2 find_snapshot_by_id
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Returns snapshot according to requested id
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -1650,19 +1658,19 @@ Id of requested snpashot
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 Managed object of requested snapshot
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
 find_snapshot_by_id is used for recursing through a tree structure of snapshot to search for requested snapshot object
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -1694,13 +1702,13 @@ sub find_snapshot_by_id {
 
 =pod
 
-=head1 create_snapshot
+=head2 create_snapshot
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Creates a snapshot for Virtual Machine
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -1718,17 +1726,17 @@ Description of requested snapshot
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 True on success
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -1750,13 +1758,13 @@ sub create_snapshot {
 
 =pod
 
-=head1 remove_all_snapshot
+=head2 remove_all_snapshot
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Removes all snapshots from a Virtual Machine
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -1766,19 +1774,19 @@ Name of Virtual Machine
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 True on success
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
 Entity::Snapshot if no snpashots found
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -1803,13 +1811,13 @@ sub remove_all_snapshots {
 
 =pod
 
-=head1 remove_snapshot
+=head2 remove_snapshot
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Removes requested snapshot
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -1823,20 +1831,20 @@ Id of snapshot
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 True on success
 False on failure
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
 Entity::Snapshot if no snapshots found
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -1877,13 +1885,13 @@ sub remove_snapshot {
 
 =pod
 
-=head1 remove_hw
+=head2 remove_hw
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Removes a requested managed object
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -1897,17 +1905,17 @@ Managed object of requested hardware
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 True on success
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -1940,13 +1948,13 @@ sub remove_hw {
 
 =pod
 
-=head1 promote
+=head2 promote
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Coverts a linked clone Virtual Machine to an independent full clone
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -1956,19 +1964,19 @@ Name of Virtual Machine
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 True on success
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
 After machine is converted it is removed from linked clone folder to the folder of the ticket
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -1992,29 +2000,29 @@ sub promote {
 
 =pod
 
-=head1 list_snapshot
+=head2 list_snapshot
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 List snapshots and prints to stdout
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
 Maybe need to rethink to put printing into outer call, this should just return some information for easier printing
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -2046,13 +2054,13 @@ sub list_snapshot {
 
 =pod
 
-=head1 traverse_snapshot
+=head2 traverse_snapshot
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Will traverse requested snapshot object for current snapshot
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -2066,17 +2074,17 @@ The current snapshot we the machine is using
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
 Should rethink to combine with find id sub
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -2113,13 +2121,13 @@ sub traverse_snapshot {
 
 =pod
 
-=head1 run_command
+=head2 run_command
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Runs a requested program in the guest that has vmware tools installed
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -2158,17 +2166,17 @@ The Environmental arguments we should give the program
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 The pid of the program started
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -2201,13 +2209,13 @@ sub run_command {
 
 =pod
 
-=head1 transfer_to_guest
+=head2 transfer_to_guest
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Transfer file to guest
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -2242,19 +2250,19 @@ Should uploaded file overwrite any present files
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 True on success
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
 Entity::TransferError if transfer was not succesful
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -2310,13 +2318,13 @@ sub transfer_to_guest {
 
 =pod
 
-=head1 transfer_from_guest
+=head2 transfer_from_guest
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Transfers files from guest
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -2344,21 +2352,22 @@ Path to remote file to download
 =item dest
 
 Destination to put file
+
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 True on success
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
 Entity::TransferError if there was a transfer error
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -2412,13 +2421,13 @@ sub transfer_from_guest {
 
 =pod
 
-=head1 guest_cred
+=head2 guest_cred
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Retrieves a NamePasswordAthentication and validates credentials if they are working
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -2436,19 +2445,19 @@ Password to authenticate with
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 NamePasswordAthentication object
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
 Entity::Auth if authentication fails
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
