@@ -1238,10 +1238,10 @@ sub generate_network_setup {
     my $os_temp_view =
       &VCenter::moref2view( &VCenter::path2moref($os_temp_path) );
     my %interfaces = %{ &Guest::network_interfaces( $os_temp_view->name ) };
-    my @mac  = &Misc::generate_macs( scalar( keys %keys ) );
-    for my $interface( keys %interfaces ) {
+    my @mac  = &Misc::generate_macs( scalar( keys %interfaces ) );
+    for my $key( keys %interfaces ) {
         my $ethernetcard;
-        if ( $interfaces{$interface}->{type} eq 'VirtualE1000' ) {
+        if ( $interfaces{$key}->{type} eq 'VirtualE1000' ) {
             &Log::debug("Generating setup for a E1000 device");
             $ethernetcard = VirtualE1000->new(
                 addressType      => 'Manual',
@@ -1250,7 +1250,7 @@ sub generate_network_setup {
                 key              => $key
             );
         }
-        elsif ( $interfaces{$interface}->{type} eq 'VirtualVmxnet2' ) {
+        elsif ( $interfaces{$key}->{type} eq 'VirtualVmxnet2' ) {
             &Log::debug("Generating setup for a VirtualVmxnet2");
             $ethernetcard = VirtualVmxnet2->new(
                 addressType      => 'Manual',
@@ -1259,7 +1259,7 @@ sub generate_network_setup {
                 key              => $key
             );
         }
-        elsif ( $interfaces{$interface}->{type} eq 'VirtualVmxnet3' ) {
+        elsif ( $interfaces{$key}->{type} eq 'VirtualVmxnet3' ) {
             &Log::debug("Generating setup for a VirtualVmxnet3");
             $ethernetcard = VirtualVmxnet3->new(
                 addressType      => 'Manual',
