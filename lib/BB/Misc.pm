@@ -9,36 +9,163 @@ BEGIN {
     our @EXPORT = qw( );
 }
 
-#tested
+=pod
+
+=head1 array_longest
+
+=head2 PURPOSE
+
+Returns longest element length of an array
+
+=head2 PARAMETERS
+
+=over
+
+=item array
+
+Array ref to array
+
+=back
+
+=head2 RETURNS
+
+Max length of longest element
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
+
 sub array_longest {
     my ($array) = @_;
     &Log::debug("Starting Misc::array_longest sub");
+    &Log::dumpob("array", $array);
     my $max = -1;
     for (@$array) {
         if ( length > $max ) {
             $max = length;
         }
     }
-    &Log::debug("Longest element is $max");
+    &Log::debug("Return=>'$max'");
+    &Log::debug("Finishing Misc::array_longest sub");
     return $max;
 }
 
-#tested
+=pod
+
+=head1 random_3digit
+
+=head2 PURPOSE
+
+Returns a a random number between 1-999
+
+=head2 PARAMETERS
+
+=over
+
+=back
+
+=head2 RETURNS
+
+A number between 1 and 999
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
+
 sub random_3digit {
     &Log::debug("Starting Misc::random_3digit sub");
-    return int( rand(999) );
+    my $ret = int( rand(999) );
+    &Log::debug("Finishing Misc::random_3digit sub");
+    &Log::debug("Return=>'$ret'");
+    return $ret;
 }
 
-#tested
+=pod
+
+=head1 generate_mac
+
+=head2 PURPOSE
+
+Generates a mac from agents pool
+
+=head2 PARAMETERS
+
+=over
+
+=item username
+
+Username to take mac pool from
+
+=back
+
+=head2 RETURNS
+
+A valid mac address
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+If user is unknown we should implement a fallback method
+Also username should be check to mac it take from VMWare SDK options hash
+
+=head2 SEE ALSO
+
+=cut
+
 sub generate_mac {
     my ($username) = @_;
-    &Log::debug("Starting Misc::generate_mac sub, username=>'$username'");
+    &Log::debug("Starting Misc::generate_mac sub");
+    &Log::debug1("Opts are: username=>'$username'");
     my $mac_base = &Support::get_key_value( 'agents', $username, 'mac' );
     &Log::debug("mac_base for $username=>'$mac_base'");
     my $mac = join ':', map { sprintf( "%02X", int rand(256) ) } ( 1 .. 3 );
-    &Log::debug("Finished Misc::generate_mac sub, mac=>'$mac_base$mac'");
+    &Log::debug("Finishing Misc::generate_mac sub");
+    &Log::debug("Return=>'$mac_base$mac'");
     return "$mac_base$mac";
 }
+
+=pod
+
+=head1 generate_uniq_mac
+
+=head2 PURPOSE
+
+Generates a uniq mac not found on the VCenter
+
+=head2 PARAMETERS
+
+=over
+
+=back
+
+=head2 RETURNS
+
+A uniq mac
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
 
 sub generate_uniq_mac {
     &Log::debug("Starting Misc::generate_uniq_mac sub");
@@ -47,13 +174,47 @@ sub generate_uniq_mac {
         &Log::debug("Generationing new mac and testing");
         $mac = &Misc::generate_mac( Opts::get_option('username') );
     }
-    &Log::debug("Mac is uniq, mac=>'$mac'");
+    &Log::debug("Finishing Misc::generate_uniq_mac_sub");
+    &Log::debug("Return=>'$mac'");
     return $mac;
 }
 
+=pod
+
+=head1 generate_macs
+
+=head2 PURPOSE
+
+Generates the requested of number of mac addresses that follow each other as possible
+
+=head2 PARAMETERS
+
+=over
+
+=item count
+
+The number of mac addresses required
+
+=back
+
+=head2 RETURNS
+
+Array ref of mac addresses
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
+
 sub generate_macs {
     my ($count) = @_;
-    &Log::debug("Starting Misc::generate_macs sub, count=>'$count'");
+    &Log::debug("Starting Misc::generate_macs sub");
+    &Log::debug1("Opts are: count=>'$count'");
     my @mac = ();
     while ( @mac != $count ) {
         if ( @mac == 0 ) {
@@ -79,13 +240,48 @@ sub generate_macs {
             }
         }
     }
-    &Log::debug("Returning mac array");
-    return @mac;
+    &Log::debug("Finishing Misc::generate_macs sub");
+    &Log::dumpobj("macs", \@mac);
+    return \@mac;
 }
+
+=pod
+
+=head1 mac_compare
+
+=head2 PURPOSE
+
+Compares if mac is uniq on VCenter
+
+=head2 PARAMETERS
+
+=over
+
+=item mac
+
+Mac address to test if uniq
+
+=back
+
+=head2 RETURNS
+
+True if mac found
+False if mac is uniq
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
 
 sub mac_compare {
     my ($mac) = @_;
-    &Log::debug("Starting Misc::mac_compare sub, mac=>'$mac'");
+    &Log::debug("Starting Misc::mac_compare sub");
+    &Log::debug1("Opts are: mac=>'$mac'");
     my $vm_view = Vim::find_entity_views(
         view_type => 'VirtualMachine',
         properties =>
@@ -108,11 +304,46 @@ sub mac_compare {
     return 0;
 }
 
-#tested
-# increment 1 on the last 3 bytes of the MAC. if overflow occurrs, then throw error
+=pod
+
+=head1 increment_mac
+
+=head2 PURPOSE
+
+Increments one on the mac address
+
+=head2 PARAMETERS
+
+=over
+
+=item mac
+
+Mac address
+
+=back
+
+=head2 RETURNS
+
+Incremented Mac address
+
+=head2 DESCRIPTION
+
+Increment 1 on the last 3 bytes of the MAC. if overflow occurrs, then throw error
+
+=head2 THROWS
+
+Entity::Mac if mac pool end reached
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
+
 sub increment_mac {
     my ($mac) = @_;
-    &Log::debug("Starting Misc::increment_mac, mac=>'$mac'");
+    &Log::debug("Starting Misc::increment_mac sub");
+    &Log::debug("Opts are: mac=>'$mac'");
     ( my $mac_hex = $mac ) =~ s/://g;
     my ( $mac_hi, $mac_lo ) = unpack( "nN", pack( 'H*', $mac_hex ) );
     if ( $mac_lo == 0x00FFFFFF ) {
@@ -131,20 +362,56 @@ sub increment_mac {
         &Log::info("Incrementing mac again");
         $new_mac = &Misc::increment_mac($new_mac);
     }
-    &Log::debug("Incrementd mac, mac=>'$new_mac'");
+    &Log::debug("Return=>'$new_mac'");
+    &Log::debug("Finishing Misc::increment_mac sub");
     return $new_mac;
 }
 
-#tested
+=pod
+
+=head1 vmname_splitter
+
+=head2 PURPOSE
+
+Virtual Machine name to split
+
+=head2 PARAMETERS
+
+=over
+
+=item vmname
+
+Name of virtual machine to split
+
+=back
+
+=head2 RETURNS
+
+Hash with extracted information
+
+=head2 DESCRIPTION
+
+If standard is not recognised by regex than unkown is returned for all elements
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
+
 sub vmname_splitter {
     my ($vmname) = @_;
     my %return = ();
-    &Log::debug("Starting Misc::vmname_splitter sub, vmname=>'$vmname'");
+    &Log::debug("Starting Misc::vmname_splitter sub");
+    &Log::debug("Opts are: vmname=>'$vmname'");
     my ( $ticket, $username, $template, $uniq ) =
       $vmname =~ /^([^-]*)-([^-]*)-([^-]*)-(\d{1,3})$/;
     if ( defined($template)
         and $template =~ /^([^_]*)_([^_]*)_([^_]*)_([^_]*)_([^_]*)$/ )
     {
+        &Log::info("Standard VM name detected");
         %return = (
             ticket   => $ticket,
             username => $username,
@@ -158,6 +425,7 @@ sub vmname_splitter {
         );
     }
     elsif ( defined($template) and $template =~ /^([^_]*)_([^_]*)$/ ) {
+        &Log::info("XCB standard name detected");
         %return = (
             ticket   => $ticket,
             username => $username,
@@ -184,17 +452,53 @@ sub vmname_splitter {
             template => 'unknown',
         );
     }
+    &Log::debug("Finishing Misc::vmname_splitter sub");
+    &Log::loghash("Return hash", \%return);
     return \%return;
 }
 
-#tested
+=pod
+
+=head1 increment_disk_name
+
+=head2 PURPOSE
+
+Increments a datastore path for new disk creation
+
+=head2 PARAMETERS
+
+=over
+
+=item name
+
+Disk path to increment
+
+=back
+
+=head2 RETURNS
+
+Incremented datastore name
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+test should be implemented if incremented disk name already exists on datastore
+
+=head2 SEE ALSO
+
+=cut
+
 sub increment_disk_name {
     my ($name) = @_;
-    &Log::debug("Starting Misc::increment_disk_name sub, name=>'$name'");
+    &Log::debug("Starting Misc::increment_disk_name sub");
+    &Log::debug1("Opts are: name=>'$name'");
     my ( $pre, $num, $post );
     if ( $name =~ /(.*)_(\d+)(\.vmdk)/ ) {
         ( $pre, $num, $post ) = ( $1, $2, $3 );
-        &Log::debug("disk has already been incremented, incrementing again");
+        &Log::debug("Disk has already been incremented, incrementing again");
         $num++;
         if ( $num == 7 ) {
             &Log::warning("We have reached the controller Id need to step one");
@@ -213,14 +517,49 @@ sub increment_disk_name {
         ( $pre, $post ) = $name =~ /(.*)(\.vmdk)/;
         $num = 1;
     }
-    &Log::debug("disk name has been incremented=>'${pre}_$num$post'");
+    &Log::debug("Finishing Misc::increment_disk_name sub");
+    &Log::debug("Return=>'${pre}_$num$post'");
     return "${pre}_$num$post";
 }
 
-#tested
+=pod
+
+=head1 filename_splitter
+
+=head2 PURPOSE
+
+Splits a datastore path to datastore folder and image string
+
+=head2 PARAMETERS
+
+=over
+
+=item filename
+
+Datastore path
+
+=back
+
+=head2 RETURNS
+
+Array containing the splitted variables
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+Vcenter::Path if path is not a valid path
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
+
 sub filename_splitter {
     my ($filename) = @_;
-    &Log::debug("Starting Misc::filename_splitter sub, filename=>'$filename'");
+    &Log::debug("Starting Misc::filename_splitter sub");
+    &Log::debug1("Opts are: filename=>'$filename'");
     my ( $datas, $folder, $image ) =
       $filename =~ qr@^\s*\[([^\]]*)\]\s*(.*)/([^/]*)$@;
     if ( !defined($datas) ) {
@@ -229,39 +568,145 @@ sub filename_splitter {
             path  => $filename
         );
     }
-    &Log::debug(
-"Finished Misc::filename_splitter sub, datastore=>'$datas', folder=>'$folder', image=>'$image'"
-    );
+    &Log::debug( "Finished Misc::filename_splitter sub");
+    &Log::debug( "Opts are: datastore=>'$datas', folder=>'$folder', image=>'$image'");
     return [ $datas, $folder, $image ];
 }
 
-#tested
+=pod
+
+=head1 generate_vmname
+
+=head2 PURPOSE
+
+Generates a virtual machine name according to standards
+
+=head2 PARAMETERS
+
+=over
+
+=item ticket
+
+The ticket the machine is going to be attached to
+
+=item username
+
+The username who is requesting the creation
+
+=item os_temp
+
+The os_template being used
+
+=back
+
+=head2 RETURNS
+
+A standard virtual machine name
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
+
 sub generate_vmname {
     my ( $ticket, $username, $os_temp ) = @_;
-    &Log::debug(
-"Starting Misc::generate_vmname sub, ticket=>'$ticket', username=>'$username', os_temp=>'$os_temp'"
-    );
-    return
-        $ticket . "-"
-      . $username . "-"
-      . $os_temp . "-"
-      . &Misc::random_3digit;
+    &Log::debug( "Starting Misc::generate_vmname sub");
+    &Log::debug( "Opts are: ticket=>'$ticket', username=>'$username', os_temp=>'$os_temp'");
+    my $vmname = $ticket . "-" . $username . "-" . $os_temp . "-" . &Misc::random_3digit;
+    &Log::debug("Vmname=>'$vmname'");
+    &Log::debug("Finishing Misc::generate_vmname sub");
+    return $vmname;
 }
+
+=pod
+
+=head1 uniq_vmname
+
+=head2 PURPOSE
+
+Generates a uniq virtual machine name according to standards
+
+=head2 PARAMETERS
+
+=over
+
+=item ticket
+
+The ticket the machine is going to be attached to
+
+=item username
+
+The username who is requesting the creation
+
+=item os_temp
+
+The os_template being used
+
+=back
+
+=head2 RETURNS
+
+An uniq virtual machine name
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
 
 sub uniq_vmname {
     my ( $ticket, $username, $os_temp ) = @_;
-    &Log::debug(
-"Starting Misc::uniq_vmname sub, ticket=>'$ticket', username=>'$username', os_temp=>'$os_temp'"
-    );
+    &Log::debug( "Starting Misc::uniq_vmname sub");
+    &Log::debug1( "Opts are: ticket=>'$ticket', username=>'$username', os_temp=>'$os_temp'");
     my $vmname = &Misc::generate_vmname( $ticket, $username, $os_temp );
     while ( &VCenter::exists_entity( $vmname, 'VirtualMachine' ) ) {
         &Log::debug("Generated name not uniq, regenerating");
         $vmname = &Misc::generate_vmname( $ticket, $username, $os_temp );
     }
+    &Log::debug("Return=>'$vmname'");
+    &Log::debug("Finishing Misc::uniq_vmname sub");
     return $vmname;
 }
 
-#tested
+=pod
+
+=head1 ticket_list
+
+=head2 PURPOSE
+
+Generates a list with all provisioned tickets on VCenter
+
+=head2 PARAMETERS
+
+=over
+
+=back
+
+=head2 RETURNS
+
+Hash ref containing ticket and first seen owner
+
+=head2 DESCRIPTION
+
+Machine names are used to idetify unseen tickets and added to hash
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
+
 sub ticket_list {
     &Log::debug("Starting Misc::ticket_list sub");
     my $machines = Vim::find_entity_views(
@@ -270,6 +715,7 @@ sub ticket_list {
     );
     my %tickets = ();
     for my $machine (@$machines) {
+        &Log::debug1("Ietaring through=>'" . $machine->name . "'");
         my $hash = &Misc::vmname_splitter( $machine->name );
         if ( $hash->{ticket} ne 'unknown'
             and !defined( $tickets{ $hash->{ticket} } ) )
@@ -277,14 +723,47 @@ sub ticket_list {
             $tickets{ $hash->{ticket} } = $hash->{username};
         }
     }
-    &Log::debug("Finished collecting ticket list");
+    &Log::debug("Finishing Misc::ticket_list sub");
     &Log::dumpobj( "tickets", %tickets );
     return \%tickets;
 }
 
+=pod
+
+=head1 user_ticket_list
+
+=head2 PURPOSE
+
+Generates hash with users provisioned tickets
+
+=head2 PARAMETERS
+
+=over
+
+=item name
+
+Username to get tickets of
+
+=back
+
+=head2 RETURNS
+
+Hash ref containing tickets
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
+
 sub user_ticket_list {
     my ($name) = @_;
-    &Log::debug("Starting Misc::user_ticket_list sub, name=>'$name'");
+    &Log::debug("Starting Misc::user_ticket_list sub");
+    &Log::debug1("Opts are: name=>'$name'");
     my $machines = Vim::find_entity_views(
         view_type  => 'VirtualMachine',
         properties => ['name'],
@@ -293,6 +772,7 @@ sub user_ticket_list {
     &Log::dumpobj( "machines", $machines );
     my %tickets = ();
     for my $machine (@$machines) {
+        &Log::debug1("Iterating through=>'" . $machine->name . "'");
         my $hash = &Misc::vmname_splitter( $machine->name );
         if ( $hash->{username} eq $name
             and !defined( $tickets{ $hash->{ticket} } ) )
@@ -300,10 +780,9 @@ sub user_ticket_list {
             $tickets{ $hash->{ticket} } = 1;
         }
     }
-    &Log::debug("Finished collecting user ticket list");
+    &Log::debug("Finishing Misc::user_ticket_list sub");
     &Log::dumpobj( "tickets", %tickets );
     return \%tickets;
 }
 
 1
-__END__

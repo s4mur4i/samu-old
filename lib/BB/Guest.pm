@@ -1238,7 +1238,7 @@ sub generate_network_setup {
     my $os_temp_view =
       &VCenter::moref2view( &VCenter::path2moref($os_temp_path) );
     my %interfaces = %{ &Guest::network_interfaces( $os_temp_view->name ) };
-    my @mac  = &Misc::generate_macs( scalar( keys %interfaces ) );
+    my @mac  = @{ &Misc::generate_macs( scalar( keys %interfaces ) )};
     for my $key( keys %interfaces ) {
         my $ethernetcard;
         if ( $interfaces{$key}->{type} eq 'VirtualE1000' ) {
