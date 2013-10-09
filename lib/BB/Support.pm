@@ -288,7 +288,7 @@ sub win_CloneSpec {
     &Log::debug(
 "Starting Support::win_CloneSpec sub, os_temp=>'$os_temp', domain=>'$domain', key=>'$key'"
     );
-    my @nicsetting = &Guest::CustomizationAdapterMapping_generator($os_temp);
+    my @nicsetting = @{ &Guest::CustomizationAdapterMapping_generator($os_temp)};
     my $globalipsettings = CustomizationGlobalIPSettings->new(
         dnsServerList => ['10.10.0.1'],
         dnsSuffixList => ['support.balabit']
@@ -367,7 +367,7 @@ sub win_CloneSpec {
 sub lin_CloneSpec {
     my ( $os_temp, $snapshot_view, $relocate_spec, $config_spec ) = @_;
     &Log::debug("Starting Support::lin_CloneSpec sub, os_temp=>'$os_temp'");
-    my @nicsetting = &Guest::CustomizationAdapterMapping_generator($os_temp);
+    my @nicsetting = @{ &Guest::CustomizationAdapterMapping_generator($os_temp)};
     my $hostname = CustomizationPrefixName->new( base => 'linuxguest' );
     my $globalipsettings = CustomizationGlobalIPSettings->new(
         dnsServerList => ['10.10.0.1'],

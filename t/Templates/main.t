@@ -68,7 +68,7 @@ SKIP : {
         for my $network (@networks) {
             isa_ok( $network, 'VirtualDeviceConfigSpec', "Interface is a valid ETHERNET object" );
         }
-        my @adapters = &Guest::CustomizationAdapterMapping_generator( $os_temp_view->name );
+        my @adapters = @{ &Guest::CustomizationAdapterMapping_generator( $os_temp_view->name )};
         for my $adapter (@adapters) {
             isa_ok( $adapter, 'CustomizationAdapterMapping', "Adapter is a valid customization mapping adapter" );
         }
