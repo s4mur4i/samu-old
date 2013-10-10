@@ -3,6 +3,14 @@ package Test;
 use strict;
 use warnings;
 
+=pod
+
+=head1 Test.pm
+
+Subroutines for BB/Test.pm
+
+=cut
+
 BEGIN {
     use Exporter;
     our @ISA    = qw( Exporter );

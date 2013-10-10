@@ -5,7 +5,14 @@ package Common;
 use FindBin;
 use lib "$FindBin::Bin/../../vmware_lib";
 
-#tested
+=pod
+
+=head1 Common.pm
+
+Collector sub for BB modules
+
+=cut
+
 use BB::Log;
 use BB::Error;
 use BB::VCenter;

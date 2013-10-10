@@ -10,7 +10,7 @@ Package: balabit-test-prereq
 Version: 1.0
 Maintainer: Krisztian Banhidy <s4mur4i@balabit.hu>
 # Pre-Depends: <comma-separated list of packages>
-Depends:libtest-output-perl,libtest-pod-perl,libtest-strict-perl,libtest-trap-perl,libtest-perl-critic-perl,libtest-fixme-perl,libtest-eol-perl,libtest-spelling-perl,libtest-exception-perl,libtest-file-perl
+Depends:libtest-output-perl,libtest-pod-perl,libtest-strict-perl,libtest-trap-perl,libtest-perl-critic-perl,libtest-fixme-perl,libtest-eol-perl,libtest-spelling-perl,libtest-exception-perl,libtest-file-perl,libtest-pod-coverage-perl
 # Recommends: <comma-separated list of packages>
 # Suggests: <comma-separated list of packages>
 # Provides: <comma-separated list of packages>
