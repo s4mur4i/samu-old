@@ -63,9 +63,9 @@ _samu() {
 
     ticket_info="--ticket"
     ticket_list=""
-    ticet_on="--ticket"
-    ticet_off="--ticket"
-    ticet_delete="--ticket"
+    ticket_on="--ticket"
+    ticket_off="--ticket"
+    ticket_delete="--ticket"
 
     bugzilla="info"
 
