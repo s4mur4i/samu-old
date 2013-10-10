@@ -6,6 +6,14 @@ use Base::misc;
 
 my $help = 0;
 
+=pod
+
+=head1 bugzilla.pm
+
+Subrutiones from Base/bugzilla.pm
+
+=cut
+
 BEGIN() {
     use Exporter();
     our ( @ISA, @EXPORT );
@@ -35,29 +43,29 @@ our $module_opts = {
 
 =pod
 
-=head1 main
+=head2 main
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Main entry for Bugzilla functions
 
-=head2 PARAMETERS
-
-=back
+=head3 PARAMETERS
 
 =over
 
-=head2 RETURNS
+=back
+
+=head3 RETURNS
 
 True on succcess
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -70,27 +78,27 @@ sub main {
 
 =pod
 
-=head1 info
+=head2 info
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Information about bugzilla ticket
 
-=head2 PARAMETERS
-
-=back
+=head3 PARAMETERS
 
 =over
 
-=head2 RETURNS
+=back
 
-=head2 DESCRIPTION
+=head3 RETURNS
 
-=head2 THROWS
+=head3 DESCRIPTION
 
-=head2 COMMENTS
+=head3 THROWS
 
-=head2 SEE ALSO
+=head3 COMMENTS
+
+=head3 SEE ALSO
 
 =cut
 
@@ -101,4 +109,4 @@ sub info {
     return 1;
 }
 
-1;
+1

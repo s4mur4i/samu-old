@@ -6,6 +6,14 @@ use Base::misc;
 
 my $help = 0;
 
+=pod
+
+=head1 ticket.pm
+
+Subroutines from Base/ticket.pm
+
+=cut
+
 BEGIN {
     use Exporter();
     our ( @ISA, @EXPORT );
@@ -71,27 +79,27 @@ our $module_opts = {
 
 =pod
 
-=head1 main
+=head2 main
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 
 
-=head2 PARAMETERS
-
-=back
+=head3 PARAMETERS
 
 =over
 
-=head2 RETURNS
+=back
 
-=head2 DESCRIPTION
+=head3 RETURNS
 
-=head2 THROWS
+=head3 DESCRIPTION
 
-=head2 COMMENTS
+=head3 THROWS
 
-=head2 SEE ALSO
+=head3 COMMENTS
+
+=head3 SEE ALSO
 
 =cut
 
@@ -104,27 +112,27 @@ sub main {
 
 =pod
 
-=head1 ticket_delete
+=head2 ticket_delete
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 
 
-=head2 PARAMETERS
-
-=back
+=head3 PARAMETERS
 
 =over
 
-=head2 RETURNS
+=back
 
-=head2 DESCRIPTION
+=head3 RETURNS
 
-=head2 THROWS
+=head3 DESCRIPTION
 
-=head2 COMMENTS
+=head3 THROWS
 
-=head2 SEE ALSO
+=head3 COMMENTS
+
+=head3 SEE ALSO
 
 =cut
 
@@ -172,27 +180,27 @@ sub ticket_delete {
 
 =pod
 
-=head1 ticket_info
+=head2 ticket_info
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 
 
-=head2 PARAMETERS
-
-=back
+=head3 PARAMETERS
 
 =over
 
-=head2 RETURNS
+=back
 
-=head2 DESCRIPTION
+=head3 RETURNS
 
-=head2 THROWS
+=head3 DESCRIPTION
 
-=head2 COMMENTS
+=head3 THROWS
 
-=head2 SEE ALSO
+=head3 COMMENTS
+
+=head3 SEE ALSO
 
 =cut
 
@@ -277,27 +285,27 @@ sub ticket_info {
 
 =pod
 
-=head1 ticket_on
+=head2 ticket_on
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 
 
-=head2 PARAMETERS
-
-=back
+=head3 PARAMETERS
 
 =over
 
-=head2 RETURNS
+=back
 
-=head2 DESCRIPTION
+=head3 RETURNS
 
-=head2 THROWS
+=head3 DESCRIPTION
 
-=head2 COMMENTS
+=head3 THROWS
 
-=head2 SEE ALSO
+=head3 COMMENTS
+
+=head3 SEE ALSO
 
 =cut
 
@@ -316,27 +324,27 @@ sub ticket_on {
 
 =pod
 
-=head1 ticket_off
+=head2 ticket_off
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 
 
-=head2 PARAMETERS
-
-=back
+=head3 PARAMETERS
 
 =over
 
-=head2 RETURNS
+=back
 
-=head2 DESCRIPTION
+=head3 RETURNS
 
-=head2 THROWS
+=head3 DESCRIPTION
 
-=head2 COMMENTS
+=head3 THROWS
 
-=head2 SEE ALSO
+=head3 COMMENTS
+
+=head3 SEE ALSO
 
 =cut
 
@@ -355,27 +363,27 @@ sub ticket_off {
 
 =pod
 
-=head1 ticket_list
+=head2 ticket_list
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 
 
-=head2 PARAMETERS
-
-=back
+=head3 PARAMETERS
 
 =over
 
-=head2 RETURNS
+=back
 
-=head2 DESCRIPTION
+=head3 RETURNS
 
-=head2 THROWS
+=head3 DESCRIPTION
 
-=head2 COMMENTS
+=head3 THROWS
 
-=head2 SEE ALSO
+=head3 COMMENTS
+
+=head3 SEE ALSO
 
 =cut
 

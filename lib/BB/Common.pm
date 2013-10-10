@@ -5,7 +5,14 @@ package Common;
 use FindBin;
 use lib "$FindBin::Bin/../../vmware_lib";
 
-#tested
+=pod
+
+=head1 Common.pm
+
+Collector sub for BB modules
+
+=cut
+
 use BB::Log;
 use BB::Error;
 use BB::VCenter;
@@ -17,9 +24,8 @@ use BB::Kayako;
 
 use VMware::VIRuntime;
 
-&Log::debug1("Loaded module common");
+&Log::debug("Loaded module common");
 
-#tested
 our $VERSION = '1.0.0';
 
 1

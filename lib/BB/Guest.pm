@@ -3,105 +3,358 @@ package Guest;
 use strict;
 use warnings;
 
+=pod
+
+=head1 Guest.pm
+
+Subroutines from BB/Guest.pm
+
+=cut
+
 BEGIN {
     use Exporter;
     our @ISA    = qw( Exporter );
     our @EXPORT = qw( );
 }
 
-#tested
+=pod
+
+=head2 entity_name_view
+
+=head3 PURPOSE
+
+Returns a managed object containing the requested entities name hash
+
+=head3 PARAMETERS
+
+=over
+
+=item name
+
+Name of the requested entity
+
+=item type
+
+Type of the requested entity
+
+=back
+
+=head3 RETURNS
+
+Managed object with name property
+
+=head3 DESCRIPTION
+
+=head3 THROWS
+
+=head3 COMMENTS
+
+=head3 SEE ALSO
+
+=cut
+
 sub entity_name_view {
     my ( $name, $type ) = @_;
-    &Log::debug("Retrieving entity name view, name=>'$name', type=>'$type'");
-    &VCenter::num_check( $name, $type );
+    &Log::debug("Starting Guest::entity_name_view sub");
+    &Log::debug1("Opts are: name=>'$name', type=>'$type'");
     my $view = &Guest::entity_property_view( $name, $type, 'name' );
+    &Log::dumpobj( "view", $view );
+    &Log::debug("Finishing Guest::entity_name_view sub");
     return $view;
 }
 
-#tested
+=pod
+
+=head2 entity_full_view
+
+=head3 PURPOSE
+
+Returns a managed object containing the requested entities full hash
+
+=head3 PARAMETERS
+
+=over
+
+=item name
+
+Name of requested entity
+
+=item type
+
+Type of requested entity
+
+=back
+
+=head3 RETURNS
+
+Managed object with all property
+
+=head3 DESCRIPTION
+
+=head3 THROWS
+
+=head3 COMMENTS
+
+=head3 SEE ALSO
+
+=cut
+
 sub entity_full_view {
     my ( $name, $type ) = @_;
-    &Log::debug(
-        "Retrieving entity full view sub, name=>'$name', type=>'$type'");
+    &Log::debug("Starting Guest::entity_full_view sub");
+    &Log::debug1("Opts are: name=>'$name', type=>'$type'");
     &VCenter::num_check( $name, $type );
     my $view =
       Vim::find_entity_view( view_type => $type, filter => { name => $name } );
     &Log::dumpobj( "full_view", $view );
+    &Log::debug("Finishing Guest::entity_full_view sub");
     return $view;
 }
 
-#tested
+=pod
+
+=head2 entity_property_view
+
+=head3 PURPOSE
+
+Returns a managed object containing the requested entities property hash
+
+=head3 PARAMETERS
+
+=over
+
+=item name
+
+Name of requested entity
+
+=item type
+
+Type of requested entity
+
+=back
+
+=head3 RETURNS
+
+Managed object with requested property
+
+=head3 DESCRIPTION
+
+=head3 THROWS
+
+=head3 COMMENTS
+
+=head3 SEE ALSO
+
+=cut
+
 sub entity_property_view {
     my ( $name, $type, $property ) = @_;
-    &Log::debug(
-"Retrieving entity property view sub, name=>'$name', type=>'$type', property=>'$property'"
-    );
-    &VCenter::num_check( $name, $type );
+    &Log::debug("Starting Guest::entity_property_view sub");
+    &Log::debug1(
+        "Opts are: name=>'$name', type=>'$type', property=>'$property'");
+    &VCenter::um_check( $name, $type );
     my $view = Vim::find_entity_view(
         view_type  => $type,
         properties => [$property],
         filter     => { name => $name }
     );
     &Log::dumpobj( "property_view", $view );
+    &Log::debug("Finishing Guest::entity_property_vuew sub");
     return $view;
 }
 
+=pod
+
+=head2 find_last_snapshot
+
+=head3 PURPOSE
+
+Retrieve last snapshot
+
+=head3 PARAMETERS
+
+=over
+
+=item snapshot_view
+
+Rootsnapshotlist hash
+
+=back
+
+=head3 RETURNS
+
+Last rootsnapshot is returned
+
+=head3 DESCRIPTION
+
+Multi level snapshots are not supported since it is fubar. Snapshots should be used with care, and should
+not be used with multi level setup
+
+=head3 THROWS
+
+=head3 COMMENTS
+
+=head3 SEE ALSO
+
+=cut
+
 sub find_last_snapshot {
     my ($snapshot_view) = @_;
-    &Log::dumpobj( "snapshot", $snapshot_view );
     &Log::debug("Starting Guest::find_last_snapshot sub");
-##FIXME atgondolni a rekurziot
+    &Log::dumpobj( "snapshot", $snapshot_view );
     foreach (@$snapshot_view) {
         if ( defined( $_->{'childSnapshotList'} ) ) {
             &Guest::find_last_snapshot( $_->{'childSnapshotList'} );
         }
         else {
-            &Log::debug( "Found snapshot returning, name=>'" . $_->name . "'" );
+            &Log::debug("Finishing Guest::find_last_snapshot sub");
             &Log::dumpobj( "return_snapshot", $_ );
             return $_;
         }
     }
 }
 
-#tested
+=pod
+
+=head2 get_altername
+
+=head3 PURPOSE
+
+Retrieves the altername of an entity
+
+=head3 PARAMETERS
+
+=over
+
+=item vmname
+
+Name of virtual machine
+
+=back
+
+=head3 RETURNS
+
+Altername or empty string
+
+=head3 DESCRIPTION
+
+=head3 THROWS
+
+=head3 COMMENTS
+
+=head3 SEE ALSO
+
+=cut
+
 sub get_altername {
     my ($vmname) = @_;
-    &Log::debug("Starting Guest::get_altername sub, vmname=>'$vmname'");
+    &Log::debug("Starting Guest::get_altername sub");
+    &Log::debug1("Opts are: vmname=>'$vmname'");
     my $view =
       &Guest::entity_property_view( $vmname, 'VirtualMachine', 'value' );
     my $key = &Guest::get_annotation_key( $vmname, "alternateName" );
+    my $altername = "";
     if ( defined( $view->value ) ) {
         foreach ( @{ $view->value } ) {
             if ( $_->key eq $key ) {
                 &Log::debug( "Found altername value=>'" . $_->value . "'" );
-                return $_->value;
+                $altername = $_->value;
             }
         }
     }
-    &Log::debug("No altername was found, returning empty string");
-    return "";
+    &Log::denug("Returning=>'$altername'");
+    &Log::debug("Finishing Guest::get_altername sub");
+    return $altername;
 }
 
-#tested
+=pod
+
+=head2 change_altername
+
+=head3 PURPOSE
+
+Changes the altername of a virtual machine
+
+=head3 PARAMETERS
+
+=over
+
+=item vmname
+
+Name of Virtual machine
+
+=item name
+
+Name of alternate name
+
+=back
+
+=head3 RETURNS
+
+Returns true on success
+
+=head3 DESCRIPTION
+
+=head3 THROWS
+
+=head3 COMMENTS
+
+=head3 SEE ALSO
+
+=cut
+
 sub change_altername {
     my ( $vmname, $name ) = @_;
-    &Log::debug(
-        "Starting Guest::change_altername sub, vmname=>'$vmname', name=>'$name'"
-    );
-    &VCenter::num_check( $vmname, 'VirtualMachine' );
+    &Log::debug("Starting Guest::change_altername sub");
+    &Log::debug1("Opts are: vmname=>'$vmname', name=>'$name'");
     my $view   = &Guest::entity_name_view( $vmname, 'VirtualMachine' );
-    my $sc     = Vim::get_service_content();
-    my $custom = Vim::get_view( mo_ref => $sc->customFieldsManager );
+    my $custom = &VCenter::get_manager("customFieldsManager");
     my $key    = &Guest::get_annotation_key( $vmname, "alternateName" );
     $custom->SetField( entity => $view, key => $key, value => $name );
-    &Log::debug("Finished changing altername");
+    &Log::debug("Finishing Guest::change_altername sub");
     return 1;
 }
+
+=pod
+
+=head2 remove_cdrom_iso_spec
+
+=head3 PURPOSE
+
+Creates a spec for removing a cdrom iso
+
+=head3 PARAMETERS
+
+=over
+
+=item vmname
+
+Name of virtual machine
+
+=item num
+
+Number of cdrom
+
+=back
+
+=head3 RETURNS
+
+A spec for removing cdrom iso
+
+=head3 DESCRIPTION
+
+=head3 THROWS
+
+=head3 COMMENTS
+
+=head3 SEE ALSO
+
+=cut
 
 sub remove_cdrom_iso_spec {
     my ( $vmname, $num ) = @_;
     &Log::debug("Starting Guest::add_cdrom_spec sub");
-    &Log::debug("Opts are, vmname=>'$vmname', num=>'$num'");
+    &Log::debug("Opts are: vmname=>'$vmname', num=>'$num'");
     my @cdrom_hw = @{ &Guest::get_hw( $vmname, 'VirtualCdrom' ) };
     my $controller =
       &Guest::key2hw( $vmname, $cdrom_hw[$num]->{controllerKey} );
@@ -119,12 +372,54 @@ sub remove_cdrom_iso_spec {
         operation => VirtualDeviceConfigSpecOperation->new('edit')
     );
     my $spec = VirtualMachineConfigSpec->new( deviceChange => [$configspec] );
+    &Log::dumpobj( "spec", $spec );
+    &Log::debug("Finishing Guest::remove_cdrom_iso_spec sub");
     return $spec;
 }
 
+=pod
+
+=head2 change_cdrom_iso_spec
+
+=head3 PURPOSE
+
+Returns a spec for changing an iso backend
+
+=head3 PARAMETERS
+
+=over
+
+=item vmname
+
+Name of Virtual Machine
+
+=item num
+
+Number of cdrom
+
+=item iso
+
+Datastore iso path
+
+=back
+
+=head3 RETURNS
+
+A spec for changing the iso of a cdrom
+
+=head3 DESCRIPTION
+
+=head3 THROWS
+
+=head3 COMMENTS
+
+=head3 SEE ALSO
+
+=cut
+
 sub change_cdrom_iso_spec {
     my ( $vmname, $num, $iso ) = @_;
-    &Log::debug("Starting Guest::add_cdrom_spec sub");
+    &Log::debug("Starting Guest::change_cdrom_iso_spec sub");
     &Log::debug("Opts are, vmname=>'$vmname', num=>'$num', iso=>'$iso'");
     if ( !&VCenter::datastore_file_exists($iso) ) {
         Vcenter::Path->throw(
@@ -147,21 +442,61 @@ sub change_cdrom_iso_spec {
         operation => VirtualDeviceConfigSpecOperation->new('edit')
     );
     my $spec = VirtualMachineConfigSpec->new( deviceChange => [$configspec] );
+    &Log::dumpobj( "spec", $spec );
+    &Log::debug("Finishing Guest::change_cdrom_iso_spec sub");
     return $spec;
 }
+
+=pod
+
+=head2 change_interface_spec
+
+=head3 PURPOSE
+
+Returns a network interface change spec
+
+=head3 PARAMETERS
+
+=over
+
+=item vmname
+
+Nanme of Virtual Machine
+
+=item num
+
+Number of interface
+
+=item network
+
+Name of requested network
+
+=back
+
+=head3 RETURNS
+
+A spec for changing the interface
+
+=head3 DESCRIPTION
+
+=head3 THROWS
+
+=head3 COMMENTS
+
+=head3 SEE ALSO
+
+=cut
 
 sub change_interface_spec {
     my ( $vmname, $num, $network ) = @_;
     &Log::debug("Starting Guest::change_interface_spec");
     &Log::debug(
-        "Opts are, vmname=>'$vmname', num=>'$num', network=>'$network'");
+        "Opts are: vmname=>'$vmname', num=>'$num', network=>'$network'");
     my @net_hw = @{ &Guest::get_hw( $vmname, 'VirtualEthernetCard' ) };
     my $network_view =
       &Guest::entity_property_view( $network, 'Network', 'name' );
     my $name = $network_view->{name};
-    &Log::debug("Name is $name");
     my $backing;
-
     if ( $network_view->{mo_ref}->{type} eq 'Network' ) {
         &Log::debug("Network is a normal network");
         $backing = VirtualEthernetCardNetworkBackingInfo->new(
@@ -173,8 +508,9 @@ sub change_interface_spec {
         &Log::debug("Network is a normal DVP");
         $network_view =
           &Guest::entity_full_view( $network, 'DistributedVirtualPortgroup' );
-        my $switch = Vim::get_view(
-            mo_ref => $network_view->{config}->{distributedVirtualSwitch} );
+        my $switch =
+          &VCenter::moref2view(
+            $network_view->{config}->{distributedVirtualSwitch} );
         my $port = DistributedVirtualSwitchPortConnection->new(
             portgroupKey => $network_view->{key},
             switchUuid   => $switch->{uuid}
@@ -206,15 +542,47 @@ sub change_interface_spec {
         device    => $device
     );
     my $spec = VirtualMachineConfigSpec->new( deviceChange => [$deviceconfig] );
-    &Log::debug("Returning spec from change_interface_spec");
+    &Log::debug("Finishing Guest::change_interface_spec sub");
     &Log::dumpobj( 'spec', $spec );
     return $spec;
 }
 
-#tested
+=pod
+
+=head2 add_cdrom_spec
+
+=head3 PURPOSE
+
+Returns a spec for adding a new cdrom
+
+=head3 PARAMETERS
+
+=over
+
+=item vmname
+
+Name of Virtual Machine
+
+=back
+
+=head3 RETURNS
+
+A spec for adding a cdrom
+
+=head3 DESCRIPTION
+
+=head3 THROWS
+
+=head3 COMMENTS
+
+=head3 SEE ALSO
+
+=cut
+
 sub add_cdrom_spec {
     my ($vmname) = @_;
-    &Log::debug("Starting Guest::add_cdrom_spec sub, vmname=>'$vmname'");
+    &Log::debug("Starting Guest::add_cdrom_spec sub");
+    &Log::debug1("Opts are: vmname=>'$vmname'");
     my $ide_key      = &get_free_ide_controller->{key};
     my $cdrombacking = VirtualCdromRemotePassthroughBackingInfo->new(
         exclusive  => 0,
@@ -230,19 +598,54 @@ sub add_cdrom_spec {
         device    => $cdrom,
     );
     my $vmspec = VirtualMachineConfigSpec->new( deviceChange => [$devspec] );
-    &Log::debug("Returning config spec");
+    &Log::debug("Finishing Gueset::add_cdrom_spec sub");
     &Log::dumpobj( "vmspec", $vmspec );
     return $vmspec;
 }
 
-#tested
+=pod
+
+=head2 add_interface_spec
+
+=head3 PURPOSE
+
+Returns a spec for adding interfaces
+
+=head3 PARAMETERS
+
+=over
+
+=item vmname
+
+Name of Virtual Machine
+
+=item type
+
+Type of interface to add
+
+=back
+
+=head3 RETURNS
+
+A spec for adding an interface
+
+=head3 DESCRIPTION
+
+Default network used is VLAN21
+
+=head3 THROWS
+
+=head3 COMMENTS
+
+=head3 SEE ALSO
+
+=cut
+
 sub add_interface_spec {
     my ( $vmname, $type ) = @_;
-    &Log::debug(
-"Starting Guest::add_interface_spec sub, vmname=>'$vmname', type=>'$type'"
-    );
+    &Log::debug("Starting Guest::add_interface_spec sub");
+    &Log::debug1("Opts are: vmname=>'$vmname', type=>'$type'");
     my @net_hw = @{ &Guest::get_hw( $vmname, 'VirtualEthernetCard' ) };
-    &VCenter::num_check( "VLAN21", "Network" );
     my $switch  = &Guest::entity_name_view( 'VLAN21', 'Network' );
     my $mac     = &Misc::increment_mac( $net_hw[-1]->{macAddress} );
     my $backing = VirtualEthernetCardNetworkBackingInfo->new(
@@ -268,17 +671,52 @@ sub add_interface_spec {
         operation => VirtualDeviceConfigSpecOperation->new('add'),
         device    => $device
     );
-    my $vmspec =
-      VirtualMachineConfigSpec->new( deviceChange => [$deviceconfig] );
-    &Log::debug("Returning config spec");
-    &Log::dumpobj( "vmspec", $vmspec );
-    return $vmspec;
+    my $spec = VirtualMachineConfigSpec->new( deviceChange => [$deviceconfig] );
+    &Log::debug("Finishing Guest::add_interface_spec sub");
+    &Log::dumpobj( "spec", $spec );
+    return $spec;
 }
 
-#tested
+=pod
+
+=head2 E1000_object
+
+=head3 PURPOSE
+
+Returns a E1000 object
+
+=head3 PARAMETERS
+
+=over
+
+=item backing
+
+A managed object for backing information
+
+=item mac
+
+The requested mac address
+
+=back
+
+=head3 RETURNS
+
+A VirtualE1000 managed object
+
+=head3 DESCRIPTION
+
+=head3 THROWS
+
+=head3 COMMENTS
+
+=head3 SEE ALSO
+
+=cut
+
 sub E1000_object {
     my ( $backing, $mac ) = @_;
-    &Log::debug("Starting Guest::E1000_object sub, mac=>'$mac'");
+    &Log::debug("Starting Guest::E1000_object sub");
+    &Log::debug("Opts are: mac=>'$mac'");
     &Log::dumpobj( "backing", $backing );
     my $device = VirtualE1000->new(
         connectable => VirtualDeviceConnectInfo->new(
@@ -292,15 +730,51 @@ sub E1000_object {
         key              => -1,
         backing          => $backing
     );
-    &Log::debug("Returning E1000 object");
+    &Log::debug("Finishing Guest::E1000_object sub");
     &Log::dumpobj( "device", $device );
     return $device;
 }
 
-#tested
+=pod
+
+=head2 Vmxnet_object
+
+=head3 PURPOSE
+
+Returns a Vmxnet object
+
+=head3 PARAMETERS
+
+=over
+
+=item backing
+
+A managed object for backing information
+
+=item mac
+
+Requested mac address
+
+=back
+
+=head3 RETURNS
+
+A VirtualVmxnet object
+
+=head3 DESCRIPTION
+
+=head3 THROWS
+
+=head3 COMMENTS
+
+=head3 SEE ALSO
+
+=cut
+
 sub Vmxnet_object {
     my ( $backing, $mac ) = @_;
-    &Log::debug("Starting Guest::Vmxnet_object sub, mac=>'$mac'");
+    &Log::debug("Starting Guest::Vmxnet_object sub");
+    &Log::debug1("Opts are: mac=>'$mac'");
     &Log::dumpobj( "backing", $backing );
     my $device = VirtualVmxnet->new(
         connectable => VirtualDeviceConnectInfo->new(
@@ -314,16 +788,53 @@ sub Vmxnet_object {
         key              => -1,
         backing          => $backing
     );
-    &Log::debug("Returning Vmxnet object");
+    &Log::debug("Finishing Guest::Vmxnet_object sub");
     &Log::dumpobj( "device", $device );
     return $device;
 }
 
-#tested
+=pod
+
+=head2 add_disk_spec
+
+=head3 PURPOSE
+
+Returns a spec for adding a harddisk
+
+=head3 PARAMETERS
+
+=over
+
+=item vmname
+
+Name of Virtual Machine
+
+=item size
+
+Size of requested disk
+
+=back
+
+=head3 RETURNS
+
+A spec for adding a disk
+
+=head3 DESCRIPTION
+
+Disk is a thin provisioned disk.
+
+=head3 THROWS
+
+=head3 COMMENTS
+
+=head3 SEE ALSO
+
+=cut
+
 sub add_disk_spec {
     my ( $vmname, $size ) = @_;
-    &Log::debug(
-        "Starting Guest::add_disk_spec sub, vmname=>'$vmname', size=>'$size'");
+    &Log::debug("Starting Guest::add_disk_spec sub");
+    &Log::debug1("Opts are: vmname=>'$vmname', size=>'$size'");
     my @disk_hw    = @{ &Guest::get_hw( $vmname, 'VirtualDisk' ) };
     my $scsi_con   = &Guest::get_scsi_controller($vmname);
     my $unitnumber = $disk_hw[-1]->{unitNumber} + 1;
@@ -358,16 +869,52 @@ sub add_disk_spec {
         device        => $disk,
         fileOperation => VirtualDeviceConfigSpecFileOperation->new('create')
     );
-    my $vmspec = VirtualMachineConfigSpec->new( deviceChange => [$devspec] );
-    &Log::debug("Returning config spec");
-    &Log::dumpobj( "vmspec", $vmspec );
-    return $vmspec;
+    my $spec = VirtualMachineConfigSpec->new( deviceChange => [$devspec] );
+    &Log::debug("Finishing Guest::add_disk_spec sub");
+    &Log::dumpobj( "spec", $spec );
+    return $spec;
 }
 
-#tested
+=pod
+
+=head2 get_scsi_controller
+
+=head3 PURPOSE
+
+Returns the scsi controllers attributes
+
+=head3 PARAMETERS
+
+=over
+
+=item vmname
+
+Name of Virtual Machine
+
+=back
+
+=head3 RETURNS
+
+Managed object of the Scsi controller
+
+=head3 DESCRIPTION
+
+Virtual Machines should have only only 1 type of scsi controller, of there are multiple we throw an exception
+
+=head3 THROWS
+
+Entity::HWError if there are multiple scsi controllers
+
+=head3 COMMENTS
+
+=head3 SEE ALSO
+
+=cut
+
 sub get_scsi_controller {
     my ($vmname) = @_;
-    &Log::debug("Starting Guest::get_scsi_controller sub, vmname=>'$vmname'");
+    &Log::debug("Starting Guest::get_scsi_controller sub");
+    &Log::debug1("Opts are: vmname=>'$vmname'");
     my @types = (
         'VirtualBusLogicController',    'VirtualLsiLogicController',
         'VirtualLsiLogicSASController', 'ParaVirtualSCSIController'
@@ -376,7 +923,6 @@ sub get_scsi_controller {
     for my $type (@types) {
         &Log::debug1("Looping through $type");
         my @cont = @{ &Guest::get_hw( $vmname, $type ) };
-        &Log::dumpobj( "get_hw_return", \@cont );
         if ( scalar(@cont) eq 1 ) {
             &Log::debug("Pushing controller to return array");
             push( @controller, @cont );
@@ -392,35 +938,74 @@ sub get_scsi_controller {
     else {
         &Log::debug("There was one controller as expected");
     }
-    &Log::debug("Returning Scsi controller");
-    &Log::dumpobj( "controller", \@controller );
+    &Log::debug("Finishing Guest::get_scsi_controller sub");
+    &Log::dumpobj( "controller", $controller[0] );
     return $controller[0];
 }
 
-#tested
+=pod
+
+=head2 get_free_ide_controller
+
+=head3 PURPOSE
+
+Returns the first free ide controller
+
+=head3 PARAMETERS
+
+=over
+
+=item vmname
+
+Name of virtual machine
+
+=back
+
+=head3 RETURNS
+
+Ide controller managed object
+
+=head3 DESCRIPTION
+
+=head3 THROWS
+
+Entity::HWError if no free ide controllers found
+
+=head3 COMMENTS
+
+=head3 SEE ALSO
+
+=cut
+
 sub get_free_ide_controller {
     my ($vmname) = @_;
-    &Log::debug(
-        "Starting Guest::get_free_ide_controller sub, vmname=>'$vmname'");
+    &Log::debug( "Starting Guest::get_free_ide_controller sub");
+    &Log::debug( "Opts are: vmname=>'$vmname'");
     my @controller = @{ &Guest::get_hw( $vmname, 'VirtualIDEController' ) };
     for ( my $i = 0 ; $i < scalar(@controller) ; $i++ ) {
         &Log::dumpobj( "ide_controller", $controller[$i] );
+        my $ret;
         if ( defined( $controller[$i]->device ) ) {
             &Log::debug("There are devices on controller, checking count");
             if ( @{ $controller[$i]->device } lt 2 ) {
                 &Log::debug("There is free space on controller returning key");
-                return $controller[$i];
+                $ret =  $controller[$i];
             }
             else {
                 &Log::debug("Controller Full");
+                next;
             }
         }
         else {
             &Log::debug("Controller is empty, returning key");
-            return $controller[$i];
+            $ret = $controller[$i];
+        }
+        if ( $ret ) {
+            &Log::debug("Finishing Guest::get_free_ide_controller sub");
+            &Log::dumpobj("controller_ret", $ret);
+            return $ret;
         }
     }
-    &Log::debug("Found no free ide controller");
     Entity::HWError->throw(
         error  => 'Could not find free ide controller',
         entity => $vmname,
@@ -428,46 +1013,151 @@ sub get_free_ide_controller {
     );
 }
 
-#tested
+=pod
+
+=head2 reconfig_vm
+
+=head3 PURPOSE
+
+Runs a reconfigvm task with requested spec
+
+=head3 PARAMETERS
+
+=over
+
+=item vmname
+
+Name of virtual machine
+
+=item spec
+
+A VirtualMachineConfigSpec for reconfiguring the vm
+
+=back
+
+=head3 RETURNS
+
+True on success
+
+=head3 DESCRIPTION
+
+=head3 THROWS
+
+=head3 COMMENTS
+
+=head3 SEE ALSO
+
+=cut
+
 sub reconfig_vm {
     my ( $vmname, $spec ) = @_;
-    &Log::debug("Starting Guest::reconfig_vm sub, vmname=>'$vmname'");
+    &Log::debug("Starting Guest::reconfig_vm sub");
+    &Log::debug1("Opts are: vmname=>'$vmname'");
     &Log::dumpobj( "spec", $spec );
     my $view = &Guest::entity_name_view( $vmname, 'VirtualMachine' );
     my $task = $view->ReconfigVM_Task( spec => $spec );
     &VCenter::Task_Status($task);
-    &Log::debug("Finished VM reconfig");
+    &Log::debug("Finishing Guest::reconfig_vm sub");
     return 1;
 }
 
-#tested
+=pod
+
+=head2 get_annotation_key
+
+=head3 PURPOSE
+
+Returns a key of a customfield
+
+=head3 PARAMETERS
+
+=over
+
+=item vmname
+
+Name of Virtual Machine
+
+=item name
+
+Name of Customfield
+
+=back
+
+=head3 RETURNS
+
+The key number if found
+
+=head3 DESCRIPTION
+
+=head3 THROWS
+
+=head3 COMMENTS
+
+=head3 SEE ALSO
+
+=cut
+
 sub get_annotation_key {
     my ( $vmname, $name ) = @_;
-    &Log::debug(
-"Starting Guest::get_annotation_key sub, vmname=>'$vmname', key=>'$name'"
-    );
-    &VCenter::num_check( $vmname, 'VirtualMachine' );
+    &Log::debug( "Starting Guest::get_annotation_key sub");
+    &Log::debug1( "Opts are: vmname=>'$vmname', key=>'$name'");
     my $view = &Guest::entity_property_view( $vmname, 'VirtualMachine',
         'availableField' );
+    my $key = 0;
     foreach ( @{ $view->availableField } ) {
+        &Log::dumpobj("customfield", $_);
         if ( $_->name eq $name ) {
-            &Log::debug( "Found key returning value=>'" . $_->key . "'" );
-            return $_->key;
+            &Log::debug( "Found key value=>'" . $_->key . "'" );
+            $key =  $_->key;
         }
     }
-    &Log::debug("No annotation key was found with requested name");
-    return 0;
+    &Log::debug("Finishing Guest::get_annotation_key sub");
+    return $key;
 }
 
-#tested
+
+=pod
+
+=head2 network_interfaces
+
+=head3 PURPOSE
+
+Returns all network interface information in hash format
+
+=head3 PARAMETERS
+
+=over
+
+=item vmname
+
+Name of virtual machine
+
+=back
+
+=head3 RETURNS
+
+Hash with all network interfaces and their information
+
+=head3 DESCRIPTION
+
+=head3 THROWS
+
+=head3 COMMENTS
+
+=head3 SEE ALSO
+
+=cut
+
 sub network_interfaces {
     my ($vmname) = @_;
-    &Log::debug("Starting Guest::network_interfaces sub, vmname=>'$vmname'");
+    &Log::debug("Starting Guest::network_interfaces sub");
+    &Log::debug1("Opts are: vmname=>'$vmname'");
     my %interfaces = ();
     my $view       = &Guest::entity_property_view( $vmname, 'VirtualMachine',
         'config.hardware.device' );
     my $devices = $view->get_property('config.hardware.device');
     for my $device (@$devices) {
+        &Log::dumpobj("device", $device);
         if ( !$device->isa('VirtualEthernetCard') ) {
             &Log::debug("Device is not a network interface, skipping");
             next;
@@ -501,15 +1191,51 @@ sub network_interfaces {
         &Log::loghash( "Interface gathered, information, key=>'$key',",
             $interfaces{$key} );
     }
-    &Log::debug("Returning interfaces hash");
+    &Log::dumpobj("interface", \%interfaces);
+    &Log::debug("Finishing Guest::network_interfaces sub");
     return \%interfaces;
 }
 
-#tested
+=pod
+
+=head2 generate_network_setup
+
+=head3 PURPOSE
+
+Generates a network DeviceConfigSpec for all interfaces for installation
+
+=head3 PARAMETERS
+
+=over
+
+=item os_temp
+
+The name of the template
+
+=back
+
+=head3 RETURNS
+
+A DeviceConfigSpec for reconfiguring the network interfaces
+
+=head3 DESCRIPTION
+
+=head3 THROWS
+
+Template::Status if no template is found
+Entity::HWError if unknown interface type is found
+
+=head3 COMMENTS
+
+=head3 SEE ALSO
+
+=cut
+
 sub generate_network_setup {
     my ($os_temp) = @_;
     my @return;
-    &Log::debug("Starting Guest::generate_network_sub, os_temp=>'$os_temp'");
+    &Log::debug("Starting Guest::generate_network_sub");
+    &Log::debug("Opts are: os_temp=>'$os_temp'");
     if ( !defined( &Support::get_key_info( 'template', $os_temp ) ) ) {
         Template::Status->throw(
             error    => 'Template does not exists',
@@ -519,11 +1245,11 @@ sub generate_network_setup {
     my $os_temp_path = &Support::get_key_value( 'template', $os_temp, 'path' );
     my $os_temp_view =
       &VCenter::moref2view( &VCenter::path2moref($os_temp_path) );
-    my %keys = %{ &Guest::network_interfaces( $os_temp_view->name ) };
-    my @mac  = &Misc::generate_macs( scalar( keys %keys ) );
-    for my $key ( keys %keys ) {
+    my %interfaces = %{ &Guest::network_interfaces( $os_temp_view->name ) };
+    my @mac  = @{ &Misc::generate_macs( scalar( keys %interfaces ) )};
+    for my $key( keys %interfaces ) {
         my $ethernetcard;
-        if ( $keys{$key}->{type} eq 'VirtualE1000' ) {
+        if ( $interfaces{$key}->{type} eq 'VirtualE1000' ) {
             &Log::debug("Generating setup for a E1000 device");
             $ethernetcard = VirtualE1000->new(
                 addressType      => 'Manual',
@@ -532,7 +1258,7 @@ sub generate_network_setup {
                 key              => $key
             );
         }
-        elsif ( $keys{$key}->{type} eq 'VirtualVmxnet2' ) {
+        elsif ( $interfaces{$key}->{type} eq 'VirtualVmxnet2' ) {
             &Log::debug("Generating setup for a VirtualVmxnet2");
             $ethernetcard = VirtualVmxnet2->new(
                 addressType      => 'Manual',
@@ -541,7 +1267,7 @@ sub generate_network_setup {
                 key              => $key
             );
         }
-        elsif ( $keys{$key}->{type} eq 'VirtualVmxnet3' ) {
+        elsif ( $interfaces{$key}->{type} eq 'VirtualVmxnet3' ) {
             &Log::debug("Generating setup for a VirtualVmxnet3");
             $ethernetcard = VirtualVmxnet3->new(
                 addressType      => 'Manual',
@@ -562,19 +1288,49 @@ sub generate_network_setup {
             device    => $ethernetcard,
             operation => $operation
         );
+        &Log::dumpobj("deviceconfigspec", $deviceconfigspec);
         push( @return, $deviceconfigspec );
     }
     &Log::debug("Returning array network devices Config Spec");
     return @return;
 }
 
-#tested
+=pod
+
+=head2 CustomizationAdapterMapping_generator
+
+=head3 PURPOSE
+
+Generates a CustomizationAdapterMapping for installation
+
+=head3 PARAMETERS
+
+=over
+
+=item vmname
+
+Name of Virtual Machine
+
+=back
+
+=head3 RETURNS
+
+Array ref with CustomizationAdapterMapping created for all interfaces
+
+=head3 DESCRIPTION
+
+=head3 THROWS
+
+=head3 COMMENTS
+
+=head3 SEE ALSO
+
+=cut
+
 sub CustomizationAdapterMapping_generator {
     my ($vmname) = @_;
-    &Log::debug(
-        "Starting Guest::CustomizationAdapterMapping_generator sub, vmname=>'"
-          . $vmname
-          . "'" );
+    &Log::debug( "Starting Guest::CustomizationAdapterMapping_generator sub" );
+    &Log::debug( "Opts are: vmname=>'$vmname'" );
     my @return;
     for my $key ( keys &Guest::network_interfaces($vmname) ) {
         &Log::debug("Generating $key Adapter mapping");
@@ -589,66 +1345,165 @@ sub CustomizationAdapterMapping_generator {
         );
         my $nicsetting =
           CustomizationAdapterMapping->new( adapter => $adapter );
+        &Log::dumpobj("nicsetting", $nicsetting);
         push( @return, $nicsetting );
     }
-    &Log::debug("Returning array of adapter mappings");
-    return @return;
+    &Log::dumpobj("CustomizationAdapterMapping_array", \@return);
+    &Log::debug("Finishing Guest::CustomizationAdapterMapping_generator sub");
+    return \@return;
 }
 
-#tested
+=pod
+
+=head2 get_hw
+
+=head3 PURPOSE
+
+Returns all requested hardwares of a vm
+
+=head3 PARAMETERS
+
+=over
+
+=item vmname
+
+Name of Virtual Machine
+
+=item hw
+
+Type of hardware to search for
+
+=back
+
+=head3 RETURNS
+
+Array ref with all hardwares as managed objects
+
+=head3 DESCRIPTION
+
+=head3 THROWS
+
+=head3 COMMENTS
+
+=head3 SEE ALSO
+
+=cut
+
 sub get_hw {
     my ( $vmname, $hw ) = @_;
-    &Log::debug( "Starting Guest::get_hw sub, vmname=>'"
-          . $vmname
-          . "', hw=>'"
-          . $hw
-          . "'" );
+    &Log::debug( "Starting Guest::get_hw sub");
+    &Log::debug( "Opts are: vmname=>'$vmname', hw=>'$hw'" );
     my @hw   = ();
     my $view = &Guest::entity_property_view( $vmname, 'VirtualMachine',
         'config.hardware.device' );
     &Log::debug("Starting loop through hardver");
     my $devices = $view->get_property('config.hardware.device');
     foreach ( @{$devices} ) {
-
+        &Log::dumpobj("device", $_);
         if ( $_->isa($hw) ) {
             &Log::debug("Found requrested hardver pushing to return");
             push( @hw, $_ );
         }
     }
-    &Log::debug( "Returning count=>'" . scalar(@hw) . "'" );
     &Log::dumpobj( $hw, \@hw );
+    &Log::debug("Finishing Guest:get_hw sub");
     return \@hw;
 }
 
+=pod
+
+=head2 key2hw
+
+=head3 PURPOSE
+
+Returns hardware object according to requested key
+
+=head3 PARAMETERS
+
+=over
+
+=item vmname
+
+Name of Virtual Machine
+
+=item key
+
+Hardware key number
+
+=back
+
+=head3 RETURNS
+
+A managed object containing the requested hardware
+
+=head3 DESCRIPTION
+
+=head3 THROWS
+
+=head3 COMMENTS
+
+=head3 SEE ALSO
+
+=cut
+
 sub key2hw {
     my ( $vmname, $key ) = @_;
-    &Log::debug( "Starting Guest::key2hw sub, vmname=>'"
-          . $vmname
-          . "', key=>'"
-          . $key
-          . "'" );
+    &Log::debug( "Starting Guest::key2hw sub");
+    &Log::debug1( "Opts are: vmname=>'$vmname', key=>'$key'" );
     my $hw;
     my $view = &Guest::entity_property_view( $vmname, 'VirtualMachine',
         'config.hardware.device' );
     &Log::debug("Starting loop through hardver");
     my $devices = $view->get_property('config.hardware.device');
     foreach ( @{$devices} ) {
-
+        &Log::dumpobj("device", $_);
         if ( $_->{key} eq $key ) {
             &Log::debug("Found requrested hardver pushing to return");
             $hw = $_;
         }
     }
-    &Log::debug("Returning requested hw");
+    &Log::debug("Finishing Guest::key2hw sub");
     &Log::dumpobj( 'hw', $hw );
     return $hw;
 }
 
-#tested
+=pod
+
+=head2 poweron
+
+=head3 PURPOSE
+
+Powers on a Virtual Machine
+
+=head3 PARAMETERS
+
+=over
+
+=item vmname
+
+Name of Virtual Machine
+
+=back
+
+=head3 RETURNS
+
+True on success
+False if machine is already powered on
+
+=head3 DESCRIPTION
+
+=head3 THROWS
+
+=head3 COMMENTS
+
+=head3 SEE ALSO
+
+=cut
+
 sub poweron {
     my ($vmname) = @_;
-    &Log::debug("Starting Guest::poweron sub, vmname=>'$vmname'");
-    &VCenter::num_check( $vmname, 'VirtualMachine' );
+    &Log::debug("Starting Guest::poweron sub");
+    &Log::debug1("Opts are: vmname=>'$vmname'");
     my $view =
       &Guest::entity_property_view( $vmname, 'VirtualMachine',
         'runtime.powerState' );
@@ -659,15 +1514,47 @@ sub poweron {
     }
     my $task = $view->PowerOnVM_Task;
     &VCenter::Task_Status($task);
-    &Log::debug("Powered on VM");
+    &Log::debug("Finishing Guest::poweron sub");
     return 1;
 }
 
-#tested
+=pod
+
+=head2 poweroff
+
+=head3 PURPOSE
+
+Poweres off a Virtual Machine
+
+=head3 PARAMETERS
+
+=over
+
+=item vmname
+
+Name of Virtual Machine
+
+=back
+
+=head3 RETURNS
+
+True on success
+False if machine is already powered on
+
+=head3 DESCRIPTION
+
+=head3 THROWS
+
+=head3 COMMENTS
+
+=head3 SEE ALSO
+
+=cut
+
 sub poweroff {
     my ($vmname) = @_;
-    &Log::debug("Starting Guest::poweroff sub, vmname=>'$vmname'");
-    &VCenter::num_check( $vmname, 'VirtualMachine' );
+    &Log::debug("Starting Guest::poweroff sub");
+    &Log::debug("Opts are: vmname=>'$vmname'");
     my $view =
       &Guest::entity_property_view( $vmname, 'VirtualMachine',
         'runtime.powerState' );
@@ -678,16 +1565,53 @@ sub poweroff {
     }
     my $task = $view->PowerOffVM_Task;
     &VCenter::Task_Status($task);
-    &Log::debug("Powered off VM");
+    &Log::debug("Finishing Guest::poweroff sub");
     return 1;
 }
 
-#tested
+=pod
+
+=head2 revert_to_snapshot
+
+=head3 PURPOSE
+
+Reverts a Virtual Machine to requested snapshot
+
+=head3 PARAMETERS
+
+=over
+
+=item vmname
+
+Name of Virtual Machine
+
+=item id
+
+Id of snapshot to revert to
+
+=back
+
+=head3 RETURNS
+
+True on success
+False on failure
+
+=head3 DESCRIPTION
+
+=head3 THROWS
+
+Entity::Snapshot if no snapshots are found
+
+=head3 COMMENTS
+
+=head3 SEE ALSO
+
+=cut
+
 sub revert_to_snapshot {
     my ( $vmname, $id ) = @_;
-    &Log::debug(
-        "Starting Guest::revert_to_snapshot sub, vmname=>'$vmname', id=>'$id'\n"
-    );
+    &Log::debug( "Starting Guest::revert_to_snapshot sub");
+    &Log::debug1( "Opts are: vmname=>'$vmname', id=>'$id'");
     my $view =
       &Guest::entity_property_view( $vmname, 'VirtualMachine', 'snapshot' );
     if ( !defined( $view->snapshot ) ) {
@@ -701,12 +1625,10 @@ sub revert_to_snapshot {
         my $snapshot = &Guest::find_snapshot_by_id( $_, $id );
         if ( defined($snapshot) ) {
             &Log::debug("Found Id reverting");
-            my $moref = Vim::get_view( mo_ref => $snapshot->snapshot );
+            my $moref = &VCenter::moref2view( $snapshot->snapshot );
             my $task = $moref->RevertToSnapshot_Task( suppressPowerOn => 1 );
             &VCenter::Task_Status($task);
-            &Log::debug(
-"Finishing GuestManagement::revert_to_snapshot sub, return=>'success'"
-            );
+            &Log::debug( "Finishing GuestManagement::revert_to_snapshot sub");
             return 1;
         }
     }
@@ -714,12 +1636,49 @@ sub revert_to_snapshot {
     return 0;
 }
 
-#tested
+=pod
+
+=head2 find_snapshot_by_id
+
+=head3 PURPOSE
+
+Returns snapshot according to requested id
+
+=head3 PARAMETERS
+
+=over
+
+=item snapshot_view
+
+Snapshot managed object of virtual machine
+
+=item id
+
+Id of requested snpashot
+
+=back
+
+=head3 RETURNS
+
+Managed object of requested snapshot
+
+=head3 DESCRIPTION
+
+find_snapshot_by_id is used for recursing through a tree structure of snapshot to search for requested snapshot object
+
+=head3 THROWS
+
+=head3 COMMENTS
+
+=head3 SEE ALSO
+
+=cut
+
 sub find_snapshot_by_id {
     my ( $snapshot_view, $id ) = @_;
-    &Log::debug( "Starting Guest::find_snapshot_by_id sub, snapshot_view_id=>'"
-          . $snapshot_view->id
-          . "', id=>'$id'" );
+    &Log::debug( "Starting Guest::find_snapshot_by_id sub");
+    &Log::debug1( "Opts are: id=>'$id'" );
+    &Log::dumpobj("snapshot_view", $snapshot_view);
     my $return;
     if ( $snapshot_view->id == $id ) {
         &Log::debug("Found the requested snapshot");
@@ -736,21 +1695,55 @@ sub find_snapshot_by_id {
             }
         }
     }
-    &Log::debug("Returning snapshot");
+    &Log::debug("Finishing Guest::find_snapshot_by_id sub");
     &Log::dumpobj( "returning snapshot", $return );
     return $return;
 }
 
-#tested
+=pod
+
+=head2 create_snapshot
+
+=head3 PURPOSE
+
+Creates a snapshot for Virtual Machine
+
+=head3 PARAMETERS
+
+=over
+
+=item vmname
+
+Name of Virtual Machine
+
+=item snap_name
+
+Name of requested snapshot
+
+=item desc
+
+Description of requested snapshot
+
+=back
+
+=head3 RETURNS
+
+True on success
+
+=head3 DESCRIPTION
+
+=head3 THROWS
+
+=head3 COMMENTS
+
+=head3 SEE ALSO
+
+=cut
+
 sub create_snapshot {
     my ( $vmname, $snap_name, $desc ) = @_;
-    &Log::debug( "Starting Guest::create_snapshot sub, vmname=>'"
-          . $vmname
-          . "', snap_name=>'"
-          . $snap_name
-          . "', desc=>'"
-          . $desc
-          . "'" );
+    &Log::debug( "Starting Guest::create_snapshot sub");
+    &Log::debug( "Opts are: vmname=>'$vmname', snap_name=>'$snap_name', desc=>'$desc'" );
     my $view = &Guest::entity_name_view( $vmname, 'VirtualMachine' );
     my $task = $view->CreateSnapshot_Task(
         name        => $snap_name,
@@ -759,14 +1752,48 @@ sub create_snapshot {
         quiesce     => 1
     );
     &VCenter::Task_Status($task);
-    &Log::debug("Finished create_snapshot sub");
+    &Log::debug("Finishing Guest::create_snapshot sub");
     return 1;
 }
 
-#tested
+=pod
+
+=head2 remove_all_snapshot
+
+=head3 PURPOSE
+
+Removes all snapshots from a Virtual Machine
+
+=head3 PARAMETERS
+
+=over
+
+=item vmname
+
+Name of Virtual Machine
+
+=back
+
+=head3 RETURNS
+
+True on success
+
+=head3 DESCRIPTION
+
+=head3 THROWS
+
+Entity::Snapshot if no snpashots found
+
+=head3 COMMENTS
+
+=head3 SEE ALSO
+
+=cut
+
 sub remove_all_snapshots {
     my ($vmname) = @_;
-    &Log::debug("Starting Guest::remove_all_snapshot sub, vmname=>'$vmname'");
+    &Log::debug("Starting Guest::remove_all_snapshot sub");
+    &Log::debug("Opts are: vmname=>'$vmname'");
     my $view =
       &Guest::entity_property_view( $vmname, 'VirtualMachine', 'snapshot' );
     if ( !defined( $view->snapshot ) ) {
@@ -777,17 +1804,54 @@ sub remove_all_snapshots {
         );
     }
     my $task = $view->RemoveAllSnapshots_Task( consolidate => 1 );
-    &Log::dumpobj( "task", $task );
     &VCenter::Task_Status($task);
-    &Log::debug("Finished removing all snapshot");
+    &Log::debug("Finishing Guest::remove_all_snapshot sub");
     return 1;
 }
 
-#tested
+=pod
+
+=head2 remove_snapshot
+
+=head3 PURPOSE
+
+Removes requested snapshot
+
+=head3 PARAMETERS
+
+=over
+
+=item vmname
+
+Name of Virtual Machine
+
+=item id
+
+Id of snapshot
+
+=back
+
+=head3 RETURNS
+
+True on success
+False on failure
+
+=head3 DESCRIPTION
+
+=head3 THROWS
+
+Entity::Snapshot if no snapshots found
+
+=head3 COMMENTS
+
+=head3 SEE ALSO
+
+=cut
+
 sub remove_snapshot {
     my ( $vmname, $id ) = @_;
-    &Log::debug(
-        "Starting Guest::remove_snapshot sub, vmname=>'$vmname', id=>'$id'");
+    &Log::debug( "Starting Guest::remove_snapshot sub");
+    &Log::debug1( "Opts are: vmname=>'$vmname', id=>'$id'");
     my $view =
       &Guest::entity_property_view( $vmname, 'VirtualMachine', 'snapshot' );
     if ( !defined( $view->snapshot ) ) {
@@ -805,9 +1869,8 @@ sub remove_snapshot {
                 my $view = &VCenter::moref2view( $snapshot->snapshot );
                 &Log::dumpobj( "view", $view );
                 my $task = $view->RemoveSnapshot_Task( removeChildren => 0 );
-                &Log::dumpobj( "task", $task );
                 &VCenter::Task_Status($task);
-                &Log::debug("Finished removing snapshot");
+                &Log::debug("Finishing Guest::remove_snapshot sub");
                 return 1;
             }
             else {
@@ -820,9 +1883,46 @@ sub remove_snapshot {
     return 0;
 }
 
+=pod
+
+=head2 remove_hw
+
+=head3 PURPOSE
+
+Removes a requested managed object
+
+=head3 PARAMETERS
+
+=over
+
+=item vmname
+
+Name of Virtual Machine
+
+=item hw
+
+Managed object of requested hardware
+
+=back
+
+=head3 RETURNS
+
+True on success
+
+=head3 DESCRIPTION
+
+=head3 THROWS
+
+=head3 COMMENTS
+
+=head3 SEE ALSO
+
+=cut
+
 sub remove_hw {
     my ( $vmname, $hw ) = @_;
     &Log::debug("Starting Guest::remove_hw sub");
+    &Log::debug1("Opts are: vmname=>'$vmname'");
     &Log::dumpobj( "hw", $hw );
     my $deviceconfig;
     if ( $hw->isa('VirtualDisk') ) {
@@ -842,26 +1942,94 @@ sub remove_hw {
     my $vmspec =
       VirtualMachineConfigSpec->new( deviceChange => [$deviceconfig] );
     &Guest::reconfig_vm( $vmname, $vmspec );
+    &Log::debug("Finishing Guest::remove_hw sub");
     return 1;
 }
+
+=pod
+
+=head2 promote
+
+=head3 PURPOSE
+
+Coverts a linked clone Virtual Machine to an independent full clone
+
+=head3 PARAMETERS
+
+=over
+
+=item vmname
+
+Name of Virtual Machine
+
+=back
+
+=head3 RETURNS
+
+True on success
+
+=head3 DESCRIPTION
+
+After machine is converted it is removed from linked clone folder to the folder of the ticket
+
+=head3 THROWS
+
+=head3 COMMENTS
+
+=head3 SEE ALSO
+
+=cut
 
 sub promote {
     my ($vmname) = @_;
     &Log::debug("Starting Guest::promote sub");
-    &Log::debug("Opts are, vmname=>'$vmname'");
+    &Log::debug("Opts are: vmname=>'$vmname'");
     &Guest::poweroff($vmname);
     my $view = &Guest::entity_name_view( $vmname, 'VirtualMachine' );
     my $task = $view->PromoteDisks_Task( unlink => 1 );
     &VCenter::Task_Status($task);
-    &VCenter::move_into_folder($vmname);
-    &Log::debug("Finished Guest::promote sub");
+    my $splitted = &Misc::vmname_splitter($vmname);
+
+    if ( !&VCenter::exists_entity( $splitted->{ticket}, 'Folder' ) ) {
+        &VCenter::create_folder( $splitted->{ticket}, 'vm' );
+    }
+    &VCenter::move_into_folder( $vmname, $splitted->{ticket} );
+    &Log::debug("Finishing Guest::promote sub");
     return 1;
 }
 
-#tested
+=pod
+
+=head2 list_snapshot
+
+=head3 PURPOSE
+
+List snapshots and prints to stdout
+
+=head3 PARAMETERS
+
+=over
+
+=back
+
+=head3 RETURNS
+
+=head3 DESCRIPTION
+
+=head3 THROWS
+
+=head3 COMMENTS
+
+Maybe need to rethink to put printing into outer call, this should just return some information for easier printing
+
+=head3 SEE ALSO
+
+=cut
+
 sub list_snapshot {
     my ($vmname) = @_;
-    &Log::debug("Starting Guest::list_snapshot sub, vmname=>'$vmname'");
+    &Log::debug("Starting Guest::list_snapshot sub");
+    &Log::debug("Opts are: vmname=>'$vmname'");
     my $view =
       &Guest::entity_property_view( $vmname, 'VirtualMachine', 'snapshot' );
     if (   !defined( $view->snapshot )
@@ -877,21 +2045,53 @@ sub list_snapshot {
     &Log::debug1("My current snapshot is: $current_snapshot");
     foreach ( @{ $view->snapshot->rootSnapshotList } ) {
         &Log::debug("Traversing snapshot");
+        &Log::dumpobj("snapshot", $_);
         &Guest::traverse_snapshot( $_, $current_snapshot );
     }
-    &Log::debug("Finished listing snapshot");
+    &Log::debug("Finishing Guest::list_snapshot sub");
     return 1;
 }
 
-#tested
+=pod
+
+=head2 traverse_snapshot
+
+=head3 PURPOSE
+
+Will traverse requested snapshot object for current snapshot
+
+=head3 PARAMETERS
+
+=over
+
+=item snapshot_moref
+
+A Managed object reference to the snapshot currently being traversed
+
+=item current_snapshot
+
+The current snapshot we the machine is using
+
+=back
+
+=head3 RETURNS
+
+=head3 DESCRIPTION
+
+=head3 THROWS
+
+=head3 COMMENTS
+
+Should rethink to combine with find id sub
+
+=head3 SEE ALSO
+
+=cut
+
 sub traverse_snapshot {
     my ( $snapshot_moref, $current_snapshot ) = @_;
-    &Log::debug(
-            "Starting Guest::traverse_snapshot sub, current_snapshot=>'"
-          . $current_snapshot
-          . "', snapshot_moref_name=>'"
-          . $snapshot_moref->name
-          . "'" );
+    &Log::debug( "Starting Guest::traverse_snapshot sub" );
+    &Log::debug1("Opts are: current_snapshot=>'$current_snapshot'");
     &Log::dumpobj( "snapshot_moref", $snapshot_moref );
     my $current = "";
     if ( $snapshot_moref->snapshot->value eq $current_snapshot ) {
@@ -915,9 +2115,70 @@ sub traverse_snapshot {
             &Guest::traverse_snapshot( $_, $current_snapshot );
         }
     }
-    &Log::debug("Finished traverse_snapshot sub");
+    &Log::debug("Finishing Guest::traverse_snapshot sub");
     return 1;
 }
+
+=pod
+
+=head2 run_command
+
+=head3 PURPOSE
+
+Runs a requested program in the guest that has vmware tools installed
+
+=head3 PARAMETERS
+
+=over
+
+=item info
+
+A hash ref with needed information
+Needs to contain following items:
+
+=item vmname
+
+Name of Virtual Machine
+
+=item guestusername
+
+Username for authentication
+
+=item guestpassword
+
+Password for authentication
+
+=item workdir
+
+The directory we should use for running the command
+
+=item prog
+
+Name of the program we should run
+
+=item prog_arg
+
+The arguments we should give the program
+
+=item env
+
+The Environmental arguments we should give the program
+
+=back
+
+=head3 RETURNS
+
+The pid of the program started
+
+=head3 DESCRIPTION
+
+=head3 THROWS
+
+=head3 COMMENTS
+
+=head3 SEE ALSO
+
+=cut
 
 sub run_command {
     my ($info) = @_;
@@ -929,7 +2190,7 @@ sub run_command {
         $info->{guestusername},
         $info->{guestpassword}
     );
-    my $guestProcMan  = &VCenter::process_manager;
+    my $guestProcMan  = &VCenter::get_manager("processManager");
     my $guestProgSpec = GuestProgramSpec->new(
         workingDirectory => $info->{workdir},
         programPath      => $info->{prog},
@@ -941,9 +2202,69 @@ sub run_command {
         auth => $guestCreds,
         spec => $guestProgSpec
     );
-    &Log::debug("Returning pid $pid");
+    &Log::debug("Returning=>'$pid'");
+    &Log::debug("Finishing Guest::run_command sub");
     return $pid;
 }
+
+=pod
+
+=head2 transfer_to_guest
+
+=head3 PURPOSE
+
+Transfer file to guest
+
+=head3 PARAMETERS
+
+=over
+
+=item info
+
+A hash with all information required for sub
+Information required:
+
+=item vmname
+
+Name of Virtual Machine
+
+=item guestusername
+
+Username to authenticate with
+
+=item guestpassword
+
+Password to authenticate with
+
+=item source
+
+Path to file to upload
+
+=item dest
+
+Destination of upload
+
+=item overwrite
+
+Should uploaded file overwrite any present files
+
+=back
+
+=head3 RETURNS
+
+True on success
+
+=head3 DESCRIPTION
+
+=head3 THROWS
+
+Entity::TransferError if transfer was not successful
+
+=head3 COMMENTS
+
+=head3 SEE ALSO
+
+=cut
 
 sub transfer_to_guest {
     my ($info) = @_;
@@ -955,9 +2276,9 @@ sub transfer_to_guest {
         $info->{guestusername},
         $info->{guestpassword}
     );
-    my $filemanager = &VCenter::file_manager;
+    my $filemanager = &VCenter::get_manager("fileManager");
     my $fileattr    = GuestFileAttributes->new();
-    my $size        = -s $info->{path};
+    my $size        = -s $info->{source};
     my $transferinfo;
     eval {
         $transferinfo = $filemanager->InitiateFileTransferToGuest(
@@ -977,11 +2298,11 @@ sub transfer_to_guest {
             filename => $info->{dest}
         );
     }
-    print "Information about file:'" . $info->{path} . "'\n";
+    print "Information about file:'" . $info->{source} . "'\n";
     print "Size of file: $size bytes";
     my $ua = LWP::UserAgent->new();
     $ua->ssl_opts( verify_hostname => 0 );
-    open( my $fh, "<", "$info->{path}" );
+    open( my $fh, "<", "$info->{source}" );
     my $content = do { local $/; <$fh> };
     my $req = $ua->put( $transferinfo, Content => $content );
 
@@ -991,9 +2312,64 @@ sub transfer_to_guest {
     else {
         Entity::TransferError->throw( error => $req->as_string );
     }
-    &Log::debug("Returning success");
+    &Log::debug("Finishing Guest:transfer_to_guest sub");
     return 1;
 }
+
+=pod
+
+=head2 transfer_from_guest
+
+=head3 PURPOSE
+
+Transfers files from guest
+
+=head3 PARAMETERS
+
+=over
+
+=item info
+
+A hash containing information required
+Required information:
+
+=item vmname
+
+Name of virtual machine
+
+=item guestusername
+
+Username to authenticate with
+
+=item guestpassword
+
+Password to authenticate with
+
+=item source
+
+Path to remote file to download
+
+=item dest
+
+Destination to put file
+
+=back
+
+=head3 RETURNS
+
+True on success
+
+=head3 DESCRIPTION
+
+=head3 THROWS
+
+Entity::TransferError if there was a transfer error
+
+=head3 COMMENTS
+
+=head3 SEE ALSO
+
+=cut
 
 sub transfer_from_guest {
     my ($info) = @_;
@@ -1005,13 +2381,13 @@ sub transfer_from_guest {
         $info->{guestusername},
         $info->{guestpassword}
     );
-    my $filemanager = &VCenter::file_manager;
+    my $filemanager = &VCenter::get_manager("fileManager");
     my $transferinfo;
     eval {
         $transferinfo = $filemanager->InitiateFileTransferFromGuest(
             vm            => $view,
             auth          => $guestCreds,
-            guestFilePath => $info->{path}
+            guestFilePath => $info->{source}
         );
     };
 
@@ -1022,14 +2398,14 @@ sub transfer_from_guest {
             filename => $info->{source}
         );
     }
-    print "Information about file: $info->{path} \n";
+    print "Information about file: $info->{source} \n";
     print "Size: " . $transferinfo->size . " bytes\n";
     print "modification Time: "
       . $transferinfo->attributes->modificationTime
       . " and access Time : "
       . $transferinfo->attributes->accessTime . "\n";
     if ( !defined( $info->{dest} ) ) {
-        my $basename = basename( $info->{path} );
+        my $basename = basename( $info->{source} );
         my $content  = get( $transferinfo->url );
         open( my $fh, ">", "/tmp/$basename" );
         print $fh "$content";
@@ -1039,17 +2415,57 @@ sub transfer_from_guest {
         &Log::debug( "Downloading file to: '" . $info->{dest} . "'" );
         my $status = getstore( $transferinfo->url, $info->{dest} );
     }
-    &Log::debug("Returning success");
+    &Log::debug("Finishing Guest::transfer_from_guest sub");
     return 1;
 }
+
+=pod
+
+=head2 guest_cred
+
+=head3 PURPOSE
+
+Retrieves a NamePasswordAthentication and validates credentials if they are working
+
+=head3 PARAMETERS
+
+=over
+
+=item vmname
+
+Name of Virtual Machine
+
+=item guestusername
+
+Username to authenticate with
+
+=item guestpassword
+
+Password to authenticate with
+
+=back
+
+=head3 RETURNS
+
+NamePasswordAthentication object
+
+=head3 DESCRIPTION
+
+=head3 THROWS
+
+Entity::Auth if authentication fails
+
+=head3 COMMENTS
+
+=head3 SEE ALSO
+
+=cut
 
 sub guest_cred {
     my ( $vmname, $guestusername, $guestpassword ) = @_;
     &Log::debug("Starting Guest::guest_cred sub");
-    &Log::debug(
-"Opts are, vmname=>'$vmname', guestusername=>'$guestusername', guestpassword=>'$guestpassword'"
-    );
-    my $authMgr   = &VCenter::auth_manager;
+    &Log::debug( "Opts are: vmname=>'$vmname', guestusername=>'$guestusername', guestpassword=>'$guestpassword'");
+    my $authMgr   = &VCenter::get_manager("authManager");
     my $guestAuth = NamePasswordAuthentication->new(
         username           => $guestusername,
         password           => $guestpassword,
@@ -1068,10 +2484,9 @@ sub guest_cred {
             password => $guestpassword
         );
     }
-    &Log::debug("Returning guestAuth");
+    &Log::debug("Finishing Guest::guest_cred sub");
     &Log::dumpobj( "guestauth", $guestAuth );
     return $guestAuth;
 }
 
 1
-__END__

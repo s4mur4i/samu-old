@@ -3,20 +3,19 @@ package Support;
 use strict;
 use warnings;
 
+=pod
+
+=head1 Support.pm
+
+Subroutines from BB/Support.pm
+
+=cut
+
 BEGIN {
     use Exporter;
     our @ISA    = qw( Exporter );
     our @EXPORT = qw( );
 }
-
-=pod
-
-=head1 template_hash
-
-=head2 description
-
-    This hash contains information about our templates.
-=cut
 
 my %template_hash = (
     'scb_300' => {
@@ -32,19 +31,19 @@ my %template_hash = (
         os       => 'xcb'
     },
     'scb_341' => {
-        path     => 'Support/vm/templates/SCB/3.4/T_scb_341',
+        path     => 'Support/vm/templates/SCB/scb_3.4/T_scb_341',
         username => 'root',
         password => 'titkos',
         os       => 'xcb'
     },
     'scb_342' => {
-        path     => 'Support/vm/templates/SCB/3.4/T_scb_342',
+        path     => 'Support/vm/templates/SCB/scb_3.4/T_scb_342',
         username => 'root',
         password => 'titkos',
         os       => 'xcb'
     },
     'scb_350' => {
-        path     => 'Support/vm/templates/SCB/3.5/T_scb_350',
+        path     => 'Support/vm/templates/SCB/scb_3.5/T_scb_350',
         username => 'root',
         password => 'titkos',
         os       => 'xcb'
@@ -185,10 +184,44 @@ my %map_hash = (
     'template' => \%template_hash,
 );
 
-#tested
+=pod
+
+=head2 get_keys
+
+=head3 PURPOSE
+
+Returns keys of hash
+
+=head3 PARAMETERS
+
+=over
+
+=item hash
+
+Name of hash
+
+=back
+
+=head3 RETURNS
+
+Array ref with keys
+
+=head3 DESCRIPTION
+
+=head3 THROWS
+
+Template::Status if no hash is found
+
+=head3 COMMENTS
+
+=head3 SEE ALSO
+
+=cut
+
 sub get_keys {
     my ($hash) = @_;
-    &Log::debug("Starting Support::get_keys sub, hash=>'$hash'");
+    &Log::debug("Starting Support::get_keys sub");
+    &Log::debug1("Opts are: hash=>'$hash'");
     if ( !defined( $map_hash{$hash} ) ) {
         Template::Status->throw(
             error    => 'Requested hash_map was not found',
@@ -196,48 +229,159 @@ sub get_keys {
         );
     }
     my $req_hash = $map_hash{$hash};
-    return [ keys %$req_hash ];
+    my $return = [ keys %$req_hash ];
+    &Log::debug("Finishing Support::get_keys sub");
+    &Log::dumpobj("req_hash", $return );
+    return $return;
 }
 
-#tested
+=pod
+
+=head2 get_key_info
+
+=head3 PURPOSE
+
+Returns hash with information
+
+=head3 PARAMETERS
+
+=over
+
+=item hash
+
+Name of hash to use
+
+=item key
+
+Key of hash to return
+
+=back
+
+=head3 RETURNS
+
+Hash reference with information
+
+=head3 DESCRIPTION
+
+=head3 THROWS
+
+Template::Status if no information is found
+
+=head3 COMMENTS
+
+=head3 SEE ALSO
+
+=cut
+
 sub get_key_info {
     my ( $hash, $key ) = @_;
-    &Log::debug(
-        "Starting Support::get_key_info sub, hash=>'$hash', key=>'$key'");
-    if ( grep /^$key$/, @{ &Support::get_keys($hash) } ) {
-        return $map_hash{$hash}->{$key};
-    }
-    else {
+    &Log::debug( "Starting Support::get_key_info sub");
+    &Log::debug1( "Opts are: hash=>'$hash', key=>'$key'");
+    if ( !grep /^$key$/, @{ &Support::get_keys($hash) } ) {
         Template::Status->throw(
             error    => 'Requested key info was not found',
             template => $key
         );
     }
+    &Log::debug("Finishing Support::get_key_info sub");
+    &Log::dumpobj("key_info", $map_hash{$hash}->{$key});
+    return $map_hash{$hash}->{$key};
 }
 
-#tested
+=pod
+
+=head2 get_key_value
+
+=head3 PURPOSE
+
+Returns a value from hash of hash
+
+=head3 PARAMETERS
+
+=over
+
+=item hash
+
+Which hash to use
+
+=item key
+
+What is the key of first hash
+
+=item value
+
+The key of hash of hash
+
+=back
+
+=head3 RETURNS
+
+Value of hash of hash
+
+=head3 DESCRIPTION
+
+=head3 THROWS
+
+Template::Status if no information found
+
+=head3 COMMENTS
+
+=head3 SEE ALSO
+
+=cut
+
 sub get_key_value {
     my ( $hash, $key, $value ) = @_;
-    &Log::debug(
-"Starting Support::get_key_value sub, hash=>'$hash', key=>'$key', value=>'$value'"
-    );
+    &Log::debug( "Starting Support::get_key_value sub");
+    &Log::debug1( "Opts are: hash=>'$hash', key=>'$key', value=>'$value'");
     my $key_hash = &Support::get_key_info( $hash, $key );
-    if ( defined( $$key_hash{$value} ) ) {
-        return $$key_hash{$value};
-    }
-    else {
+    if ( !defined( $$key_hash{$value} ) ) {
         Template::Status->throw(
             error    => 'Requested key value was not found',
             template => $value
         );
     }
+    &Log::debug("Finishing Support::get_key_value sub");
+    &Log::debug("Return=>'" . $$key_hash{$value} . "'");
+    return $$key_hash{$value};
 }
 
-### Installation helper objects
-#tested
+=pod
+
+=head2 RelocateSpec
+
+=head3 PURPOSE
+
+Returns a VirtualMachineRelocateSpec managed object for installation
+
+=head3 PARAMETERS
+
+=over
+
+=item ticket
+
+The ticket number
+
+=back
+
+=head3 RETURNS
+
+VirtualMachineRelocateSpec managed object
+
+=head3 DESCRIPTION
+
+=head3 THROWS
+
+=head3 COMMENTS
+
+=head3 SEE ALSO
+
+=cut
+
 sub RelocateSpec {
     my ($ticket) = @_;
-    &Log::debug("Starting Support::RelocateSpec sub, ticket=>'$ticket'");
+    &Log::debug("Starting Support::RelocateSpec sub");
+    &Log::debug1("Opts are: ticket=>'$ticket'");
     my $host_view =
       &Guest::entity_name_view( 'vmware-it1.balabit', 'HostSystem' );
     my $ticket_resource_pool =
@@ -247,57 +391,229 @@ sub RelocateSpec {
         diskMoveType => "createNewChildDiskBacking",
         pool         => $ticket_resource_pool
     );
+    &Log::debug("Finishing Support::RelocateSpec sub");
+    &Log::dumpobj("relocate_spec", $relocate_spec);
     return $relocate_spec;
 }
 
-#tested
+=pod
+
+=head2 ConfigSpec
+
+=head3 PURPOSE
+
+Generates VirtualMachineConfigSpec managed object for installation
+
+=head3 PARAMETERS
+
+=over
+
+=item memory
+
+Requested memory ammount
+
+=item cpu
+
+Number of cores to give to virtual machine
+
+=item os_temp
+
+The template that is being used to clone machine
+
+=back
+
+=head3 RETURNS
+
+VirtualMachineConfigSpec Managd object
+
+=head3 DESCRIPTION
+
+=head3 THROWS
+
+=head3 COMMENTS
+
+=head3 SEE ALSO
+
+=cut
+
 sub ConfigSpec {
     my ( $memory, $cpu, $os_temp ) = @_;
-    &Log::debug(
-"Starting Support::ConfigSpec sub, memory=>'$memory', cpu=>'$cpu', os_temp=>'$os_temp'"
-    );
+    &Log::debug( "Starting Support::ConfigSpec sub");
+    &Log::debug1( "Opts are: memory=>'$memory', cpu=>'$cpu', os_temp=>'$os_temp'");
     my $config_spec = VirtualMachineConfigSpec->new(
         memoryMB     => $memory,
         numCPUs      => $cpu,
         deviceChange => [ &Guest::generate_network_setup($os_temp) ]
     );
+    &Log::debug("Finishing Support::ConfigSpec sub");
+    &Log::dumpob("config_spec", $config_spec);
     return $config_spec;
 }
 
-#tested
+=pod
+
+=head2 CustomizationPassword
+
+=head3 PURPOSE
+
+Returns a CustomizationPassword managed object for Standard password use
+
+=head3 PARAMETERS
+
+=over
+
+=back
+
+=head3 RETURNS
+
+=head3 DESCRIPTION
+
+=head3 THROWS
+
+=head3 COMMENTS
+
+=head3 SEE ALSO
+
+=cut
+
 sub CustomizationPassword {
     &Log::debug("Starting Support::CustomizationPassword sub");
-    return CustomizationPassword->new( plainText => 1, value => 'titkos' );
+    my $ret = CustomizationPassword->new( plainText => 1, value => 'titkos' );
+    &Log::debug("Finishing Support::CustomizationPassword sub");
+    &Log::dumpobj("CustomizationPassword", $ret);
+    return $ret;
 }
 
-#tested
+=pod
+
+=head2 identification_domain
+
+=head3 PURPOSE
+
+Returns CustomizationIdentification managed object for domain join
+
+=head3 PARAMETERS
+
+=over
+
+=back
+
+=head3 RETURNS
+
+CustomizationIdentification managed object
+
+=head3 DESCRIPTION
+
+=head3 THROWS
+
+=head3 COMMENTS
+
+=head3 SEE ALSO
+
+=cut
+
 sub identification_domain {
     &Log::debug("Starting Support::identification_domain sub");
-    return CustomizationIdentification->new(
+    my $ret = CustomizationIdentification->new(
         domainAdmin         => 'Administrator@support.balabit',
         domainAdminPassword => &CustomizationPassword,
         joinDomain          => 'support.balabit'
     );
+    &Log::debug("Finishing Support::identification_domain sub");
+    &Log::dumpobj("CustomizationIdentification", $ret);
+    return $ret;
 }
 
-#tested
+=pod
+
+=head2 identification_workgroup
+
+=head3 PURPOSE
+
+Returns a CustomizationIdetification managed object for workgroup join
+
+=head3 PARAMETERS
+
+=over
+
+=back
+
+=head3 RETURNS
+
+CustomizationIdetification managed object
+
+=head3 DESCRIPTION
+
+=head3 THROWS
+
+=head3 COMMENTS
+
+=head3 SEE ALSO
+
+=cut
+
 sub identification_workgroup {
     &Log::debug("Starting Support::identification_workgroup sub");
-    return CustomizationIdentification->new(
+    my $ret = CustomizationIdentification->new(
         domainAdmin         => 'Administrator@support.balabit',
         domainAdminPassword => &CustomizationPassword,
         joinWorkgroup       => 'SUPPORT'
     );
+    &Log::debug("Finishing Support::idetification_workgroup sub");
+    &Log::dumpobj("CustomizationIdetification", $ret);
+    return $ret;
 }
 
-#tested
+=pod
+
+=head2 win_CloneSpec
+
+=head3 PURPOSE
+
+Returns a Clonespec for cloneing
+
+=head3 PARAMETERS
+
+=over
+
+=item os_temp
+
+The template the Linux virtual machine is going to be attached
+
+=item snapshot_view
+
+Snapshot Managed object to attach clone to
+
+=item relocate_spec
+
+Destination for created clone
+
+=item config_spec
+
+Config spec for creation of Virtual Machine
+
+=back
+
+=head3 RETURNS
+
+A VirtualMachineCloneSpec managed object
+
+=head3 DESCRIPTION
+
+=head3 THROWS
+
+=head3 COMMENTS
+
+=head3 SEE ALSO
+
+=cut
+
 sub win_CloneSpec {
     my ( $os_temp, $snapshot_view, $relocate_spec, $config_spec, $domain, $key )
       = @_;
-    &Log::debug(
-"Starting Support::win_CloneSpec sub, os_temp=>'$os_temp', domain=>'$domain', key=>'$key'"
-    );
-    my @nicsetting = &Guest::CustomizationAdapterMapping_generator($os_temp);
+    &Log::debug("Starting Support::win_CloneSpec sub");
+    &Log::debug("Opts are: os_temp=>'$os_temp', domain=>'$domain', key=>'$key'");
+    my @nicsetting = @{ &Guest::CustomizationAdapterMapping_generator($os_temp)};
     my $globalipsettings = CustomizationGlobalIPSettings->new(
         dnsServerList => ['10.10.0.1'],
         dnsSuffixList => ['support.balabit']
@@ -368,15 +684,60 @@ sub win_CloneSpec {
         config        => $config_spec,
         customization => $customization_spec
     );
-    &Log::debug("Returning win Clone Spec");
+    &Log::dumpobj("clone_spec", $clone_spec);
+    &Log::debug("Finishing Misc::win_CloneSpec sub");
     return $clone_spec;
 }
 
-#tested
+=pod
+
+=head2 lin_CloneSpec
+
+=head3 PURPOSE
+
+Returns a Clonespec for cloneing
+
+=head3 PARAMETERS
+
+=over
+
+=item os_temp
+
+The template the Linux virtual machine is going to be attached
+
+=item snapshot_view
+
+Snapshot Managed object to attach clone to
+
+=item relocate_spec
+
+Destination for created clone
+
+=item config_spec
+
+Config spec for creation of Virtual Machine
+
+=back
+
+=head3 RETURNS
+
+A VirtualMachineCloneSpec managed object
+
+=head3 DESCRIPTION
+
+=head3 THROWS
+
+=head3 COMMENTS
+
+=head3 SEE ALSO
+
+=cut
+
 sub lin_CloneSpec {
     my ( $os_temp, $snapshot_view, $relocate_spec, $config_spec ) = @_;
-    &Log::debug("Starting Support::lin_CloneSpec sub, os_temp=>'$os_temp'");
-    my @nicsetting = &Guest::CustomizationAdapterMapping_generator($os_temp);
+    &Log::debug("Starting Support::lin_CloneSpec sub");
+    &Log::debug1("Opts are: os_temp=>'$os_temp'");
+    my @nicsetting = @{ &Guest::CustomizationAdapterMapping_generator($os_temp)};
     my $hostname = CustomizationPrefixName->new( base => 'linuxguest' );
     my $globalipsettings = CustomizationGlobalIPSettings->new(
         dnsServerList => ['10.10.0.1'],
@@ -401,11 +762,51 @@ sub lin_CloneSpec {
         config        => $config_spec,
         customization => $customization_spec
     );
-    &Log::debug("Returning lin Clone Spec");
+    &Log::dumpobj("clone_spec", $clone_spec);
+    &Log::debug("Finishing Support::lin_CloneSpec sub");
     return $clone_spec;
 }
 
-#tested
+=pod
+
+=head2 oth_CloneSpec
+
+=head3 PURPOSE
+
+Returns a Clonespec for cloneing
+
+=head3 PARAMETERS
+
+=over
+
+=item snapshot_view
+
+Snapshot Managed object to attach clone to
+
+=item relocate_spec
+
+Destination for created clone
+
+=item config_spec
+
+Config spec for creation of Virtual Machine
+
+=back
+
+=head3 RETURNS
+
+A VirtualMachineCloneSpec managed object
+
+=head3 DESCRIPTION
+
+=head3 THROWS
+
+=head3 COMMENTS
+
+=head3 SEE ALSO
+
+=cut
+
 sub oth_CloneSpec {
     my ( $snapshot_view, $relocate_spec, $config_spec ) = @_;
     &Log::debug("Starting Support::oth_CloneSpec sub");
@@ -416,8 +817,9 @@ sub oth_CloneSpec {
         location => $relocate_spec,
         config   => $config_spec
     );
-    &Log::debug("Returning oth Clone Spec");
+    &Log::dumpobj("clone_spec", $clone_spec);
+    &Log::debug("Finishing Support::oth_CloneSpec sub");
     return $clone_spec;
 }
 
-__END__
+1

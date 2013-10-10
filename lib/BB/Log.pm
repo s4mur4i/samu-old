@@ -1,28 +1,95 @@
 package Log;
+
 use strict;
 use warnings;
-#
-# Last change:
-#   by  $Author: gabsimon $
-#   on  $Date: 2010-12-10 12:43:07 +0100 (Fri, 10 Dec 2010) $
-#
+
 use Getopt::Long qw(:config bundling pass_through);
 use Sys::Syslog qw(:standard :macros);
 use File::Basename;
 use Data::Dumper;
 
+=pod
+
+=head1 Log.pm
+
+Subroutines from BB/Log.pm
+
+=cut
+
 my $verbose;
 my $quiet;
 my $verbosity;
 
-#tested
+=pod
+
+=head2 verbostiy
+
+=head3 PURPOSE
+
+Returns verbosity level
+
+=head3 PARAMETERS
+
+=over
+
+=back
+
+=head3 RETURNS
+
+Returns verbosity level
+
+=head3 DESCRIPTION
+
+Getter sub for verbosity
+
+=head3 THROWS
+
+=head3 COMMENTS
+
+=head3 SEE ALSO
+
+=cut
+
 sub verbosity {
     return $verbosity;
 }
 
-# format a log message
-# args: (generic description, followed by arguments as a hash)
-# example: $l = log2line('Incoming connection', ip => '1.2.3.4', local_port => 1234, remote_port => $rport);
+=pod
+
+=head2 log2line
+
+=head3 PURPOSE
+
+Formats a log message
+
+=head3 PARAMETERS
+
+=over
+
+=item level
+
+Level of information
+
+=item msg
+
+The requested log information
+
+=back
+
+=head3 RETURNS
+
+The formatted log message
+
+=head3 DESCRIPTION
+
+=head3 THROWS
+
+=head3 COMMENTS
+
+=head3 SEE ALSO
+
+=cut
+
 sub log2line {
     $0 =~ s/.*\///g;    # strip off the leading . from the program name
     my $level = shift;
@@ -61,50 +128,418 @@ sub log2line {
     return "$msg\n";
 }
 
+=pod
+
+=head2 debug2
+
+=head3 PURPOSE
+
+debug 2 for printing information at log level 10
+
+=head3 PARAMETERS
+
+=over
+
+=item msg
+
+Message to print
+
+=back
+
+=head3 RETURNS
+
+=head3 DESCRIPTION
+
+=head3 THROWS
+
+=head3 COMMENTS
+
+=head3 SEE ALSO
+
+=cut
+
 sub debug2 {
     ( verbosity() >= 10 ) and syslog( LOG_DEBUG, log2line( 'DEBUG2', @_ ) );
 }
+
+=pod
+
+=head2 debug1
+
+=head3 PURPOSE
+
+debug 1 for printing information at log level 9
+
+=head3 PARAMETERS
+
+=over
+
+=item msg
+
+Message to print
+
+=back
+
+=head3 RETURNS
+
+=head3 DESCRIPTION
+
+=head3 THROWS
+
+=head3 COMMENTS
+
+=head3 SEE ALSO
+
+=cut
 
 sub debug1 {
     ( verbosity() >= 9 ) and syslog( LOG_DEBUG, log2line( 'DEBUG1', @_ ) );
 }
 
+=pod
+
+=head2 debug
+
+=head3 PURPOSE
+
+debug for printing information at log level 8
+
+=head3 PARAMETERS
+
+=over
+
+=item msg
+
+Message to print
+
+=back
+
+=head3 RETURNS
+
+=head3 DESCRIPTION
+
+=head3 THROWS
+
+=head3 COMMENTS
+
+=head3 SEE ALSO
+
+=cut
+
 sub debug {
     ( verbosity() >= 8 ) and syslog( LOG_DEBUG, log2line( 'DEBUG', @_ ) );
 }
+
+=pod
+
+=head2 info
+
+=head3 PURPOSE
+
+info for printing information at log level 7
+
+=head3 PARAMETERS
+
+=over
+
+=item msg
+
+Message to print
+
+=back
+
+=head3 RETURNS
+
+=head3 DESCRIPTION
+
+=head3 THROWS
+
+=head3 COMMENTS
+
+=head3 SEE ALSO
+
+=cut
 
 sub info {
     ( verbosity() >= 7 ) and syslog( LOG_INFO, log2line( 'INFO', @_ ) );
 }
 
+=pod
+
+=head2 notice
+
+=head3 PURPOSE
+
+notice for printing information at log level 6
+
+=head3 PARAMETERS
+
+=over
+
+=item msg
+
+Message to print
+
+=back
+
+=head3 RETURNS
+
+=head3 DESCRIPTION
+
+=head3 THROWS
+
+=head3 COMMENTS
+
+=head3 SEE ALSO
+
+=cut
+
 sub notice {
     ( verbosity() >= 6 ) and syslog( LOG_NOTICE, log2line( 'NOTICE', @_ ) );
 }
+
+=pod
+
+=head2 warning
+
+=head3 PURPOSE
+
+warning for printing information at log level 5
+
+=head3 PARAMETERS
+
+=over
+
+=item msg
+
+Message to print
+
+=back
+
+=head3 RETURNS
+
+=head3 DESCRIPTION
+
+=head3 THROWS
+
+=head3 COMMENTS
+
+=head3 SEE ALSO
+
+=cut
 
 sub warning {
     ( verbosity() >= 5 ) and syslog( LOG_WARNING, log2line( 'WARNING', @_ ) );
 }
 
+=pod
+
+=head2 error
+
+=head3 PURPOSE
+
+error for printing information at log level 4
+
+=head3 PARAMETERS
+
+=over
+
+=item msg
+
+Message to print
+
+=back
+
+=head3 RETURNS
+
+=head3 DESCRIPTION
+
+=head3 THROWS
+
+=head3 COMMENTS
+
+=head3 SEE ALSO
+
+=cut
+
 sub error {
     ( verbosity() >= 4 ) and syslog( LOG_ERR, log2line( 'ERROR', @_ ) );
 }
+
+=pod
+
+=head2 ciritical
+
+=head3 PURPOSE
+
+Critical for printing information at log level 3
+
+=head3 PARAMETERS
+
+=over
+
+=item msg
+
+Message to print
+
+=back
+
+=head3 RETURNS
+
+=head3 DESCRIPTION
+
+=head3 THROWS
+
+=head3 COMMENTS
+
+=head3 SEE ALSO
+
+=cut
 
 sub critical {
     ( verbosity() >= 3 ) and syslog( LOG_CRIT, log2line( 'CRITICAL', @_ ) );
 }
 
+=pod
+
+=head2 alert
+
+=head3 PURPOSE
+
+alert for printing information at log level 2
+
+=head3 PARAMETERS
+
+=over
+
+=item msg
+
+Message to print
+
+=back
+
+=head3 RETURNS
+
+=head3 DESCRIPTION
+
+=head3 THROWS
+
+=head3 COMMENTS
+
+=head3 SEE ALSO
+
+=cut
+
 sub alert {
     ( verbosity() >= 2 ) and syslog( LOG_ALERT, log2line( 'ALERT', @_ ) );
 }
+
+=pod
+
+=head2 emergency
+
+=head3 PURPOSE
+
+emergency for printing information at log level 1
+
+=head3 PARAMETERS
+
+=over
+
+=item msg
+
+Message to print
+
+=back
+
+=head3 RETURNS
+
+=head3 DESCRIPTION
+
+=head3 THROWS
+
+=head3 COMMENTS
+
+=head3 SEE ALSO
+
+=cut
 
 sub emergency {
     ( verbosity() >= 1 ) and syslog( LOG_EMERG, log2line( 'EMERGENCY', @_ ) );
 }
 
+=pod
+
+=head2 dumpobj
+
+=head3 PURPOSE
+
+Dumps an object for debugging
+
+=head3 PARAMETERS
+
+=over
+
+=item name
+
+Name of object for better identification
+
+=item obj
+
+Object to dump
+
+=back
+
+=head3 RETURNS
+
+=head3 DESCRIPTION
+
+=head3 THROWS
+
+=head3 COMMENTS
+
+=head3 SEE ALSO
+
+=cut
+
 sub dumpobj {
     my ( $name, $obj ) = @_;
     ( verbosity() >= 10 ) and debug2( "Dumping object $name:" . Dumper($obj) );
 }
+
+=pod
+
+=head2 loghash
+
+=head3 PURPOSE
+
+Logs a hash to readable format
+
+=head3 PARAMETERS
+
+=over
+
+=item msg
+
+Message to log to hash
+
+=item hash
+
+Hashref to log
+
+=back
+
+=head3 RETURNS
+
+=head3 DESCRIPTION
+
+=head3 THROWS
+
+=head3 COMMENTS
+
+=head3 SEE ALSO
+
+=cut
 
 sub loghash {
     my ( $msg, $hash ) = @_;

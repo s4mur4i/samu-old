@@ -28,6 +28,9 @@ WriteMakefile(
         'File::HomeDir'       => 0.98,
         'ExtUtils::MakeMaker' => 6.74,
         'Test::Strict'        => 0.14,
+# FIXME find required versions and test
+        'Test::Pod::Coverage' => 0,
+        'Test::Pod' => 0,
     },
     CONFIGURE_REQUIRES => { 'ExtUtils::MakeMaker' => 6.5705 },
     PREREQ_PM          => {

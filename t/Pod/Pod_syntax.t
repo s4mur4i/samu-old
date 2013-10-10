@@ -4,8 +4,8 @@ use warnings;
 use 5.14.0;
 use Test::More;
 use FindBin;
-use Test::More;
 use lib "$FindBin::Bin/../../lib";
+use Test::Pod;
 use English qw(-no_match_vars);
 
 if ( !($ENV{ALL} or $ENV{POD}) ) {
@@ -13,14 +13,14 @@ if ( !($ENV{ALL} or $ENV{POD}) ) {
     plan( skip_all => $msg );
 }
 
-eval { require Test::Pod::Coverage; };
+eval { require Test::Pod; };
 
 if ( $EVAL_ERROR ) {
-    my $msg = 'Test::Pod::Coverage required to test POD';
+    my $msg = 'Test::Pod required to test POD';
     plan( skip_all => $msg );
 }
 
-Test::Pod::Coverage->import;
-my $trustme = { trustme => [ qr{ \A (?: new )\z }x ] };
-all_pod_coverage_ok( $trustme );
+Test::Pod->import;
+
+all_pod_files_ok();
 done_testing;

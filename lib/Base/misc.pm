@@ -7,6 +7,14 @@ use Pod::Usage;
 use FindBin;
 use Module::Load;
 
+=pod
+
+=head1 misc.pm
+
+Subroutines from Base/misc.pm
+
+=cut
+
 BEGIN {
     use Exporter();
     our ( @ISA, @EXPORT );
@@ -19,27 +27,27 @@ our $help;
 
 =pod
 
-=head1 call_pod2usage
+=head2 call_pod2usage
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 
 
-=head2 PARAMETERS
-
-=back
+=head3 PARAMETERS
 
 =over
 
-=head2 RETURNS
+=back
 
-=head2 DESCRIPTION
+=head3 RETURNS
 
-=head2 THROWS
+=head3 DESCRIPTION
 
-=head2 COMMENTS
+=head3 THROWS
 
-=head2 SEE ALSO
+=head3 COMMENTS
+
+=head3 SEE ALSO
 
 =cut
 
@@ -56,27 +64,27 @@ sub call_pod2usage {
 
 =pod
 
-=head1 option_parser
+=head2 option_parser
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 
 
-=head2 PARAMETERS
-
-=back
+=head3 PARAMETERS
 
 =over
 
-=head2 RETURNS
+=back
 
-=head2 DESCRIPTION
+=head3 RETURNS
 
-=head2 THROWS
+=head3 DESCRIPTION
 
-=head2 COMMENTS
+=head3 THROWS
 
-=head2 SEE ALSO
+=head3 COMMENTS
+
+=head3 SEE ALSO
 
 =cut
 

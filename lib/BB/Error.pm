@@ -3,6 +3,14 @@ package Error;
 use strict;
 use warnings;
 
+=pod
+
+=head1 Error.pm
+
+Subroutines from BB/Error.pm
+
+=cut
+
 use Data::Dumper;
 use Exception::Class (
     'BaseException',
@@ -110,7 +118,7 @@ use Exception::Class (
 BEGIN {
     use Exporter;
     our @ISA    = qw( Exporter );
-    our @EXPORT = qw( &test &catch_ex );
+    our @EXPORT = qw( );
 }
 
 use overload
@@ -118,11 +126,42 @@ use overload
   'bool'   => sub { 1 },
   fallback => 1;
 
-#tested
+=pod
+
+=head2 catch_ex
+
+=head3 PURPOSE
+
+To implement a global catch Exception
+
+=head3 PARAMETERS
+
+=over
+
+=item ex
+
+The thrown exception
+
+=back
+
+=head3 RETURNS
+
+True on success
+
+=head3 DESCRIPTION
+
+=head3 THROWS
+
+=head3 COMMENTS
+
+=head3 SEE ALSO
+
+=cut
+
 sub catch_ex {
     my ($ex) = @_;
-    &Log::debug2( "Dumping exception:" . Dumper($ex) );
-    &Log::debug("Invoking Error:catch_ex sub");
+    &Log::debug("Starting Error::catch_ex sub");
+    &Log::dumpobj("ex", $ex);
     ## Entity Exceptions
     if ( $ex->isa('Entity::NumException') ) {
         &Log::critical( "Desc=>'"
@@ -228,13 +267,12 @@ sub catch_ex {
         &Log::critical( "Information:" . Dumper($ex) );
     }
     else {
-        &Log::info("This is an unkown error. Dumping information");
+        &Log::debug("This is an unkown error. Dumping information");
         &Log::critical("I'm blue and I'm a WTF.....");
         &Log::critical( "Information:" . Dumper($ex) );
     }
-    &Log::debug("catch_ex sub is completed");
+    &Log::debug("Finishing Error::catch_ex sub");
     return 1;
 }
 
-#### We need to end with success
 1

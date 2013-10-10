@@ -4,6 +4,14 @@ use strict;
 use warnings;
 use LWP::Simple;
 
+=pod
+
+=head1 Bugzilla.pm
+
+Subroutines from Bugzilla.pm
+
+=cut
+
 BEGIN {
     use Exporter;
     our @ISA    = qw( Exporter );
@@ -12,37 +20,37 @@ BEGIN {
 
 =pod
 
-=head1 bugzilla_status
+=head2 bugzilla_status
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Retrieve Status of bugzilla
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
-=back
+=over
 
 =item ticket
 
 The Bugzilla ticket number to retrieve
 
-=over
+=back
 
-=head2 RETURNS
+=head3 RETURNS
 
 Unknown if no information is returned, else the returned value
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
 Sub retrieves the bugzilla ticket status with regexp matching the html page.
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
 Very fragile, the backend can cange any time. Need to upgrade bugzilla so we can do API calls
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 

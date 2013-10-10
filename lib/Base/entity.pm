@@ -6,6 +6,14 @@ use Base::misc;
 
 my $help = 0;
 
+=pod
+
+=head1 entity.pm
+
+Subroutines from Base/entity.pm
+
+=cut
+
 BEGIN {
     use Exporter();
     our ( @ISA, @EXPORT );
@@ -578,27 +586,27 @@ our $module_opts = {
 
 =pod
 
-=head1 main
+=head2 main
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 This is main entry point for Entity module
 
-=head2 PARAMETERS
-
-=back
+=head3 PARAMETERS
 
 =over
 
-=head2 RETURNS
+=back
 
-=head2 DESCRIPTION
+=head3 RETURNS
 
-=head2 THROWS
+=head3 DESCRIPTION
 
-=head2 COMMENTS
+=head3 THROWS
 
-=head2 SEE ALSO
+=head3 COMMENTS
+
+=head3 SEE ALSO
 
 =cut
 
@@ -611,31 +619,31 @@ sub main {
 
 =pod
 
-=head1 list_cdrom
+=head2 list_cdrom
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 List all cdroms attached to a vm
 
-=head2 PARAMETERS
-
-=back
-
-=item vmname
+=head3 PARAMETERS
 
 =over
 
-=head2 RETURNS
+=item vmname
+
+=back
+
+=head3 RETURNS
 
 True on success
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -688,27 +696,27 @@ sub list_cdrom {
 
 =pod
 
-=head1 list_interface
+=head2 list_interface
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 
 
-=head2 PARAMETERS
-
-=back
+=head3 PARAMETERS
 
 =over
 
-=head2 RETURNS
+=back
 
-=head2 DESCRIPTION
+=head3 RETURNS
 
-=head2 THROWS
+=head3 DESCRIPTION
 
-=head2 COMMENTS
+=head3 THROWS
 
-=head2 SEE ALSO
+=head3 COMMENTS
+
+=head3 SEE ALSO
 
 =cut
 
@@ -749,27 +757,27 @@ sub list_interface {
 
 =pod
 
-=head1 list_disk
+=head2 list_disk
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 
 
-=head2 PARAMETERS
-
-=back
+=head3 PARAMETERS
 
 =over
 
-=head2 RETURNS
+=back
 
-=head2 DESCRIPTION
+=head3 RETURNS
 
-=head2 THROWS
+=head3 DESCRIPTION
 
-=head2 COMMENTS
+=head3 THROWS
 
-=head2 SEE ALSO
+=head3 COMMENTS
+
+=head3 SEE ALSO
 
 =cut
 
@@ -801,27 +809,27 @@ sub list_disk {
 
 =pod
 
-=head1 list_snapshot
+=head2 list_snapshot
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 
 
-=head2 PARAMETERS
-
-=back
+=head3 PARAMETERS
 
 =over
 
-=head2 RETURNS
+=back
 
-=head2 DESCRIPTION
+=head3 RETURNS
 
-=head2 THROWS
+=head3 DESCRIPTION
 
-=head2 COMMENTS
+=head3 THROWS
 
-=head2 SEE ALSO
+=head3 COMMENTS
+
+=head3 SEE ALSO
 
 =cut
 
@@ -836,27 +844,27 @@ sub list_snapshot {
 
 =pod
 
-=head1 change_altername
+=head2 change_altername
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 
 
-=head2 PARAMETERS
-
-=back
+=head3 PARAMETERS
 
 =over
 
-=head2 RETURNS
+=back
 
-=head2 DESCRIPTION
+=head3 RETURNS
 
-=head2 THROWS
+=head3 DESCRIPTION
 
-=head2 COMMENTS
+=head3 THROWS
 
-=head2 SEE ALSO
+=head3 COMMENTS
+
+=head3 SEE ALSO
 
 =cut
 
@@ -872,27 +880,27 @@ sub change_altername {
 
 =pod
 
-=head1 change_cdrom
+=head2 change_cdrom
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 
 
-=head2 PARAMETERS
-
-=back
+=head3 PARAMETERS
 
 =over
 
-=head2 RETURNS
+=back
 
-=head2 DESCRIPTION
+=head3 RETURNS
 
-=head2 THROWS
+=head3 DESCRIPTION
 
-=head2 COMMENTS
+=head3 THROWS
 
-=head2 SEE ALSO
+=head3 COMMENTS
+
+=head3 SEE ALSO
 
 =cut
 
@@ -939,27 +947,27 @@ sub change_cdrom {
 
 =pod
 
-=head1 change_interface
+=head2 change_interface
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 
 
-=head2 PARAMETERS
-
-=back
+=head3 PARAMETERS
 
 =over
 
-=head2 RETURNS
+=back
 
-=head2 DESCRIPTION
+=head3 RETURNS
 
-=head2 THROWS
+=head3 DESCRIPTION
 
-=head2 COMMENTS
+=head3 THROWS
 
-=head2 SEE ALSO
+=head3 COMMENTS
+
+=head3 SEE ALSO
 
 =cut
 
@@ -980,27 +988,27 @@ sub change_interface {
 
 =pod
 
-=head1 change_snapshot
+=head2 change_snapshot
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 
 
-=head2 PARAMETERS
-
-=back
+=head3 PARAMETERS
 
 =over
 
-=head2 RETURNS
+=back
 
-=head2 DESCRIPTION
+=head3 RETURNS
 
-=head2 THROWS
+=head3 DESCRIPTION
 
-=head2 COMMENTS
+=head3 THROWS
 
-=head2 SEE ALSO
+=head3 COMMENTS
+
+=head3 SEE ALSO
 
 =cut
 
@@ -1016,27 +1024,27 @@ sub change_snapshot {
 
 =pod
 
-=head1 add_snapshot
+=head2 add_snapshot
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 
 
-=head2 PARAMETERS
-
-=back
+=head3 PARAMETERS
 
 =over
 
-=head2 RETURNS
+=back
 
-=head2 DESCRIPTION
+=head3 RETURNS
 
-=head2 THROWS
+=head3 DESCRIPTION
 
-=head2 COMMENTS
+=head3 THROWS
 
-=head2 SEE ALSO
+=head3 COMMENTS
+
+=head3 SEE ALSO
 
 =cut
 
@@ -1059,27 +1067,27 @@ sub add_snapshot {
 
 =pod
 
-=head1 add_interface
+=head2 add_interface
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 
 
-=head2 PARAMETERS
-
-=back
+=head3 PARAMETERS
 
 =over
 
-=head2 RETURNS
+=back
 
-=head2 DESCRIPTION
+=head3 RETURNS
 
-=head2 THROWS
+=head3 DESCRIPTION
 
-=head2 COMMENTS
+=head3 THROWS
 
-=head2 SEE ALSO
+=head3 COMMENTS
+
+=head3 SEE ALSO
 
 =cut
 
@@ -1096,27 +1104,27 @@ sub add_interface {
 
 =pod
 
-=head1 add_cdrom
+=head2 add_cdrom
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 
 
-=head2 PARAMETERS
-
-=back
+=head3 PARAMETERS
 
 =over
 
-=head2 RETURNS
+=back
 
-=head2 DESCRIPTION
+=head3 RETURNS
 
-=head2 THROWS
+=head3 DESCRIPTION
 
-=head2 COMMENTS
+=head3 THROWS
 
-=head2 SEE ALSO
+=head3 COMMENTS
+
+=head3 SEE ALSO
 
 =cut
 
@@ -1132,27 +1140,27 @@ sub add_cdrom {
 
 =pod
 
-=head1 add_disk
+=head2 add_disk
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 
 
-=head2 PARAMETERS
-
-=back
+=head3 PARAMETERS
 
 =over
 
-=head2 RETURNS
+=back
 
-=head2 DESCRIPTION
+=head3 RETURNS
 
-=head2 THROWS
+=head3 DESCRIPTION
 
-=head2 COMMENTS
+=head3 THROWS
 
-=head2 SEE ALSO
+=head3 COMMENTS
+
+=head3 SEE ALSO
 
 =cut
 
@@ -1169,27 +1177,27 @@ sub add_disk {
 
 =pod
 
-=head1 clone_vm
+=head2 clone_vm
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 
 
-=head2 PARAMETERS
-
-=back
+=head3 PARAMETERS
 
 =over
 
-=head2 RETURNS
+=back
 
-=head2 DESCRIPTION
+=head3 RETURNS
 
-=head2 THROWS
+=head3 DESCRIPTION
 
-=head2 COMMENTS
+=head3 THROWS
 
-=head2 SEE ALSO
+=head3 COMMENTS
+
+=head3 SEE ALSO
 
 =cut
 
@@ -1304,27 +1312,27 @@ sub clone_vm {
 
 =pod
 
-=head1 info_dumper
+=head2 info_dumper
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 
 
-=head2 PARAMETERS
-
-=back
+=head3 PARAMETERS
 
 =over
 
-=head2 RETURNS
+=back
 
-=head2 DESCRIPTION
+=head3 RETURNS
 
-=head2 THROWS
+=head3 DESCRIPTION
 
-=head2 COMMENTS
+=head3 THROWS
 
-=head2 SEE ALSO
+=head3 COMMENTS
+
+=head3 SEE ALSO
 
 =cut
 
@@ -1340,27 +1348,27 @@ sub info_dumper {
 
 =pod
 
-=head1 info_runtime
+=head2 info_runtime
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 
 
-=head2 PARAMETERS
-
-=back
+=head3 PARAMETERS
 
 =over
 
-=head2 RETURNS
+=back
 
-=head2 DESCRIPTION
+=head3 RETURNS
 
-=head2 THROWS
+=head3 DESCRIPTION
 
-=head2 COMMENTS
+=head3 THROWS
 
-=head2 SEE ALSO
+=head3 COMMENTS
+
+=head3 SEE ALSO
 
 =cut
 
@@ -1377,27 +1385,27 @@ sub info_runtime {
 
 =pod
 
-=head1 run_command
+=head2 run_command
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 
 
-=head2 PARAMETERS
-
-=back
+=head3 PARAMETERS
 
 =over
 
-=head2 RETURNS
+=back
 
-=head2 DESCRIPTION
+=head3 RETURNS
 
-=head2 THROWS
+=head3 DESCRIPTION
 
-=head2 COMMENTS
+=head3 THROWS
 
-=head2 SEE ALSO
+=head3 COMMENTS
+
+=head3 SEE ALSO
 
 =cut
 
@@ -1425,27 +1433,27 @@ sub run_command {
 
 =pod
 
-=head1 transfer
+=head2 transfer
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 
 
-=head2 PARAMETERS
-
-=back
+=head3 PARAMETERS
 
 =over
 
-=head2 RETURNS
+=back
 
-=head2 DESCRIPTION
+=head3 RETURNS
 
-=head2 THROWS
+=head3 DESCRIPTION
 
-=head2 COMMENTS
+=head3 THROWS
 
-=head2 SEE ALSO
+=head3 COMMENTS
+
+=head3 SEE ALSO
 
 =cut
 
@@ -1484,27 +1492,27 @@ sub transfer {
 
 =pod
 
-=head1 delete_vm
+=head2 delete_vm
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 
 
-=head2 PARAMETERS
-
-=back
+=head3 PARAMETERS
 
 =over
 
-=head2 RETURNS
+=back
 
-=head2 DESCRIPTION
+=head3 RETURNS
 
-=head2 THROWS
+=head3 DESCRIPTION
 
-=head2 COMMENTS
+=head3 THROWS
 
-=head2 SEE ALSO
+=head3 COMMENTS
+
+=head3 SEE ALSO
 
 =cut
 
@@ -1529,27 +1537,27 @@ sub delete_vm {
 
 =pod
 
-=head1 delete_snapshot
+=head2 delete_snapshot
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 
 
-=head2 PARAMETERS
-
-=back
+=head3 PARAMETERS
 
 =over
 
-=head2 RETURNS
+=back
 
-=head2 DESCRIPTION
+=head3 RETURNS
 
-=head2 THROWS
+=head3 DESCRIPTION
 
-=head2 COMMENTS
+=head3 THROWS
 
-=head2 SEE ALSO
+=head3 COMMENTS
+
+=head3 SEE ALSO
 
 =cut
 
@@ -1576,27 +1584,27 @@ sub delete_snapshot {
 
 =pod
 
-=head1 delete_cdrom
+=head2 delete_cdrom
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 
 
-=head2 PARAMETERS
-
-=back
+=head3 PARAMETERS
 
 =over
 
-=head2 RETURNS
+=back
 
-=head2 DESCRIPTION
+=head3 RETURNS
 
-=head2 THROWS
+=head3 DESCRIPTION
 
-=head2 COMMENTS
+=head3 THROWS
 
-=head2 SEE ALSO
+=head3 COMMENTS
+
+=head3 SEE ALSO
 
 =cut
 
@@ -1613,27 +1621,27 @@ sub delete_cdrom {
 
 =pod
 
-=head1 delete_disk
+=head2 delete_disk
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 
 
-=head2 PARAMETERS
-
-=back
+=head3 PARAMETERS
 
 =over
 
-=head2 RETURNS
+=back
 
-=head2 DESCRIPTION
+=head3 RETURNS
 
-=head2 THROWS
+=head3 DESCRIPTION
 
-=head2 COMMENTS
+=head3 THROWS
 
-=head2 SEE ALSO
+=head3 COMMENTS
+
+=head3 SEE ALSO
 
 =cut
 
@@ -1650,27 +1658,27 @@ sub delete_disk {
 
 =pod
 
-=head1 delete_interface
+=head2 delete_interface
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 
 
-=head2 PARAMETERS
-
-=back
+=head3 PARAMETERS
 
 =over
 
-=head2 RETURNS
+=back
 
-=head2 DESCRIPTION
+=head3 RETURNS
 
-=head2 THROWS
+=head3 DESCRIPTION
 
-=head2 COMMENTS
+=head3 THROWS
 
-=head2 SEE ALSO
+=head3 COMMENTS
+
+=head3 SEE ALSO
 
 =cut
 
@@ -1687,27 +1695,27 @@ sub delete_interface {
 
 =pod
 
-=head1 delete_resourcepool
+=head2 delete_resourcepool
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 
 
-=head2 PARAMETERS
-
-=back
+=head3 PARAMETERS
 
 =over
 
-=head2 RETURNS
+=back
 
-=head2 DESCRIPTION
+=head3 RETURNS
 
-=head2 THROWS
+=head3 DESCRIPTION
 
-=head2 COMMENTS
+=head3 THROWS
 
-=head2 SEE ALSO
+=head3 COMMENTS
+
+=head3 SEE ALSO
 
 =cut
 
@@ -1728,27 +1736,27 @@ sub delete_resourcepool {
 
 =pod
 
-=head1 delete_folder
+=head2 delete_folder
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 
 
-=head2 PARAMETERS
-
-=back
+=head3 PARAMETERS
 
 =over
 
-=head2 RETURNS
+=back
 
-=head2 DESCRIPTION
+=head3 RETURNS
 
-=head2 THROWS
+=head3 DESCRIPTION
 
-=head2 COMMENTS
+=head3 THROWS
 
-=head2 SEE ALSO
+=head3 COMMENTS
+
+=head3 SEE ALSO
 
 =cut
 
@@ -1769,27 +1777,27 @@ sub delete_folder {
 
 =pod
 
-=head1 add_folder
+=head2 add_folder
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 
 
-=head2 PARAMETERS
-
-=back
+=head3 PARAMETERS
 
 =over
 
-=head2 RETURNS
+=back
 
-=head2 DESCRIPTION
+=head3 RETURNS
 
-=head2 THROWS
+=head3 DESCRIPTION
 
-=head2 COMMENTS
+=head3 THROWS
 
-=head2 SEE ALSO
+=head3 COMMENTS
+
+=head3 SEE ALSO
 
 =cut
 
@@ -1803,27 +1811,27 @@ sub add_folder {
 
 =pod
 
-=head1 add_resourcepool
+=head2 add_resourcepool
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 
 
-=head2 PARAMETERS
-
-=back
+=head3 PARAMETERS
 
 =over
 
-=head2 RETURNS
+=back
 
-=head2 DESCRIPTION
+=head3 RETURNS
 
-=head2 THROWS
+=head3 DESCRIPTION
 
-=head2 COMMENTS
+=head3 THROWS
 
-=head2 SEE ALSO
+=head3 COMMENTS
+
+=head3 SEE ALSO
 
 =cut
 
@@ -1837,27 +1845,27 @@ sub add_resourcepool {
 
 =pod
 
-=head1 promote
+=head2 promote
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 
 
-=head2 PARAMETERS
-
-=back
+=head3 PARAMETERS
 
 =over
 
-=head2 RETURNS
+=back
 
-=head2 DESCRIPTION
+=head3 RETURNS
 
-=head2 THROWS
+=head3 DESCRIPTION
 
-=head2 COMMENTS
+=head3 THROWS
 
-=head2 SEE ALSO
+=head3 COMMENTS
+
+=head3 SEE ALSO
 
 =cut
 
@@ -1872,27 +1880,27 @@ sub promote {
 
 =pod
 
-=head1 change_disk
+=head2 change_disk
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 
 
-=head2 PARAMETERS
-
-=back
+=head3 PARAMETERS
 
 =over
 
-=head2 RETURNS
+=back
 
-=head2 DESCRIPTION
+=head3 RETURNS
 
-=head2 THROWS
+=head3 DESCRIPTION
 
-=head2 COMMENTS
+=head3 THROWS
 
-=head2 SEE ALSO
+=head3 COMMENTS
+
+=head3 SEE ALSO
 
 =cut
 
@@ -1905,4 +1913,4 @@ sub change_disk {
     return 1;
 }
 
-1;
+1

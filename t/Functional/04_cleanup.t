@@ -8,6 +8,7 @@ use FindBin;
 use lib "$FindBin::Bin/../../lib/";
 use lib "$FindBin::Bin/../../vmware_lib/";
 use BB::Common;
+use BB::Test;
 use Base::admin;
 
 BEGIN {
@@ -26,7 +27,7 @@ for my $type ( @types ) {
     }
 }
 diag("Creating empty resources and calling backend subs");
-&VCenter::create_test_entities;
+&Test::create_test_entities;
 for my $type ( qw(ResourcePool Folder DistributedVirtualSwitch) ) {
     my $ret = &VCenter::check_if_empty_entity( 'test_1337', $type );
     is( $ret , 1, "Check if empty returned true for empty $type" );
@@ -34,17 +35,17 @@ for my $type ( qw(ResourcePool Folder DistributedVirtualSwitch) ) {
     is( Vim::find_entity_view( view_type =>$type, properties => [ 'name' ], filter => { name => 'test_1337' } ), undef, "test_1337 $type doesn't exist after delete" );
 }
 diag("Creating resources and calling cleanup to see if deleted");
-&VCenter::create_test_entities;
+&Test::create_test_entities;
 is( &admin::cleanup, 1 ,"Admin cleanup sub deletes resource Pool" );
 for my $type ( @types ) {
     is( Vim::find_entity_view( view_type =>$type, properties => [ 'name' ], filter => { name => 'test_1337' } ), undef, "test_1337 $type doesn't exist after cleanup" );
 }
 diag("Creating resources with entity and see if they don't get deleted");
-&VCenter::create_test_entities;
+&Test::create_test_entities;
 ok( \&VCenter::create_dvportgroup( 'test_1337_dvg', 'test_1337' ), "Creating test_1337_dvg DVPG");
 throws_ok { &VCenter::create_dvportgroup( 'test_1337_dvg', 'test_1337' ) } 'Entity::NumException', 'Exception is thrown by second dvg creation';
 throws_ok { &VCenter::create_dvportgroup( 'test_1337_dvg2', 'test_1337_test_1337' ) } 'Entity::NumException', 'Exception is thrown if no parent switch found';
-&VCenter::create_test_vm( 'test_1337' );
+&Test::create_test_vm( 'test_1337' );
 &admin::cleanup;
 for my $type ( @types ) {
     is( &VCenter::exists_entity( 'test_1337', $type ), 1, "Entity Exists $type" );
