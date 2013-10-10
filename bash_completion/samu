@@ -101,7 +101,7 @@ _samu() {
     network_list_dvp=""
     network_create="--type --ticket --vms"
 
-    samu="vm ticket datastore bugzilla kayako admin"
+    samu="vm ticket datastore bugzilla kayako admin network"
     cur="${COMP_WORDS[COMP_CWORD]}"
 
 	_helper_opts="-h --help -m --man"
