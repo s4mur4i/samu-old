@@ -1223,7 +1223,7 @@ A DeviceConfigSpec for reconfiguring the network interfaces
 =head3 THROWS
 
 Template::Status if no template is found
-Entity::HWError if unkown interface type is found
+Entity::HWError if unknown interface type is found
 
 =head3 COMMENTS
 
@@ -2258,7 +2258,7 @@ True on success
 
 =head3 THROWS
 
-Entity::TransferError if transfer was not succesful
+Entity::TransferError if transfer was not successful
 
 =head3 COMMENTS
 

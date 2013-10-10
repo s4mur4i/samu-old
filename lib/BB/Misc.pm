@@ -399,7 +399,7 @@ Hash with extracted information
 
 =head3 DESCRIPTION
 
-If standard is not recognised by regex than unkown is returned for all elements
+If standard is not recognised by regex than unknown is returned for all elements
 
 =head3 THROWS
 
@@ -550,7 +550,7 @@ Datastore path
 
 =head3 RETURNS
 
-Array containing the splitted variables
+Array containing the split variables
 
 =head3 DESCRIPTION
 

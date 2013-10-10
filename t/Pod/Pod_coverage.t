@@ -20,11 +20,7 @@ if ( $EVAL_ERROR ) {
     plan( skip_all => $msg );
 }
 
-my @modules = ( qw(BB::Guest BB::VCenter BB::Bugzilla BB::Error BB::Kayako BB::Log BB::Misc BB::Support Base::entity Base::admin Base::bugzilla Base::datastore Base::kayako Base::misc Base::network Base::ticket) ),
 Test::Pod::Coverage->import;
-#for my $module (@modules) {
-#    pod_coverage_ok( $module, "$module is covered");
-#}
 my $trustme = { trustme => [ qr{ \A (?: new )\z }x ] };
 all_pod_coverage_ok( $trustme );
 done_testing;

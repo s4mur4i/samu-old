@@ -578,7 +578,7 @@ Returns a Clonespec for cloneing
 
 =item os_temp
 
-The template the linux virtual machine is going to be attached
+The template the Linux virtual machine is going to be attached
 
 =item snapshot_view
 
@@ -703,7 +703,7 @@ Returns a Clonespec for cloneing
 
 =item os_temp
 
-The template the linux virtual machine is going to be attached
+The template the Linux virtual machine is going to be attached
 
 =item snapshot_view
 

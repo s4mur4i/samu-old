@@ -23,3 +23,4 @@ if ( $EVAL_ERROR ) {
 Test::Pod->import;
 
 all_pod_files_ok();
+done_testing;

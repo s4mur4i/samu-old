@@ -941,7 +941,7 @@ True on success
 
 =head2 THROWS
 
-Entity::NumException if delete was not succesful
+Entity::NumException if delete was not successful
 
 =head2 COMMENTS
 
