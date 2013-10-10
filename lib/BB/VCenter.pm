@@ -3,6 +3,14 @@ package VCenter;
 use strict;
 use warnings;
 
+=pod
+
+=head1 VCenter.pm
+
+Subroutines for BB/VCenter.pm
+
+=cut
+
 BEGIN {
     use Exporter;
     our @ISA    = qw( Exporter );
@@ -11,13 +19,13 @@ BEGIN {
 
 =pod
 
-=head1 num_check
+=head2 num_check
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Checks if the entity only exists once
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -31,19 +39,19 @@ Type of entity
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 True on success
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
 Entity::NumException if the result is not 1
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -70,13 +78,13 @@ sub num_check {
 
 =pod
 
-=head1 exists_entity
+=head2 exists_entity
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Checks if entity exists or not with true or false
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -90,18 +98,18 @@ Type of entity
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 True if entity can be found
 False if entity cannot be found
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -126,13 +134,13 @@ sub exists_entity {
 
 =pod
 
-=head1 path2name
+=head2 path2name
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Converts a VCenter inventory path to Name
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -142,17 +150,17 @@ VCenter inventory path
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
 Vcenter:Path if no entity is found with the requested path
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -176,13 +184,13 @@ sub path2name {
 
 =pod
 
-=head1 path2moref
+=head2 path2moref
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Converts a VCenter inventory path to a Managed object reference
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -192,17 +200,17 @@ VCenter inventory path
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
 Vcenter:Path if no entity is found with the requested path
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -225,13 +233,13 @@ sub path2moref {
 
 =pod
 
-=head1 moref2view
+=head2 moref2view
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Converts a moref to a view
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -241,19 +249,19 @@ A managed object reference
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 A Managed object to the reference
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
 Entity::Status if the get_view returned with undef
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -272,13 +280,13 @@ sub moref2view {
 
 =pod
 
-=head1 linked_clone_folder
+=head2 linked_clone_folder
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Creates a folder for the template where the linked clones can be stored
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -288,17 +296,17 @@ The template name
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 A managed object to the folder
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -328,13 +336,13 @@ sub linked_clone_folder {
 
 =pod
 
-=head1 check_if_empty_entity
+=head2 check_if_empty_entity
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Checks if the entity is empty or has children
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -348,20 +356,20 @@ Type of entity
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 True if has children
 False if entity is empty
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
 Entity::NumException if no entity found or unknown type is requested
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -441,13 +449,13 @@ sub check_if_empty_entity {
 
 =pod
 
-=head1 Task_Status
+=head2 Task_Status
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Checks task status and prints progress
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -457,19 +465,19 @@ A Managed object reference to a task
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 True on success
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
 TaskEr::Error if there was an error during the task
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -513,13 +521,13 @@ sub Task_Status {
 
 =pod
 
-=head1 ticket_vms_name
+=head2 ticket_vms_name
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Returns array ref with vmnames attached to a ticket
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -529,15 +537,15 @@ Ticket number to return names of
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -563,13 +571,13 @@ sub ticket_vms_name {
 
 =pod
 
-=head1 name2path
+=head2 name2path
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Converts an entity name to VCenter inventory path
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -579,17 +587,17 @@ Name of entity whoes name should be converted
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 Inventory path of entity
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -607,13 +615,13 @@ sub name2path {
 
 =pod
 
-=head1 create_resource_pool
+=head2 create_resource_pool
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Creating a resourcepool in requested parent resourcepool
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -627,19 +635,19 @@ Name of requested resourcepool parent
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 Managed object of new resourcepool
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
 Entity::NumException if parent doesn't exist or resourcepool already exists
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -702,13 +710,13 @@ sub create_resource_pool {
 
 =pod
 
-=head1 create_folder
+=head2 create_folder
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Create an inventory folder with requested name
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -722,19 +730,19 @@ Parent of requested folder
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 Managed object of created folder
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
 Entity::NumException if requested folder exists or parent doesn't exist
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -775,13 +783,13 @@ sub create_folder {
 
 =pod
 
-=head1 create_switch
+=head2 create_switch
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Creates aerquested Distributed Virtual Switch
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -791,19 +799,19 @@ Name of requested switch name
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 True on success
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
 Entity::NumException if switch already exists
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -845,13 +853,13 @@ sub create_switch {
 
 =pod
 
-=head1 create_dvportgroup
+=head2 create_dvportgroup
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Create a requested Distributed Virtual Portgroup
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -865,19 +873,19 @@ Parent switch for portgroup
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 True on success
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
 Entity::NumException if entity already exists
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -913,13 +921,13 @@ sub create_dvportgroup {
 
 =pod
 
-=head1 destroy_entity
+=head2 destroy_entity
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Destroy a requested entity type
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -933,19 +941,19 @@ Type of entity
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 True on success
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
 Entity::NumException if delete was not successful
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -979,13 +987,13 @@ sub destroy_entity {
 
 =pod
 
-=head1 vm_last_snapshot_view
+=head2 vm_last_snapshot_view
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Returns last snapshot for a vm
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -995,11 +1003,11 @@ Virtual Machine name
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 Managed object of requested snapshot
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
 Sub only handles one tier at level 0!
 Reason: If a sceneraio requires that the initial disk have multiple snapshot for different uses, than
@@ -1007,13 +1015,13 @@ than is a fubar and should be handled with multiple machines. There can be later
 but it should not diverge deeply and create multi depth hiearchy for snapshots. To handle these are not
 trivial and not best practices. A snapshot should be used for short times and deleted afterwards
 
-=head2 THROWS
+=head3 THROWS
 
 Entity::Snapshot if virtual machine has no snapshots defined
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -1053,13 +1061,13 @@ sub vm_last_snapshot_view {
 
 =pod
 
-=head1 find_vms_with_disk
+=head2 find_vms_with_disk
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Returns array ref with all machines linked to a vmdk disk
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -1069,17 +1077,17 @@ A datastore path to a vmdk file
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 Array ref with all virtual machines linked to the disk
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -1119,13 +1127,13 @@ sub find_vms_with_disk {
 
 =pod
 
-=head1 datastore_file_exists
+=head2 datastore_file_exists
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Checks if datastore file exists
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -1135,18 +1143,18 @@ Datastore path to file
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 True if file exists
 False if file does not exist
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -1186,13 +1194,13 @@ sub datastore_file_exists {
 
 =pod
 
-=head1 SDK_options
+=head2 SDK_options
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 For parsing SDK options and feeding the
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -1202,17 +1210,17 @@ A hash ref to the options that should be added
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 True on success
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -1228,31 +1236,31 @@ sub SDK_options {
 
 =pod
 
-=head1 connect_vcenter
+=head2 connect_vcenter
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Connecting to a VCenter
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 True on success
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
 Connection::Connect if connection to VCenter fails
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -1278,29 +1286,29 @@ sub connect_vcenter {
 
 =pod
 
-=head1 disconnect_vcenter
+=head2 disconnect_vcenter
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Disconnects from VCenter
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 True on success
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -1313,31 +1321,31 @@ sub disconnect_vcenter {
 
 =pod
 
-=head1 service_content
+=head2 service_content
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Retrieves service content
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 Managed Object for a service content
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
 Vcenter::ServiceContent if service content could not be retrieved
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -1355,13 +1363,13 @@ sub service_content {
 
 =pod
 
-=head1 move_into_folder
+=head2 move_into_folder
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Moves a Virtual Machine into a folder
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -1375,17 +1383,17 @@ The requested folder
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 True on success
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -1403,31 +1411,31 @@ sub move_into_folder {
 
 =pod
 
-=head1 get_vim
+=head2 get_vim
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Retrieves a vim object
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 Vim object
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
 Vcenter::ServiceContent if vim objcect could not be retrieved
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
@@ -1445,13 +1453,13 @@ sub get_vim {
 
 =pod
 
-=head1 get_manager
+=head2 get_manager
 
-=head2 PURPOSE
+=head3 PURPOSE
 
 Retrieve SErvice content manager
 
-=head2 PARAMETERS
+=head3 PARAMETERS
 
 =over
 
@@ -1466,19 +1474,19 @@ Undocumented : guestOperationsManager
 
 =back
 
-=head2 RETURNS
+=head3 RETURNS
 
 The Service content object requested
 
-=head2 DESCRIPTION
+=head3 DESCRIPTION
 
-=head2 THROWS
+=head3 THROWS
 
 Vcenter::ServiceContent if no object is found with requested name
 
-=head2 COMMENTS
+=head3 COMMENTS
 
-=head2 SEE ALSO
+=head3 SEE ALSO
 
 =cut
 
