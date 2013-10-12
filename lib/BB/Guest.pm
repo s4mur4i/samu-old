@@ -159,7 +159,7 @@ sub entity_property_view {
         filter     => { name => $name }
     );
     &Log::dumpobj( "property_view", $view );
-    &Log::debug("Finishing Guest::entity_property_vuew sub");
+    &Log::debug("Finishing Guest::entity_property_view sub");
     return $view;
 }
 
@@ -2184,19 +2184,21 @@ sub run_command {
     my ($info) = @_;
     &Log::debug("Starting Guest::run_command sub");
     &Log::loghash( "Info options, ", $info );
-    my $view       = &Guest::entity_name_view( $info->{vmname} );
+    my $view       = &Guest::entity_name_view( $info->{vmname}, 'VirtualMachine' );
     my $guestCreds = &Guest::guest_cred(
         $info->{vmname},
         $info->{guestusername},
         $info->{guestpassword}
     );
-    my $guestProcMan  = &VCenter::get_manager("processManager");
+    my $guestOP   = &VCenter::get_manager("guestOperationsManager");
+    my $guestProcMan = &VCenter::moref2view($guestOP->{processManager});
     my $guestProgSpec = GuestProgramSpec->new(
         workingDirectory => $info->{workdir},
         programPath      => $info->{prog},
         arguments        => $info->{prog_arg},
         envVariables     => [ $info->{env} ]
     );
+    &Log::dumpobj( "guestProgSpec", $guestProgSpec);
     my $pid = $guestProcMan->StartProgramInGuest(
         vm   => $view,
         auth => $guestCreds,
@@ -2270,13 +2272,15 @@ sub transfer_to_guest {
     my ($info) = @_;
     &Log::debug("Starting Guest::transfer_to_guest sub");
     &Log::loghash( "Info options, ", $info );
-    my $view       = &Guest::entity_name_view( $info->{vmname} );
+    my $view       = &Guest::entity_name_view( $info->{vmname}, 'VirtualMachine' );
     my $guestCreds = &Guest::guest_cred(
         $info->{vmname},
         $info->{guestusername},
         $info->{guestpassword}
     );
-    my $filemanager = &VCenter::get_manager("fileManager");
+    my $guestOP   = &VCenter::get_manager("guestOperationsManager");
+    my $filemanager = &VCenter::moref2view($guestOP->{fileManager});
+    &Log::dumpobj( "filemanager", $filemanager);
     my $fileattr    = GuestFileAttributes->new();
     my $size        = -s $info->{source};
     my $transferinfo;
@@ -2299,7 +2303,7 @@ sub transfer_to_guest {
         );
     }
     print "Information about file:'" . $info->{source} . "'\n";
-    print "Size of file: $size bytes";
+    print "Size of file: $size bytes\n";
     my $ua = LWP::UserAgent->new();
     $ua->ssl_opts( verify_hostname => 0 );
     open( my $fh, "<", "$info->{source}" );
@@ -2381,7 +2385,8 @@ sub transfer_from_guest {
         $info->{guestusername},
         $info->{guestpassword}
     );
-    my $filemanager = &VCenter::get_manager("fileManager");
+    my $guestOP   = &VCenter::get_manager("guestOperationsManager");
+    my $filemanager = &VCenter::moref2view($guestOP->{fileManager});
     my $transferinfo;
     eval {
         $transferinfo = $filemanager->InitiateFileTransferFromGuest(
@@ -2392,6 +2397,7 @@ sub transfer_from_guest {
     };
 
     if ($@) {
+        &Log::dumpobj("transferinfo_erro", $@);
         Entity::TransferError->throw(
             error    => 'Could not retrieve Transfer information',
             entity   => $info->{vmname},
@@ -2404,6 +2410,7 @@ sub transfer_from_guest {
       . $transferinfo->attributes->modificationTime
       . " and access Time : "
       . $transferinfo->attributes->accessTime . "\n";
+    LWP::Simple->import;
     if ( !defined( $info->{dest} ) ) {
         my $basename = basename( $info->{source} );
         my $content  = get( $transferinfo->url );
@@ -2465,7 +2472,8 @@ sub guest_cred {
     my ( $vmname, $guestusername, $guestpassword ) = @_;
     &Log::debug("Starting Guest::guest_cred sub");
     &Log::debug( "Opts are: vmname=>'$vmname', guestusername=>'$guestusername', guestpassword=>'$guestpassword'");
-    my $authMgr   = &VCenter::get_manager("authManager");
+    my $guestOP   = &VCenter::get_manager("guestOperationsManager");
+    my $authMgr = &VCenter::moref2view($guestOP->{authManager});
     my $guestAuth = NamePasswordAuthentication->new(
         username           => $guestusername,
         password           => $guestpassword,

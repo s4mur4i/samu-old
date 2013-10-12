@@ -189,7 +189,7 @@ sub catch_ex {
     }
     elsif ( $ex->isa('Entity::TransferError') ) {
         &Log::critical(
-            "Desc=>'" . $ex->error . "',entity=>'" . $ex->entity . "'" );
+            "Desc=>'" . $ex->error . "',entity=>'" . $ex->entity . "',source=>'" . $ex->filename . "'" );
     }
     elsif ( $ex->isa('Entity::HWError') ) {
         &Log::critical( "Desc=>'"
