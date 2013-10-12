@@ -60,6 +60,8 @@ WriteMakefile(
         'GSSAPI::Status'    => 0,
         'Crypt::SSLeay'     => 0.57,
         'Pod::Simple::Wiki' => 0.11,
+        'RPC::XML::Client' => 0,
+        'Text::Table' => 0,
     },
     PREREQ_FATAL => 0,
 );

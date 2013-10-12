@@ -39,7 +39,19 @@ our $module_opts = {
         list => {
             function => \&ticket_list,
             vcenter_connect => 1,
-            opts     => {},
+            opts     => {
+                output => {
+                    type => "=s",
+                    help => "Output type, table/csv",
+                    default => "table",
+                    required => 0,
+                },
+                noheader => {
+                    type => "",
+                    help => "Should header information be printed",
+                    required => 0,
+                },
+            },
         },
         on => {
             function => \&ticket_on,
@@ -392,22 +404,35 @@ sub ticket_list {
     my $tickets = &Misc::ticket_list;
     &Log::debug("Finished collecting ticket list");
     my $dbh = &Kayako::connect_kayako();
+    my $output = Opts::get_option('output');
+    if ( $output eq 'table') {
+        &Output::create_table;
+    } elsif ( $output eq 'csv') {
+        &Output::create_csv;
+    } else {
+        Vcenter::Opts->throw( error => "Unknwon option requested", opt => $output );
+    }
+    if (!Opts::get_option('noheader')) {
+        my @array = (qw(Ticket Owner Status B-Ticket B-Status));
+        &Output::add_row(\@array);
+    } else {
+        &Log::info("Skipping header adding");
+    }
     for my $ticket ( sort ( keys %{$tickets} ) ) {
         &Log::debug("Collecting information about ticket=>'$ticket'");
         if ( $ticket ne "" and $ticket ne "unknown" ) {
-            my $string = "";
-            $string = "Ticket: $ticket, owner: $$tickets{$ticket}";
-            my $result = &Kayako::run_query( $dbh,
-"select ticketstatustitle from swtickets where ticketid = '$ticket'"
-            );
+            my @string;
+            push(@string, $ticket);
+#FIXME detect multiuser tickets
+            push(@string, $$tickets{$ticket});
+            my $result = &Kayako::run_query( $dbh, "select ticketstatustitle from swtickets where ticketid = '$ticket'");
             if ( defined($result) ) {
-                $string .=
-                  ", ticket status: " . $$result{ticketstatustitle} . "";
-                $result = &Kayako::run_query( $dbh,
-"select fieldvalue from swcustomfieldvalues where typeid = '$ticket' and customfieldid = '25'"
-                );
-                if ( defined($result) or $$result{fieldvalue} ne "" ) {
+                push(@string, $$result{ticketstatustitle});
+                $result = &Kayako::run_query( $dbh, "select fieldvalue from swcustomfieldvalues where typeid = '$ticket' and customfieldid = '25'");
+                if ( defined($result) and $$result{fieldvalue} ne "" ) {
                     my @result = split( " ", $$result{fieldvalue} );
+                    my $bugzilla_status;
+                    my $bugzilla_ticket;
                     foreach (@result) {
                         if ( $_ ne "" ) {
                             my $id;
@@ -420,22 +445,33 @@ sub ticket_list {
                             else {
                                 $id = $_;
                             }
-                            $string .= ", bugzilla: " . $id;
-                            my $content = &Bugzilla::bugzilla_status($id);
-                            if ( defined($content) ) {
-                                $string .= ", bugzilla status: $content";
+                            if ( !$bugzilla_ticket) {
+                                $bugzilla_ticket = $id;
+                            } else {
+                                $bugzilla_ticket .= ",$id";
                             }
-
+                            my $content = &Bugzilla::bugzilla_status($id);
+                            if ( !$bugzilla_status) {
+                                $bugzilla_status = $content;
+                            } else {
+                                $bugzilla_status .= ",$content";
+                            }
                         }
                     }
+                    push(@string,$bugzilla_ticket);
+                    push(@string,$bugzilla_status);
+                } else {
+                    push(@string, "---");
+                    push(@string, "---");
                 }
             }
-            print $string . "\n";
+            &Output::add_row(\@string);
         }
         else {
             &Log::debug("Ticket name is empty or unknown");
         }
     }
+    &Output::print;
     &Log::debug("Finished printing ticket information");
     &Kayako::disconnect_kayako($dbh);
     &Log::debug("Finishing Ticket::ticket_list sub");
