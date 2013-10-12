@@ -417,17 +417,16 @@ sub ticket_list {
     &Log::debug("Finished collecting ticket list");
     my $dbh = &Kayako::connect_kayako();
     my $output = Opts::get_option('output');
+    my @titles = (qw(Ticket Owner Status B-Ticket B-Status));
     if ( $output eq 'table') {
         &Output::create_table;
     } elsif ( $output eq 'csv') {
-        my @array = (qw(Ticket Owner Status B-Ticket B-Status));
-        &Output::create_csv(\@array);
+        &Output::create_csv(\@titles);
     } else {
         Vcenter::Opts->throw( error => "Unknwon option requested", opt => $output );
     }
     if (!Opts::get_option('noheader')) {
-        my @array = (qw(Ticket Owner Status B-Ticket B-Status));
-        &Output::add_row(\@array);
+        &Output::add_row(\@titles);
     } else {
         &Log::info("Skipping header adding");
     }

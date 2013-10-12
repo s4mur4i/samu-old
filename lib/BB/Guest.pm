@@ -152,7 +152,7 @@ sub entity_property_view {
     &Log::debug("Starting Guest::entity_property_view sub");
     &Log::debug1(
         "Opts are: name=>'$name', type=>'$type', property=>'$property'");
-    &VCenter::um_check( $name, $type );
+    &VCenter::num_check( $name, $type );
     my $view = Vim::find_entity_view(
         view_type  => $type,
         properties => [$property],
