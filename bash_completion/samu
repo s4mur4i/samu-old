@@ -62,7 +62,7 @@ _samu() {
     ticket="info list on off delete"
 
     ticket_info="--ticket"
-    ticket_list=""
+    ticket_list="--noheader --output"
     ticet_on="--ticket"
     ticet_off="--ticket"
     ticet_delete="--ticket"

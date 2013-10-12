@@ -62,6 +62,7 @@ WriteMakefile(
         'Pod::Simple::Wiki' => 0.11,
         'RPC::XML::Client' => 0,
         'Text::Table' => 0,
+        'Class::CSV' => 0,
     },
     PREREQ_FATAL => 0,
 );

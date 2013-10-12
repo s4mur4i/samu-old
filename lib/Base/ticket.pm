@@ -385,13 +385,25 @@ sub ticket_off {
 
 =over
 
+=item output
+
+Type of output. Can be csv or table
+
+=item noheader
+
+Removes the header row
+
 =back
 
 =head3 RETURNS
 
+True on success
+
 =head3 DESCRIPTION
 
 =head3 THROWS
+
+Vcenter::Opts if unkown option passed
 
 =head3 COMMENTS
 
@@ -408,7 +420,8 @@ sub ticket_list {
     if ( $output eq 'table') {
         &Output::create_table;
     } elsif ( $output eq 'csv') {
-        &Output::create_csv;
+        my @array = (qw(Ticket Owner Status B-Ticket B-Status));
+        &Output::create_csv(\@array);
     } else {
         Vcenter::Opts->throw( error => "Unknwon option requested", opt => $output );
     }
@@ -418,7 +431,7 @@ sub ticket_list {
     } else {
         &Log::info("Skipping header adding");
     }
-    for my $ticket ( sort ( keys %{$tickets} ) ) {
+    for my $ticket ( sort {$a<=>$b} ( keys %{$tickets} ) ) {
         &Log::debug("Collecting information about ticket=>'$ticket'");
         if ( $ticket ne "" and $ticket ne "unknown" ) {
             my @string;
@@ -448,13 +461,13 @@ sub ticket_list {
                             if ( !$bugzilla_ticket) {
                                 $bugzilla_ticket = $id;
                             } else {
-                                $bugzilla_ticket .= ",$id";
+                                $bugzilla_ticket .= "/$id";
                             }
                             my $content = &Bugzilla::bugzilla_status($id);
                             if ( !$bugzilla_status) {
                                 $bugzilla_status = $content;
                             } else {
-                                $bugzilla_status .= ",$content";
+                                $bugzilla_status .= "/$content";
                             }
                         }
                     }
