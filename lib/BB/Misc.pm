@@ -52,7 +52,7 @@ Max length of longest element
 sub array_longest {
     my ($array) = @_;
     &Log::debug("Starting Misc::array_longest sub");
-    &Log::dumpob("array", $array);
+    &Log::dumpobj("array", $array);
     my $max = -1;
     for (@$array) {
         if ( length > $max ) {

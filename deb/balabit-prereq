@@ -10,7 +10,7 @@ Package: balabit-prereq
 Version: 1.0
 Maintainer: Krisztian Banhidy <s4mur4i@balabit.hu>
 # Pre-Depends: <comma-separated list of packages>
-Depends: libexception-class-perl,libfile-homedir-perl,libterm-readkey-perl,libarchive-zip-perl,libcrypt-ssleay-perl,libxml-libxml-perl,libdbd-mysql-perl,libgssapi-perl,libpod-simple-wiki-perl,perl-doc
+Depends: libexception-class-perl,libfile-homedir-perl,libterm-readkey-perl,libarchive-zip-perl,libcrypt-ssleay-perl,libxml-libxml-perl,libdbd-mysql-perl,libgssapi-perl,libpod-simple-wiki-perl,perl-doc,librpc-xml-perl,libtext-table-perl,libclass-csv-perl
 # Recommends: <comma-separated list of packages>
 # Suggests: <comma-separated list of packages>
 # Provides: <comma-separated list of packages>

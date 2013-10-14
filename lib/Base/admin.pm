@@ -36,7 +36,19 @@ our $module_opts = {
         templates => {
             function => \&templates,
             vcenter_connect => 0,
-            opts     => {},
+            opts     => {
+                output => {
+                    type => "=s",
+                    help => "Output type, table/csv",
+                    default => "table",
+                    required => 0,
+                },
+                noheader => {
+                    type => "",
+                    help => "Should header information be printed",
+                    required => 0,
+                },
+            },
         },
         test => {
             function => \&test,
@@ -238,15 +250,28 @@ True on success
 sub templates {
     &Log::debug("Starting Admin::templates sub");
     my $keys = &Support::get_keys('template');
+    my $output = Opts::get_option('output');
+    my @titles = (qw(Name Path));
+    if ( $output eq 'table') {
+        &Output::create_table;
+    } elsif ( $output eq 'csv') {
+        my @array = (qw(Ticket Owner Status B-Ticket B-Status));
+        &Output::create_csv(\@titles);
+    } else {
+        Vcenter::Opts->throw( error => "Unknwon option requested", opt => $output );
+    }
+    if (!Opts::get_option('noheader')) {
+        &Output::add_row(\@titles);
+    } else {
+        &Log::info("Skipping header adding");
+    }
     my $max  = &Misc::array_longest($keys);
     for my $template (@$keys) {
         &Log::debug("Element working on:'$template'");
         my $path = &Support::get_key_value( 'template', $template, 'path' );
-
-        # FIXME create better formating table or other possibilities
-        my $length = ( $max - length($template) ) + 1;
-        print "Name:'$template'" . " " x $length . "Path:'$path'\n";
+        &Output::add_row([ $template, $path]);
     }
+    &Output::print;
     &Log::debug("Finishing Admin::templates sub");
     return 1;
 }

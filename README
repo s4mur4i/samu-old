@@ -13,3 +13,10 @@ libtest-output-perl libtest-pod-perl libtest-strict-perl libtest-trap-perl libte
 Packages not found in apt
 
 Test::DNS, Test::Files, Test::PureASCII Test::PerlTidy Test::Pod::Spelling::CommonMistakes
+
+
+## Examples
+#
+./samu.pl vm run --vmname s4mur4i-prog --env "VALAMI=TEST" --prog /bin/echo --prog_arg "\$VALAMI >test" --workdir /tmp
+./samu.pl vm transfer --vmname s4mur4i-prog --type from --source /tmp/test --dest /tmp/test2
+./samu.pl vm transfer --vmname s4mur4i-prog --type to --source /tmp/test2 --dest /tmp/test3

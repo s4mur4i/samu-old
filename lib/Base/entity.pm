@@ -335,6 +335,17 @@ our $module_opts = {
                             help     => "Which VMs cdrom to list",
                             required => 1,
                         },
+                        output => {
+                            type => "=s",
+                            help => "Output type, table/csv",
+                            default => "table",
+                            required => 0,
+                        },
+                        noheader => {
+                            type => "",
+                            help => "Should header information be printed",
+                            required => 0,
+                        },
                     },
                 },
                 interface => {
@@ -345,6 +356,17 @@ our $module_opts = {
                             type     => "=s",
                             help     => "Which VMs interface to list",
                             required => 1,
+                        },
+                        output => {
+                            type => "=s",
+                            help => "Output type, table/csv",
+                            default => "table",
+                            required => 0,
+                        },
+                        noheader => {
+                            type => "",
+                            help => "Should header information be printed",
+                            required => 0,
                         },
                     },
                 },
@@ -357,6 +379,17 @@ our $module_opts = {
                             help     => "Which VMs disk to list",
                             required => 1,
                         },
+                        output => {
+                            type => "=s",
+                            help => "Output type, table/csv",
+                            default => "table",
+                            required => 0,
+                        },
+                        noheader => {
+                            type => "",
+                            help => "Should header information be printed",
+                            required => 0,
+                        },
                     },
                 },
                 snapshot => {
@@ -367,6 +400,17 @@ our $module_opts = {
                             type     => "=s",
                             help     => "Name of vm to list snapshot",
                             required => 1,
+                        },
+                        output => {
+                            type => "=s",
+                            help => "Output type, table/csv",
+                            default => "table",
+                            required => 0,
+                        },
+                        noheader => {
+                            type => "",
+                            help => "Should header information be printed",
+                            required => 0,
                         },
                     },
                 },
@@ -631,6 +675,16 @@ List all cdroms attached to a vm
 
 =item vmname
 
+Name of Virtual Machine
+
+=item noheader
+
+Should header row be printed
+
+=item output
+
+Type of output table or csv
+
 =back
 
 =head3 RETURNS
@@ -640,6 +694,8 @@ True on success
 =head3 DESCRIPTION
 
 =head3 THROWS
+
+Vcenter::Opts if unknown output requested
 
 =head3 COMMENTS
 
@@ -651,6 +707,21 @@ sub list_cdrom {
     &Log::debug("Starting Entity::list_cdrom sub");
     my $vmname = Opts::get_option('vmname');
     &Log::debug1("Opts are: vmname=>'$vmname'");
+    my $output = Opts::get_option('output');
+    my @titles = (qw(Number Key Size Path));
+    if ( $output eq 'table') {
+        &Output::create_table;
+    } elsif ( $output eq 'csv') {
+        my @array = (qw(Ticket Owner Status B-Ticket B-Status));
+        &Output::create_csv(\@titles);
+    } else {
+        Vcenter::Opts->throw( error => "Unknwon option requested", opt => $output );
+    }
+    if (!Opts::get_option('noheader')) {
+        &Output::add_row(\@titles);
+    } else {
+        &Log::info("Skipping header adding");
+    }
     my @cdrom_hw = @{ &Guest::get_hw( $vmname, 'VirtualCdrom' ) };
     if ( @cdrom_hw eq 0 ) {
         &Log::debug("No cdroms on entity");
@@ -673,7 +744,7 @@ sub list_cdrom {
             &Log::debug(
 "Backing is a Client device backing either passthrough or emulated ide"
             );
-            $backing = "Client Device";
+            $backing = "Client_Device";
         }
         elsif ( $cdrom_hw[$i]->{backing}->isa('VirtualCdromAtapiBackingInfo') )
         {
@@ -681,15 +752,9 @@ sub list_cdrom {
             $backing = $cdrom_hw[$i]->{backing}->{deviceName};
         }
         my $label = $cdrom_hw[$i]->{deviceInfo}->{label} || "None";
-        print "number=>'"
-          . $i
-          . "', key=>'"
-          . $cdrom_hw[$i]->{key}
-          . "', backing=>'"
-          . $backing
-          . "', label=>'"
-          . $label . "'\n";
+        &Output::add_row( [$i, $cdrom_hw[$i]->{key}, "$backing", "$label" ] );
     }
+    &Output::print;
     &Log::debug("Finishing Entity::list_cdrom sub");
     return 1;
 }
@@ -700,19 +765,35 @@ sub list_cdrom {
 
 =head3 PURPOSE
 
-
+List interfaces and information
 
 =head3 PARAMETERS
 
 =over
 
+=item vmname
+
+Name of Virtual Machine
+
+=item noheader
+
+Should header row be printed
+
+=item output
+
+Type of output table or csv
+
 =back
 
 =head3 RETURNS
 
+True on success
+
 =head3 DESCRIPTION
 
 =head3 THROWS
+
+Vcenter::Opts if unknown output requested
 
 =head3 COMMENTS
 
@@ -724,6 +805,20 @@ sub list_interface {
     &Log::debug("Entity::list_interface sub started");
     my $vmname = Opts::get_option('vmname');
     &Log::debug1("Opts are: vmname=>'$vmname'");
+    my $output = Opts::get_option('output');
+    my @titles = (qw(Number Key MacAddress Label Type));
+    if ( $output eq 'table') {
+        &Output::create_table;
+    } elsif ( $output eq 'csv') {
+        &Output::create_csv(\@titles);
+    } else {
+        Vcenter::Opts->throw( error => "Unknwon option requested", opt => $output );
+    }
+    if (!Opts::get_option('noheader')) {
+        &Output::add_row(\@titles);
+    } else {
+        &Log::info("Skipping header adding");
+    }
     my @net_hw = @{ &Guest::get_hw( $vmname, 'VirtualEthernetCard' ) };
     if ( @net_hw eq 0 ) {
         &Log::debug("No interface on entity");
@@ -740,17 +835,9 @@ sub list_interface {
             &Log::debug(
                 "Some unknown interface type, need to implement object handle");
         }
-        print "number=>'$i', key=>'"
-          . $net_hw[$i]->{key}
-          . "', mac=>'"
-          . $net_hw[$i]->{macAddress}
-          . "', interface=>'"
-          . $net_hw[$i]->{backing}->{deviceName}
-          . "', type=>'"
-          . $type
-          . "', label=>'"
-          . $net_hw[$i]->{deviceInfo}->{label} . "'\n";
+        &Output::add_row([$i, $net_hw[$i]->{key}, $net_hw[$i]->{macAddress}, $net_hw[$i]->{deviceInfo}->{label}, $type]);
     }
+    &Output::print;
     &Log::debug("Finishing Entity::list_interface sub");
     return 1;
 }
@@ -761,19 +848,35 @@ sub list_interface {
 
 =head3 PURPOSE
 
-
+List disk attached to Virtual Machine
 
 =head3 PARAMETERS
 
 =over
 
+=item vmname
+
+Name of Virtual Machine
+
+=item noheader
+
+Should header row be printed
+
+=item output
+
+Type of output table or csv
+
 =back
 
 =head3 RETURNS
 
+True on success
+
 =head3 DESCRIPTION
 
 =head3 THROWS
+
+Vcenter::Opts if unknown output requested
 
 =head3 COMMENTS
 
@@ -785,6 +888,21 @@ sub list_disk {
     &Log::debug("Starting Entity::list_disk sub");
     my $vmname = Opts::get_option('vmname');
     &Log::debug1("Opts are: vmname=>'$vmname'");
+    my $output = Opts::get_option('output');
+    my @titles = (qw(Number Key Size Path));
+    if ( $output eq 'table') {
+        &Output::create_table;
+    } elsif ( $output eq 'csv') {
+        my @array = (qw(Ticket Owner Status B-Ticket B-Status));
+        &Output::create_csv(\@titles);
+    } else {
+        Vcenter::Opts->throw( error => "Unknwon option requested", opt => $output );
+    }
+    if (!Opts::get_option('noheader')) {
+        &Output::add_row(\@titles);
+    } else {
+        &Log::info("Skipping header adding");
+    }
     my @disk_hw = @{ &Guest::get_hw( $vmname, 'VirtualDisk' ) };
     &Log::dumpobj( "disk_hw", \@disk_hw );
     if ( @disk_hw eq 0 ) {
@@ -794,15 +912,9 @@ sub list_disk {
     for ( my $i = 0 ; $i < scalar(@disk_hw) ; $i++ ) {
         &Log::debug("Iterating thorugh disk hardware '$i'");
         &Log::dumpobj( "disk $i", $disk_hw[$i] );
-        print "number=>'"
-          . $i
-          . "', key=>'"
-          . $disk_hw[$i]->{key}
-          . "', size=>'"
-          . $disk_hw[$i]->{capacityInKB}
-          . "' KB, path=>'"
-          . $disk_hw[$i]->{backing}->{fileName} . "'\n";
+        &Output::add_row([$i, $disk_hw[$i]->{key}, $disk_hw[$i]->{capacityInKB}, $disk_hw[$i]->{backing}->{fileName}]);
     }
+    &Output::print;
     &Log::debug("Finishing list_disk sub");
     return 1;
 }
@@ -813,15 +925,21 @@ sub list_disk {
 
 =head3 PURPOSE
 
-
+To list snapshot information
 
 =head3 PARAMETERS
 
 =over
 
+=item vmname
+
+Name of Virtual Machine
+
 =back
 
 =head3 RETURNS
+
+True on success
 
 =head3 DESCRIPTION
 
