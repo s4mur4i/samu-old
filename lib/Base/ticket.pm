@@ -435,7 +435,6 @@ sub ticket_list {
         if ( $ticket ne "" and $ticket ne "unknown" ) {
             my @string;
             push(@string, $ticket);
-#FIXME detect multiuser tickets
             push(@string, $$tickets{$ticket});
             my $result = &Kayako::run_query( $dbh, "select ticketstatustitle from swtickets where ticketid = '$ticket'");
             if ( defined($result) ) {
