@@ -89,7 +89,17 @@ our $module_opts = {
                             help     => "List a specific Folder",
                             required => 0,
                         },
-
+                        output => {
+                            type => "=s",
+                            help => "Output type, table/csv",
+                            default => "table",
+                            required => 0,
+                        },
+                        noheader => {
+                            type => "",
+                            help => "Should header information be printed",
+                            required => 0,
+                        },
                     },
                 },
                 resourcepool => {
@@ -102,13 +112,24 @@ our $module_opts = {
                             required => 0,
                         },
                         all => {
-                            type     => "=s",
+                            type     => "",
                             help     => "List all resourcepools",
                             required => 0,
                         },
                         name => {
                             type     => "=s",
                             help     => "List a specific resourcepool",
+                            required => 0,
+                        },
+                        output => {
+                            type => "=s",
+                            help => "Output type, table/csv",
+                            default => "table",
+                            required => 0,
+                        },
+                        noheader => {
+                            type => "",
+                            help => "Should header information be printed",
                             required => 0,
                         },
                     },
@@ -255,7 +276,6 @@ sub templates {
     if ( $output eq 'table') {
         &Output::create_table;
     } elsif ( $output eq 'csv') {
-        my @array = (qw(Ticket Owner Status B-Ticket B-Status));
         &Output::create_csv(\@titles);
     } else {
         Vcenter::Opts->throw( error => "Unknwon option requested", opt => $output );
@@ -426,6 +446,20 @@ sub list_resourcepool {
     &Log::debug("Starting Admin::list_resourcepool sub");
     my $user = &Opts::get_option('user') || &Opts::get_option('username');
     &Log::debug1("Opts are: user=>'$user'");
+    my $output = Opts::get_option('output');
+    my @titles = (qw(ResourcePool VirtualMachineChilds ResourcePoolChilds Alarm Memory CPU MaxMemory MaxCPU));
+    if ( $output eq 'table') {
+        &Output::create_table;
+    } elsif ( $output eq 'csv') {
+        &Output::create_csv(\@titles);
+    } else {
+        Vcenter::Opts->throw( error => "Unknwon option requested", opt => $output );
+    }
+    if (!Opts::get_option('noheader')) {
+        &Output::add_row(\@titles);
+    } else {
+        &Log::info("Skipping header adding");
+    }
     my @request = ();
     if ( &Opts::get_option('all') ) {
         &Log::debug("All resource pools requested");
@@ -451,9 +485,30 @@ sub list_resourcepool {
         }
     }
     &Log::dumpobj( "request array", \@request );
-    ## FIXME: mit is szeretnenk itt latni
-    # VM count, resource use, power status
-    # Text table!!!!
+    for my $resourcepool ( @request ) {
+        my @output;
+        my $view = &Guest::entity_full_view( $resourcepool, 'ResourcePool');
+        push(@output, $resourcepool);
+        if ($view->{vm}) {
+            push(@output, scalar(@{$view->{vm}}));
+        } else {
+            push(@output, 0);
+        }
+        if ($view->{resourcePool}) {
+            push(@output, scalar(@{$view->{resourcePool}}));
+        } else {
+            push(@output,0);
+        }
+        push(@output, $view->{runtime}->{overallStatus}->{val});
+        my $memoryMB = int($view->{runtime}->{memory}->{overallUsage}/1048576);
+        push(@output, "${memoryMB}MB");
+        push(@output, "$view->{runtime}->{cpu}->{overallUsage}Mhz");
+        $memoryMB = int($view->{runtime}->{memory}->{maxUsage}/1048576);
+        push(@output, "${memoryMB}MB");
+        push(@output, "$view->{runtime}->{cpu}->{maxUsage}Mhz");
+        &Output::add_row( \@output );
+    }
+    &Output::print;
     &Log::debug("Finishing Admin::list_resourcepool sub");
     return 1;
 }
