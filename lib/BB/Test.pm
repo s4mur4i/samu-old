@@ -17,18 +17,6 @@ BEGIN {
     our @EXPORT = qw( );
 }
 ## These subs help the testing framework. They are not tested and should not be fiddled by mortal souls
-sub clonevm {
-    my ( $template, $vmname, $folder, $clone_spec ) = @_;
-    my $template_view = &Guest::entity_name_view( $template, 'VirtualMachine' );
-    my $folder_view = &Guest::entity_name_view( $folder, 'Folder' );
-    my $task = $template_view->CloneVM_Task(
-        folder => $folder_view,
-        name   => $vmname,
-        spec   => $clone_spec
-    );
-    &VCenter::Task_Status($task);
-    return 1;
-}
 
 sub create_test_vm {
     my ($name) = @_;
@@ -93,3 +81,5 @@ sub create_test_entities {
     &VCenter::create_switch('test_1337');
     return 1;
 }
+
+1

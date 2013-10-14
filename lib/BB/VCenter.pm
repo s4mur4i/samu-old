@@ -129,7 +129,7 @@ sub exists_entity {
         $ret = 1;
     }
     &Log::debug("Finishing VCenter::exists_entity sub");
-    return 1;
+    return $ret;
 }
 
 =pod
@@ -1503,6 +1503,67 @@ sub get_manager {
     &Log::debug("Finishing VCenter::get_manager sub");
     &Log::dumpobj("$type manager", $manager);
     return $manager;
+}
+
+=pod
+
+=head1 clonevm
+
+=head2 PURPOSE
+
+Clone a virtual machine with requested parameters
+
+=head2 PARAMETERS
+
+=over
+
+=item template
+
+Name of template
+
+=item vmname
+
+Name of requested virtual machine
+
+=item folder
+
+Name of parent folder
+
+=item clone_spec
+
+The VirtualMachineCloneSpec object
+
+=back
+
+=head2 RETURNS
+
+True on success
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
+
+sub clonevm {
+    my ( $template, $vmname, $folder, $clone_spec ) = @_;
+    &Log::debug("Starting VCenter::clonevm sub");
+    &Log::debug1("Opts are: template=>'$template', vmname=>'$vmname', folder=>'$folder'");
+    &Log::dumpobj("clone_spec", $clone_spec);
+    my $template_view = &Guest::entity_name_view( $template, 'VirtualMachine' );
+    my $folder_view = &Guest::entity_name_view( $folder, 'Folder' );
+    my $task = $template_view->CloneVM_Task(
+        folder => $folder_view,
+        name   => $vmname,
+        spec   => $clone_spec
+    );
+    &VCenter::Task_Status($task);
+    &Log::debug("Finishing VCenter::clonevm sub");
+    return 1;
 }
 
 1

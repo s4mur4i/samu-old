@@ -262,7 +262,7 @@ sub get_altername {
             }
         }
     }
-    &Log::denug("Returning=>'$altername'");
+    &Log::debug("Returning=>'$altername'");
     &Log::debug("Finishing Guest::get_altername sub");
     return $altername;
 }

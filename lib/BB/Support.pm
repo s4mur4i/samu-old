@@ -446,7 +446,7 @@ sub ConfigSpec {
         deviceChange => [ &Guest::generate_network_setup($os_temp) ]
     );
     &Log::debug("Finishing Support::ConfigSpec sub");
-    &Log::dumpob("config_spec", $config_spec);
+    &Log::dumpobj("config_spec", $config_spec);
     return $config_spec;
 }
 
