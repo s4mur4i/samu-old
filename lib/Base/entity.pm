@@ -1098,8 +1098,6 @@ sub change_interface {
         "Opts are: vmname=>'$vmname', num=>'$num', network=>'$network'");
     my $spec = &Guest::change_interface_spec( $vmname, $num, $network );
     &Guest::reconfig_vm( $vmname, $spec );
-
-    #FIXME there is some issue here
     &Log::debug("Finishing Entity::change_interface sub");
     return 1;
 }

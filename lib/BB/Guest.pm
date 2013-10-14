@@ -493,48 +493,42 @@ sub change_interface_spec {
     &Log::debug(
         "Opts are: vmname=>'$vmname', num=>'$num', network=>'$network'");
     my @net_hw = @{ &Guest::get_hw( $vmname, 'VirtualEthernetCard' ) };
+    # We also hve to add the first one that is indexed 0
+    if ( $num + 1 > scalar(@net_hw) ) {
+        Entity::HWError->throw( error  => 'Unknown Interface count', entity => $vmname, hw => scalar(@net_hw));
+    }
     my $network_view =
       &Guest::entity_property_view( $network, 'Network', 'name' );
     my $name = $network_view->{name};
     my $backing;
+    &Log::dumpobj("network_hw", $net_hw[$num]);
     if ( $network_view->{mo_ref}->{type} eq 'Network' ) {
         &Log::debug("Network is a normal network");
-        $backing = VirtualEthernetCardNetworkBackingInfo->new(
-            deviceName => $name,
-            network    => $network
-        );
+        $backing = VirtualEthernetCardNetworkBackingInfo->new( deviceName => $name, network    => $network_view);
     }
     elsif ( $network_view->{mo_ref}->{type} eq 'DistributedVirtualPortgroup' ) {
         &Log::debug("Network is a normal DVP");
-        $network_view =
-          &Guest::entity_full_view( $network, 'DistributedVirtualPortgroup' );
-        my $switch =
-          &VCenter::moref2view(
-            $network_view->{config}->{distributedVirtualSwitch} );
-        my $port = DistributedVirtualSwitchPortConnection->new(
-            portgroupKey => $network_view->{key},
-            switchUuid   => $switch->{uuid}
-        );
-        $backing =
-          VirtualEthernetCardDistributedVirtualPortBackingInfo->new(
-            port => $port );
+        $network_view = &Guest::entity_full_view( $network, 'DistributedVirtualPortgroup' );
+        my $switch = &VCenter::moref2view( $network_view->{config}->{distributedVirtualSwitch} );
+        my $port = DistributedVirtualSwitchPortConnection->new( portgroupKey => $network_view->{key}, switchUuid   => $switch->{uuid});
+        $backing = VirtualEthernetCardDistributedVirtualPortBackingInfo->new( port => $port );
     }
     else {
         Entity::HWError->throw( error => 'Unknown Network type',entity => $vmname, hw =>  $network_view->{mo_ref}->{type} );
     }
-    my $device = VirtualE1000->new(
-        connectable => VirtualDeviceConnectInfo->new(
-            startConnected    => '1',
-            allowGuestControl => '1',
-            connected         => '1'
-        ),
-        wakeOnLanEnabled => 1,
-        macAddress       => $net_hw[$num]->{macAddress},
-        addressType      => "Manual",
-        key              => $net_hw[$num]->{key},
-        backing          => $backing,
-        deviceInfo       => Description->new( summary => $name, label => $name )
-    );
+    my $device;
+    if ( $net_hw[$num]->isa('VirtualE1000') ) {
+        $device = VirtualE1000->new( connectable => VirtualDeviceConnectInfo->new( startConnected    => '1', allowGuestControl => '1', connected         => '1'),
+        wakeOnLanEnabled => 1, macAddress       => $net_hw[$num]->{macAddress}, addressType      => "Manual", key              => $net_hw[$num]->{key}, backing          => $backing, deviceInfo       => Description->new( summary => $name, label => $name ));
+    } elsif ( $net_hw[$num]->isa('VirtualVmxnet3') ) {
+        $device = VirtualVmxnet3->new( connectable => VirtualDeviceConnectInfo->new( startConnected    => '1', allowGuestControl => '1', connected         => '1'),
+        wakeOnLanEnabled => 1, macAddress       => $net_hw[$num]->{macAddress}, addressType      => "Manual", key              => $net_hw[$num]->{key}, backing          => $backing, deviceInfo       => Description->new( summary => $name, label => $name ));
+    } elsif ( $net_hw[$num]->isa('VirtualVmxnet2') ) {
+        $device = VirtualVmxnet2->new( connectable => VirtualDeviceConnectInfo->new( startConnected    => '1', allowGuestControl => '1', connected         => '1'),
+        wakeOnLanEnabled => 1, macAddress       => $net_hw[$num]->{macAddress}, addressType      => "Manual", key              => $net_hw[$num]->{key}, backing          => $backing, deviceInfo       => Description->new( summary => $name, label => $name ));
+    } else {
+        Entity::HWError->throw( error  => 'Interface object is unhandeled', entity => $vmname, hw => $num);
+    }
     my $deviceconfig = VirtualDeviceConfigSpec->new(
         operation => VirtualDeviceConfigSpecOperation->new('edit'),
         device    => $device
