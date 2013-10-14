@@ -723,12 +723,19 @@ sub ticket_list {
     );
     my %tickets = ();
     for my $machine (@$machines) {
-        &Log::debug1("Ietaring through=>'" . $machine->name . "'");
+        &Log::debug1("Iterating through=>'" . $machine->name . "'");
         my $hash = &Misc::vmname_splitter( $machine->name );
         if ( $hash->{ticket} ne 'unknown'
             and !defined( $tickets{ $hash->{ticket} } ) )
         {
             $tickets{ $hash->{ticket} } = $hash->{username};
+        } elsif ( defined( $tickets{ $hash->{ticket} } ) ) {
+            if ( !($tickets{ $hash->{ticket} } =~ /$hash->{username}/) ) {
+                &Log::debug("Adding new owner to hash");
+                $tickets{ $hash->{ticket} } .= "," .$hash->{username};
+            } else {
+                &Log::debug("Owner is already added to hash");
+            }
         }
     }
     &Log::debug("Finishing Misc::ticket_list sub");

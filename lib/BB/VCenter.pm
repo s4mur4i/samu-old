@@ -485,8 +485,6 @@ sub Task_Status {
     my ($taskRef) = @_;
     &Log::debug("Starting VCenter::Task_Status sub");
     &Log::dumpobj( "taskRef", $taskRef );
-## FIXME remove if unneeded
-    #my $task_view = Vim::get_view( mo_ref => $taskRef, type => 'Task' );
     my $task_view = &VCenter::moref2view($taskRef);
     my $progress  = 0;
     while (1) {

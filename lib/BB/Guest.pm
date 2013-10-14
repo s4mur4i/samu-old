@@ -520,9 +520,7 @@ sub change_interface_spec {
             port => $port );
     }
     else {
-        &Log::debug("Unkown network type");
-
-        #FIXME Implement exception
+        Entity::HWError->throw( error => 'Unknown Network type',entity => $vmname, hw =>  $network_view->{mo_ref}->{type} );
     }
     my $device = VirtualE1000->new(
         connectable => VirtualDeviceConnectInfo->new(
