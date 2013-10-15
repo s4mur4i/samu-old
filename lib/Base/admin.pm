@@ -68,7 +68,28 @@ our $module_opts = {
                 out => {
                     type     => "=s",
                     help     => "Output file",
-                    required => 1,
+                    required => 0,
+                },
+                dokuserver => {
+                    type => "=s",
+                    help => "Dokuwiki XML RPC server url",
+                    required => 0,
+                    default => "https://supportwiki.balabit/lib/exe/xmlrpc.php",
+                },
+                dokuuser => {
+                    type => "=s",
+                    help => "Dokuwiki user, defaults to VCenter user",
+                    required => 0,
+                },
+                dokupass => {
+                    type => "=s",
+                    help => "Dokuwiki password, defaults to VCenter user",
+                    required => 0,
+                },
+                page => {
+                    type => "=s",
+                    help => "Pagename to upload to with namespace",
+                    required => 0,
                 },
             },
         },
@@ -358,6 +379,22 @@ The file that contains pod information
 
 The output file localtion
 
+=item page
+
+Dokuwiki path to upload file
+
+=item dokuuser
+
+The Dokuwiki username to use to log in
+
+=item dokupass
+
+The Dokuwiki password to use to log in
+
+=item dokuserver
+
+The Dokuwiki server to connect to
+
 =back
 
 =head3 RETURNS
@@ -381,23 +418,33 @@ Connection::Connect when files cannot be opened
 sub pod2wiki {
     &Log::debug("Starting Admin::pod2wiki sub");
     my $in     = Opts::get_option('in');
-    my $out    = Opts::get_option('out');
-    my $parser = Pod::Simple::Wiki->new('dokuwiki');
-    &Log::debug1("Opts are: in=>'$in', out=>'$out'");
-    open( my $IN, "<", $in )
-      or Connection::Connect->throw(
-        error => "Couldn't open: $!",
-        type  => 'file',
-        dest  => $in
-      );
-    open( my $OUT, ">", $out )
-      or Connection::Connect->throw(
-        error => "Couldn't open: $!",
-        type  => 'file',
-        dest  => $out
-      );
-    $parser->output_fh($OUT);
-    $parser->parse_file($IN);
+    my $out    = Opts::get_option('out') || 0;
+    my $page     = Opts::get_option('page') || 0;
+    &Log::debug1("Opts are: in=>'$in', out=>'$out',page=>'$page'");
+    my $converted = &Misc::pod2wiki($in);
+    if ( $out ) {
+        &Log::debug("Output file requested");
+        open( my $OUT, ">", $out ) or Connection::Connect->throw( error => "Couldn't open: $!", type  => 'file', dest  => $out);
+        print $OUT $converted;
+    } else {
+        &Log::debug("No output file requested");
+    }
+    if ( $page ) {
+        &Log::debug("Requested upload to Dokuwiki page=>'$page'");
+        my $server = &Opts::get_option('dokuserver');
+        my $dokuuser = &Opts::get_option('dokuuser') || &Opts::get_option('username');
+        my $dokupass = &Opts::get_option('dokupass') || &Opts::get_option('password');
+        &Dokuwiki::connect( $server, $dokuuser, $dokupass);
+        my $req = RPC::XML::request->new('wiki.putPage',RPC::XML::string->new($page), RPC::XML::string->new($converted));
+        my $ret = &Dokuwiki::request( $req );
+        if ( $ret) {
+            &Log::debug("Upload succesful");
+        } else {
+            Connection::Connect->throw( error => 'Could not upload to Dokuwiki', type => 'Dokuwiki', dest => $page );
+        }
+    } else {
+        &Log::debug("No upload to dokuwiki requested");
+    }
     &Log::debug("Finishing Admin::pod2wiki sub");
     return 1;
 }
@@ -446,7 +493,7 @@ sub list_resourcepool {
     &Log::debug("Starting Admin::list_resourcepool sub");
     my $user = &Opts::get_option('user') || &Opts::get_option('username');
     &Log::debug1("Opts are: user=>'$user'");
-    my $output = Opts::get_option('output');
+    my $output = &Opts::get_option('output');
     my @titles = (qw(ResourcePool VirtualMachineChilds ResourcePoolChilds Alarm Memory CPU MaxMemory MaxCPU));
     if ( $output eq 'table') {
         &Output::create_table;
@@ -455,7 +502,7 @@ sub list_resourcepool {
     } else {
         Vcenter::Opts->throw( error => "Unknwon option requested", opt => $output );
     }
-    if (!Opts::get_option('noheader')) {
+    if (!&Opts::get_option('noheader')) {
         &Output::add_row(\@titles);
     } else {
         &Log::info("Skipping header adding");

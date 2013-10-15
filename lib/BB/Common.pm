@@ -22,6 +22,7 @@ use BB::Guest;
 use BB::Bugzilla;
 use BB::Kayako;
 use BB::Output;
+use BB::Dokuwiki;
 
 use VMware::VIRuntime;
 

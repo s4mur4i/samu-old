@@ -800,4 +800,53 @@ sub user_ticket_list {
     return \%tickets;
 }
 
+=pod
+
+=head1 pod2wiki
+
+=head2 PURPOSE
+
+Converts a pod file to dokuwiki format
+
+=head2 PARAMETERS
+
+=over
+
+=item in
+
+The input file path
+
+=back
+
+=head2 RETURNS
+
+A string with converted text
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+Connection::Connect if in file could not be opened
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
+
+sub pod2wiki {
+    my ( $in ) = @_;
+    &Log::debug("Starting Misc::pod2wiki sub");
+    &Log::debug("Opts are: in=>'$in'");
+    my $out;
+    my $parser = Pod::Simple::Wiki->new('dokuwiki');
+    open( my $IN, "<", $in ) or Connection::Connect->throw( error => "Couldn't open: $!", type  => 'file', dest  => $in);
+    $parser->output_string( \$out );
+    $parser->parse_file($IN);
+    close $IN;
+    &Log::dumpobj("out_string", $out);
+    &Log::debug("Finishing Misc::pod2wiki sub");
+    return $out;
+}
+
 1
