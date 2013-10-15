@@ -141,11 +141,11 @@ stderr_like(
     qr/^Error.pm\s\[CRITICAL\]:\sDesc=>'test',entity=>'teste',user=>'me',pass=>'bebebebe';$/,
     "Entity Auth exception output"
 );
-eval { Entity::TransferError->throw( error => 'test', entity => 'teste' ); };
+eval { Entity::TransferError->throw( error => 'test', entity => 'teste', filename => 'tast' ); };
 $ex = $@;
 stderr_like(
     sub { &Error::catch_ex($ex) },
-    qr/^Error.pm\s\[CRITICAL\]:\sDesc=>'test',entity=>'teste';$/,
+    qr/^Error.pm\s\[CRITICAL\]:\sDesc=>'test',entity=>'teste',source=>'tast';$/,
     "Entity TransferError exception output"
 );
 eval { Entity::HWError->throw( error => 'test1', entity => 'test2', hw => 'dick' ); };

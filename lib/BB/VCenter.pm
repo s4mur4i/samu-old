@@ -1042,7 +1042,7 @@ sub vm_last_snapshot_view {
             snapshot => 'none'
         );
     }
-    &Log::dumpbobj( "snapshot_view", $snapshot_view );
+    &Log::dumpobj( "snapshot_view", $snapshot_view );
     if ( defined( $snapshot_view->[0]->{'childSnapshotList'} ) ) {
         &Log::debug("Recursion for last snapshot");
         $snapshot_view =
@@ -1501,6 +1501,72 @@ sub get_manager {
     &Log::debug("Finishing VCenter::get_manager sub");
     &Log::dumpobj("$type manager", $manager);
     return $manager;
+}
+
+=pod
+
+=head1 resourcepool_info
+
+=head2 PURPOSE
+
+Returns resourcepool information for printing or handling
+
+=head2 PARAMETERS
+
+=over
+
+=item name
+
+Name of resourcepool to return
+
+=back
+
+=head2 RETURNS
+
+Array ref with resourcepool information
+
+=head2 DESCRIPTION
+
+Return information in array ref for routine like Output::add_row. Max is used to display the limits of a resourcepool
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
+
+sub resourcepool_info {
+    my ($name) = @_;
+    &Log::debug("Starting VCenter::resourcepool_info sub");
+    &Log::debug("Opts are: name=>'$name'");
+    my @info;
+    my $view = &Guest::entity_full_view( $name, 'ResourcePool');
+    push(@info, $name);
+    if ($view->{vm}) {
+        &Log::debug("Resourcepool has child Virtual Machines");
+        push(@info, scalar(@{$view->{vm}}));
+    } else {
+        &Log::debug("Resourcepool has no child Virtual Machines");
+        push(@info, 0);
+    }
+    if ($view->{resourcePool}) {
+        &Log::debug("Resourcepool has child resourcepools");
+        push(@info, scalar(@{$view->{resourcePool}}));
+    } else {
+        &Log::debug("Resourcepool has no child resourcepools");
+        push(@info,0);
+    }
+    push(@info, $view->{runtime}->{overallStatus}->{val});
+    my $memoryMB = int($view->{runtime}->{memory}->{overallUsage}/1048576);
+    push(@info, "${memoryMB}MB");
+    push(@info, "$view->{runtime}->{cpu}->{overallUsage}Mhz");
+    $memoryMB = int($view->{runtime}->{memory}->{maxUsage}/1048576);
+    push(@info, "${memoryMB}MB");
+    push(@info, "$view->{runtime}->{cpu}->{maxUsage}Mhz");
+    &Log::debug("Finishing VCenter::resourcepool_info sub");
+    return \@info;
 }
 
 =pod

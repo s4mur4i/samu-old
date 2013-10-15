@@ -80,7 +80,7 @@ our $module_opts = {
                     vcenter_connect => 1,
                     opts     => {
                         all => {
-                            type     => "=s",
+                            type     => "",
                             help     => "List all Folders",
                             required => 0,
                         },
@@ -485,28 +485,8 @@ sub list_resourcepool {
         }
     }
     &Log::dumpobj( "request array", \@request );
-    for my $resourcepool ( @request ) {
-        my @output;
-        my $view = &Guest::entity_full_view( $resourcepool, 'ResourcePool');
-        push(@output, $resourcepool);
-        if ($view->{vm}) {
-            push(@output, scalar(@{$view->{vm}}));
-        } else {
-            push(@output, 0);
-        }
-        if ($view->{resourcePool}) {
-            push(@output, scalar(@{$view->{resourcePool}}));
-        } else {
-            push(@output,0);
-        }
-        push(@output, $view->{runtime}->{overallStatus}->{val});
-        my $memoryMB = int($view->{runtime}->{memory}->{overallUsage}/1048576);
-        push(@output, "${memoryMB}MB");
-        push(@output, "$view->{runtime}->{cpu}->{overallUsage}Mhz");
-        $memoryMB = int($view->{runtime}->{memory}->{maxUsage}/1048576);
-        push(@output, "${memoryMB}MB");
-        push(@output, "$view->{runtime}->{cpu}->{maxUsage}Mhz");
-        &Output::add_row( \@output );
+    for my $resourcepool ( sort @request ) {
+        &Output::add_row( &VCenter::resourcepool_info($resourcepool) );
     }
     &Output::print;
     &Log::debug("Finishing Admin::list_resourcepool sub");
