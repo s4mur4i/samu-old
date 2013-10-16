@@ -292,21 +292,8 @@ True on success
 sub templates {
     &Log::debug("Starting Admin::templates sub");
     my $keys = &Support::get_keys('template');
-    my $output = Opts::get_option('output');
     my @titles = (qw(Name Path));
-    if ( $output eq 'table') {
-        &Output::create_table;
-    } elsif ( $output eq 'csv') {
-        &Output::create_csv(\@titles);
-    } else {
-        Vcenter::Opts->throw( error => "Unknwon option requested", opt => $output );
-    }
-    if (!Opts::get_option('noheader')) {
-        &Output::add_row(\@titles);
-    } else {
-        &Log::info("Skipping header adding");
-    }
-    my $max  = &Misc::array_longest($keys);
+    &Output::option_parser(\@titles);
     for my $template (@$keys) {
         &Log::debug("Element working on:'$template'");
         my $path = &Support::get_key_value( 'template', $template, 'path' );
@@ -493,20 +480,8 @@ sub list_resourcepool {
     &Log::debug("Starting Admin::list_resourcepool sub");
     my $user = &Opts::get_option('user') || &Opts::get_option('username');
     &Log::debug1("Opts are: user=>'$user'");
-    my $output = &Opts::get_option('output');
     my @titles = (qw(ResourcePool VirtualMachineChilds ResourcePoolChilds Alarm Memory CPU MaxMemory MaxCPU));
-    if ( $output eq 'table') {
-        &Output::create_table;
-    } elsif ( $output eq 'csv') {
-        &Output::create_csv(\@titles);
-    } else {
-        Vcenter::Opts->throw( error => "Unknwon option requested", opt => $output );
-    }
-    if (!&Opts::get_option('noheader')) {
-        &Output::add_row(\@titles);
-    } else {
-        &Log::info("Skipping header adding");
-    }
+    &Output::option_parser(\@titles);
     my @request = ();
     if ( &Opts::get_option('all') ) {
         &Log::debug("All resource pools requested");
@@ -604,32 +579,11 @@ sub list_folder {
         &Log::debug("No option requested running VMWare sdk help");
         &Opts::usage;
     }
-    my $output = &Opts::get_option('output');
     my @titles = (qw(Folder VirtualMachineChilds FolderChilds));
-    if ( $output eq 'table') {
-        &Output::create_table;
-    } elsif ( $output eq 'csv') {
-        &Output::create_csv(\@titles);
-    } else {
-        Vcenter::Opts->throw( error => "Unknwon option requested", opt => $output );
-    }
-    if (!&Opts::get_option('noheader')) {
-        &Output::add_row(\@titles);
-    } else {
-        &Log::info("Skipping header adding");
-    }
+    &Output::option_parser(\@titles);
     for my $folder ( @folder ) {
-        my $view = &Guest::entity_property_view( $folder, 'Folder', 'childEntity');
-        my %sorted = ( VirtualMachine => [], Folder => [] );
-        for my $entity ( @{ $view->{childEntity} }) {
-            if (defined($sorted{$entity->{type}})) {
-                my $view = &VCenter::moref2view( $entity);
-                push(@{ $sorted{$entity->{type}} }, $view->{name});
-            } else {
-                &Log::debug("Unhandled entity in Inventory Folder");
-            }
-        }
-        &Output::add_row( [ $folder, join("\n", @{ $sorted{VirtualMachine} }), join("\n", @{ $sorted{Folder} })] );
+        my $sorted = &VCenter::folder_info($folder);
+        &Output::add_row( [ $folder, join("/", @{ $sorted->{VirtualMachine} }), join("/", @{ $sorted->{Folder} })] );
         &Output::add_row( [ "-----", "-----", "-----" ] );
     }
     &Output::print;

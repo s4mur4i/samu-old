@@ -416,20 +416,8 @@ sub ticket_list {
     my $tickets = &Misc::ticket_list;
     &Log::debug("Finished collecting ticket list");
     my $dbh = &Kayako::connect_kayako();
-    my $output = Opts::get_option('output');
     my @titles = (qw(Ticket Owner Status B-Ticket B-Status));
-    if ( $output eq 'table') {
-        &Output::create_table;
-    } elsif ( $output eq 'csv') {
-        &Output::create_csv(\@titles);
-    } else {
-        Vcenter::Opts->throw( error => "Unknwon option requested", opt => $output );
-    }
-    if (!Opts::get_option('noheader')) {
-        &Output::add_row(\@titles);
-    } else {
-        &Log::info("Skipping header adding");
-    }
+    &Output::option_parser(\@titles);
     for my $ticket ( sort {$a<=>$b} ( keys %{$tickets} ) ) {
         &Log::debug("Collecting information about ticket=>'$ticket'");
         if ( $ticket ne "" and $ticket ne "unknown" ) {

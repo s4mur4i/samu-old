@@ -707,21 +707,8 @@ sub list_cdrom {
     &Log::debug("Starting Entity::list_cdrom sub");
     my $vmname = Opts::get_option('vmname');
     &Log::debug1("Opts are: vmname=>'$vmname'");
-    my $output = Opts::get_option('output');
     my @titles = (qw(Number Key Size Path));
-    if ( $output eq 'table') {
-        &Output::create_table;
-    } elsif ( $output eq 'csv') {
-        my @array = (qw(Ticket Owner Status B-Ticket B-Status));
-        &Output::create_csv(\@titles);
-    } else {
-        Vcenter::Opts->throw( error => "Unknwon option requested", opt => $output );
-    }
-    if (!Opts::get_option('noheader')) {
-        &Output::add_row(\@titles);
-    } else {
-        &Log::info("Skipping header adding");
-    }
+    &Output::option_parser(\@titles);
     my @cdrom_hw = @{ &Guest::get_hw( $vmname, 'VirtualCdrom' ) };
     if ( @cdrom_hw eq 0 ) {
         &Log::debug("No cdroms on entity");
@@ -805,20 +792,8 @@ sub list_interface {
     &Log::debug("Entity::list_interface sub started");
     my $vmname = Opts::get_option('vmname');
     &Log::debug1("Opts are: vmname=>'$vmname'");
-    my $output = Opts::get_option('output');
     my @titles = (qw(Number Key MacAddress Label Type));
-    if ( $output eq 'table') {
-        &Output::create_table;
-    } elsif ( $output eq 'csv') {
-        &Output::create_csv(\@titles);
-    } else {
-        Vcenter::Opts->throw( error => "Unknwon option requested", opt => $output );
-    }
-    if (!Opts::get_option('noheader')) {
-        &Output::add_row(\@titles);
-    } else {
-        &Log::info("Skipping header adding");
-    }
+    &Output::option_parser(\@titles);
     my @net_hw = @{ &Guest::get_hw( $vmname, 'VirtualEthernetCard' ) };
     if ( @net_hw eq 0 ) {
         &Log::debug("No interface on entity");
@@ -888,21 +863,8 @@ sub list_disk {
     &Log::debug("Starting Entity::list_disk sub");
     my $vmname = Opts::get_option('vmname');
     &Log::debug1("Opts are: vmname=>'$vmname'");
-    my $output = Opts::get_option('output');
     my @titles = (qw(Number Key Size Path));
-    if ( $output eq 'table') {
-        &Output::create_table;
-    } elsif ( $output eq 'csv') {
-        my @array = (qw(Ticket Owner Status B-Ticket B-Status));
-        &Output::create_csv(\@titles);
-    } else {
-        Vcenter::Opts->throw( error => "Unknwon option requested", opt => $output );
-    }
-    if (!Opts::get_option('noheader')) {
-        &Output::add_row(\@titles);
-    } else {
-        &Log::info("Skipping header adding");
-    }
+    &Output::option_parser(\@titles);
     my @disk_hw = @{ &Guest::get_hw( $vmname, 'VirtualDisk' ) };
     &Log::dumpobj( "disk_hw", \@disk_hw );
     if ( @disk_hw eq 0 ) {

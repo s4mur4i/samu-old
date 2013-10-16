@@ -1569,6 +1569,25 @@ sub resourcepool_info {
     return \@info;
 }
 
+sub folder_info {
+    my ( $name ) = @_;
+    &Log::debug("Starting VCenter::folder_info sub");
+    &Log::debug1("Opts are: name=>'$name'");
+    my %entities = ( VirtualMachine => [], Folder => [] );
+    my $view = &Guest::entity_property_view( $name, 'Folder', 'childEntity');
+    for my $entity ( @{ $view->{childEntity} }) {
+        if (defined($entities{$entity->{type}})) {
+            my $view = &VCenter::moref2view( $entity);
+            push(@{ $entities{$entity->{type}} }, $view->{name});
+        } else {
+            &Log::debug("Unhandled entity in Inventory Folder");
+        }
+    }
+    &Log::dumpobj("entities", \%entities);
+    &Log::debug("Finishing VCenter::folder_info sub");
+    return \%entities;
+}
+
 =pod
 
 =head1 clonevm

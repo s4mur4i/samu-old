@@ -190,4 +190,59 @@ sub print {
     return 1;
 }
 
+=pod
+
+=head1 option_parser
+
+=head2 PURPOSE
+
+Parses option to decide if table or csv should be used
+
+=head2 PARAMETERS
+
+=over
+
+=item titles
+
+Array ref to use for headers
+
+=back
+
+=head2 RETURNS
+
+True on success
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+Vcenter::Opts if unknown opts is requested for output
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
+
+sub option_parser {
+    my ( $titles ) = @_;
+    &Log::debug("Starting Output::option_parser sub");
+    &Log::dumpobj("titles", $titles);
+    my $output = &Opts::get_option('output');
+    if ( $output eq 'table') {
+        &Output::create_table;
+    } elsif ( $output eq 'csv') {
+        &Output::create_csv($titles);
+    } else {
+        Vcenter::Opts->throw( error => "Unknwon option requested", opt => $output );
+    }
+    if (!&Opts::get_option('noheader')) {
+        &Output::add_row($titles);
+    } else {
+        &Log::info("Skipping header adding");
+    }
+    &Log::debug("Finishing Output::option_parser sub");
+    return 1;
+}
+
 1
