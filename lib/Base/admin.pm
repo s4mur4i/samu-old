@@ -586,7 +586,7 @@ sub list_folder {
             properties => ['name'],
             filter     => { name => 'vm' }
         );
-        my $folders = Vim::find_entity_view(
+        my $folders = Vim::find_entity_views(
             view_type    => 'Folder',
             begin_entity => $vm_folder_view,
             properties   => ['name']
@@ -604,7 +604,35 @@ sub list_folder {
         &Log::debug("No option requested running VMWare sdk help");
         &Opts::usage;
     }
-    ## FIXME: mit es hogy printelni ide
+    my $output = &Opts::get_option('output');
+    my @titles = (qw(Folder VirtualMachineChilds FolderChilds));
+    if ( $output eq 'table') {
+        &Output::create_table;
+    } elsif ( $output eq 'csv') {
+        &Output::create_csv(\@titles);
+    } else {
+        Vcenter::Opts->throw( error => "Unknwon option requested", opt => $output );
+    }
+    if (!&Opts::get_option('noheader')) {
+        &Output::add_row(\@titles);
+    } else {
+        &Log::info("Skipping header adding");
+    }
+    for my $folder ( @folder ) {
+        my $view = &Guest::entity_property_view( $folder, 'Folder', 'childEntity');
+        my %sorted = ( VirtualMachine => [], Folder => [] );
+        for my $entity ( @{ $view->{childEntity} }) {
+            if (defined($sorted{$entity->{type}})) {
+                my $view = &VCenter::moref2view( $entity);
+                push(@{ $sorted{$entity->{type}} }, $view->{name});
+            } else {
+                &Log::debug("Unhandled entity in Inventory Folder");
+            }
+        }
+        &Output::add_row( [ $folder, join("\n", @{ $sorted{VirtualMachine} }), join("\n", @{ $sorted{Folder} })] );
+        &Output::add_row( [ "-----", "-----", "-----" ] );
+    }
+    &Output::print;
     &Log::debug("Finishing Admin::list_folder sub");
     return 1;
 }

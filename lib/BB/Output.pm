@@ -48,7 +48,7 @@ sub create_table {
     &Log::debug("Starting Output::create_table sub");
     if ( !defined( $tbh ) ) {
         &Log::debug("Creating table object");
-        $tbh = Text::Table->new();
+        $tbh = Text::Table->new( );
     } else {
         &Log::warning("Table object already created");
     }
