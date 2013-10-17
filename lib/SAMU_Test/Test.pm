@@ -7,7 +7,7 @@ use warnings;
 
 =head1 Test.pm
 
-Subroutines for BB/Test.pm
+Subroutines for SAMU_Test/Test.pm
 
 =cut
 
@@ -16,7 +16,7 @@ BEGIN {
     our @ISA    = qw( Exporter );
     our @EXPORT = qw( );
 }
-## These subs help the testing framework. They are not tested and should not be fiddled by mortal souls
+
 sub clonevm {
     my ( $template, $vmname, $folder, $clone_spec ) = @_;
     my $template_view = &Guest::entity_name_view( $template, 'VirtualMachine' );
@@ -93,3 +93,20 @@ sub create_test_entities {
     &VCenter::create_switch('test_1337');
     return 1;
 }
+
+sub uniq {
+    return keys %{{ map { $_ => 1 } @_ }};
+}
+
+sub search_file {
+    my ( $file, $string ) = @_;
+    open( my $fh, "<", $file) or die $!;
+    while ( my $line = <$fh> ) {
+        if ( $line =~ /'$string'/ ) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+1

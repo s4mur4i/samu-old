@@ -5,7 +5,7 @@ Standards-Version: 3.9.2
 Package: balabit-test-prereq
 Version: 1.0
 Maintainer: Krisztian Banhidy <s4mur4i@balabit.hu>
-Depends:libtest-output-perl,libtest-pod-perl,libtest-strict-perl,libtest-trap-perl,libtest-perl-critic-perl,libtest-fixme-perl,libtest-eol-perl,libtest-spelling-perl,libtest-exception-perl,libtest-file-perl,libtest-pod-coverage-perl,libtest-pod-perl
+Depends:libtest-output-perl,libtest-pod-perl,libtest-strict-perl,libtest-trap-perl,libtest-perl-critic-perl,libtest-fixme-perl,libtest-eol-perl,libtest-spelling-perl,libtest-exception-perl,libtest-file-perl,libtest-pod-coverage-perl,libtest-pod-perl,libmodule-extract-use-perl
 Description: Tassadar: My friends, this is our final hour.
 	Q: How many testers does it take to change a lightbulb?
 	A: None, they just tell you that the room is dark.

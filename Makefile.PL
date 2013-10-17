@@ -30,6 +30,7 @@ WriteMakefile(
         'Test::Strict'        => 0.14,
         'Test::Pod::Coverage' => 1.08,
         'Test::Pod' => 1.44,
+        'Module::ScanDeps' => 0,
     },
     CONFIGURE_REQUIRES => { 'ExtUtils::MakeMaker' => 6.5705 },
     PREREQ_PM          => {
@@ -62,6 +63,10 @@ WriteMakefile(
         'RPC::XML::Client' => 0.76,
         'Text::Table' => 1.123,
         'Class::CSV' => 1.03,
+        'File::Basename' => 0,
+        'MIME::Base64' => 0,
+        'Term::ReadKey' => 0,
+        'LWP::Simple' => 0,
     },
     PREREQ_FATAL => 0,
 );
