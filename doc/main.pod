@@ -66,6 +66,10 @@ Higher level commands for administering or maintenance of the VCenter and enviro
 
 Network related functions
 
+=item devel
+
+Developer functions
+
 =back
 
 =head1 VM
@@ -1460,6 +1464,64 @@ Delete switch
 =item dvp
 
 Delete distributed Virtual Portgroup
+
+=back
+
+=head1 DEVEL
+
+Devel related functions
+
+=head3 SYNOPSIS
+
+samu.pl devel [options] [functions]
+
+=head3 OPTIONS
+
+=over
+
+=item -help|-h
+
+Print the help page
+
+=back
+
+=head3 FUNCTIONS
+
+=over
+
+=item create
+
+Create functions for developer
+
+=back
+
+=head1 DEVEL_functions
+
+=head2 DEVEL_create_function
+
+=head3 SYNOPSIS
+
+samu.pl devel create [options]
+
+=head3 OPTIONS
+
+=over
+
+=item mainpod
+
+Creates a main pod from multiple files
+
+=back
+
+=head2 DEVEL_create_mainpod_function
+
+=head3 SYNOPSIS
+
+samu.pl create mainpod [options]
+
+=head3 OPTIONS
+
+=over
 
 =back
 

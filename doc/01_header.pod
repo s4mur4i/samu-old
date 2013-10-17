@@ -65,4 +65,8 @@ Higher level commands for administering or maintenance of the VCenter and enviro
 
 Network related functions
 
+=item devel
+
+Developer functions
+
 =back
