@@ -60,6 +60,11 @@ my $samu_opts = {
             module   => 'network',
             function => \&network::main
         },
+        devel => {
+            helper   => 'DEVEL',
+            module   => 'devel',
+            function => \&devel::main
+        },
     }
 };
 
