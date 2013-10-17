@@ -414,6 +414,44 @@ our $module_opts = {
                         },
                     },
                 },
+                process => {
+                    function => \&list_process,
+                    vcenter_connect => 1,
+                    opts => {
+                        vmname => {
+                            type => "=s",
+                            help => "Name of Virtual Machine",
+                            required => 1,
+                        },
+                        guestusername => {
+                            type => "=s",
+                            help => "Username to authenticate with",
+                            required => 0,
+                        },
+                        guestpassword => {
+                            type => "=s",
+                            help => "Password to authenticate with",
+                            required => 0,
+                        },
+                        pid => {
+                            type => "=s",
+                            help => "Pid to get information about",
+                            required => 0,
+                            default => 0,
+                        },
+                        output => {
+                            type => "=s",
+                            help => "Output type, table/csv",
+                            default => "table",
+                            required => 0,
+                        },
+                        noheader => {
+                            type => "",
+                            help => "Should header information be printed",
+                            required => 0,
+                        },
+                    },
+                },
             },
         },
         change => {
@@ -919,6 +957,70 @@ sub list_snapshot {
     &Log::debug1("Opts are: vmname=>'$vmname'");
     &Guest::list_snapshot($vmname);
     &Log::debug("Finishing Entity::list_snapshot sub");
+    return 1;
+}
+
+=pod
+
+=head1 list_process
+
+=head2 PURPOSE
+
+List processes in Virtual Machine
+
+=head2 PARAMETERS
+
+=over
+
+=item pid
+
+Pid of requested program
+
+=item guestusername
+
+Username to authenticate with
+
+=item guestpassword
+
+Password to authenticate with
+
+=item vmname
+
+Name of Virtual Machine
+
+=back
+
+=head2 RETURNS
+
+True on success
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
+
+sub list_process {
+    &Log::debug("Starting Entity::list_process sub");
+    my %arguments;
+    $arguments{'vmname'} = &Opts::get_option('vmname');
+    my $vm_info = &Misc::vmname_splitter( $arguments{vmname} );
+    $arguments{'guestusername'} = &Opts::get_option('guestusername') || &Support::get_key_value( 'template', $vm_info->{template}, 'username' );
+    $arguments{'guestpassword'} = &Opts::get_option('guestpassword') || &Support::get_key_value( 'template', $vm_info->{template}, 'password' );
+    $arguments{'pid'} = &Opts::get_option('pid');
+    my @titles = (qw(pid owner name command startTime endTime exitCode));
+    &Output::option_parser(\@titles);
+    my $programs = &Guest::process_info(\%arguments);
+    for my $prog ( @$programs ) {
+        &Log::dumpobj("prog", $prog);
+        &Output::add_row( [ $prog->{pid}, $prog->{owner} // "---", $prog->{name} // "---", $prog->{cmdLine} //  "---", $prog->{startTime} // "---", $prog->{endTime} // "---", $prog->{exitCode} // "---"] );
+    }
+    &Output::print;
+    &Log::debug("Finishing Entity::list_process sub");
     return 1;
 }
 
@@ -1541,12 +1643,8 @@ sub transfer {
     $opts{type}   = Opts::get_option('type');
     $opts{vmname} = Opts::get_option('vmname');
     my $vm_info = &Misc::vmname_splitter( $opts{vmname} );
-    $opts{guestusername} = Opts::get_option('guestusername')
-      || &Support::get_key_value( 'template', $vm_info->{template},
-        'username' );
-    $opts{guestpassword} = Opts::get_option('guestpassword')
-      || &Support::get_key_value( 'template', $vm_info->{template},
-        'password' );
+    $opts{guestusername} = Opts::get_option('guestusername') || &Support::get_key_value( 'template', $vm_info->{template}, 'username' );
+    $opts{guestpassword} = Opts::get_option('guestpassword') || &Support::get_key_value( 'template', $vm_info->{template}, 'password' );
     $opts{source}    = Opts::get_option('source');
     $opts{dest}      = Opts::get_option('dest');
     $opts{overwrite} = Opts::get_option('overwrite');

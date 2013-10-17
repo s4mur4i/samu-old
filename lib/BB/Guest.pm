@@ -2420,6 +2420,78 @@ sub transfer_from_guest {
 
 =pod
 
+=head1 process_info
+
+=head2 PURPOSE
+
+Returns info about process in Virtual Machine
+
+=head2 PARAMETERS
+
+=over
+
+=item info
+
+A hash containing information required
+Required information:
+
+=item vmname
+
+Name of virtual machine
+
+=item guestusername
+
+Username to authenticate with
+
+=item guestpassword
+
+Password to authenticate with
+
+=item pid
+
+Pid of the requested program. Pid 0 returns all programs
+
+=back
+
+=head2 RETURNS
+
+Array ref with program objects
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+Entity::NumException if no pid is found
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
+
+sub process_info {
+    my ($info) = @_;
+    &Log::debug("Starting Guest::process_info sub");
+    my $guestCreds = &Guest::guest_cred( $info->{vmname}, $info->{guestusername}, $info->{guestpassword});
+    my $guestOP   = &VCenter::get_manager("guestOperationsManager");
+    my $processmanager = &VCenter::moref2view($guestOP->{processManager});
+    my $view=&Guest::entity_name_view($info->{vmname}, 'VirtualMachine');
+    my $data;
+    if ( $info->{pid} != 0 ) {
+        $data = $processmanager->ListProcessesInGuest(vm=>$view, auth=>$guestCreds, pids =>[ $info->{pid}]);
+    } else {
+        $data = $processmanager->ListProcessesInGuest(vm=>$view, auth=>$guestCreds);
+    }
+    if ( !@{$data} ) {
+        Entity::NumException->throw( error => "No processes found with requested PID", entity => $info->{vmname}, num => $info->{pid});
+    }
+    &Log::dumpobj("data", $data);
+    &Log::debug("Finishing Guest::process_info sub");
+    return $data;
+}
+
+=pod
+
 =head2 guest_cred
 
 =head3 PURPOSE
