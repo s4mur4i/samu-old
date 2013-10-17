@@ -1,6 +1,5 @@
 bash_completion/samu
 Changes
-create_mainpod.pl
 deb/balabit-prereq
 deb/balabit-prereq_1.0_all.deb
 deb/balabit-test-prereq
@@ -17,15 +16,16 @@ doc/25_kayako.pod
 doc/30_bugzilla.pod
 doc/35_admin.pod
 doc/40_network.pod
+doc/43_devel.pod
 doc/45_commonvi.pod
 doc/50_install.pod
 doc/55_loglevel.pod
 doc/99_footer.pod
 doc/main.pod
-generate_perl_modules.sh
 lib/Base/admin.pm
 lib/Base/bugzilla.pm
 lib/Base/datastore.pm
+lib/Base/devel.pm
 lib/Base/entity.pm
 lib/Base/kayako.pm
 lib/Base/misc.pm
@@ -98,7 +98,6 @@ t/Pod/Pod_subs.t
 t/Pod/Pod_syntax.t
 t/Templates/main.t
 t/VMware/VIRuntime.t
-TEST_PERL_MODULES.pl
 vmware_lib/VMware/VICommon.pm
 vmware_lib/VMware/VICredStore.pm
 vmware_lib/VMware/VIExt.pm
