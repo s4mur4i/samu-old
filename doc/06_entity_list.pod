@@ -30,6 +30,10 @@ List disks attached to a virtual machine
 
 List snapshots attached to a virtual machine
 
+=item process
+
+List process or processes in guest with vmware tools installed
+
 =back
 
 =head2 VM_list_interface_function
@@ -46,6 +50,14 @@ samu.pl vm list interface [options] [function]
 
 Name of virtual machine
 
+=item output
+
+Output type: table or csv
+
+=item noheader
+
+should header informaiton be printed
+
 =back
 
 =head2 VM_list_cdrom_function
@@ -61,6 +73,14 @@ samu.pl vm list cdrom [options] [function]
 =item vmname
 
 Name of virtual machine
+
+=item output
+
+Output type: table or csv
+
+=item noheader
+
+should header informaiton be printed
 
 =back
 
@@ -84,7 +104,7 @@ Name of virtual machine
 
 =head3 SYNOPSIS
 
-samu.pl vm list disk [options] [function]
+samu.pl vm list disk [options]
 
 =head3 OPTIONS
 
@@ -93,5 +113,49 @@ samu.pl vm list disk [options] [function]
 =item vmname
 
 Name of virtual machine
+
+=item output
+
+Output type: table or csv
+
+=item noheader
+
+should header informaiton be printed
+
+=back
+
+=head2 VM_list_process_function
+
+=head3 SYNOPSIS
+
+samu.pl vm list process [options]
+
+=head3 OPTIONS
+
+=over
+
+=item vmname
+
+Name of virtual machine
+
+=item pid
+
+Pid of requested program. Default is all programrams
+
+=item guestusername
+
+Username to authenticate with
+
+=item guestpassword
+
+Password to authenticate with
+
+=item output
+
+Output type: table or csv
+
+=item noheader
+
+should header informaiton be printed
 
 =back

@@ -39,11 +39,12 @@ _samu() {
     vm_delete_folder="--name"
     vm_delete_resourcepool="--name"
 
-    vm_list="cdrom interface disk snapshot"
-    vm_list_cdrom="--vmname"
-    vm_list_disk="--vmname"
-    vm_list_interface="--vmname"
+    vm_list="cdrom interface disk snapshot process"
+    vm_list_cdrom="--vmname --output --noheader"
+    vm_list_disk="--vmname --output --noheader"
+    vm_list_interface="--vmname --output --noheader"
     vm_list_snapshot="--vmname"
+    vm_list_process="--vmname --pid --guestusername --guestpassword --output --noheader"
 
     vm_change="cdrom interface disk altername snapshot power"
     vm_change_cdrom="--vmname --num --iso --unmount"
@@ -138,6 +139,7 @@ _samu() {
     _vm_list_disk_options="${vm_list_disk} ${sdk_opts}"
     _vm_list_interface_options="${vm_list_network} ${sdk_opts}"
     _vm_list_snapshot_options="${vm_list_snapshot} ${sdk_opts}"
+    _vm_list_process_options="${vm_list_process} ${sdk_opts}"
 
     _vm_change_options="${vm_change}"
     _vm_change_cdrom_options="${vm_change_cdrom} ${sdk_opts}"
