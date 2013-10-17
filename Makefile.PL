@@ -28,9 +28,8 @@ WriteMakefile(
         'File::HomeDir'       => 0.98,
         'ExtUtils::MakeMaker' => 6.74,
         'Test::Strict'        => 0.14,
-# FIXME find required versions and test
-        'Test::Pod::Coverage' => 0,
-        'Test::Pod' => 0,
+        'Test::Pod::Coverage' => 1.08,
+        'Test::Pod' => 1.44,
     },
     CONFIGURE_REQUIRES => { 'ExtUtils::MakeMaker' => 6.5705 },
     PREREQ_PM          => {
@@ -60,9 +59,9 @@ WriteMakefile(
         'GSSAPI::Status'    => 0,
         'Crypt::SSLeay'     => 0.57,
         'Pod::Simple::Wiki' => 0.11,
-        'RPC::XML::Client' => 0,
-        'Text::Table' => 0,
-        'Class::CSV' => 0,
+        'RPC::XML::Client' => 0.76,
+        'Text::Table' => 1.123,
+        'Class::CSV' => 1.03,
     },
     PREREQ_FATAL => 0,
 );
