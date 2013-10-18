@@ -6,5 +6,5 @@ use Test::More;
 use FindBin;
 use lib "$FindBin::Bin/../../lib";
 
-BEGIN { use_ok('BB::Test'); use_ok('BB::Common'); }
+BEGIN { use_ok('SAMU_Test::Test'); use_ok('SAMU_Test::Common'); }
 done_testing;

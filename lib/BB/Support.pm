@@ -62,6 +62,13 @@ my %template_hash = (
         key      => '33PXH-7Y6KF-2VJC9-XBBR8-HVTHH',
         os       => 'win'
     },
+    'win_7sp1_en_x64_ent' => {
+        path     => 'Support/vm/templates/Windows/7/T_win_7sp1_en_x64_ent',
+        username => 'admin',
+        password => 'titkos',
+        key      => '33PXH-7Y6KF-2VJC9-XBBR8-HVTHH',
+        os       => 'win'
+    },
     'win_2003_en_x64_ent' => {
         path     => 'Support/vm/templates/Windows/2003/T_win_2003_en_x64_ent',
         username => 'Administrator',

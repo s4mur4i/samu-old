@@ -5,6 +5,8 @@ use 5.14.0;
 use Test::More;
 use FindBin;
 use English qw(-no_match_vars);
+use lib "$FindBin::Bin/../lib";
+use SAMU_Test::Common;
 
 if ( !( $ENV{ALL} or $ENV{AUTHOR} ) ) {
     my $msg = 'Author test.  Set $ENV{AUTHOR} to a true value to run.';
@@ -27,24 +29,23 @@ dir_only_contains_ok(
     ],
     "VMware contains the Default modules only"
 );
-dir_only_contains_ok(
-    "$FindBin::Bin/../lib/BB",
-    [
-        qw(Common.pm Error.pm Guest.pm Log.pm Misc.pm Support.pm VCenter.pm Kayako.pm Bugzilla.pm)
-    ],
-    "BB only contains the default modules"
-);
-dir_only_contains_ok(
-    "$FindBin::Bin/../lib/Base",
-    [
-        qw(network.pm admin.pm bugzilla.pm datastore.pm entity.pm kayako.pm misc.pm ticket.pm)
-    ],
-    "Base only contains the default modules"
-);
+my $modules = &Test::module_namespace;
+for my $module ( @$modules ) {
+    if ( $module eq 'Pod') {
+        # Pod is an external dependency and we dont do traditional testing with it
+        next;
+    }
+    opendir( my $fh, "$FindBin::Bin/$module");
+    my @files = grep { $_ ne '.' && $_ ne '..' && $_ !~ /_[^.]*\.t$/  } readdir $fh;
+    closedir $fh;
+    s/\.t$/\.pm/ foreach (@files);
+    dir_only_contains_ok( "$FindBin::Bin/../lib/$module", \@files, "$module only contains tested modules");
+}
+
 dir_contains_ok(
     "$FindBin::Bin/../",
-    [qw(samu.pl generate_perl_modules.sh TEST_PERL_MODULES.pl)],
-    "Base only contains the default modules"
+    [qw(samu.pl)],
+    "Root only contains the default modules"
 );
 
 done_testing;
