@@ -8,11 +8,6 @@ use English qw(-no_match_vars);
 use lib "$FindBin::Bin/../lib";
 use SAMU_Test::Common;
 
-if ( !( $ENV{ALL} or $ENV{AUTHOR} ) ) {
-    my $msg = 'Author test.  Set $ENV{AUTHOR} to a true value to run.';
-    plan( skip_all => $msg );
-}
-
 eval { require Test::Files; };
 
 if ($EVAL_ERROR) {
