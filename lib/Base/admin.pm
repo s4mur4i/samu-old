@@ -80,7 +80,7 @@ our $module_opts = {
                     vcenter_connect => 1,
                     opts     => {
                         all => {
-                            type     => "=s",
+                            type     => "",
                             help     => "List all Folders",
                             required => 0,
                         },
@@ -102,7 +102,7 @@ our $module_opts = {
                             required => 0,
                         },
                         all => {
-                            type     => "=s",
+                            type     => "",
                             help     => "List all resourcepools",
                             required => 0,
                         },

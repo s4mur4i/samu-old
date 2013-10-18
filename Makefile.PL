@@ -30,7 +30,11 @@ WriteMakefile(
         'Test::Strict'        => 0.14,
         'Test::Pod::Coverage' => 1.08,
         'Test::Pod' => 1.44,
-        'Module::ScanDeps' => 0,
+        'Module::Extract::Use' => 0,
+        'Test::Pod::Spelling::CommonMistakes' => 0,
+        'Test::Perl::Critic' => 0,
+        'File::Find' => 0,
+        'File::Spec::Functions' => 0,
     },
     CONFIGURE_REQUIRES => { 'ExtUtils::MakeMaker' => 6.5705 },
     PREREQ_PM          => {
