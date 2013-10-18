@@ -688,7 +688,7 @@ This is main entry point for Entity module
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -737,7 +737,7 @@ Vcenter::Opts if unknown output requested
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -822,7 +822,7 @@ Vcenter::Opts if unknown output requested
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -900,7 +900,7 @@ Vcenter::Opts if unknown output requested
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -961,7 +961,7 @@ True on success
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -1014,7 +1014,7 @@ True on success
 
 =head2 COMMENTS
 
-=head2 SEE ALSO
+=head2 TEST COVERAGE
 
 =cut
 
@@ -1075,7 +1075,7 @@ sub list_process {
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -1111,7 +1111,7 @@ sub change_altername {
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -1178,7 +1178,7 @@ sub change_cdrom {
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -1217,7 +1217,7 @@ sub change_interface {
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -1253,7 +1253,7 @@ sub change_snapshot {
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -1296,7 +1296,7 @@ sub add_snapshot {
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -1333,7 +1333,7 @@ sub add_interface {
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -1369,7 +1369,7 @@ sub add_cdrom {
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -1406,7 +1406,7 @@ sub add_disk {
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -1541,7 +1541,7 @@ sub clone_vm {
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -1577,7 +1577,7 @@ sub info_dumper {
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -1614,7 +1614,7 @@ sub info_runtime {
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -1662,7 +1662,7 @@ sub run_command {
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -1721,7 +1721,7 @@ sub transfer {
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -1766,7 +1766,7 @@ sub delete_vm {
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -1813,7 +1813,7 @@ sub delete_snapshot {
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -1850,7 +1850,7 @@ sub delete_cdrom {
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -1887,7 +1887,7 @@ sub delete_disk {
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -1924,7 +1924,7 @@ sub delete_interface {
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -1965,7 +1965,7 @@ sub delete_resourcepool {
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -2006,7 +2006,7 @@ sub delete_folder {
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -2040,7 +2040,7 @@ sub add_folder {
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -2074,7 +2074,7 @@ sub add_resourcepool {
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -2109,7 +2109,7 @@ sub promote {
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 

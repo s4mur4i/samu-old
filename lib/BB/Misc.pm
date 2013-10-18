@@ -45,7 +45,7 @@ Max length of longest element
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -88,7 +88,7 @@ A number between 1 and 999
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -131,7 +131,7 @@ A valid mac address
 If user is unknown we should implement a fallback method
 Also username should be check to mac it take from VMWare SDK options hash
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -171,7 +171,7 @@ A uniq mac
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -215,7 +215,7 @@ Array ref of mac addresses
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -282,7 +282,7 @@ False if mac is uniq
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -344,7 +344,7 @@ Entity::Mac if mac pool end reached
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -405,7 +405,7 @@ If standard is not recognised by regex than unknown is returned for all elements
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -495,7 +495,7 @@ Incremented datastore name
 
 test should be implemented if incremented disk name already exists on datastore
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -560,7 +560,7 @@ Vcenter::Path if path is not a valid path
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -618,7 +618,7 @@ A standard virtual machine name
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -671,7 +671,7 @@ An uniq virtual machine name
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -717,7 +717,7 @@ Machine names are used to idetify unseen tickets and added to hash
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -779,7 +779,7 @@ Hash ref containing tickets
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -838,7 +838,7 @@ Connection::Connect if in file could not be opened
 
 =head2 COMMENTS
 
-=head2 SEE ALSO
+=head2 TEST COVERAGE
 
 =cut
 

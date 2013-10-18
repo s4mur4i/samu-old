@@ -193,7 +193,7 @@ This is main entry point for Admin module
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -230,7 +230,7 @@ Resourcepool, Folder and DistributedVirtualSwitch are tested to see if it has an
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -285,7 +285,7 @@ True on success
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -330,7 +330,7 @@ The function only prints the current time on VCenter
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -398,7 +398,7 @@ Connection::Connect when files cannot be opened
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -490,7 +490,7 @@ True on success
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -567,7 +567,7 @@ True on success
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -647,7 +647,7 @@ List the vm names that are linked to the linked clone
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 

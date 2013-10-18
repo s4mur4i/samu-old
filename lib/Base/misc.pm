@@ -47,7 +47,7 @@ our $help;
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -84,7 +84,7 @@ sub call_pod2usage {
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 

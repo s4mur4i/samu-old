@@ -154,7 +154,7 @@ True on success
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 

@@ -44,7 +44,7 @@ Connection::Connect if connection fails to server
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -93,7 +93,7 @@ True on success
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -139,7 +139,7 @@ The results of the query in a hashref
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 

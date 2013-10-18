@@ -221,7 +221,7 @@ Template::Status if no hash is found
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -276,7 +276,7 @@ Template::Status if no information is found
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -333,7 +333,7 @@ Template::Status if no information found
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -381,7 +381,7 @@ VirtualMachineRelocateSpec managed object
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -439,7 +439,7 @@ VirtualMachineConfigSpec Managd object
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -480,7 +480,7 @@ Returns a CustomizationPassword managed object for Standard password use
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -516,7 +516,7 @@ CustomizationIdentification managed object
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -556,7 +556,7 @@ CustomizationIdetification managed object
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -612,7 +612,7 @@ A VirtualMachineCloneSpec managed object
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -739,7 +739,7 @@ A VirtualMachineCloneSpec managed object
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -814,7 +814,7 @@ A VirtualMachineCloneSpec managed object
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 

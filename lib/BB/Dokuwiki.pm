@@ -58,7 +58,7 @@ Connection::Connect if connection is unsuccesful
 
 =head2 COMMENTS
 
-=head2 SEE ALSO
+=head2 TEST COVERAGE
 
 =cut
 
@@ -126,7 +126,7 @@ Connection::Connect if there is no valid connection to the server
 
 =head2 COMMENTS
 
-=head2 SEE ALSO
+=head2 TEST COVERAGE
 
 =cut
 

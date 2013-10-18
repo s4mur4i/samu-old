@@ -51,7 +51,7 @@ Entity::NumException if the result is not 1
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -109,7 +109,7 @@ False if entity cannot be found
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -160,7 +160,7 @@ Vcenter:Path if no entity is found with the requested path
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -210,7 +210,7 @@ Vcenter:Path if no entity is found with the requested path
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -261,7 +261,7 @@ Entity::Status if the get_view returned with undef
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -306,7 +306,7 @@ A managed object to the folder
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -369,7 +369,7 @@ Entity::NumException if no entity found or unknown type is requested
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -477,7 +477,7 @@ TaskEr::Error if there was an error during the task
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -543,7 +543,7 @@ Ticket number to return names of
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -595,7 +595,7 @@ Inventory path of entity
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -645,7 +645,7 @@ Entity::NumException if parent doesn't exist or resourcepool already exists
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -740,7 +740,7 @@ Entity::NumException if requested folder exists or parent doesn't exist
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -809,7 +809,7 @@ Entity::NumException if switch already exists
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -883,7 +883,7 @@ Entity::NumException if entity already exists
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -951,7 +951,7 @@ Entity::NumException if delete was not successful
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -1019,7 +1019,7 @@ Entity::Snapshot if virtual machine has no snapshots defined
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -1085,7 +1085,7 @@ Array ref with all virtual machines linked to the disk
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -1152,7 +1152,7 @@ False if file does not exist
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -1219,7 +1219,7 @@ True on success
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -1259,7 +1259,7 @@ Connection::Connect if connection to VCenter fails
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -1307,7 +1307,7 @@ True on success
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -1344,7 +1344,7 @@ Vcenter::ServiceContent if service content could not be retrieved
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -1392,7 +1392,7 @@ True on success
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -1434,7 +1434,7 @@ Vcenter::ServiceContent if vim objcect could not be retrieved
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -1485,7 +1485,7 @@ Vcenter::ServiceContent if no object is found with requested name
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -1534,7 +1534,7 @@ Return information in array ref for routine like Output::add_row. Max is used to
 
 =head2 COMMENTS
 
-=head2 SEE ALSO
+=head2 TEST COVERAGE
 
 =cut
 
@@ -1632,7 +1632,7 @@ True on success
 
 =head2 COMMENTS
 
-=head2 SEE ALSO
+=head2 TEST COVERAGE
 
 =cut
 

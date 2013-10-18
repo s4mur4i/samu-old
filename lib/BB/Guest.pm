@@ -49,7 +49,7 @@ Managed object with name property
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -95,7 +95,7 @@ Managed object with all property
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -143,7 +143,7 @@ Managed object with requested property
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -194,7 +194,7 @@ not be used with multi level setup
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -242,7 +242,7 @@ Altername or empty string
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -299,7 +299,7 @@ Returns true on success
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -347,7 +347,7 @@ A spec for removing cdrom iso
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -413,7 +413,7 @@ A spec for changing the iso of a cdrom
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -483,7 +483,7 @@ A spec for changing the interface
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -627,7 +627,7 @@ A spec for adding a cdrom
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -689,7 +689,7 @@ Default network used is VLAN21
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -761,7 +761,7 @@ A VirtualE1000 managed object
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -819,7 +819,7 @@ A VirtualVmxnet object
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -879,7 +879,7 @@ Disk is a thin provisioned disk.
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -959,7 +959,7 @@ Entity::HWError if there are multiple scsi controllers
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -1025,7 +1025,7 @@ Entity::HWError if no free ide controllers found
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -1097,7 +1097,7 @@ True on success
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -1145,7 +1145,7 @@ The key number if found
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -1195,7 +1195,7 @@ Hash with all network interfaces and their information
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -1278,7 +1278,7 @@ Entity::HWError if unknown interface type is found
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -1374,7 +1374,7 @@ Array ref with CustomizationAdapterMapping created for all interfaces
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -1436,7 +1436,7 @@ Array ref with all hardwares as managed objects
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -1493,7 +1493,7 @@ A managed object containing the requested hardware
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -1547,7 +1547,7 @@ False if machine is already powered on
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -1598,7 +1598,7 @@ False if machine is already powered on
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -1655,7 +1655,7 @@ Entity::Snapshot if no snapshots are found
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -1721,7 +1721,7 @@ find_snapshot_by_id is used for recursing through a tree structure of snapshot t
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -1787,7 +1787,7 @@ True on success
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -1838,7 +1838,7 @@ Entity::Snapshot if no snpashots found
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -1896,7 +1896,7 @@ Entity::Snapshot if no snapshots found
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -1967,7 +1967,7 @@ True on success
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -2028,7 +2028,7 @@ After machine is converted it is removed from linked clone folder to the folder 
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -2074,7 +2074,7 @@ List snapshots and prints to stdout
 
 Maybe need to rethink to put printing into outer call, this should just return some information for easier printing
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -2136,7 +2136,7 @@ The current snapshot we the machine is using
 
 Should rethink to combine with find id sub
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -2228,7 +2228,7 @@ The pid of the program started
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -2316,7 +2316,7 @@ Entity::TransferError if transfer was not successful
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -2423,7 +2423,7 @@ Entity::TransferError if there was a transfer error
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
@@ -2525,7 +2525,7 @@ Entity::NumException if no pid is found
 
 =head2 COMMENTS
 
-=head2 SEE ALSO
+=head2 TEST COVERAGE
 
 =cut
 
@@ -2604,7 +2604,7 @@ Entity::Auth if authentication fails
 
 =head3 COMMENTS
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 

@@ -61,7 +61,7 @@ our $module_opts = {
 
 =head2 COMMENTS
 
-=head2 SEE ALSO
+=head2 TEST COVERAGE
 
 =cut
 

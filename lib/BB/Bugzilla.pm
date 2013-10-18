@@ -50,7 +50,7 @@ Sub retrieves the bugzilla ticket status with regexp matching the html page.
 
 Very fragile, the backend can cange any time. Need to upgrade bugzilla so we can do API calls
 
-=head3 SEE ALSO
+=head3 TEST COVERAGE
 
 =cut
 
