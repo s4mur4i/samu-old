@@ -65,4 +65,20 @@ for my $module (@testmodules) {
     is( &Test::search_file( "$FindBin::Bin/../Makefile.PL", "$module" ),
         1, "$module is in Makefile.PL" );
 }
+my %make_modules = ();
+open(my $fh, "<", "$FindBin::Bin/../Makefile.PL");
+while ( my $line = <$fh>) {
+    chomp $line;
+    if ( $line =~ /^\s*'[^:]*(:{2}[^:]*)'\s*=>\s*[^,]*,\s*$/ ) {
+        my ($mod) = $line =~ /'([^']*)'/;
+        $make_modules{$mod} = 1;
+    }
+}
+my %modules = map { $_ => 1 } @modules;
+my %testmodules = map { $_ => 1 } @testmodules;
+my %mergedmodules = ( %modules, %testmodules);
+close $fh;
+for my $mod ( keys %make_modules ) {
+    is( $mergedmodules{$mod} // 0, 1, "$mod is used");
+}
 done_testing;
