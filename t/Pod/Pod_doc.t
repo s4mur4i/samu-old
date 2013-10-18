@@ -9,10 +9,10 @@ use Test::Spelling;
 add_stopwords(<DATA>);
 
 my $doc = "$FindBin::Bin/../../doc/";
-opendir( my $dir, $doc);
+opendir( my $dir, $doc );
 my @files;
-while ( my $file = readdir($dir)) {
-    push(@files, "$doc$file") if ( $file =~ m/\.pod$/ );
+while ( my $file = readdir($dir) ) {
+    push( @files, "$doc$file" ) if ( $file =~ m/\.pod$/ );
 }
 all_pod_files_ok(@files);
 done_testing;

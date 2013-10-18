@@ -65,7 +65,8 @@ throws_ok {
     Vcenter::Path->throw( error => 'test', path => '/path/to/inventory' );
 }
 'Vcenter', 'VCenter Path Exception';
-throws_ok { Vcenter::Opts->throw( error => 'test', opt => 'test1' ); } 'Vcenter', 'VCenter Opts Exception';
+throws_ok { Vcenter::Opts->throw( error => 'test', opt => 'test1' ); }
+'Vcenter', 'VCenter Opts Exception';
 throws_ok { Template::Status->throw( error => 'test', template => 'test' ) }
 'Template', 'Template Status Exception';
 throws_ok { Template::Error->throw( error => 'test', template => 'test' ) }
@@ -120,7 +121,13 @@ combined_like(
     qr/^Error.pm\s\[CRITICAL\]:\sI'm blue and I'm a WTF.....;/,
     "VCenter Base exception"
 );
-eval { Entity::NumException->throw( error  => 'test', entity => 'teste', count  => '1'); };
+eval {
+    Entity::NumException->throw(
+        error  => 'test',
+        entity => 'teste',
+        count  => '1'
+    );
+};
 $ex = $@;
 stderr_like(
     sub { &Error::catch_ex($ex) },
@@ -134,35 +141,58 @@ stderr_like(
     qr/^Error.pm\s\[CRITICAL\]:\sDesc=>'test',entity=>'teste';$/,
     "Entity Status exception output"
 );
-eval { Entity::Auth->throw( error    => 'test', entity   => 'teste', username => 'me', password => 'bebebebe'); };
+eval {
+    Entity::Auth->throw(
+        error    => 'test',
+        entity   => 'teste',
+        username => 'me',
+        password => 'bebebebe'
+    );
+};
 $ex = $@;
 stderr_like(
     sub { &Error::catch_ex($ex) },
-    qr/^Error.pm\s\[CRITICAL\]:\sDesc=>'test',entity=>'teste',user=>'me',pass=>'bebebebe';$/,
+qr/^Error.pm\s\[CRITICAL\]:\sDesc=>'test',entity=>'teste',user=>'me',pass=>'bebebebe';$/,
     "Entity Auth exception output"
 );
-eval { Entity::TransferError->throw( error => 'test', entity => 'teste', filename => 'tast' ); };
+eval {
+    Entity::TransferError->throw(
+        error    => 'test',
+        entity   => 'teste',
+        filename => 'tast'
+    );
+};
 $ex = $@;
 stderr_like(
     sub { &Error::catch_ex($ex) },
     qr/^Error.pm\s\[CRITICAL\]:\sDesc=>'test',entity=>'teste',source=>'tast';$/,
     "Entity TransferError exception output"
 );
-eval { Entity::HWError->throw( error => 'test1', entity => 'test2', hw => 'dick' ); };
+eval {
+    Entity::HWError->throw( error => 'test1', entity => 'test2', hw => 'dick' );
+};
 $ex = $@;
 stderr_like(
     sub { &Error::catch_ex($ex) },
     qr/^Error.pm\s\[CRITICAL\]:\sDesc=>'test1',entity=>'test2',hw=>'dick';$/,
     "Entity HWError exception output"
 );
-eval { Entity::Snapshot->throw( error => 'test1', entity => 'test2', snapshot => 'test3'); };
+eval {
+    Entity::Snapshot->throw(
+        error    => 'test1',
+        entity   => 'test2',
+        snapshot => 'test3'
+    );
+};
 $ex = $@;
 stderr_like(
     sub { &Error::catch_ex($ex) },
-    qr/^Error.pm\s\[CRITICAL\]:\sDesc=>'test1',entity=>'test2',snapshot=>'test3';$/,
+qr/^Error.pm\s\[CRITICAL\]:\sDesc=>'test1',entity=>'test2',snapshot=>'test3';$/,
     "Entity Snapshot exception output"
 );
-eval { Entity::Mac->throw( error => 'test1', entity => 'test2', mac => 'test3' ); };
+eval {
+    Entity::Mac->throw( error => 'test1', entity => 'test2', mac => 'test3' );
+};
 $ex = $@;
 stderr_like(
     sub { &Error::catch_ex($ex) },
@@ -171,16 +201,38 @@ stderr_like(
 );
 eval { Vcenter::ServiceContent->throw( error => 'test' ); };
 $ex = $@;
-stderr_like( sub { &Error::catch_ex($ex) }, qr/^Error.pm\s\[CRITICAL\]:\sDesc=>'test';$/, "VCenter ServiceContent exception output");
+stderr_like(
+    sub { &Error::catch_ex($ex) },
+    qr/^Error.pm\s\[CRITICAL\]:\sDesc=>'test';$/,
+    "VCenter ServiceContent exception output"
+);
 eval { Vcenter::Path->throw( error => 'test', path => '/some/path/to/gold' ); };
 $ex = $@;
-stderr_like( sub { &Error::catch_ex($ex) }, qr/^Error.pm\s\[CRITICAL\]:\sDesc=>'test',path=>'\/some\/path\/to\/gold';$/, "VCenter Path exception output");
+stderr_like(
+    sub { &Error::catch_ex($ex) },
+    qr/^Error.pm\s\[CRITICAL\]:\sDesc=>'test',path=>'\/some\/path\/to\/gold';$/,
+    "VCenter Path exception output"
+);
 eval { Vcenter::Opts->throw( error => 'test', opt => 'test2' ); };
 $ex = $@;
-stderr_like( sub { &Error::catch_ex($ex) }, qr/^Error.pm\s\[CRITICAL\]:\sDesc=>'test',opt=>'test2';$/, "VCenter Opts exception output");
-eval { Connection::Connect->throw( error => 'test1', type  => 'test2', dest  => 'test3'); };
+stderr_like(
+    sub { &Error::catch_ex($ex) },
+    qr/^Error.pm\s\[CRITICAL\]:\sDesc=>'test',opt=>'test2';$/,
+    "VCenter Opts exception output"
+);
+eval {
+    Connection::Connect->throw(
+        error => 'test1',
+        type  => 'test2',
+        dest  => 'test3'
+    );
+};
 $ex = $@;
-stderr_like( sub { &Error::catch_ex($ex) }, qr/^Error.pm\s\[CRITICAL\]:\sDesc=>'test1',type=>'test2',dest=>'test3';$/, "Connection Connect exception output");
+stderr_like(
+    sub { &Error::catch_ex($ex) },
+    qr/^Error.pm\s\[CRITICAL\]:\sDesc=>'test1',type=>'test2',dest=>'test3';$/,
+    "Connection Connect exception output"
+);
 eval { Template::Status->throw( error => 'test', template => 'template' ); };
 $ex = $@;
 stderr_like(
@@ -203,12 +255,16 @@ stderr_like(
     "TaskEr NotDefined exception output"
 );
 eval {
-    TaskEr::Error->throw( error => 'test1', fault => 'test2', detail => 'test3' );
+    TaskEr::Error->throw(
+        error  => 'test1',
+        fault  => 'test2',
+        detail => 'test3'
+    );
 };
 $ex = $@;
 stderr_like(
     sub { &Error::catch_ex($ex) },
-    qr/^Error.pm\s\[CRITICAL\]:\sDesc=>'test1',detail=>'test3',fault=>'test2';$/,
+qr/^Error.pm\s\[CRITICAL\]:\sDesc=>'test1',detail=>'test3',fault=>'test2';$/,
     "TaskEr Error exception output"
 );
 eval { BaseException->throw(); };

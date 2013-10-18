@@ -6,14 +6,14 @@ use 5.14.0;
 use Test::More;
 use English qw(-no_match_vars);
 
-if ( not ($ENV{ALL} or $ENV{DNS}) ) {
+if ( not( $ENV{ALL} or $ENV{DNS} ) ) {
     my $msg = 'Author test.  Set $ENV{DNS} to a true value to run.';
     plan( skip_all => $msg );
 }
 
 eval { require Test::DNS; };
 
-if ( $EVAL_ERROR ) {
+if ($EVAL_ERROR) {
     my $msg = 'Test::DNS required to test DNS';
     plan( skip_all => $msg );
 }

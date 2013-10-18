@@ -6,14 +6,14 @@ use Test::More;
 use FindBin;
 use English qw(-no_match_vars);
 
-if ( !($ENV{ALL} or $ENV{AUTHOR}) ) {
+if ( !( $ENV{ALL} or $ENV{AUTHOR} ) ) {
     my $msg = 'Author test.  Set $ENV{AUTHOR} to a true value to run.';
     plan( skip_all => $msg );
 }
 
 eval { require Test::Files; };
 
-if ( $EVAL_ERROR ) {
+if ($EVAL_ERROR) {
     my $msg = 'Test::Files required to criticise code';
     plan( skip_all => $msg );
 }
@@ -29,7 +29,9 @@ dir_only_contains_ok(
 );
 dir_only_contains_ok(
     "$FindBin::Bin/../lib/BB",
-    [qw(Common.pm Error.pm Guest.pm Log.pm Misc.pm Support.pm VCenter.pm Kayako.pm Bugzilla.pm)],
+    [
+        qw(Common.pm Error.pm Guest.pm Log.pm Misc.pm Support.pm VCenter.pm Kayako.pm Bugzilla.pm)
+    ],
     "BB only contains the default modules"
 );
 dir_only_contains_ok(

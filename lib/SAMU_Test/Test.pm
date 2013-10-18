@@ -2,6 +2,7 @@ package Test;
 
 use strict;
 use warnings;
+use FindBin;
 
 =pod
 
@@ -107,6 +108,19 @@ sub search_file {
         }
     }
     return 0;
+}
+
+sub module_namespace{
+    my $libdir;
+    if ( -d "$FindBin::Bin/../lib" ) {
+        $libdir = "$FindBin::Bin/../lib";
+    } else {
+        $libdir = "$FindBin::Bin/../../lib";
+    }
+    opendir( my $dir, $libdir);
+    my @folder = grep { $_ ne '.' && $_ ne '..' } readdir $dir;
+    closedir $dir;
+    return \@folder;
 }
 
 1

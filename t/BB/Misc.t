@@ -105,6 +105,7 @@ like(
 );
 
 done_testing;
+
 END {
     &Util::disconnect();
 }

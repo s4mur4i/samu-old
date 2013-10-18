@@ -17,8 +17,11 @@ BEGIN {
     &Util::connect();
 }
 ok( &admin::test, "Admin test sub ran succesfully" );
-output_like( \&admin::test, qr/^Server\sTime\s:\s\d{4}(-\d{2}){2}T\d{2}(:\d{2}){2}\.\d+Z$/, qr/^$/, "Output is a valid server time" );
+output_like( \&admin::test,
+    qr/^Server\sTime\s:\s\d{4}(-\d{2}){2}T\d{2}(:\d{2}){2}\.\d+Z$/,
+    qr/^$/, "Output is a valid server time" );
 done_testing;
+
 END {
     &Util::disconnect();
 }

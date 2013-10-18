@@ -8,19 +8,19 @@ use Test::More;
 use lib "$FindBin::Bin/../../lib";
 use English qw(-no_match_vars);
 
-if ( !($ENV{ALL} or $ENV{POD}) ) {
+if ( !( $ENV{ALL} or $ENV{POD} ) ) {
     my $msg = 'Author test.  Set $ENV{POD} to a true value to run.';
     plan( skip_all => $msg );
 }
 
 eval { require Test::Pod::Coverage; };
 
-if ( $EVAL_ERROR ) {
+if ($EVAL_ERROR) {
     my $msg = 'Test::Pod::Coverage required to test POD';
     plan( skip_all => $msg );
 }
 
 Test::Pod::Coverage->import;
-my $trustme = { trustme => [ qr{ \A (?: new )\z }x ] };
-all_pod_coverage_ok( $trustme );
+my $trustme = { trustme => [qr{ \A (?: new )\z }x] };
+all_pod_coverage_ok($trustme);
 done_testing;
