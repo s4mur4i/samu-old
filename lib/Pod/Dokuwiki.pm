@@ -1,1 +1,0 @@
-Simple/Wiki/Dokuwiki.pm
