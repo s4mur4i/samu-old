@@ -21,8 +21,8 @@ BEGIN {
 sub clonevm {
     my ( $template, $vmname, $folder, $clone_spec ) = @_;
     my $template_view = &Guest::entity_name_view( $template, 'VirtualMachine' );
-    my $folder_view = &Guest::entity_name_view( $folder, 'Folder' );
-    my $task = $template_view->CloneVM_Task(
+    my $folder_view   = &Guest::entity_name_view( $folder,   'Folder' );
+    my $task          = $template_view->CloneVM_Task(
         folder => $folder_view,
         name   => $vmname,
         spec   => $clone_spec
@@ -96,12 +96,12 @@ sub create_test_entities {
 }
 
 sub uniq {
-    return keys %{{ map { $_ => 1 } @_ }};
+    return keys %{ { map { $_ => 1 } @_ } };
 }
 
 sub search_file {
     my ( $file, $string ) = @_;
-    open( my $fh, "<", $file) or die $!;
+    open( my $fh, "<", $file ) or die $!;
     while ( my $line = <$fh> ) {
         if ( $line =~ /'$string'/ ) {
             return 1;
@@ -110,14 +110,15 @@ sub search_file {
     return 0;
 }
 
-sub module_namespace{
+sub module_namespace {
     my $libdir;
     if ( -d "$FindBin::Bin/../lib" ) {
         $libdir = "$FindBin::Bin/../lib";
-    } else {
+    }
+    else {
         $libdir = "$FindBin::Bin/../../lib";
     }
-    opendir( my $dir, $libdir);
+    opendir( my $dir, $libdir );
     my @folder = grep { $_ ne '.' && $_ ne '..' } readdir $dir;
     closedir $dir;
     return \@folder;

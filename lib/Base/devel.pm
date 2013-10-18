@@ -25,23 +25,23 @@ our $module_opts = {
     helper    => 'DEVEL',
     functions => {
         create => {
-            helper => "DEVEL_functions/DEVEL_create_function",
+            helper    => "DEVEL_functions/DEVEL_create_function",
             functions => {
                 mainpod => {
-                    function => \&create_mainpod,
+                    function        => \&create_mainpod,
                     vcenter_connect => 0,
-                    opts => {
+                    opts            => {
                         folder => {
-                            type => "=s",
-                            help => "Folder to take pod files from",
+                            type     => "=s",
+                            help     => "Folder to take pod files from",
                             required => 0,
-                            default => "$FindBin::Bin/doc",
+                            default  => "$FindBin::Bin/doc",
                         },
                         output => {
-                            type => "=s",
-                            help => "Output file",
+                            type     => "=s",
+                            help     => "Output file",
                             required => 0,
-                            default => "main.pod",
+                            default  => "main.pod",
                         },
                     },
                 },
@@ -57,7 +57,6 @@ sub main {
     return 1;
 }
 
-
 sub create_mainpod {
     &Log::debug("Starting Devel::create_mainpod sub");
     my $folder = &Opts::get_option('folder');
@@ -67,13 +66,15 @@ sub create_mainpod {
     if ( -f $outfile ) {
         &Log::debug("Unlinking outfile");
         unlink $outfile;
-    } else {
+    }
+    else {
         &Log::debug("No need to unlink output file");
     }
     my @files;
     opendir( my $dir, $folder );
     while ( my $file = readdir($dir) ) {
-        if ( ( !$file =~ /\.pod$/ ) or $file =~ /^\./ or $file =~ /^$output$/ ) {
+        if ( ( !$file =~ /\.pod$/ ) or $file =~ /^\./ or $file =~ /^$output$/ )
+        {
             &Log::debug("Jumping to next file");
             next;
         }

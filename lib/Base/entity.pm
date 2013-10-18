@@ -26,9 +26,9 @@ our $module_opts = {
     helper    => 'VM',
     functions => {
         clone => {
-            function => \&clone_vm,
+            function        => \&clone_vm,
             vcenter_connect => 1,
-            opts     => {
+            opts            => {
                 ticket => {
                     type => "=s",
                     help =>
@@ -66,9 +66,9 @@ our $module_opts = {
             },
         },
         convert_full => {
-            function => \&promote,
+            function        => \&promote,
             vcenter_connect => 1,
-            opts     => {
+            opts            => {
                 vmname => {
                     type     => "=s",
                     help     => "Which machine to convert",
@@ -77,9 +77,9 @@ our $module_opts = {
             },
         },
         info => {
-            helper    => "VM_functions/VM_info_function",
+            helper          => "VM_functions/VM_info_function",
             vcenter_connect => 1,
-            functions => {
+            functions       => {
                 dumper => {
                     function      => \&info_dumper,
                     prereq_module => [qw(Data::Dumper)],
@@ -110,9 +110,9 @@ our $module_opts = {
             helper    => "VM_functions/VM_add_function",
             functions => {
                 cdrom => {
-                    function => \&add_cdrom,
+                    function        => \&add_cdrom,
                     vcenter_connect => 1,
-                    opts     => {
+                    opts            => {
                         vmname => {
                             type => "=s",
                             help => "The vm's name where cdrom should be added",
@@ -121,9 +121,9 @@ our $module_opts = {
                     },
                 },
                 interface => {
-                    function => \&add_interface,
+                    function        => \&add_interface,
                     vcenter_connect => 1,
-                    opts     => {
+                    opts            => {
                         vmname => {
                             type => "=s",
                             help =>
@@ -140,9 +140,9 @@ our $module_opts = {
                     },
                 },
                 disk => {
-                    function => \&add_disk,
+                    function        => \&add_disk,
                     vcenter_connect => 1,
-                    opts     => {
+                    opts            => {
                         vmname => {
                             type => "=s",
                             help => "The vm's name where disk should be added",
@@ -156,9 +156,9 @@ our $module_opts = {
                     },
                 },
                 snapshot => {
-                    function => \&add_snapshot,
+                    function        => \&add_snapshot,
                     vcenter_connect => 1,
-                    opts     => {
+                    opts            => {
                         vmname => {
                             type => "=s",
                             help =>
@@ -180,9 +180,9 @@ our $module_opts = {
                     },
                 },
                 folder => {
-                    function => \&add_folder,
+                    function        => \&add_folder,
                     vcenter_connect => 1,
-                    opts     => {
+                    opts            => {
                         name => {
                             type     => "=s",
                             help     => "Name of folder to create",
@@ -197,9 +197,9 @@ our $module_opts = {
                     },
                 },
                 resourcepool => {
-                    function => \&add_resourcepool,
+                    function        => \&add_resourcepool,
                     vcenter_connect => 1,
-                    opts     => {
+                    opts            => {
                         name => {
                             type     => "=s",
                             help     => "Name of folder to create",
@@ -219,9 +219,9 @@ our $module_opts = {
             helper    => 'VM_functions/VM_delete_function',
             functions => {
                 cdrom => {
-                    function => \&delete_cdrom,
+                    function        => \&delete_cdrom,
                     vcenter_connect => 1,
-                    opts     => {
+                    opts            => {
                         vmname => {
                             type     => "=s",
                             help     => "Which VMs cdrom to list",
@@ -235,9 +235,9 @@ our $module_opts = {
                     },
                 },
                 interface => {
-                    function => \&delete_interface,
+                    function        => \&delete_interface,
                     vcenter_connect => 1,
-                    opts     => {
+                    opts            => {
                         vmname => {
                             type     => "=s",
                             help     => "Which VMs cdrom to list",
@@ -251,9 +251,9 @@ our $module_opts = {
                     },
                 },
                 disk => {
-                    function => \&delete_disk,
+                    function        => \&delete_disk,
                     vcenter_connect => 1,
-                    opts     => {
+                    opts            => {
                         vmname => {
                             type     => "=s",
                             help     => "Which VMs cdrom to list",
@@ -267,9 +267,9 @@ our $module_opts = {
                     },
                 },
                 snapshot => {
-                    function => \&delete_snapshot,
+                    function        => \&delete_snapshot,
                     vcenter_connect => 1,
-                    opts     => {
+                    opts            => {
                         vmname => {
                             type     => "=s",
                             help     => "Which VMs snapshot to delete",
@@ -289,9 +289,9 @@ our $module_opts = {
                     },
                 },
                 vm => {
-                    function => \&delete_vm,
+                    function        => \&delete_vm,
                     vcenter_connect => 1,
-                    opts     => {
+                    opts            => {
                         vmname => {
                             type     => "=s",
                             help     => "Name of vm to delete",
@@ -300,9 +300,9 @@ our $module_opts = {
                     },
                 },
                 resourcepool => {
-                    function => \&delete_resourcepool,
+                    function        => \&delete_resourcepool,
                     vcenter_connect => 1,
-                    opts     => {
+                    opts            => {
                         name => {
                             type     => "=s",
                             help     => "Name of resource pool to delete",
@@ -311,9 +311,9 @@ our $module_opts = {
                     },
                 },
                 folder => {
-                    function => \&delete_folder,
+                    function        => \&delete_folder,
                     vcenter_connect => 1,
-                    opts     => {
+                    opts            => {
                         name => {
                             type     => "=s",
                             help     => "Name of folder to delete",
@@ -327,127 +327,127 @@ our $module_opts = {
             helper    => "VM_functions/VM_list_function",
             functions => {
                 cdrom => {
-                    function => \&list_cdrom,
+                    function        => \&list_cdrom,
                     vcenter_connect => 1,
-                    opts     => {
+                    opts            => {
                         vmname => {
                             type     => "=s",
                             help     => "Which VMs cdrom to list",
                             required => 1,
                         },
                         output => {
-                            type => "=s",
-                            help => "Output type, table/csv",
-                            default => "table",
+                            type     => "=s",
+                            help     => "Output type, table/csv",
+                            default  => "table",
                             required => 0,
                         },
                         noheader => {
-                            type => "",
-                            help => "Should header information be printed",
+                            type     => "",
+                            help     => "Should header information be printed",
                             required => 0,
                         },
                     },
                 },
                 interface => {
-                    function => \&list_interface,
+                    function        => \&list_interface,
                     vcenter_connect => 1,
-                    opts     => {
+                    opts            => {
                         vmname => {
                             type     => "=s",
                             help     => "Which VMs interface to list",
                             required => 1,
                         },
                         output => {
-                            type => "=s",
-                            help => "Output type, table/csv",
-                            default => "table",
+                            type     => "=s",
+                            help     => "Output type, table/csv",
+                            default  => "table",
                             required => 0,
                         },
                         noheader => {
-                            type => "",
-                            help => "Should header information be printed",
+                            type     => "",
+                            help     => "Should header information be printed",
                             required => 0,
                         },
                     },
                 },
                 disk => {
-                    function => \&list_disk,
+                    function        => \&list_disk,
                     vcenter_connect => 1,
-                    opts     => {
+                    opts            => {
                         vmname => {
                             type     => "=s",
                             help     => "Which VMs disk to list",
                             required => 1,
                         },
                         output => {
-                            type => "=s",
-                            help => "Output type, table/csv",
-                            default => "table",
+                            type     => "=s",
+                            help     => "Output type, table/csv",
+                            default  => "table",
                             required => 0,
                         },
                         noheader => {
-                            type => "",
-                            help => "Should header information be printed",
+                            type     => "",
+                            help     => "Should header information be printed",
                             required => 0,
                         },
                     },
                 },
                 snapshot => {
-                    function => \&list_snapshot,
+                    function        => \&list_snapshot,
                     vcenter_connect => 1,
-                    opts     => {
+                    opts            => {
                         vmname => {
                             type     => "=s",
                             help     => "Name of vm to list snapshot",
                             required => 1,
                         },
                         output => {
-                            type => "=s",
-                            help => "Output type, table/csv",
-                            default => "table",
+                            type     => "=s",
+                            help     => "Output type, table/csv",
+                            default  => "table",
                             required => 0,
                         },
                         noheader => {
-                            type => "",
-                            help => "Should header information be printed",
+                            type     => "",
+                            help     => "Should header information be printed",
                             required => 0,
                         },
                     },
                 },
                 process => {
-                    function => \&list_process,
+                    function        => \&list_process,
                     vcenter_connect => 1,
-                    opts => {
+                    opts            => {
                         vmname => {
-                            type => "=s",
-                            help => "Name of Virtual Machine",
+                            type     => "=s",
+                            help     => "Name of Virtual Machine",
                             required => 1,
                         },
                         guestusername => {
-                            type => "=s",
-                            help => "Username to authenticate with",
+                            type     => "=s",
+                            help     => "Username to authenticate with",
                             required => 0,
                         },
                         guestpassword => {
-                            type => "=s",
-                            help => "Password to authenticate with",
+                            type     => "=s",
+                            help     => "Password to authenticate with",
                             required => 0,
                         },
                         pid => {
-                            type => "=s",
-                            help => "Pid to get information about",
+                            type     => "=s",
+                            help     => "Pid to get information about",
                             required => 0,
-                            default => 0,
+                            default  => 0,
                         },
                         output => {
-                            type => "=s",
-                            help => "Output type, table/csv",
-                            default => "table",
+                            type     => "=s",
+                            help     => "Output type, table/csv",
+                            default  => "table",
                             required => 0,
                         },
                         noheader => {
-                            type => "",
-                            help => "Should header information be printed",
+                            type     => "",
+                            help     => "Should header information be printed",
                             required => 0,
                         },
                     },
@@ -458,9 +458,9 @@ our $module_opts = {
             helper    => "VM_functions/VM_change_function",
             functions => {
                 cdrom => {
-                    function => \&change_cdrom,
+                    function        => \&change_cdrom,
                     vcenter_connect => 1,
-                    opts     => {
+                    opts            => {
                         vmname => {
                             type     => "=s",
                             help     => "Which VMs disk to list",
@@ -484,9 +484,9 @@ our $module_opts = {
                     },
                 },
                 interface => {
-                    function => \&change_interface,
+                    function        => \&change_interface,
                     vcenter_connect => 1,
-                    opts     => {
+                    opts            => {
                         vmname => {
                             type     => "=s",
                             help     => "Name of vm",
@@ -506,9 +506,9 @@ our $module_opts = {
                     },
                 },
                 disk => {
-                    function => \&change_disk,
+                    function        => \&change_disk,
                     vcenter_connect => 1,
-                    opts     => {
+                    opts            => {
                         vmname => {
                             type     => "=s",
                             help     => "Which VMs disk to change.",
@@ -527,9 +527,9 @@ our $module_opts = {
                     },
                 },
                 altername => {
-                    function => \&change_altername,
+                    function        => \&change_altername,
                     vcenter_connect => 1,
-                    opts     => {
+                    opts            => {
                         vmname => {
                             type     => "=s",
                             help     => "Name of vm",
@@ -543,9 +543,9 @@ our $module_opts = {
                     },
                 },
                 snapshot => {
-                    function => \&change_snapshot,
+                    function        => \&change_snapshot,
                     vcenter_connect => 1,
-                    opts     => {
+                    opts            => {
                         vmname => {
                             type     => "=s",
                             help     => "Name of vm",
@@ -559,9 +559,9 @@ our $module_opts = {
                     },
                 },
                 power => {
-                    function => \&change_power,
+                    function        => \&change_power,
                     vcenter_connect => 1,
-                    opts     => {
+                    opts            => {
                         vmname => {
                             type     => "=s",
                             help     => "Name of vm",
@@ -578,10 +578,10 @@ our $module_opts = {
             },
         },
         run => {
-            prereq_module => [qw(LWP::UserAgent)],
+            prereq_module   => [qw(LWP::UserAgent)],
             vcenter_connect => 1,
-            function      => \&run_command,
-            opts          => {
+            function        => \&run_command,
+            opts            => {
                 vmname => {
                     type     => "=s",
                     help     => "Which VMs should be used for running command",
@@ -621,10 +621,10 @@ our $module_opts = {
             },
         },
         transfer => {
-            function      => \&transfer,
+            function        => \&transfer,
             vcenter_connect => 1,
-            prereq_module => [qw(LWP::Simple HTTP::Request LWP::UserAgent)],
-            opts          => {
+            prereq_module   => [qw(LWP::Simple HTTP::Request LWP::UserAgent)],
+            opts            => {
                 type => {
                     type     => "=s",
                     help     => "Diretion of transfer, Values: to/from",
@@ -746,7 +746,7 @@ sub list_cdrom {
     my $vmname = Opts::get_option('vmname');
     &Log::debug1("Opts are: vmname=>'$vmname'");
     my @titles = (qw(Number Key Size Path));
-    &Output::option_parser(\@titles);
+    &Output::option_parser( \@titles );
     my @cdrom_hw = @{ &Guest::get_hw( $vmname, 'VirtualCdrom' ) };
     if ( @cdrom_hw eq 0 ) {
         &Log::debug("No cdroms on entity");
@@ -777,7 +777,7 @@ sub list_cdrom {
             $backing = $cdrom_hw[$i]->{backing}->{deviceName};
         }
         my $label = $cdrom_hw[$i]->{deviceInfo}->{label} || "None";
-        &Output::add_row( [$i, $cdrom_hw[$i]->{key}, "$backing", "$label" ] );
+        &Output::add_row( [ $i, $cdrom_hw[$i]->{key}, "$backing", "$label" ] );
     }
     &Output::print;
     &Log::debug("Finishing Entity::list_cdrom sub");
@@ -831,7 +831,7 @@ sub list_interface {
     my $vmname = Opts::get_option('vmname');
     &Log::debug1("Opts are: vmname=>'$vmname'");
     my @titles = (qw(Number Key MacAddress Label Type));
-    &Output::option_parser(\@titles);
+    &Output::option_parser( \@titles );
     my @net_hw = @{ &Guest::get_hw( $vmname, 'VirtualEthernetCard' ) };
     if ( @net_hw eq 0 ) {
         &Log::debug("No interface on entity");
@@ -848,7 +848,14 @@ sub list_interface {
             &Log::debug(
                 "Some unknown interface type, need to implement object handle");
         }
-        &Output::add_row([$i, $net_hw[$i]->{key}, $net_hw[$i]->{macAddress}, $net_hw[$i]->{deviceInfo}->{label}, $type]);
+        &Output::add_row(
+            [
+                $i,
+                $net_hw[$i]->{key},
+                $net_hw[$i]->{macAddress},
+                $net_hw[$i]->{deviceInfo}->{label}, $type
+            ]
+        );
     }
     &Output::print;
     &Log::debug("Finishing Entity::list_interface sub");
@@ -902,7 +909,7 @@ sub list_disk {
     my $vmname = Opts::get_option('vmname');
     &Log::debug1("Opts are: vmname=>'$vmname'");
     my @titles = (qw(Number Key Size Path));
-    &Output::option_parser(\@titles);
+    &Output::option_parser( \@titles );
     my @disk_hw = @{ &Guest::get_hw( $vmname, 'VirtualDisk' ) };
     &Log::dumpobj( "disk_hw", \@disk_hw );
     if ( @disk_hw eq 0 ) {
@@ -912,7 +919,14 @@ sub list_disk {
     for ( my $i = 0 ; $i < scalar(@disk_hw) ; $i++ ) {
         &Log::debug("Iterating thorugh disk hardware '$i'");
         &Log::dumpobj( "disk $i", $disk_hw[$i] );
-        &Output::add_row([$i, $disk_hw[$i]->{key}, $disk_hw[$i]->{capacityInKB}, $disk_hw[$i]->{backing}->{fileName}]);
+        &Output::add_row(
+            [
+                $i,
+                $disk_hw[$i]->{key},
+                $disk_hw[$i]->{capacityInKB},
+                $disk_hw[$i]->{backing}->{fileName}
+            ]
+        );
     }
     &Output::print;
     &Log::debug("Finishing list_disk sub");
@@ -1009,15 +1023,30 @@ sub list_process {
     my %arguments;
     $arguments{'vmname'} = &Opts::get_option('vmname');
     my $vm_info = &Misc::vmname_splitter( $arguments{vmname} );
-    $arguments{'guestusername'} = &Opts::get_option('guestusername') || &Support::get_key_value( 'template', $vm_info->{template}, 'username' );
-    $arguments{'guestpassword'} = &Opts::get_option('guestpassword') || &Support::get_key_value( 'template', $vm_info->{template}, 'password' );
+    $arguments{'guestusername'} = &Opts::get_option('guestusername')
+      || &Support::get_key_value( 'template', $vm_info->{template},
+        'username' );
+    $arguments{'guestpassword'} = &Opts::get_option('guestpassword')
+      || &Support::get_key_value( 'template', $vm_info->{template},
+        'password' );
     $arguments{'pid'} = &Opts::get_option('pid');
     my @titles = (qw(pid owner name command startTime endTime exitCode));
-    &Output::option_parser(\@titles);
-    my $programs = &Guest::process_info(\%arguments);
-    for my $prog ( @$programs ) {
-        &Log::dumpobj("prog", $prog);
-        &Output::add_row( [ $prog->{pid}, $prog->{owner} // "---", $prog->{name} // "---", $prog->{cmdLine} //  "---", $prog->{startTime} // "---", $prog->{endTime} // "---", $prog->{exitCode} // "---"] );
+    &Output::option_parser( \@titles );
+    my $programs = &Guest::process_info( \%arguments );
+
+    for my $prog (@$programs) {
+        &Log::dumpobj( "prog", $prog );
+        &Output::add_row(
+            [
+                $prog->{pid},
+                $prog->{owner}     // "---",
+                $prog->{name}      // "---",
+                $prog->{cmdLine}   // "---",
+                $prog->{startTime} // "---",
+                $prog->{endTime}   // "---",
+                $prog->{exitCode}  // "---"
+            ]
+        );
     }
     &Output::print;
     &Log::debug("Finishing Entity::list_process sub");
@@ -1643,8 +1672,12 @@ sub transfer {
     $opts{type}   = Opts::get_option('type');
     $opts{vmname} = Opts::get_option('vmname');
     my $vm_info = &Misc::vmname_splitter( $opts{vmname} );
-    $opts{guestusername} = Opts::get_option('guestusername') || &Support::get_key_value( 'template', $vm_info->{template}, 'username' );
-    $opts{guestpassword} = Opts::get_option('guestpassword') || &Support::get_key_value( 'template', $vm_info->{template}, 'password' );
+    $opts{guestusername} = Opts::get_option('guestusername')
+      || &Support::get_key_value( 'template', $vm_info->{template},
+        'username' );
+    $opts{guestpassword} = Opts::get_option('guestpassword')
+      || &Support::get_key_value( 'template', $vm_info->{template},
+        'password' );
     $opts{source}    = Opts::get_option('source');
     $opts{dest}      = Opts::get_option('dest');
     $opts{overwrite} = Opts::get_option('overwrite');

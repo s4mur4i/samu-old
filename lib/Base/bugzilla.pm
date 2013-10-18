@@ -28,9 +28,9 @@ our $module_opts = {
     helper    => 'BUGZILLA',
     functions => {
         info => {
-            function => \&info,
+            function        => \&info,
             vcenter_connect => 0,
-            opts     => {
+            opts            => {
                 ticket => {
                     type     => "=s",
                     help     => "The bugzilla ticket to list information about",

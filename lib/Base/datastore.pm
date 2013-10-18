@@ -26,9 +26,9 @@ our $module_opts = {
     helper    => 'DATASTORE',
     functions => {
         add => {
-            function => \&datastore_add,
+            function        => \&datastore_add,
             vcenter_connect => 1,
-            opts     => {
+            opts            => {
                 datastore => {
                     type     => "=s",
                     help     => "Name of datastore",
@@ -37,9 +37,9 @@ our $module_opts = {
             },
         },
         delete => {
-            function => \&datastore_delete,
+            function        => \&datastore_delete,
             vcenter_connect => 1,
-            opts     => {
+            opts            => {
                 datastore => {
                     type     => "=s",
                     help     => "Name of datastore",
@@ -48,14 +48,14 @@ our $module_opts = {
             },
         },
         list => {
-            function => \&datastore_list,
+            function        => \&datastore_list,
             vcenter_connect => 1,
-            opts     => {},
+            opts            => {},
         },
         info => {
-            function => \&datastore_info,
+            function        => \&datastore_info,
             vcenter_connect => 1,
-            opts     => {
+            opts            => {
                 datastore => {
                     type     => "=s",
                     help     => "Name of datastore",

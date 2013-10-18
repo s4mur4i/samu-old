@@ -121,7 +121,8 @@ sub option_parser {
                     &VCenter::connect_vcenter();
                 };
                 if ($@) { &Error::catch_ex($@) }
-            } else {
+            }
+            else {
                 &Log::debug("No connection is required to VCenter");
             }
         }

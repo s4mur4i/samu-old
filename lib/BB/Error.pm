@@ -161,7 +161,7 @@ True on success
 sub catch_ex {
     my ($ex) = @_;
     &Log::debug("Starting Error::catch_ex sub");
-    &Log::dumpobj("ex", $ex);
+    &Log::dumpobj( "ex", $ex );
     ## Entity Exceptions
     if ( $ex->isa('Entity::NumException') ) {
         &Log::critical( "Desc=>'"
@@ -188,8 +188,13 @@ sub catch_ex {
               . "'" );
     }
     elsif ( $ex->isa('Entity::TransferError') ) {
-        &Log::critical(
-            "Desc=>'" . $ex->error . "',entity=>'" . $ex->entity . "',source=>'" . $ex->filename . "'" );
+        &Log::critical( "Desc=>'"
+              . $ex->error
+              . "',entity=>'"
+              . $ex->entity
+              . "',source=>'"
+              . $ex->filename
+              . "'" );
     }
     elsif ( $ex->isa('Entity::HWError') ) {
         &Log::critical( "Desc=>'"

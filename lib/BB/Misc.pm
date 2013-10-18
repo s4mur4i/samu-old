@@ -52,7 +52,7 @@ Max length of longest element
 sub array_longest {
     my ($array) = @_;
     &Log::debug("Starting Misc::array_longest sub");
-    &Log::dumpobj("array", $array);
+    &Log::dumpobj( "array", $array );
     my $max = -1;
     for (@$array) {
         if ( length > $max ) {
@@ -249,7 +249,7 @@ sub generate_macs {
         }
     }
     &Log::debug("Finishing Misc::generate_macs sub");
-    &Log::dumpobj("macs", \@mac);
+    &Log::dumpobj( "macs", \@mac );
     return \@mac;
 }
 
@@ -461,7 +461,7 @@ sub vmname_splitter {
         );
     }
     &Log::debug("Finishing Misc::vmname_splitter sub");
-    &Log::loghash("Return hash", \%return);
+    &Log::loghash( "Return hash", \%return );
     return \%return;
 }
 
@@ -576,8 +576,9 @@ sub filename_splitter {
             path  => $filename
         );
     }
-    &Log::debug( "Finished Misc::filename_splitter sub");
-    &Log::debug( "Opts are: datastore=>'$datas', folder=>'$folder', image=>'$image'");
+    &Log::debug("Finished Misc::filename_splitter sub");
+    &Log::debug(
+        "Opts are: datastore=>'$datas', folder=>'$folder', image=>'$image'");
     return [ $datas, $folder, $image ];
 }
 
@@ -623,9 +624,12 @@ A standard virtual machine name
 
 sub generate_vmname {
     my ( $ticket, $username, $os_temp ) = @_;
-    &Log::debug( "Starting Misc::generate_vmname sub");
-    &Log::debug( "Opts are: ticket=>'$ticket', username=>'$username', os_temp=>'$os_temp'");
-    my $vmname = $ticket . "-" . $username . "-" . $os_temp . "-" . &Misc::random_3digit;
+    &Log::debug("Starting Misc::generate_vmname sub");
+    &Log::debug(
+"Opts are: ticket=>'$ticket', username=>'$username', os_temp=>'$os_temp'"
+    );
+    my $vmname =
+      $ticket . "-" . $username . "-" . $os_temp . "-" . &Misc::random_3digit;
     &Log::debug("Vmname=>'$vmname'");
     &Log::debug("Finishing Misc::generate_vmname sub");
     return $vmname;
@@ -673,8 +677,10 @@ An uniq virtual machine name
 
 sub uniq_vmname {
     my ( $ticket, $username, $os_temp ) = @_;
-    &Log::debug( "Starting Misc::uniq_vmname sub");
-    &Log::debug1( "Opts are: ticket=>'$ticket', username=>'$username', os_temp=>'$os_temp'");
+    &Log::debug("Starting Misc::uniq_vmname sub");
+    &Log::debug1(
+"Opts are: ticket=>'$ticket', username=>'$username', os_temp=>'$os_temp'"
+    );
     my $vmname = &Misc::generate_vmname( $ticket, $username, $os_temp );
     while ( &VCenter::exists_entity( $vmname, 'VirtualMachine' ) ) {
         &Log::debug("Generated name not uniq, regenerating");
@@ -723,17 +729,19 @@ sub ticket_list {
     );
     my %tickets = ();
     for my $machine (@$machines) {
-        &Log::debug1("Iterating through=>'" . $machine->name . "'");
+        &Log::debug1( "Iterating through=>'" . $machine->name . "'" );
         my $hash = &Misc::vmname_splitter( $machine->name );
         if ( $hash->{ticket} ne 'unknown'
             and !defined( $tickets{ $hash->{ticket} } ) )
         {
             $tickets{ $hash->{ticket} } = $hash->{username};
-        } elsif ( defined( $tickets{ $hash->{ticket} } ) ) {
-            if ( !($tickets{ $hash->{ticket} } =~ /$hash->{username}/) ) {
+        }
+        elsif ( defined( $tickets{ $hash->{ticket} } ) ) {
+            if ( !( $tickets{ $hash->{ticket} } =~ /$hash->{username}/ ) ) {
                 &Log::debug("Adding new owner to hash");
-                $tickets{ $hash->{ticket} } .= "," .$hash->{username};
-            } else {
+                $tickets{ $hash->{ticket} } .= "," . $hash->{username};
+            }
+            else {
                 &Log::debug("Owner is already added to hash");
             }
         }
@@ -787,7 +795,7 @@ sub user_ticket_list {
     &Log::dumpobj( "machines", $machines );
     my %tickets = ();
     for my $machine (@$machines) {
-        &Log::debug1("Iterating through=>'" . $machine->name . "'");
+        &Log::debug1( "Iterating through=>'" . $machine->name . "'" );
         my $hash = &Misc::vmname_splitter( $machine->name );
         if ( $hash->{username} eq $name
             and !defined( $tickets{ $hash->{ticket} } ) )
@@ -835,16 +843,21 @@ Connection::Connect if in file could not be opened
 =cut
 
 sub pod2wiki {
-    my ( $in ) = @_;
+    my ($in) = @_;
     &Log::debug("Starting Misc::pod2wiki sub");
     &Log::debug("Opts are: in=>'$in'");
     my $out;
     my $parser = Pod::Simple::Wiki->new('dokuwiki');
-    open( my $IN, "<", $in ) or Connection::Connect->throw( error => "Couldn't open: $!", type  => 'file', dest  => $in);
+    open( my $IN, "<", $in )
+      or Connection::Connect->throw(
+        error => "Couldn't open: $!",
+        type  => 'file',
+        dest  => $in
+      );
     $parser->output_string( \$out );
     $parser->parse_file($IN);
     close $IN;
-    &Log::dumpobj("out_string", $out);
+    &Log::dumpobj( "out_string", $out );
     &Log::debug("Finishing Misc::pod2wiki sub");
     return $out;
 }

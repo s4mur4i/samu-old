@@ -65,17 +65,32 @@ Connection::Connect if connection is unsuccesful
 sub connect {
     my ( $server, $dokuuser, $dokupass ) = @_;
     &Log::debug("Starting Dokuwiki::connect sub");
-    &Log::debug1("Opts are: server=>'$server', dokuuser=>'$dokuuser', dokupass=>'$dokupass'");
-    if ( !$client) {
-        $client = RPC::XML::Client->new( $server, useragent =>[ cookie_jar => { file => "$ENV{HOME}/.cookies.txt" }],);
-        my $logged_on_ok = $client->send_request('dokuwiki.login', $dokuuser, $dokupass);
+    &Log::debug1(
+"Opts are: server=>'$server', dokuuser=>'$dokuuser', dokupass=>'$dokupass'"
+    );
+    if ( !$client ) {
+        $client = RPC::XML::Client->new( $server,
+            useragent =>
+              [ cookie_jar => { file => "$ENV{HOME}/.cookies.txt" } ], );
+        my $logged_on_ok =
+          $client->send_request( 'dokuwiki.login', $dokuuser, $dokupass );
         if ( $logged_on_ok->value ) {
             &Log::debug("Dokuwiki Login succesful");
-        } else {
-            Connection::Connect->throw( error => 'Server/Username/Password error', type => 'Dokuwiki', dest => $server );
         }
-    } else {
-        Connection::Connect->throw( error => 'Already connected to Dokuwiki', type => 'Dokuwiki', dest => $server );
+        else {
+            Connection::Connect->throw(
+                error => 'Server/Username/Password error',
+                type  => 'Dokuwiki',
+                dest  => $server
+            );
+        }
+    }
+    else {
+        Connection::Connect->throw(
+            error => 'Already connected to Dokuwiki',
+            type  => 'Dokuwiki',
+            dest  => $server
+        );
     }
     &Log::debug("Finishing Dokuwiki::connect sub");
     return 1;
@@ -116,16 +131,21 @@ Connection::Connect if there is no valid connection to the server
 =cut
 
 sub request {
-    my ( $req ) = @_;
+    my ($req) = @_;
     &Log::debug("Starting Dokuwiki::request sub");
-    &Log::dumpobj("request", $req);
+    &Log::dumpobj( "request", $req );
     my $res;
-    if ( $client ) {
+    if ($client) {
         &Log::debug("We have a connection to Dokuwiki");
         $res = $client->send_request($req);
-        &Log::dumpobj("return", $res);
-    } else {
-        Connection::Connect->throw( error => 'No Connection to Dokuwiki server', type => 'Dokuwiki', dest => 'none');
+        &Log::dumpobj( "return", $res );
+    }
+    else {
+        Connection::Connect->throw(
+            error => 'No Connection to Dokuwiki server',
+            type  => 'Dokuwiki',
+            dest  => 'none'
+        );
     }
     &Log::debug("Finishing Dokuwiki::request sub");
     return $res->value;

@@ -61,7 +61,7 @@ sub connect_kayako {
         dest  => $dsn
       );
     &Log::debug("Finishing Kayako::connect_kayako sub");
-    &Log::dumpobj("dbi handle", $dbh);
+    &Log::dumpobj( "dbi handle", $dbh );
     return $dbh;
 }
 
@@ -100,7 +100,7 @@ True on success
 sub disconnect_kayako {
     my ($dbh) = @_;
     &Log::debug("Starting Kayako::disconnect_kayako sub");
-    &Log::dumpobj("dbh", $dbh);
+    &Log::dumpobj( "dbh", $dbh );
     $dbh->disconnect
       or &Log::warning( "Kayako db disconnect warning:" . $dbh->errstr );
     &Log::debug("Finishing Kayako::disconnect_kayako sub");
@@ -147,11 +147,11 @@ sub run_query {
     my ( $dbh, $query ) = @_;
     &Log::debug("Starting Kayako::run_query sub");
     &Log::debug("Opts are: query=>'$query'");
-    &Log::dumpobj("dbh", $dbh);
+    &Log::dumpobj( "dbh", $dbh );
     my $sth = $dbh->prepare("$query");
     $sth->execute();
     my $result = $sth->fetchrow_hashref();
-    &Log::dumpobj("result", $result);
+    &Log::dumpobj( "result", $result );
     &Log::debug("Finishing Kayako::run_query sub");
     return $result;
 }

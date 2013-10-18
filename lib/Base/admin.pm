@@ -29,37 +29,37 @@ our $module_opts = {
     helper    => 'ADMIN',
     functions => {
         cleanup => {
-            function => \&cleanup,
+            function        => \&cleanup,
             vcenter_connect => 1,
-            opts     => {},
+            opts            => {},
         },
         templates => {
-            function => \&templates,
+            function        => \&templates,
             vcenter_connect => 0,
-            opts     => {
+            opts            => {
                 output => {
-                    type => "=s",
-                    help => "Output type, table/csv",
-                    default => "table",
+                    type     => "=s",
+                    help     => "Output type, table/csv",
+                    default  => "table",
                     required => 0,
                 },
                 noheader => {
-                    type => "",
-                    help => "Should header information be printed",
+                    type     => "",
+                    help     => "Should header information be printed",
                     required => 0,
                 },
             },
         },
         test => {
-            function => \&test,
+            function        => \&test,
             vcenter_connect => 1,
-            opts     => {},
+            opts            => {},
         },
         pod2wiki => {
-            function      => \&pod2wiki,
+            function        => \&pod2wiki,
             vcenter_connect => 0,
-            prereq_module => [qw(Pod::Simple::Wiki::Dokuwiki)],
-            opts          => {
+            prereq_module   => [qw(Pod::Simple::Wiki::Dokuwiki)],
+            opts            => {
                 in => {
                     type     => "=s",
                     help     => "Source Pod file",
@@ -71,24 +71,24 @@ our $module_opts = {
                     required => 0,
                 },
                 dokuserver => {
-                    type => "=s",
-                    help => "Dokuwiki XML RPC server url",
+                    type     => "=s",
+                    help     => "Dokuwiki XML RPC server url",
                     required => 0,
                     default => "https://supportwiki.balabit/lib/exe/xmlrpc.php",
                 },
                 dokuuser => {
-                    type => "=s",
-                    help => "Dokuwiki user, defaults to VCenter user",
+                    type     => "=s",
+                    help     => "Dokuwiki user, defaults to VCenter user",
                     required => 0,
                 },
                 dokupass => {
-                    type => "=s",
-                    help => "Dokuwiki password, defaults to VCenter user",
+                    type     => "=s",
+                    help     => "Dokuwiki password, defaults to VCenter user",
                     required => 0,
                 },
                 page => {
-                    type => "=s",
-                    help => "Pagename to upload to with namespace",
+                    type     => "=s",
+                    help     => "Pagename to upload to with namespace",
                     required => 0,
                 },
             },
@@ -97,9 +97,9 @@ our $module_opts = {
             helper    => "ADMIN_functions/ADMIN_list_functions",
             functions => {
                 folder => {
-                    function => \&list_folder,
+                    function        => \&list_folder,
                     vcenter_connect => 1,
-                    opts     => {
+                    opts            => {
                         all => {
                             type     => "",
                             help     => "List all Folders",
@@ -111,22 +111,22 @@ our $module_opts = {
                             required => 0,
                         },
                         output => {
-                            type => "=s",
-                            help => "Output type, table/csv",
-                            default => "table",
+                            type     => "=s",
+                            help     => "Output type, table/csv",
+                            default  => "table",
                             required => 0,
                         },
                         noheader => {
-                            type => "",
-                            help => "Should header information be printed",
+                            type     => "",
+                            help     => "Should header information be printed",
                             required => 0,
                         },
                     },
                 },
                 resourcepool => {
-                    function => \&list_resourcepool,
+                    function        => \&list_resourcepool,
                     vcenter_connect => 1,
-                    opts     => {
+                    opts            => {
                         user => {
                             type     => "=s",
                             help     => "Which users resourcepool to list",
@@ -143,22 +143,22 @@ our $module_opts = {
                             required => 0,
                         },
                         output => {
-                            type => "=s",
-                            help => "Output type, table/csv",
-                            default => "table",
+                            type     => "=s",
+                            help     => "Output type, table/csv",
+                            default  => "table",
                             required => 0,
                         },
                         noheader => {
-                            type => "",
-                            help => "Should header information be printed",
+                            type     => "",
+                            help     => "Should header information be printed",
                             required => 0,
                         },
                     },
                 },
                 linked_clones => {
-                    function => \&list_linked_clones,
+                    function        => \&list_linked_clones,
                     vcenter_connect => 1,
-                    opts     => {
+                    opts            => {
                         template => {
                             type     => "=s",
                             help     => "Which templates linked clones to list",
@@ -291,13 +291,13 @@ True on success
 
 sub templates {
     &Log::debug("Starting Admin::templates sub");
-    my $keys = &Support::get_keys('template');
+    my $keys   = &Support::get_keys('template');
     my @titles = (qw(Name Path));
-    &Output::option_parser(\@titles);
+    &Output::option_parser( \@titles );
     for my $template (@$keys) {
         &Log::debug("Element working on:'$template'");
         my $path = &Support::get_key_value( 'template', $template, 'path' );
-        &Output::add_row([ $template, $path]);
+        &Output::add_row( [ $template, $path ] );
     }
     &Output::print;
     &Log::debug("Finishing Admin::templates sub");
@@ -404,32 +404,50 @@ Connection::Connect when files cannot be opened
 
 sub pod2wiki {
     &Log::debug("Starting Admin::pod2wiki sub");
-    my $in     = Opts::get_option('in');
-    my $out    = Opts::get_option('out') || 0;
-    my $page     = Opts::get_option('page') || 0;
+    my $in   = Opts::get_option('in');
+    my $out  = Opts::get_option('out') || 0;
+    my $page = Opts::get_option('page') || 0;
     &Log::debug1("Opts are: in=>'$in', out=>'$out',page=>'$page'");
     my $converted = &Misc::pod2wiki($in);
-    if ( $out ) {
+    if ($out) {
         &Log::debug("Output file requested");
-        open( my $OUT, ">", $out ) or Connection::Connect->throw( error => "Couldn't open: $!", type  => 'file', dest  => $out);
+        open( my $OUT, ">", $out )
+          or Connection::Connect->throw(
+            error => "Couldn't open: $!",
+            type  => 'file',
+            dest  => $out
+          );
         print $OUT $converted;
-    } else {
+    }
+    else {
         &Log::debug("No output file requested");
     }
-    if ( $page ) {
+    if ($page) {
         &Log::debug("Requested upload to Dokuwiki page=>'$page'");
         my $server = &Opts::get_option('dokuserver');
-        my $dokuuser = &Opts::get_option('dokuuser') || &Opts::get_option('username');
-        my $dokupass = &Opts::get_option('dokupass') || &Opts::get_option('password');
-        &Dokuwiki::connect( $server, $dokuuser, $dokupass);
-        my $req = RPC::XML::request->new('wiki.putPage',RPC::XML::string->new($page), RPC::XML::string->new($converted));
-        my $ret = &Dokuwiki::request( $req );
-        if ( $ret) {
+        my $dokuuser =
+          &Opts::get_option('dokuuser') || &Opts::get_option('username');
+        my $dokupass =
+          &Opts::get_option('dokupass') || &Opts::get_option('password');
+        &Dokuwiki::connect( $server, $dokuuser, $dokupass );
+        my $req = RPC::XML::request->new(
+            'wiki.putPage',
+            RPC::XML::string->new($page),
+            RPC::XML::string->new($converted)
+        );
+        my $ret = &Dokuwiki::request($req);
+        if ($ret) {
             &Log::debug("Upload succesful");
-        } else {
-            Connection::Connect->throw( error => 'Could not upload to Dokuwiki', type => 'Dokuwiki', dest => $page );
         }
-    } else {
+        else {
+            Connection::Connect->throw(
+                error => 'Could not upload to Dokuwiki',
+                type  => 'Dokuwiki',
+                dest  => $page
+            );
+        }
+    }
+    else {
         &Log::debug("No upload to dokuwiki requested");
     }
     &Log::debug("Finishing Admin::pod2wiki sub");
@@ -480,8 +498,10 @@ sub list_resourcepool {
     &Log::debug("Starting Admin::list_resourcepool sub");
     my $user = &Opts::get_option('user') || &Opts::get_option('username');
     &Log::debug1("Opts are: user=>'$user'");
-    my @titles = (qw(ResourcePool VirtualMachineChilds ResourcePoolChilds Alarm Memory CPU MaxMemory MaxCPU));
-    &Output::option_parser(\@titles);
+    my @titles = (
+        qw(ResourcePool VirtualMachineChilds ResourcePoolChilds Alarm Memory CPU MaxMemory MaxCPU)
+    );
+    &Output::option_parser( \@titles );
     my @request = ();
     if ( &Opts::get_option('all') ) {
         &Log::debug("All resource pools requested");
@@ -580,10 +600,16 @@ sub list_folder {
         &Opts::usage;
     }
     my @titles = (qw(Folder VirtualMachineChilds FolderChilds));
-    &Output::option_parser(\@titles);
-    for my $folder ( @folder ) {
+    &Output::option_parser( \@titles );
+    for my $folder (@folder) {
         my $sorted = &VCenter::folder_info($folder);
-        &Output::add_row( [ $folder, join("/", @{ $sorted->{VirtualMachine} }), join("/", @{ $sorted->{Folder} })] );
+        &Output::add_row(
+            [
+                $folder,
+                join( "/", @{ $sorted->{VirtualMachine} } ),
+                join( "/", @{ $sorted->{Folder} } )
+            ]
+        );
         &Output::add_row( [ "-----", "-----", "-----" ] );
     }
     &Output::print;

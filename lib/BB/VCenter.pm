@@ -1179,6 +1179,7 @@ sub datastore_file_exists {
         searchSpec    => $searchspec
     );
     my $ret = 0;
+
     if ( defined( $return->[0]->file ) ) {
         &Log::debug("Datastore file exists");
         $ret = 1;
@@ -1499,7 +1500,7 @@ sub get_manager {
             error => "Could not retrieve $type Manager" );
     }
     &Log::debug("Finishing VCenter::get_manager sub");
-    &Log::dumpobj("$type manager", $manager);
+    &Log::dumpobj( "$type manager", $manager );
     return $manager;
 }
 
@@ -1542,48 +1543,51 @@ sub resourcepool_info {
     &Log::debug("Starting VCenter::resourcepool_info sub");
     &Log::debug("Opts are: name=>'$name'");
     my @info;
-    my $view = &Guest::entity_full_view( $name, 'ResourcePool');
-    push(@info, $name);
-    if ($view->{vm}) {
+    my $view = &Guest::entity_full_view( $name, 'ResourcePool' );
+    push( @info, $name );
+    if ( $view->{vm} ) {
         &Log::debug("Resourcepool has child Virtual Machines");
-        push(@info, scalar(@{$view->{vm}}));
-    } else {
+        push( @info, scalar( @{ $view->{vm} } ) );
+    }
+    else {
         &Log::debug("Resourcepool has no child Virtual Machines");
-        push(@info, 0);
+        push( @info, 0 );
     }
-    if ($view->{resourcePool}) {
+    if ( $view->{resourcePool} ) {
         &Log::debug("Resourcepool has child resourcepools");
-        push(@info, scalar(@{$view->{resourcePool}}));
-    } else {
-        &Log::debug("Resourcepool has no child resourcepools");
-        push(@info,0);
+        push( @info, scalar( @{ $view->{resourcePool} } ) );
     }
-    push(@info, $view->{runtime}->{overallStatus}->{val});
-    my $memoryMB = int($view->{runtime}->{memory}->{overallUsage}/1048576);
-    push(@info, "${memoryMB}MB");
-    push(@info, "$view->{runtime}->{cpu}->{overallUsage}Mhz");
-    $memoryMB = int($view->{runtime}->{memory}->{maxUsage}/1048576);
-    push(@info, "${memoryMB}MB");
-    push(@info, "$view->{runtime}->{cpu}->{maxUsage}Mhz");
+    else {
+        &Log::debug("Resourcepool has no child resourcepools");
+        push( @info, 0 );
+    }
+    push( @info, $view->{runtime}->{overallStatus}->{val} );
+    my $memoryMB = int( $view->{runtime}->{memory}->{overallUsage} / 1048576 );
+    push( @info, "${memoryMB}MB" );
+    push( @info, "$view->{runtime}->{cpu}->{overallUsage}Mhz" );
+    $memoryMB = int( $view->{runtime}->{memory}->{maxUsage} / 1048576 );
+    push( @info, "${memoryMB}MB" );
+    push( @info, "$view->{runtime}->{cpu}->{maxUsage}Mhz" );
     &Log::debug("Finishing VCenter::resourcepool_info sub");
     return \@info;
 }
 
 sub folder_info {
-    my ( $name ) = @_;
+    my ($name) = @_;
     &Log::debug("Starting VCenter::folder_info sub");
     &Log::debug1("Opts are: name=>'$name'");
     my %entities = ( VirtualMachine => [], Folder => [] );
-    my $view = &Guest::entity_property_view( $name, 'Folder', 'childEntity');
-    for my $entity ( @{ $view->{childEntity} }) {
-        if (defined($entities{$entity->{type}})) {
-            my $view = &VCenter::moref2view( $entity);
-            push(@{ $entities{$entity->{type}} }, $view->{name});
-        } else {
+    my $view = &Guest::entity_property_view( $name, 'Folder', 'childEntity' );
+    for my $entity ( @{ $view->{childEntity} } ) {
+        if ( defined( $entities{ $entity->{type} } ) ) {
+            my $view = &VCenter::moref2view($entity);
+            push( @{ $entities{ $entity->{type} } }, $view->{name} );
+        }
+        else {
             &Log::debug("Unhandled entity in Inventory Folder");
         }
     }
-    &Log::dumpobj("entities", \%entities);
+    &Log::dumpobj( "entities", \%entities );
     &Log::debug("Finishing VCenter::folder_info sub");
     return \%entities;
 }
@@ -1635,11 +1639,13 @@ True on success
 sub clonevm {
     my ( $template, $vmname, $folder, $clone_spec ) = @_;
     &Log::debug("Starting VCenter::clonevm sub");
-    &Log::debug1("Opts are: template=>'$template', vmname=>'$vmname', folder=>'$folder'");
-    &Log::dumpobj("clone_spec", $clone_spec);
+    &Log::debug1(
+        "Opts are: template=>'$template', vmname=>'$vmname', folder=>'$folder'"
+    );
+    &Log::dumpobj( "clone_spec", $clone_spec );
     my $template_view = &Guest::entity_name_view( $template, 'VirtualMachine' );
-    my $folder_view = &Guest::entity_name_view( $folder, 'Folder' );
-    my $task = $template_view->CloneVM_Task(
+    my $folder_view   = &Guest::entity_name_view( $folder,   'Folder' );
+    my $task          = $template_view->CloneVM_Task(
         folder => $folder_view,
         name   => $vmname,
         spec   => $clone_spec

@@ -46,10 +46,11 @@ True on success
 
 sub create_table {
     &Log::debug("Starting Output::create_table sub");
-    if ( !defined( $tbh ) ) {
+    if ( !defined($tbh) ) {
         &Log::debug("Creating table object");
-        $tbh = Text::Table->new( );
-    } else {
+        $tbh = Text::Table->new();
+    }
+    else {
         &Log::warning("Table object already created");
     }
     &Log::debug("Finishing Output::create_table sub");
@@ -89,12 +90,13 @@ True on success
 =cut
 
 sub create_csv {
-    my ( $header ) =@_;
+    my ($header) = @_;
     &Log::debug("Starting Output::create_csv sub");
-    if ( !defined( $csv ) ) {
+    if ( !defined($csv) ) {
         &Log::debug("Creating csv object");
-        $csv = Class::CSV->new(fields =>$header);
-    } else {
+        $csv = Class::CSV->new( fields => $header );
+    }
+    else {
         &Log::warning("CSV object already created");
     }
     &Log::debug("Finishing Output::create_csv sub");
@@ -136,11 +138,12 @@ True on success
 sub add_row {
     my ($row) = @_;
     &Log::debug("Starting Output::create_table sub");
-    &Log::dumpobj( "row", $row);
+    &Log::dumpobj( "row", $row );
     if ( defined($tbh) ) {
         &Log::debug("Adding row to table");
         $tbh->add(@$row);
-    } elsif(defined $csv) {
+    }
+    elsif ( defined $csv ) {
         &Log::debug("Adding row to csv");
         $csv->add_line($row);
     }
@@ -182,7 +185,8 @@ sub print {
         &Log::debug("Printing from table");
         $tbh->load;
         print $tbh;
-    } elsif(defined $csv) {
+    }
+    elsif ( defined $csv ) {
         &Log::debug("Printing from csv");
         $csv->print;
     }
@@ -225,20 +229,26 @@ Vcenter::Opts if unknown opts is requested for output
 =cut
 
 sub option_parser {
-    my ( $titles ) = @_;
+    my ($titles) = @_;
     &Log::debug("Starting Output::option_parser sub");
-    &Log::dumpobj("titles", $titles);
+    &Log::dumpobj( "titles", $titles );
     my $output = &Opts::get_option('output');
-    if ( $output eq 'table') {
+    if ( $output eq 'table' ) {
         &Output::create_table;
-    } elsif ( $output eq 'csv') {
-        &Output::create_csv($titles);
-    } else {
-        Vcenter::Opts->throw( error => "Unknwon option requested", opt => $output );
     }
-    if (!&Opts::get_option('noheader')) {
+    elsif ( $output eq 'csv' ) {
+        &Output::create_csv($titles);
+    }
+    else {
+        Vcenter::Opts->throw(
+            error => "Unknwon option requested",
+            opt   => $output
+        );
+    }
+    if ( !&Opts::get_option('noheader') ) {
         &Output::add_row($titles);
-    } else {
+    }
+    else {
         &Log::info("Skipping header adding");
     }
     &Log::debug("Finishing Output::option_parser sub");

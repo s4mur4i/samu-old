@@ -229,9 +229,9 @@ sub get_keys {
         );
     }
     my $req_hash = $map_hash{$hash};
-    my $return = [ keys %$req_hash ];
+    my $return   = [ keys %$req_hash ];
     &Log::debug("Finishing Support::get_keys sub");
-    &Log::dumpobj("req_hash", $return );
+    &Log::dumpobj( "req_hash", $return );
     return $return;
 }
 
@@ -275,8 +275,8 @@ Template::Status if no information is found
 
 sub get_key_info {
     my ( $hash, $key ) = @_;
-    &Log::debug( "Starting Support::get_key_info sub");
-    &Log::debug1( "Opts are: hash=>'$hash', key=>'$key'");
+    &Log::debug("Starting Support::get_key_info sub");
+    &Log::debug1("Opts are: hash=>'$hash', key=>'$key'");
     if ( !grep /^$key$/, @{ &Support::get_keys($hash) } ) {
         Template::Status->throw(
             error    => 'Requested key info was not found',
@@ -284,7 +284,7 @@ sub get_key_info {
         );
     }
     &Log::debug("Finishing Support::get_key_info sub");
-    &Log::dumpobj("key_info", $map_hash{$hash}->{$key});
+    &Log::dumpobj( "key_info", $map_hash{$hash}->{$key} );
     return $map_hash{$hash}->{$key};
 }
 
@@ -332,8 +332,8 @@ Template::Status if no information found
 
 sub get_key_value {
     my ( $hash, $key, $value ) = @_;
-    &Log::debug( "Starting Support::get_key_value sub");
-    &Log::debug1( "Opts are: hash=>'$hash', key=>'$key', value=>'$value'");
+    &Log::debug("Starting Support::get_key_value sub");
+    &Log::debug1("Opts are: hash=>'$hash', key=>'$key', value=>'$value'");
     my $key_hash = &Support::get_key_info( $hash, $key );
     if ( !defined( $$key_hash{$value} ) ) {
         Template::Status->throw(
@@ -342,7 +342,7 @@ sub get_key_value {
         );
     }
     &Log::debug("Finishing Support::get_key_value sub");
-    &Log::debug("Return=>'" . $$key_hash{$value} . "'");
+    &Log::debug( "Return=>'" . $$key_hash{$value} . "'" );
     return $$key_hash{$value};
 }
 
@@ -392,7 +392,7 @@ sub RelocateSpec {
         pool         => $ticket_resource_pool
     );
     &Log::debug("Finishing Support::RelocateSpec sub");
-    &Log::dumpobj("relocate_spec", $relocate_spec);
+    &Log::dumpobj( "relocate_spec", $relocate_spec );
     return $relocate_spec;
 }
 
@@ -438,15 +438,16 @@ VirtualMachineConfigSpec Managd object
 
 sub ConfigSpec {
     my ( $memory, $cpu, $os_temp ) = @_;
-    &Log::debug( "Starting Support::ConfigSpec sub");
-    &Log::debug1( "Opts are: memory=>'$memory', cpu=>'$cpu', os_temp=>'$os_temp'");
+    &Log::debug("Starting Support::ConfigSpec sub");
+    &Log::debug1(
+        "Opts are: memory=>'$memory', cpu=>'$cpu', os_temp=>'$os_temp'");
     my $config_spec = VirtualMachineConfigSpec->new(
         memoryMB     => $memory,
         numCPUs      => $cpu,
         deviceChange => [ &Guest::generate_network_setup($os_temp) ]
     );
     &Log::debug("Finishing Support::ConfigSpec sub");
-    &Log::dumpobj("config_spec", $config_spec);
+    &Log::dumpobj( "config_spec", $config_spec );
     return $config_spec;
 }
 
@@ -480,7 +481,7 @@ sub CustomizationPassword {
     &Log::debug("Starting Support::CustomizationPassword sub");
     my $ret = CustomizationPassword->new( plainText => 1, value => 'titkos' );
     &Log::debug("Finishing Support::CustomizationPassword sub");
-    &Log::dumpobj("CustomizationPassword", $ret);
+    &Log::dumpobj( "CustomizationPassword", $ret );
     return $ret;
 }
 
@@ -520,7 +521,7 @@ sub identification_domain {
         joinDomain          => 'support.balabit'
     );
     &Log::debug("Finishing Support::identification_domain sub");
-    &Log::dumpobj("CustomizationIdentification", $ret);
+    &Log::dumpobj( "CustomizationIdentification", $ret );
     return $ret;
 }
 
@@ -560,7 +561,7 @@ sub identification_workgroup {
         joinWorkgroup       => 'SUPPORT'
     );
     &Log::debug("Finishing Support::idetification_workgroup sub");
-    &Log::dumpobj("CustomizationIdetification", $ret);
+    &Log::dumpobj( "CustomizationIdetification", $ret );
     return $ret;
 }
 
@@ -612,8 +613,10 @@ sub win_CloneSpec {
     my ( $os_temp, $snapshot_view, $relocate_spec, $config_spec, $domain, $key )
       = @_;
     &Log::debug("Starting Support::win_CloneSpec sub");
-    &Log::debug("Opts are: os_temp=>'$os_temp', domain=>'$domain', key=>'$key'");
-    my @nicsetting = @{ &Guest::CustomizationAdapterMapping_generator($os_temp)};
+    &Log::debug(
+        "Opts are: os_temp=>'$os_temp', domain=>'$domain', key=>'$key'");
+    my @nicsetting =
+      @{ &Guest::CustomizationAdapterMapping_generator($os_temp) };
     my $globalipsettings = CustomizationGlobalIPSettings->new(
         dnsServerList => ['10.10.0.1'],
         dnsSuffixList => ['support.balabit']
@@ -684,7 +687,7 @@ sub win_CloneSpec {
         config        => $config_spec,
         customization => $customization_spec
     );
-    &Log::dumpobj("clone_spec", $clone_spec);
+    &Log::dumpobj( "clone_spec", $clone_spec );
     &Log::debug("Finishing Misc::win_CloneSpec sub");
     return $clone_spec;
 }
@@ -737,7 +740,8 @@ sub lin_CloneSpec {
     my ( $os_temp, $snapshot_view, $relocate_spec, $config_spec ) = @_;
     &Log::debug("Starting Support::lin_CloneSpec sub");
     &Log::debug1("Opts are: os_temp=>'$os_temp'");
-    my @nicsetting = @{ &Guest::CustomizationAdapterMapping_generator($os_temp)};
+    my @nicsetting =
+      @{ &Guest::CustomizationAdapterMapping_generator($os_temp) };
     my $hostname = CustomizationPrefixName->new( base => 'linuxguest' );
     my $globalipsettings = CustomizationGlobalIPSettings->new(
         dnsServerList => ['10.10.0.1'],
@@ -762,7 +766,7 @@ sub lin_CloneSpec {
         config        => $config_spec,
         customization => $customization_spec
     );
-    &Log::dumpobj("clone_spec", $clone_spec);
+    &Log::dumpobj( "clone_spec", $clone_spec );
     &Log::debug("Finishing Support::lin_CloneSpec sub");
     return $clone_spec;
 }
@@ -817,7 +821,7 @@ sub oth_CloneSpec {
         location => $relocate_spec,
         config   => $config_spec
     );
-    &Log::dumpobj("clone_spec", $clone_spec);
+    &Log::dumpobj( "clone_spec", $clone_spec );
     &Log::debug("Finishing Support::oth_CloneSpec sub");
     return $clone_spec;
 }

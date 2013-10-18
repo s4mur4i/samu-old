@@ -26,9 +26,9 @@ our $module_opts = {
     helper    => "TICKET",
     functions => {
         info => {
-            function => \&ticket_info,
+            function        => \&ticket_info,
             vcenter_connect => 1,
-            opts     => {
+            opts            => {
                 ticket => {
                     type     => "=s",
                     help     => "Ticket to list information about",
@@ -37,26 +37,26 @@ our $module_opts = {
             },
         },
         list => {
-            function => \&ticket_list,
+            function        => \&ticket_list,
             vcenter_connect => 1,
-            opts     => {
+            opts            => {
                 output => {
-                    type => "=s",
-                    help => "Output type, table/csv",
-                    default => "table",
+                    type     => "=s",
+                    help     => "Output type, table/csv",
+                    default  => "table",
                     required => 0,
                 },
                 noheader => {
-                    type => "",
-                    help => "Should header information be printed",
+                    type     => "",
+                    help     => "Should header information be printed",
                     required => 0,
                 },
             },
         },
         on => {
-            function => \&ticket_on,
+            function        => \&ticket_on,
             vcenter_connect => 1,
-            opts     => {
+            opts            => {
                 ticket => {
                     type     => "=s",
                     help     => "Ticket to power on",
@@ -65,9 +65,9 @@ our $module_opts = {
             },
         },
         off => {
-            function => \&ticket_off,
+            function        => \&ticket_off,
             vcenter_connect => 1,
-            opts     => {
+            opts            => {
                 ticket => {
                     type     => "=s",
                     help     => "Ticket to power off",
@@ -76,9 +76,9 @@ our $module_opts = {
             },
         },
         delete => {
-            function => \&ticket_delete,
+            function        => \&ticket_delete,
             vcenter_connect => 1,
-            opts     => {
+            opts            => {
                 ticket => {
                     type     => "=s",
                     help     => "Ticket to delete",
@@ -328,7 +328,7 @@ sub ticket_on {
     my $machines = &VCenter::ticket_vms_name($ticket);
     for my $vm (@$machines) {
         print "Powering on '" . $vm . "'\n";
-        &Guest::poweron( $vm );
+        &Guest::poweron($vm);
     }
     &Log::debug("Finishing Ticket::ticket_on sub");
     return 1;
@@ -367,7 +367,7 @@ sub ticket_off {
     my $machines = &VCenter::ticket_vms_name($ticket);
     for my $vm (@$machines) {
         print "Powering off '" . $vm . "'\n";
-        &Guest::poweroff( $vm );
+        &Guest::poweroff($vm);
     }
     &Log::debug("Finishing Ticket::ticket_off sub");
     return 1;
@@ -415,19 +415,23 @@ sub ticket_list {
     &Log::debug("Starting Ticket::ticket_list sub");
     my $tickets = &Misc::ticket_list;
     &Log::debug("Finished collecting ticket list");
-    my $dbh = &Kayako::connect_kayako();
+    my $dbh    = &Kayako::connect_kayako();
     my @titles = (qw(Ticket Owner Status B-Ticket B-Status));
-    &Output::option_parser(\@titles);
-    for my $ticket ( sort {$a<=>$b} ( keys %{$tickets} ) ) {
+    &Output::option_parser( \@titles );
+    for my $ticket ( sort { $a <=> $b } ( keys %{$tickets} ) ) {
         &Log::debug("Collecting information about ticket=>'$ticket'");
         if ( $ticket ne "" and $ticket ne "unknown" ) {
             my @string;
-            push(@string, $ticket);
-            push(@string, $$tickets{$ticket});
-            my $result = &Kayako::run_query( $dbh, "select ticketstatustitle from swtickets where ticketid = '$ticket'");
+            push( @string, $ticket );
+            push( @string, $$tickets{$ticket} );
+            my $result = &Kayako::run_query( $dbh,
+"select ticketstatustitle from swtickets where ticketid = '$ticket'"
+            );
             if ( defined($result) ) {
-                push(@string, $$result{ticketstatustitle});
-                $result = &Kayako::run_query( $dbh, "select fieldvalue from swcustomfieldvalues where typeid = '$ticket' and customfieldid = '25'");
+                push( @string, $$result{ticketstatustitle} );
+                $result = &Kayako::run_query( $dbh,
+"select fieldvalue from swcustomfieldvalues where typeid = '$ticket' and customfieldid = '25'"
+                );
                 if ( defined($result) and $$result{fieldvalue} ne "" ) {
                     my @result = split( " ", $$result{fieldvalue} );
                     my $bugzilla_status;
@@ -444,27 +448,30 @@ sub ticket_list {
                             else {
                                 $id = $_;
                             }
-                            if ( !$bugzilla_ticket) {
+                            if ( !$bugzilla_ticket ) {
                                 $bugzilla_ticket = $id;
-                            } else {
+                            }
+                            else {
                                 $bugzilla_ticket .= "/$id";
                             }
                             my $content = &Bugzilla::bugzilla_status($id);
-                            if ( !$bugzilla_status) {
+                            if ( !$bugzilla_status ) {
                                 $bugzilla_status = $content;
-                            } else {
+                            }
+                            else {
                                 $bugzilla_status .= "/$content";
                             }
                         }
                     }
-                    push(@string,$bugzilla_ticket);
-                    push(@string,$bugzilla_status);
-                } else {
-                    push(@string, "---");
-                    push(@string, "---");
+                    push( @string, $bugzilla_ticket );
+                    push( @string, $bugzilla_status );
+                }
+                else {
+                    push( @string, "---" );
+                    push( @string, "---" );
                 }
             }
-            &Output::add_row(\@string);
+            &Output::add_row( \@string );
         }
         else {
             &Log::debug("Ticket name is empty or unknown");

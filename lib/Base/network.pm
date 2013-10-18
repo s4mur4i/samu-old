@@ -24,9 +24,9 @@ our $module_opts = {
     helper    => 'NETWORK',
     functions => {
         add => {
-            function => \&network_add,
+            function        => \&network_add,
             vcenter_connect => 1,
-            opts     => {
+            opts            => {
                 ticket => {
                     type     => "=s",
                     help     => "Ticket to add network to",
@@ -40,9 +40,9 @@ our $module_opts = {
             },
         },
         create => {
-            function => \&create_net,
+            function        => \&create_net,
             vcenter_connect => 1,
-            opts     => {
+            opts            => {
                 type => {
                     type     => "=s",
                     help     => "Type of interface to create",
@@ -62,19 +62,19 @@ our $module_opts = {
             },
         },
         list_switch => {
-            function => \&list_switch,
+            function        => \&list_switch,
             vcenter_connect => 1,
-            opts     => {},
+            opts            => {},
         },
         list_dvp => {
-            function => \&list_dvp,
+            function        => \&list_dvp,
             vcenter_connect => 1,
-            opts     => {},
+            opts            => {},
         },
         delete => {
-            function => \&network_delete,
+            function        => \&network_delete,
             vcenter_connect => 1,
-            opts     => {
+            opts            => {
                 name => {
                     type     => "=s",
                     help     => "Name of device to delete",

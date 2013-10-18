@@ -493,41 +493,101 @@ sub change_interface_spec {
     &Log::debug(
         "Opts are: vmname=>'$vmname', num=>'$num', network=>'$network'");
     my @net_hw = @{ &Guest::get_hw( $vmname, 'VirtualEthernetCard' ) };
+
     # We also hve to add the first one that is indexed 0
     if ( $num + 1 > scalar(@net_hw) ) {
-        Entity::HWError->throw( error  => 'Unknown Interface count', entity => $vmname, hw => scalar(@net_hw));
+        Entity::HWError->throw(
+            error  => 'Unknown Interface count',
+            entity => $vmname,
+            hw     => scalar(@net_hw)
+        );
     }
     my $network_view =
       &Guest::entity_property_view( $network, 'Network', 'name' );
     my $name = $network_view->{name};
     my $backing;
-    &Log::dumpobj("network_hw", $net_hw[$num]);
+    &Log::dumpobj( "network_hw", $net_hw[$num] );
     if ( $network_view->{mo_ref}->{type} eq 'Network' ) {
         &Log::debug("Network is a normal network");
-        $backing = VirtualEthernetCardNetworkBackingInfo->new( deviceName => $name, network    => $network_view);
+        $backing = VirtualEthernetCardNetworkBackingInfo->new(
+            deviceName => $name,
+            network    => $network_view
+        );
     }
     elsif ( $network_view->{mo_ref}->{type} eq 'DistributedVirtualPortgroup' ) {
         &Log::debug("Network is a normal DVP");
-        $network_view = &Guest::entity_full_view( $network, 'DistributedVirtualPortgroup' );
-        my $switch = &VCenter::moref2view( $network_view->{config}->{distributedVirtualSwitch} );
-        my $port = DistributedVirtualSwitchPortConnection->new( portgroupKey => $network_view->{key}, switchUuid   => $switch->{uuid});
-        $backing = VirtualEthernetCardDistributedVirtualPortBackingInfo->new( port => $port );
+        $network_view =
+          &Guest::entity_full_view( $network, 'DistributedVirtualPortgroup' );
+        my $switch =
+          &VCenter::moref2view(
+            $network_view->{config}->{distributedVirtualSwitch} );
+        my $port = DistributedVirtualSwitchPortConnection->new(
+            portgroupKey => $network_view->{key},
+            switchUuid   => $switch->{uuid}
+        );
+        $backing =
+          VirtualEthernetCardDistributedVirtualPortBackingInfo->new(
+            port => $port );
     }
     else {
-        Entity::HWError->throw( error => 'Unknown Network type',entity => $vmname, hw =>  $network_view->{mo_ref}->{type} );
+        Entity::HWError->throw(
+            error  => 'Unknown Network type',
+            entity => $vmname,
+            hw     => $network_view->{mo_ref}->{type}
+        );
     }
     my $device;
     if ( $net_hw[$num]->isa('VirtualE1000') ) {
-        $device = VirtualE1000->new( connectable => VirtualDeviceConnectInfo->new( startConnected    => '1', allowGuestControl => '1', connected         => '1'),
-        wakeOnLanEnabled => 1, macAddress       => $net_hw[$num]->{macAddress}, addressType      => "Manual", key              => $net_hw[$num]->{key}, backing          => $backing, deviceInfo       => Description->new( summary => $name, label => $name ));
-    } elsif ( $net_hw[$num]->isa('VirtualVmxnet3') ) {
-        $device = VirtualVmxnet3->new( connectable => VirtualDeviceConnectInfo->new( startConnected    => '1', allowGuestControl => '1', connected         => '1'),
-        wakeOnLanEnabled => 1, macAddress       => $net_hw[$num]->{macAddress}, addressType      => "Manual", key              => $net_hw[$num]->{key}, backing          => $backing, deviceInfo       => Description->new( summary => $name, label => $name ));
-    } elsif ( $net_hw[$num]->isa('VirtualVmxnet2') ) {
-        $device = VirtualVmxnet2->new( connectable => VirtualDeviceConnectInfo->new( startConnected    => '1', allowGuestControl => '1', connected         => '1'),
-        wakeOnLanEnabled => 1, macAddress       => $net_hw[$num]->{macAddress}, addressType      => "Manual", key              => $net_hw[$num]->{key}, backing          => $backing, deviceInfo       => Description->new( summary => $name, label => $name ));
-    } else {
-        Entity::HWError->throw( error  => 'Interface object is unhandeled', entity => $vmname, hw => $num);
+        $device = VirtualE1000->new(
+            connectable => VirtualDeviceConnectInfo->new(
+                startConnected    => '1',
+                allowGuestControl => '1',
+                connected         => '1'
+            ),
+            wakeOnLanEnabled => 1,
+            macAddress       => $net_hw[$num]->{macAddress},
+            addressType      => "Manual",
+            key              => $net_hw[$num]->{key},
+            backing          => $backing,
+            deviceInfo => Description->new( summary => $name, label => $name )
+        );
+    }
+    elsif ( $net_hw[$num]->isa('VirtualVmxnet3') ) {
+        $device = VirtualVmxnet3->new(
+            connectable => VirtualDeviceConnectInfo->new(
+                startConnected    => '1',
+                allowGuestControl => '1',
+                connected         => '1'
+            ),
+            wakeOnLanEnabled => 1,
+            macAddress       => $net_hw[$num]->{macAddress},
+            addressType      => "Manual",
+            key              => $net_hw[$num]->{key},
+            backing          => $backing,
+            deviceInfo => Description->new( summary => $name, label => $name )
+        );
+    }
+    elsif ( $net_hw[$num]->isa('VirtualVmxnet2') ) {
+        $device = VirtualVmxnet2->new(
+            connectable => VirtualDeviceConnectInfo->new(
+                startConnected    => '1',
+                allowGuestControl => '1',
+                connected         => '1'
+            ),
+            wakeOnLanEnabled => 1,
+            macAddress       => $net_hw[$num]->{macAddress},
+            addressType      => "Manual",
+            key              => $net_hw[$num]->{key},
+            backing          => $backing,
+            deviceInfo => Description->new( summary => $name, label => $name )
+        );
+    }
+    else {
+        Entity::HWError->throw(
+            error  => 'Interface object is unhandeled',
+            entity => $vmname,
+            hw     => $num
+        );
     }
     my $deviceconfig = VirtualDeviceConfigSpec->new(
         operation => VirtualDeviceConfigSpecOperation->new('edit'),
@@ -971,8 +1031,8 @@ Entity::HWError if no free ide controllers found
 
 sub get_free_ide_controller {
     my ($vmname) = @_;
-    &Log::debug( "Starting Guest::get_free_ide_controller sub");
-    &Log::debug( "Opts are: vmname=>'$vmname'");
+    &Log::debug("Starting Guest::get_free_ide_controller sub");
+    &Log::debug("Opts are: vmname=>'$vmname'");
     my @controller = @{ &Guest::get_hw( $vmname, 'VirtualIDEController' ) };
     for ( my $i = 0 ; $i < scalar(@controller) ; $i++ ) {
         &Log::dumpobj( "ide_controller", $controller[$i] );
@@ -981,7 +1041,7 @@ sub get_free_ide_controller {
             &Log::debug("There are devices on controller, checking count");
             if ( @{ $controller[$i]->device } lt 2 ) {
                 &Log::debug("There is free space on controller returning key");
-                $ret =  $controller[$i];
+                $ret = $controller[$i];
             }
             else {
                 &Log::debug("Controller Full");
@@ -992,9 +1052,9 @@ sub get_free_ide_controller {
             &Log::debug("Controller is empty, returning key");
             $ret = $controller[$i];
         }
-        if ( $ret ) {
+        if ($ret) {
             &Log::debug("Finishing Guest::get_free_ide_controller sub");
-            &Log::dumpobj("controller_ret", $ret);
+            &Log::dumpobj( "controller_ret", $ret );
             return $ret;
         }
     }
@@ -1091,22 +1151,21 @@ The key number if found
 
 sub get_annotation_key {
     my ( $vmname, $name ) = @_;
-    &Log::debug( "Starting Guest::get_annotation_key sub");
-    &Log::debug1( "Opts are: vmname=>'$vmname', key=>'$name'");
+    &Log::debug("Starting Guest::get_annotation_key sub");
+    &Log::debug1("Opts are: vmname=>'$vmname', key=>'$name'");
     my $view = &Guest::entity_property_view( $vmname, 'VirtualMachine',
         'availableField' );
     my $key = 0;
     foreach ( @{ $view->availableField } ) {
-        &Log::dumpobj("customfield", $_);
+        &Log::dumpobj( "customfield", $_ );
         if ( $_->name eq $name ) {
             &Log::debug( "Found key value=>'" . $_->key . "'" );
-            $key =  $_->key;
+            $key = $_->key;
         }
     }
     &Log::debug("Finishing Guest::get_annotation_key sub");
     return $key;
 }
-
 
 =pod
 
@@ -1149,7 +1208,7 @@ sub network_interfaces {
         'config.hardware.device' );
     my $devices = $view->get_property('config.hardware.device');
     for my $device (@$devices) {
-        &Log::dumpobj("device", $device);
+        &Log::dumpobj( "device", $device );
         if ( !$device->isa('VirtualEthernetCard') ) {
             &Log::debug("Device is not a network interface, skipping");
             next;
@@ -1183,7 +1242,7 @@ sub network_interfaces {
         &Log::loghash( "Interface gathered, information, key=>'$key',",
             $interfaces{$key} );
     }
-    &Log::dumpobj("interface", \%interfaces);
+    &Log::dumpobj( "interface", \%interfaces );
     &Log::debug("Finishing Guest::network_interfaces sub");
     return \%interfaces;
 }
@@ -1238,8 +1297,8 @@ sub generate_network_setup {
     my $os_temp_view =
       &VCenter::moref2view( &VCenter::path2moref($os_temp_path) );
     my %interfaces = %{ &Guest::network_interfaces( $os_temp_view->name ) };
-    my @mac  = @{ &Misc::generate_macs( scalar( keys %interfaces ) )};
-    for my $key( keys %interfaces ) {
+    my @mac        = @{ &Misc::generate_macs( scalar( keys %interfaces ) ) };
+    for my $key ( keys %interfaces ) {
         my $ethernetcard;
         if ( $interfaces{$key}->{type} eq 'VirtualE1000' ) {
             &Log::debug("Generating setup for a E1000 device");
@@ -1280,7 +1339,7 @@ sub generate_network_setup {
             device    => $ethernetcard,
             operation => $operation
         );
-        &Log::dumpobj("deviceconfigspec", $deviceconfigspec);
+        &Log::dumpobj( "deviceconfigspec", $deviceconfigspec );
         push( @return, $deviceconfigspec );
     }
     &Log::debug("Returning array network devices Config Spec");
@@ -1321,8 +1380,8 @@ Array ref with CustomizationAdapterMapping created for all interfaces
 
 sub CustomizationAdapterMapping_generator {
     my ($vmname) = @_;
-    &Log::debug( "Starting Guest::CustomizationAdapterMapping_generator sub" );
-    &Log::debug( "Opts are: vmname=>'$vmname'" );
+    &Log::debug("Starting Guest::CustomizationAdapterMapping_generator sub");
+    &Log::debug("Opts are: vmname=>'$vmname'");
     my @return;
     for my $key ( keys &Guest::network_interfaces($vmname) ) {
         &Log::debug("Generating $key Adapter mapping");
@@ -1337,10 +1396,10 @@ sub CustomizationAdapterMapping_generator {
         );
         my $nicsetting =
           CustomizationAdapterMapping->new( adapter => $adapter );
-        &Log::dumpobj("nicsetting", $nicsetting);
+        &Log::dumpobj( "nicsetting", $nicsetting );
         push( @return, $nicsetting );
     }
-    &Log::dumpobj("CustomizationAdapterMapping_array", \@return);
+    &Log::dumpobj( "CustomizationAdapterMapping_array", \@return );
     &Log::debug("Finishing Guest::CustomizationAdapterMapping_generator sub");
     return \@return;
 }
@@ -1383,15 +1442,15 @@ Array ref with all hardwares as managed objects
 
 sub get_hw {
     my ( $vmname, $hw ) = @_;
-    &Log::debug( "Starting Guest::get_hw sub");
-    &Log::debug( "Opts are: vmname=>'$vmname', hw=>'$hw'" );
+    &Log::debug("Starting Guest::get_hw sub");
+    &Log::debug("Opts are: vmname=>'$vmname', hw=>'$hw'");
     my @hw   = ();
     my $view = &Guest::entity_property_view( $vmname, 'VirtualMachine',
         'config.hardware.device' );
     &Log::debug("Starting loop through hardver");
     my $devices = $view->get_property('config.hardware.device');
     foreach ( @{$devices} ) {
-        &Log::dumpobj("device", $_);
+        &Log::dumpobj( "device", $_ );
         if ( $_->isa($hw) ) {
             &Log::debug("Found requrested hardver pushing to return");
             push( @hw, $_ );
@@ -1440,15 +1499,15 @@ A managed object containing the requested hardware
 
 sub key2hw {
     my ( $vmname, $key ) = @_;
-    &Log::debug( "Starting Guest::key2hw sub");
-    &Log::debug1( "Opts are: vmname=>'$vmname', key=>'$key'" );
+    &Log::debug("Starting Guest::key2hw sub");
+    &Log::debug1("Opts are: vmname=>'$vmname', key=>'$key'");
     my $hw;
     my $view = &Guest::entity_property_view( $vmname, 'VirtualMachine',
         'config.hardware.device' );
     &Log::debug("Starting loop through hardver");
     my $devices = $view->get_property('config.hardware.device');
     foreach ( @{$devices} ) {
-        &Log::dumpobj("device", $_);
+        &Log::dumpobj( "device", $_ );
         if ( $_->{key} eq $key ) {
             &Log::debug("Found requrested hardver pushing to return");
             $hw = $_;
@@ -1602,8 +1661,8 @@ Entity::Snapshot if no snapshots are found
 
 sub revert_to_snapshot {
     my ( $vmname, $id ) = @_;
-    &Log::debug( "Starting Guest::revert_to_snapshot sub");
-    &Log::debug1( "Opts are: vmname=>'$vmname', id=>'$id'");
+    &Log::debug("Starting Guest::revert_to_snapshot sub");
+    &Log::debug1("Opts are: vmname=>'$vmname', id=>'$id'");
     my $view =
       &Guest::entity_property_view( $vmname, 'VirtualMachine', 'snapshot' );
     if ( !defined( $view->snapshot ) ) {
@@ -1620,7 +1679,7 @@ sub revert_to_snapshot {
             my $moref = &VCenter::moref2view( $snapshot->snapshot );
             my $task = $moref->RevertToSnapshot_Task( suppressPowerOn => 1 );
             &VCenter::Task_Status($task);
-            &Log::debug( "Finishing GuestManagement::revert_to_snapshot sub");
+            &Log::debug("Finishing GuestManagement::revert_to_snapshot sub");
             return 1;
         }
     }
@@ -1668,9 +1727,9 @@ find_snapshot_by_id is used for recursing through a tree structure of snapshot t
 
 sub find_snapshot_by_id {
     my ( $snapshot_view, $id ) = @_;
-    &Log::debug( "Starting Guest::find_snapshot_by_id sub");
-    &Log::debug1( "Opts are: id=>'$id'" );
-    &Log::dumpobj("snapshot_view", $snapshot_view);
+    &Log::debug("Starting Guest::find_snapshot_by_id sub");
+    &Log::debug1("Opts are: id=>'$id'");
+    &Log::dumpobj( "snapshot_view", $snapshot_view );
     my $return;
     if ( $snapshot_view->id == $id ) {
         &Log::debug("Found the requested snapshot");
@@ -1734,8 +1793,9 @@ True on success
 
 sub create_snapshot {
     my ( $vmname, $snap_name, $desc ) = @_;
-    &Log::debug( "Starting Guest::create_snapshot sub");
-    &Log::debug( "Opts are: vmname=>'$vmname', snap_name=>'$snap_name', desc=>'$desc'" );
+    &Log::debug("Starting Guest::create_snapshot sub");
+    &Log::debug(
+        "Opts are: vmname=>'$vmname', snap_name=>'$snap_name', desc=>'$desc'");
     my $view = &Guest::entity_name_view( $vmname, 'VirtualMachine' );
     my $task = $view->CreateSnapshot_Task(
         name        => $snap_name,
@@ -1842,8 +1902,8 @@ Entity::Snapshot if no snapshots found
 
 sub remove_snapshot {
     my ( $vmname, $id ) = @_;
-    &Log::debug( "Starting Guest::remove_snapshot sub");
-    &Log::debug1( "Opts are: vmname=>'$vmname', id=>'$id'");
+    &Log::debug("Starting Guest::remove_snapshot sub");
+    &Log::debug1("Opts are: vmname=>'$vmname', id=>'$id'");
     my $view =
       &Guest::entity_property_view( $vmname, 'VirtualMachine', 'snapshot' );
     if ( !defined( $view->snapshot ) ) {
@@ -2037,7 +2097,7 @@ sub list_snapshot {
     &Log::debug1("My current snapshot is: $current_snapshot");
     foreach ( @{ $view->snapshot->rootSnapshotList } ) {
         &Log::debug("Traversing snapshot");
-        &Log::dumpobj("snapshot", $_);
+        &Log::dumpobj( "snapshot", $_ );
         &Guest::traverse_snapshot( $_, $current_snapshot );
     }
     &Log::debug("Finishing Guest::list_snapshot sub");
@@ -2082,7 +2142,7 @@ Should rethink to combine with find id sub
 
 sub traverse_snapshot {
     my ( $snapshot_moref, $current_snapshot ) = @_;
-    &Log::debug( "Starting Guest::traverse_snapshot sub" );
+    &Log::debug("Starting Guest::traverse_snapshot sub");
     &Log::debug1("Opts are: current_snapshot=>'$current_snapshot'");
     &Log::dumpobj( "snapshot_moref", $snapshot_moref );
     my $current = "";
@@ -2176,21 +2236,21 @@ sub run_command {
     my ($info) = @_;
     &Log::debug("Starting Guest::run_command sub");
     &Log::loghash( "Info options, ", $info );
-    my $view       = &Guest::entity_name_view( $info->{vmname}, 'VirtualMachine' );
+    my $view = &Guest::entity_name_view( $info->{vmname}, 'VirtualMachine' );
     my $guestCreds = &Guest::guest_cred(
         $info->{vmname},
         $info->{guestusername},
         $info->{guestpassword}
     );
-    my $guestOP   = &VCenter::get_manager("guestOperationsManager");
-    my $guestProcMan = &VCenter::moref2view($guestOP->{processManager});
+    my $guestOP       = &VCenter::get_manager("guestOperationsManager");
+    my $guestProcMan  = &VCenter::moref2view( $guestOP->{processManager} );
     my $guestProgSpec = GuestProgramSpec->new(
         workingDirectory => $info->{workdir},
         programPath      => $info->{prog},
         arguments        => $info->{prog_arg},
         envVariables     => [ $info->{env} ]
     );
-    &Log::dumpobj( "guestProgSpec", $guestProgSpec);
+    &Log::dumpobj( "guestProgSpec", $guestProgSpec );
     my $pid = $guestProcMan->StartProgramInGuest(
         vm   => $view,
         auth => $guestCreds,
@@ -2264,17 +2324,17 @@ sub transfer_to_guest {
     my ($info) = @_;
     &Log::debug("Starting Guest::transfer_to_guest sub");
     &Log::loghash( "Info options, ", $info );
-    my $view       = &Guest::entity_name_view( $info->{vmname}, 'VirtualMachine' );
+    my $view = &Guest::entity_name_view( $info->{vmname}, 'VirtualMachine' );
     my $guestCreds = &Guest::guest_cred(
         $info->{vmname},
         $info->{guestusername},
         $info->{guestpassword}
     );
-    my $guestOP   = &VCenter::get_manager("guestOperationsManager");
-    my $filemanager = &VCenter::moref2view($guestOP->{fileManager});
-    &Log::dumpobj( "filemanager", $filemanager);
-    my $fileattr    = GuestFileAttributes->new();
-    my $size        = -s $info->{source};
+    my $guestOP     = &VCenter::get_manager("guestOperationsManager");
+    my $filemanager = &VCenter::moref2view( $guestOP->{fileManager} );
+    &Log::dumpobj( "filemanager", $filemanager );
+    my $fileattr = GuestFileAttributes->new();
+    my $size     = -s $info->{source};
     my $transferinfo;
     eval {
         $transferinfo = $filemanager->InitiateFileTransferToGuest(
@@ -2377,8 +2437,8 @@ sub transfer_from_guest {
         $info->{guestusername},
         $info->{guestpassword}
     );
-    my $guestOP   = &VCenter::get_manager("guestOperationsManager");
-    my $filemanager = &VCenter::moref2view($guestOP->{fileManager});
+    my $guestOP     = &VCenter::get_manager("guestOperationsManager");
+    my $filemanager = &VCenter::moref2view( $guestOP->{fileManager} );
     my $transferinfo;
     eval {
         $transferinfo = $filemanager->InitiateFileTransferFromGuest(
@@ -2389,7 +2449,7 @@ sub transfer_from_guest {
     };
 
     if ($@) {
-        &Log::dumpobj("transferinfo_erro", $@);
+        &Log::dumpobj( "transferinfo_erro", $@ );
         Entity::TransferError->throw(
             error    => 'Could not retrieve Transfer information',
             entity   => $info->{vmname},
@@ -2472,20 +2532,36 @@ Entity::NumException if no pid is found
 sub process_info {
     my ($info) = @_;
     &Log::debug("Starting Guest::process_info sub");
-    my $guestCreds = &Guest::guest_cred( $info->{vmname}, $info->{guestusername}, $info->{guestpassword});
-    my $guestOP   = &VCenter::get_manager("guestOperationsManager");
-    my $processmanager = &VCenter::moref2view($guestOP->{processManager});
-    my $view=&Guest::entity_name_view($info->{vmname}, 'VirtualMachine');
+    my $guestCreds = &Guest::guest_cred(
+        $info->{vmname},
+        $info->{guestusername},
+        $info->{guestpassword}
+    );
+    my $guestOP        = &VCenter::get_manager("guestOperationsManager");
+    my $processmanager = &VCenter::moref2view( $guestOP->{processManager} );
+    my $view = &Guest::entity_name_view( $info->{vmname}, 'VirtualMachine' );
     my $data;
     if ( $info->{pid} != 0 ) {
-        $data = $processmanager->ListProcessesInGuest(vm=>$view, auth=>$guestCreds, pids =>[ $info->{pid}]);
-    } else {
-        $data = $processmanager->ListProcessesInGuest(vm=>$view, auth=>$guestCreds);
+        $data = $processmanager->ListProcessesInGuest(
+            vm   => $view,
+            auth => $guestCreds,
+            pids => [ $info->{pid} ]
+        );
+    }
+    else {
+        $data = $processmanager->ListProcessesInGuest(
+            vm   => $view,
+            auth => $guestCreds
+        );
     }
     if ( !@{$data} ) {
-        Entity::NumException->throw( error => "No processes found with requested PID", entity => $info->{vmname}, num => $info->{pid});
+        Entity::NumException->throw(
+            error  => "No processes found with requested PID",
+            entity => $info->{vmname},
+            num    => $info->{pid}
+        );
     }
-    &Log::dumpobj("data", $data);
+    &Log::dumpobj( "data", $data );
     &Log::debug("Finishing Guest::process_info sub");
     return $data;
 }
@@ -2535,9 +2611,11 @@ Entity::Auth if authentication fails
 sub guest_cred {
     my ( $vmname, $guestusername, $guestpassword ) = @_;
     &Log::debug("Starting Guest::guest_cred sub");
-    &Log::debug( "Opts are: vmname=>'$vmname', guestusername=>'$guestusername', guestpassword=>'$guestpassword'");
+    &Log::debug(
+"Opts are: vmname=>'$vmname', guestusername=>'$guestusername', guestpassword=>'$guestpassword'"
+    );
     my $guestOP   = &VCenter::get_manager("guestOperationsManager");
-    my $authMgr = &VCenter::moref2view($guestOP->{authManager});
+    my $authMgr   = &VCenter::moref2view( $guestOP->{authManager} );
     my $guestAuth = NamePasswordAuthentication->new(
         username           => $guestusername,
         password           => $guestpassword,

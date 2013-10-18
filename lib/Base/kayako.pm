@@ -26,9 +26,9 @@ our $module_opts = {
     helper    => 'KAYAKO',
     functions => {
         info => {
-            function => \&info,
+            function        => \&info,
             vcenter_connect => 0,
-            opts     => {
+            opts            => {
                 ticket => {
                     type     => '=s',
                     help     => "Number of ticket to gather info",
