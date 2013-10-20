@@ -62,24 +62,11 @@ for my $template ( @{ &Support::get_keys('template') } ) {
         'pina', "Altername is changed for " . $view->name );
     diag("Testing list functions");
     my $name = $view->name;
-    output_like(
-        \&entity::list_disk,
-qr/^number=>'0',\skey=>'\d+',\ssize=>'\d+'\sKB,\spath=>'\[support\] $name\/$name.vmdk'$/,
-        qr/^$/,
-        "Listing disk information"
-    );
-    output_like(
-        \&entity::list_cdrom,
-        qr/^number=>'0', key=>'\d+', backing=>'Client Device', label=>'[^']*'$/,
-        qr/^$/,
-        "Listing cdrom information"
-    );
-    output_like(
-        \&entity::list_interface,
-qr/^number=>'0', key=>'\d+', mac=>'([0-9A-F]{2}:){5}[0-9A-F]{2}', interface=>'[^']*', type=>'[^']*', label=>'Network adapter 1'/,
-        qr/^$/,
-        "Listing network information"
-    );
+    &Opts::add_options( %{ $entity::module_opts->{functions}->{list}->{functions}->{disk} ->{opts} });
+    &Opts::set_option( "noheader", 1 );
+    output_like( \&entity::list_disk, qr/^\s*0\s*\d+\s*\d+\s\[support\] $name\/$name.vmdk\s*$/, qr/^$/, "Listing disk information");
+    output_like( \&entity::list_cdrom, qr/^\s*0\s*\d+\s*Client_Device\s*CD\/DVD drive 1\s*$/, qr/^$/, "Listing cdrom information");
+    output_like( \&entity::list_interface, qr/^\s*0\s*\d+\s*([0-9A-F]{2}:){5}[0-9A-F]{2}\s*Network adapter 1\s*\S*\s*$/, qr/^$/, "Listing network information");
     throws_ok { &entity::list_snapshot() } 'Entity::Snapshot',
       "list_snapshot throws exception";
     diag("Testing add functions");
@@ -90,12 +77,7 @@ qr/^number=>'0', key=>'\d+', mac=>'([0-9A-F]{2}:){5}[0-9A-F]{2}', interface=>'[^
         '4', "There are 4 cdroms on machine" );
     throws_ok { &entity::add_cdrom } 'Entity::HWError',
       "Add cdrom throws exception if no free controller is found";
-    &Opts::add_options(
-        %{
-            $entity::module_opts->{functions}->{add}->{functions}->{disk}
-              ->{opts}
-        }
-    );
+    &Opts::add_options( %{ $entity::module_opts->{functions}->{add}->{functions}->{disk} ->{opts} });
     &Opts::set_option( "size", "1" );
     is( &entity::add_disk, 1, "Add disk 2 returned success" );
     is( &entity::add_disk, 1, "Add disk 3 returned success" );

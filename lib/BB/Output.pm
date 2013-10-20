@@ -185,10 +185,12 @@ sub print {
         &Log::debug("Printing from table");
         $tbh->load;
         print $tbh;
+        undef $tbh;
     }
     elsif ( defined $csv ) {
         &Log::debug("Printing from csv");
         $csv->print;
+        undef $csv;
     }
     &Log::debug("Finishing Output::print sub");
     return 1;
