@@ -403,7 +403,7 @@ True on success
 
 =head3 THROWS
 
-Vcenter::Opts if unkown option passed
+Vcenter::Opts if unknown option passed
 
 =head3 COMMENTS
 

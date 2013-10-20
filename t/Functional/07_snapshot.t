@@ -9,7 +9,7 @@ use FindBin;
 use lib "$FindBin::Bin/../../lib/";
 use lib "$FindBin::Bin/../../vmware_lib/";
 use BB::Common;
-use BB::Test;
+use SAMU_Test::Test;
 use Base::entity;
 
 BEGIN {
