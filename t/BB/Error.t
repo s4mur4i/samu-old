@@ -15,7 +15,7 @@ my %tested;
 my %file;
 open(my $fh, "<", "$FindBin::Bin/../../lib/BB/Error.pm");
 while ( my $line = <$fh>) {
-    if ( $line =~ /^\s*'([^']*)'\s*=>\s*{\s*$/ ) {
+    if ( $line =~ /^\s*'([^']*)'\s*=>\s*{\s*/ ) {
         $file{$1} = 1;
     }
 }
@@ -23,9 +23,11 @@ diag("Parsed Error.pm for all used exceptions");
 close $fh;
 diag("Throwing all exceptions");
 ###
+$tested{'BaseException'}=1;
 eval { BaseException->throw(); };
 stderr_like( sub { &Error::catch_ex($@) }, qr/^Error.pm\s\[CRITICAL\]:\sI'm blue and I'm a WTF.+;/, "Base Exception for all exceptions output");
 ###
+$tested{'Template'}=1;
 eval { Template->throw( error => 'test', template => 'test' ); };
 combined_like( sub { &Error::catch_ex($@) }, qr/^Error.pm\s\[CRITICAL\]:\sI'm blue and I'm a WTF.....;/, "Template Base exception");
 ###
@@ -84,22 +86,22 @@ throws_ok { Entity::Mac->throw( error  => 'test', entity => 'test', mac    => '0
 eval { Entity::Mac->throw( error => 'test1', entity => 'test2', mac => 'test3' ); };
 stderr_like( sub { &Error::catch_ex($@) }, qr/^Error.pm\s\[CRITICAL\]:\sDesc=>'test1',entity=>'test2',mac=>'test3';$/, "Entity Mac exception output");
 ###
-$tested{'VCenter::ServiceContent'}=1;
+$tested{'Vcenter::ServiceContent'}=1;
 throws_ok { Vcenter::ServiceContent->throw( error => 'test' ) } 'Vcenter::ServiceContent', 'VCenter Service Content Exception';
 eval { Vcenter::ServiceContent->throw( error => 'test' ); };
 stderr_like( sub { &Error::catch_ex($@) }, qr/^Error.pm\s\[CRITICAL\]:\sDesc=>'test';$/, "VCenter ServiceContent exception output");
 ###
-$tested{'VCenter::Path'}=1;
+$tested{'Vcenter::Path'}=1;
 throws_ok { Vcenter::Path->throw( error => 'test', path => '/path/to/inventory' ); } 'Vcenter::Path', 'VCenter Path Exception';
 eval { Vcenter::Path->throw( error => 'test', path => '/some/path/to/gold' ); };
 stderr_like( sub { &Error::catch_ex($@) }, qr/^Error.pm\s\[CRITICAL\]:\sDesc=>'test',path=>'\/some\/path\/to\/gold';$/, "VCenter Path exception output");
 ###
-$tested{'VCenter::Opts'}=1;
+$tested{'Vcenter::Opts'}=1;
 throws_ok { Vcenter::Opts->throw( error => 'test', opt => 'test1' ); } 'Vcenter::Opts', 'VCenter Opts Exception';
 eval { Vcenter::Opts->throw( error => 'test', opt => 'test2' ); };
 stderr_like( sub { &Error::catch_ex($@) }, qr/^Error.pm\s\[CRITICAL\]:\sDesc=>'test',opt=>'test2';$/, "VCenter Opts exception output");
 ###
-$tested{'VCenter::Status'}=1;
+$tested{'Template::Status'}=1;
 throws_ok { Template::Status->throw( error => 'test', template => 'test' ) } 'Template::Status', 'Template Status Exception';
 eval { Template::Status->throw( error => 'test', template => 'template' ); };
 stderr_like( sub { &Error::catch_ex($@) }, qr/^Error.pm\s\[CRITICAL\]:\sDesc=>'test',template=>'template';$/, "Template Status exception output");
@@ -124,4 +126,17 @@ throws_ok { TaskEr::Error->throw( error => 'test', detail => 'test', fault => 't
 eval { TaskEr::Error->throw( error  => 'test1', fault  => 'test2', detail => 'test3'); };
 stderr_like( sub { &Error::catch_ex($@) }, qr/^Error.pm\s\[CRITICAL\]:\sDesc=>'test1',detail=>'test3',fault=>'test2';$/, "TaskEr Error exception output");
 ###
+$tested{'Vcenter::Module'}=1;
+throws_ok { Vcenter::Module->throw( error => 'test', module => 'test' ); } 'Vcenter::Module', 'Vcenter Module Exception';
+eval { Vcenter::Module->throw( error  => 'test1', module  => 'test2'); };
+stderr_like( sub { &Error::catch_ex($@) }, qr/^Error.pm\s\[CRITICAL\]:\sDesc=>'test1',module=>'test2';$/, "Vcenter Module exception output");
+###
+diag("Testing if every Exception is tested from file");
+for my $ex ( keys %tested ) {
+    is( $file{$ex}, 1, "$ex is in file");
+}
+diag("Reverse test");
+for my $ex ( keys %file) {
+    is( $tested{$ex}, 1, "$ex is tested" );
+}
 done_testing();
