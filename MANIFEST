@@ -33,6 +33,7 @@ lib/Base/network.pm
 lib/Base/ticket.pm
 lib/BB/Bugzilla.pm
 lib/BB/Common.pm
+lib/BB/Dokuwiki.pm
 lib/BB/Error.pm
 lib/BB/Guest.pm
 lib/BB/Kayako.pm
@@ -49,7 +50,6 @@ MANIFEST			This list of files
 README
 samu.pl
 t/01_common.t
-t/02_dns.t
 t/03_grammer_naci.t
 t/04_files.t
 t/05_ascii.t
@@ -60,6 +60,7 @@ t/09_modules.t
 t/Base/admin.t
 t/Base/bugzilla.t
 t/Base/datastore.t
+t/Base/devel.t
 t/Base/entity.t
 t/Base/kayako.t
 t/Base/misc.t
@@ -67,6 +68,7 @@ t/Base/network.t
 t/Base/ticket.t
 t/BB/Bugzilla.t
 t/BB/Common.t
+t/BB/Dokuwiki.t
 t/BB/Error.t
 t/BB/Guest.t
 t/BB/Kayako.t
@@ -83,6 +85,7 @@ t/BB/Log_7.t
 t/BB/Log_8.t
 t/BB/Log_9.t
 t/BB/Misc.t
+t/BB/Output.t
 t/BB/Support.t
 t/BB/VCenter.t
 t/Functional/01_vcenter.t
@@ -92,10 +95,14 @@ t/Functional/04_cleanup.t
 t/Functional/05_clone.t
 t/Functional/06_ticket.t
 t/Functional/07_snapshot.t
+t/Functional/08_dns.t
+t/Pod/Dokuwiki.t
 t/Pod/Pod_coverage.t
 t/Pod/Pod_doc.t
 t/Pod/Pod_subs.t
 t/Pod/Pod_syntax.t
+t/SAMU_Test/Common.t
+t/SAMU_Test/Test.t
 t/Templates/main.t
 t/VMware/VIRuntime.t
 vmware_lib/VMware/VICommon.pm
