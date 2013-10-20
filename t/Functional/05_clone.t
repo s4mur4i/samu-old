@@ -65,7 +65,7 @@ for my $template ( @{ &Support::get_keys('template') } ) {
     &Opts::add_options( %{ $entity::module_opts->{functions}->{list}->{functions}->{disk} ->{opts} });
     &Opts::set_option( "noheader", 1 );
     output_like( \&entity::list_disk, qr/^\s*0\s*\d+\s*\d+\s\[support\] $name\/$name.vmdk\s*$/, qr/^$/, "Listing disk information");
-    output_like( \&entity::list_cdrom, qr/^\s*0\s*\d+\s*Client_Device\s*CD\/DVD drive 1\s*$/, qr/^$/, "Listing cdrom information");
+    output_like( \&entity::list_cdrom, qr/^\s*0\s*\d+\s*Client_Device\s*CD\/DVD drive 1\s*/, qr/^$/, "Listing cdrom information");
     output_like( \&entity::list_interface, qr/^\s*0\s*\d+\s*([0-9A-F]{2}:){5}[0-9A-F]{2}\s*Network adapter 1\s*\S*\s*$/, qr/^$/, "Listing network information");
     throws_ok { &entity::list_snapshot() } 'Entity::Snapshot',
       "list_snapshot throws exception";
