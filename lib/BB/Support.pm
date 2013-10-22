@@ -178,12 +178,13 @@ my %template_hash = (
 my %agents_hash = (
     's4mur4i' => { mac => '02:01:20:' },
     'balage'  => { mac => '02:01:12:' },
-    'adrienn' => { mac => '02:01:19:' },
+    'adrienn' => { mac => '02:01:40:' },
     'varnyu'  => { mac => '02:01:19:' },
     'kkovari' => { mac => '02:01:00:' },
     'szaki'   => { mac => '02:01:00:' },
     'blehel'  => { mac => '02:01:00:' },
     'imre'    => { mac => '02:01:00:' },
+    'janos'   => { mac => '02:01:00:' },
 );
 
 my %map_hash = (
@@ -284,7 +285,9 @@ sub get_key_info {
     my ( $hash, $key ) = @_;
     &Log::debug("Starting Support::get_key_info sub");
     &Log::debug1("Opts are: hash=>'$hash', key=>'$key'");
-    if ( !grep /^$key$/, @{ &Support::get_keys($hash) } ) {
+
+    #if ( !grep /^$key$/, @{ &Support::get_keys($hash) } ) {
+    if ( !defined( $map_hash{$hash}->{$key} ) ) {
         Template::Status->throw(
             error    => 'Requested key info was not found',
             template => $key
