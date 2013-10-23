@@ -99,8 +99,6 @@ sub option_parser {
     if ( exists $opts->{module} ) {
         my $module = 'Base::' . $opts->{module};
         &Log::debug("loading module $module");
-
-        #eval "use $module";
         eval { load $module; };
         $module->import();
     }
