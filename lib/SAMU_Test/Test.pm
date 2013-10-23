@@ -3,6 +3,11 @@ package Test;
 use strict;
 use warnings;
 use FindBin;
+use Module::Load;
+use Test::More;
+use Data::Dumper;
+
+my $pod_hash = {};
 
 =pod
 
@@ -122,6 +127,158 @@ sub module_namespace {
     my @folder = grep { $_ ne '.' && $_ ne '..' } readdir $dir;
     closedir $dir;
     return \@folder;
+}
+
+sub traverse_opts {
+    my ( $opts, $path, $doc_path ) = @_;
+    if ( exists $opts->{helper} ) {
+        &Test::find_in_pod( $opts->{helper}, $doc_path );
+    }
+    if ( exists $opts->{module} ) {
+        my $module = 'Base::' . $opts->{module};
+        eval { load $module; };
+        my $ret = 0;
+        if ($@) {
+            $ret = 1;
+        }
+        is( $ret, 0, "$module loaded successfully" );
+    }
+    if ( exists $opts->{prereq_module} ) {
+        for my $module ( @{ $opts->{prereq_module} } ) {
+            eval { load $module; };
+            my $ret = 0;
+            if ($@) {
+                $ret = 1;
+            }
+            is( $ret, 0, "$module loaded successfully" );
+        }
+    }
+    if ( exists $opts->{function} ) {
+        my $func_ret = 0;
+        my $podname = join( "_", @$path ) . "_function";
+        if ( defined &{ $opts->{function} } ) {
+            $func_ret = 1;
+        }
+        is( $func_ret, 1, "$$path[-1] can be invoked" );
+        is( exists( $opts->{opts} ) // 0, 1, "$$path[-1] opts exists" );
+        for my $key ( keys $opts->{opts} ) {
+            &Test::find_in_pod( "$$path[0]_functions/$podname/OPTIONS/item/$key", $doc_path );
+            is( defined($opts->{opts}->{$key}->{type}),1,"$key has type defined");
+            is( defined($opts->{opts}->{$key}->{help}),1,"$key has help defined");
+            is( defined($opts->{opts}->{$key}->{required}),1,"$key has required defined");
+            is( defined($opts->{opts}->{$key}->{default}),1,"$key has default defined");
+        }
+        &Test::find_in_pod( "$$path[0]_functions/$podname/SYNOPSIS", $doc_path );
+        is( exists( $opts->{vcenter_connect} ) // 0,
+            1, "Vcenter_connect exists" );
+        &Test::find_in_pod( "$$path[0]_functions/$podname", $doc_path );
+    }
+    if ( exists $opts->{functions} ) {
+        is(defined($opts->{helper}), 1, "Functions has helper defined" );
+        for my $key ( keys $opts->{functions} ) {
+            push( @$path, $key );
+            my $podname = join( "_", @$path ) . "_function";
+            &Test::find_in_pod( "$$path[0]_functions/$podname", $doc_path );
+            &Test::traverse_opts( $opts->{functions}->{$key}, $path );
+        }
+    }
+    pop(@$path);
+}
+
+sub parse_pod {
+    my ($file) = @_;
+    open( my $fh, "<", $file ) or die "Could not open file";
+    my @path;
+    while ( my $line = <$fh> ) {
+        if ( $line =~ /^=head1\s(.*)\s*$/ ) {
+            $pod_hash->{$1} = {};
+            @path = ($1);
+        }
+        if ( $line =~ /^=head2\s(.*)\s*$/ ) {
+            while ( scalar(@path) gt 1 ) {
+                pop @path;
+            }
+            push( @path, $1 );
+            $pod_hash->{ $path[0] }->{$1} = {};
+        }
+        if ( $line =~ /^=head3\s(.*)\s*$/ ) {
+            while ( scalar(@path) gt 2 ) {
+                pop @path;
+            }
+            push( @path, $1 );
+            $pod_hash->{ $path[0] }->{ $path[1] }->{$1} = {};
+
+        }
+        if ( $line =~ /^=head4\s(.*)\s$/ ) {
+            while ( scalar(@path) gt 3 ) {
+                pop @path;
+            }
+            push( @path, $1 );
+            $pod_hash->{ $path[0] }->{ $path[1] }->{ $path[2] }->{$1} = {};
+        }
+        if ( $line =~ /^=over\s*$/ ) {
+            if ( scalar(@path) eq 1 ) {
+                $pod_hash->{ $path[0] }->{item} = {};
+            }
+            elsif ( scalar(@path) eq 2 ) {
+                $pod_hash->{ $path[0] }->{ $path[1] }->{item} = {};
+            }
+            elsif ( scalar(@path) eq 3 ) {
+                $pod_hash->{ $path[0] }->{ $path[1] }->{ $path[2] }->{item} =
+                  {};
+            }
+            elsif ( scalar(@path) eq 4 ) {
+                $pod_hash->{ $path[0] }->{ $path[1] }->{ $path[2] }
+                  ->{ $path[3] }->{item} = {};
+            }
+        }
+        if ( $line =~ /^=item\s*(.*)\s*$/ ) {
+            if ( scalar(@path) eq 1 ) {
+                $pod_hash->{ $path[0] }->{item}->{$1} = 1;
+            }
+            elsif ( scalar(@path) eq 2 ) {
+                $pod_hash->{ $path[0] }->{ $path[1] }->{item}->{$1} = 1;
+            }
+            elsif ( scalar(@path) eq 3 ) {
+                $pod_hash->{ $path[0] }->{ $path[1] }->{ $path[2] }->{item}
+                  ->{$1} = 1;
+            }
+            elsif ( scalar(@path) eq 4 ) {
+                $pod_hash->{ $path[0] }->{ $path[1] }->{ $path[2] }
+                  ->{ $path[3] }->{item}->{$1} = 1;
+            }
+        }
+    }
+    close $fh;
+}
+
+sub find_in_pod {
+    my ( $path, $doc_path ) = @_;
+    diag("path=>'$path'");
+    my @helper = split( "/", $path );
+    if ( scalar(%$pod_hash) eq 0 ) {
+        &Test::parse_pod($doc_path);
+    }
+    is( exists( $pod_hash->{ $helper[0] } ), 1, "$helper[0] is in pod" );
+    if ( scalar(@helper) eq 2 ) {
+        is( exists( $pod_hash->{ $helper[0] }->{ $helper[1] } ),
+            1, "$helper[1] is in pod" );
+    }
+    elsif ( scalar(@helper) eq 3 ) {
+        is( exists( $pod_hash->{ $helper[0] }->{ $helper[1] } ), 1, "$helper[1] is in pod" );
+        is( exists( $pod_hash->{ $helper[0] }->{ $helper[1] }->{ $helper[2] } ), 1, "$helper[2] is in pod");
+    }
+    elsif ( scalar(@helper) eq 4 ) {
+        is( exists( $pod_hash->{ $helper[0] }->{ $helper[1] } ), 1, "$helper[1] is in pod" );
+        is( exists( $pod_hash->{ $helper[0] }->{ $helper[1] }->{ $helper[2] } ), 1, "$helper[2] is in pod");
+        is( exists( $pod_hash->{ $helper[0] }->{ $helper[1] }->{ $helper[2] } ->{ $helper[3] }), 1, "$helper[3] is in pod");
+    }
+    elsif ( scalar(@helper) eq 5 ) {
+        is( exists( $pod_hash->{ $helper[0] }->{ $helper[1] } ), 1, "$helper[1] is in pod" );
+        is( exists( $pod_hash->{ $helper[0] }->{ $helper[1] }->{ $helper[2] } ), 1, "$helper[2] is in pod");
+        is( exists( $pod_hash->{ $helper[0] }->{ $helper[1]}->{ $helper[2] } ->{ $helper[3] }), 1, "$helper[3] is in pod");
+        is( exists( $pod_hash->{ $helper[0] }->{ $helper[1]}->{ $helper[2] } ->{ $helper[3] }->{ $helper[4] }), 1, "$helper[4] is in pod");
+    }
 }
 
 1
