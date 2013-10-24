@@ -11,5 +11,5 @@ BEGIN { use_ok('Base::admin'); }
 
 my $module = &admin::module_opts;
 &Test::traverse_opts( $module, ["ADMIN"], "$FindBin::Bin/../../doc/main.pod" );
-&Test::parse_pod("$FindBin::Bin/../../doc/main.pod");
+&Test::verify_complete( "admin");
 done_testing;

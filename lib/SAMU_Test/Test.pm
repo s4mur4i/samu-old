@@ -8,6 +8,7 @@ use Test::More;
 use Data::Dumper;
 
 my $pod_hash = {};
+my $autocomplete = {};
 
 =pod
 
@@ -134,6 +135,9 @@ sub traverse_opts {
     if ( exists $opts->{helper} ) {
         &Test::find_in_pod( $opts->{helper}, $doc_path );
     }
+    if ( scalar(%$autocomplete) eq 0 ) {
+        &Test::parse_autocomplete("$FindBin::Bin/../../bash_completion/samu");
+    }
     if ( exists $opts->{module} ) {
         my $module = 'Base::' . $opts->{module};
         eval { load $module; };
@@ -161,20 +165,29 @@ sub traverse_opts {
         }
         is( $func_ret, 1, "$$path[-1] can be invoked" );
         is( exists( $opts->{opts} ) // 0, 1, "$$path[-1] opts exists" );
+        my $compname = lc( join( "_", @$path ));
         for my $key ( keys $opts->{opts} ) {
             &Test::find_in_pod( "$$path[0]_functions/$podname/OPTIONS/item/$key", $doc_path );
             is( defined($opts->{opts}->{$key}->{type}),1,"$key has type defined");
             is( defined($opts->{opts}->{$key}->{help}),1,"$key has help defined");
             is( defined($opts->{opts}->{$key}->{required}),1,"$key has required defined");
             is( defined($opts->{opts}->{$key}->{default}),1,"$key has default defined");
+            is( defined($autocomplete->{$compname}->{$key}),1,"$compname has $key opt");
+            $autocomplete->{$compname}->{$key} = 0;
+        }
+        my $items = &Test::return_pod_hash( "$$path[0]_functions/$podname/OPTIONS/item", $doc_path);
+        for my $item (keys %$items) {
+            is( defined($opts->{opts}->{$item}), 1, "$item is defined in module opts");
         }
         &Test::find_in_pod( "$$path[0]_functions/$podname/SYNOPSIS", $doc_path );
         is( exists( $opts->{vcenter_connect} ) // 0,
             1, "Vcenter_connect exists" );
         &Test::find_in_pod( "$$path[0]_functions/$podname", $doc_path );
+        is(defined($opts->{helper}), 0, "Function has no helper defined" );
+    } else {
+        is(defined($opts->{helper}), 1, "Functions has helper defined" );
     }
     if ( exists $opts->{functions} ) {
-        is(defined($opts->{helper}), 1, "Functions has helper defined" );
         for my $key ( keys $opts->{functions} ) {
             push( @$path, $key );
             my $podname = join( "_", @$path ) . "_function";
@@ -183,6 +196,43 @@ sub traverse_opts {
         }
     }
     pop(@$path);
+    #use Data::Dumper;
+    #diag( Dumper $autocomplete);
+}
+
+sub parse_autocomplete {
+    my ( $file ) = @_;
+    open ( my $fh, "<", $file) or die "Could not open completion file";
+    while ( my $line = <$fh>) {
+        if ( $line =~ /^\s*([^_ ][^=]*)="([^"]*)"\s$/ ) {
+            if ( $1 =~ /sdk_opts|cur_opt|default_opts|opt_var|cur|helper_opts|local varname/) {
+                next;
+            }
+            my $val = $1;
+            $autocomplete->{$val} = {};
+            for my $element ( split(" ", $2) ) {
+                if ( $element =~ /^\s*-{1,2}(.*)\s*$/) {
+                    $element = $1;
+                }
+                $autocomplete->{$val}->{$element} = 1;
+            }
+        } elsif ( $line =~ /^\s*_([^ =]*)_options="([^"]*)"\s$/) {
+            my $val = $1;
+            $autocomplete->{$val}->{OPTIONS} = 1;
+            for my $opt ( split(" ",$2) ) {
+                if ( $opt =~ /^\${([^}]*)}$/) {
+                    $opt = $1;
+                }
+                if ( !defined($autocomplete->{$val}->{OPTS}) ) {
+                    $autocomplete->{$val}->{OPTS} ={};
+                }
+                $autocomplete->{$val}->{OPTS}->{$opt} = 1;
+            }
+        }
+    }
+    #use Data::Dumper;
+    #diag(Dumper $autocomplete);
+    close $fh;
 }
 
 sub parse_pod {
@@ -254,7 +304,7 @@ sub parse_pod {
 
 sub find_in_pod {
     my ( $path, $doc_path ) = @_;
-    diag("path=>'$path'");
+    #diag("path=>'$path'");
     my @helper = split( "/", $path );
     if ( scalar(%$pod_hash) eq 0 ) {
         &Test::parse_pod($doc_path);
@@ -278,6 +328,50 @@ sub find_in_pod {
         is( exists( $pod_hash->{ $helper[0] }->{ $helper[1] }->{ $helper[2] } ), 1, "$helper[2] is in pod");
         is( exists( $pod_hash->{ $helper[0] }->{ $helper[1]}->{ $helper[2] } ->{ $helper[3] }), 1, "$helper[3] is in pod");
         is( exists( $pod_hash->{ $helper[0] }->{ $helper[1]}->{ $helper[2] } ->{ $helper[3] }->{ $helper[4] }), 1, "$helper[4] is in pod");
+    }
+}
+
+sub return_pod_hash {
+    my ( $path, $doc_path ) = @_;
+    my @helper = split( "/", $path );
+    if ( scalar(%$pod_hash) eq 0 ) {
+        &Test::parse_pod($doc_path);
+    }
+    my $ret;
+    if ( scalar(@helper) eq 0 ) {
+        die "ERROR";
+    } elsif ( scalar(@helper) eq 1) {
+        return $pod_hash->{$helper[0]};
+    } elsif( scalar(@helper) eq 2) {
+        return $pod_hash->{$helper[0]}->{$helper[1]};
+    } elsif( scalar(@helper) eq 3) {
+        return $pod_hash->{$helper[0]}->{$helper[1]}->{$helper[2]};
+    } elsif( scalar(@helper) eq 4) {
+        return $pod_hash->{$helper[0]}->{$helper[1]}->{$helper[2]}->{$helper[3]};
+    } elsif( scalar(@helper) eq 5) {
+        return $pod_hash->{$helper[0]}->{$helper[1]}->{$helper[2]}->{$helper[3]}->{$helper[4]};
+    } elsif( scalar(@helper) eq 6) {
+        return $pod_hash->{$helper[0]}->{$helper[1]}->{$helper[2]}->{$helper[3]}->{$helper[4]}->{$helper[5]};
+    }
+    die "There was no match, die";
+}
+
+sub verify_complete {
+    my ( $module ) = @_;
+    $module = lc($module);
+    for my $key ( keys %$autocomplete) {
+        if ( $key !~ /^$module/) {
+            next;
+        }
+        is( $autocomplete->{$key}->{OPTIONS}, 1, "$key has options defined in bash autocompletion");
+        $autocomplete->{$key}->{OPTIONS} = 0;
+        is( defined($autocomplete->{$key}->{OPTS}->{$key}), 1, "_ part of options in autocomplete has itself");
+        is( $autocomplete->{$key}->{OPTS}->{sdk_opts}, 1, "_ part of options in autocomplete has sdk_opts");
+        is( scalar(keys $autocomplete->{$key}->{OPTS}), 2,"_ part has 2 elements");
+        $autocomplete->{$key}->{OPTS} = 0;
+        for my $elem ( keys $autocomplete->{$key}) {
+            is( $autocomplete->{$key}->{$elem},0,"$elem in $key is tested");
+        }
     }
 }
 
