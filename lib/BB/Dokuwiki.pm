@@ -60,6 +60,10 @@ Connection::Connect if connection is unsuccesful
 
 =head2 TEST COVERAGE
 
+Testing if incorrect attribute throws exception
+Testing if correct logons create connect object
+Testing if second correct logon throws exception
+
 =cut
 
 sub connect {
@@ -78,6 +82,7 @@ sub connect {
             &Log::debug("Dokuwiki Login succesful");
         }
         else {
+            undef $client;
             Connection::Connect->throw(
                 error => 'Server/Username/Password error',
                 type  => 'Dokuwiki',
@@ -128,6 +133,10 @@ Connection::Connect if there is no valid connection to the server
 
 =head2 TEST COVERAGE
 
+Testing if correct getVersion returns valid output
+Testing if incorrect request returns object
+Testing if no connect object exists an exception is thrown
+
 =cut
 
 sub request {
@@ -149,6 +158,10 @@ sub request {
     }
     &Log::debug("Finishing Dokuwiki::request sub");
     return $res->value;
+}
+
+sub return_client {
+    return $client;
 }
 
 1

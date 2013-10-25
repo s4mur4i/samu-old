@@ -176,7 +176,7 @@ my %template_hash = (
 );
 
 my %agents_hash = (
-    's4mur4i' => { mac => '02:01:20:' },
+    's4mur4i' => { mac => '02:01:20:', ip => '10.21.32.' },
     'balage'  => { mac => '02:01:12:' },
     'adrienn' => { mac => '02:01:40:' },
     'varnyu'  => { mac => '02:01:19:' },
@@ -184,7 +184,7 @@ my %agents_hash = (
     'szaki'   => { mac => '02:01:00:' },
     'blehel'  => { mac => '02:01:00:' },
     'imre'    => { mac => '02:01:00:' },
-    'janos'   => { mac => '02:01:00:' },
+    'janos'   => { mac => '02:01:5F:', ip => '10.21.95.' },
 );
 
 my %map_hash = (
