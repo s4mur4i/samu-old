@@ -235,13 +235,13 @@ our $module_opts = {
         delete => {
             helper    => 'VM_functions/VM_delete_function',
             functions => {
-                cdrom => {
-                    function        => \&delete_cdrom,
+                hw => {
+                    function        => \&delete_hw,
                     vcenter_connect => 1,
                     opts            => {
                         vmname => {
                             type     => "=s",
-                            help     => "Which VMs cdrom to list",
+                            help     => "Name of virtual machine",
                             required => 1,
                             default => "",
                         },
@@ -251,39 +251,9 @@ our $module_opts = {
                             required => 1,
                             default => "",
                         },
-                    },
-                },
-                interface => {
-                    function        => \&delete_interface,
-                    vcenter_connect => 1,
-                    opts            => {
-                        vmname => {
-                            type     => "=s",
-                            help     => "Which VMs cdrom to list",
-                            required => 1,
-                            default => "",
-                        },
-                        id => {
-                            type     => "=s",
-                            help     => "Which device to delete",
-                            required => 1,
-                            default => "",
-                        },
-                    },
-                },
-                disk => {
-                    function        => \&delete_disk,
-                    vcenter_connect => 1,
-                    opts            => {
-                        vmname => {
-                            type     => "=s",
-                            help     => "Which VMs cdrom to list",
-                            required => 1,
-                            default => "",
-                        },
-                        id => {
-                            type     => "=s",
-                            help     => "Which device to delete",
+                        hw => {
+                            type => "=s",
+                            help => "What hw to delete",
                             required => 1,
                             default => "",
                         },
@@ -1892,112 +1862,62 @@ sub delete_snapshot {
 
 =pod
 
-=head2 delete_cdrom
+=head1 delete_hw
 
-=head3 PURPOSE
+=head2 PURPOSE
 
+Deletes the requested hw
 
-
-=head3 PARAMETERS
-
-=over
-
-=back
-
-=head3 RETURNS
-
-=head3 DESCRIPTION
-
-=head3 THROWS
-
-=head3 COMMENTS
-
-=head3 TEST COVERAGE
-
-=cut
-
-sub delete_cdrom {
-    &Log::debug("Starting Entity::delete_cdrom sub");
-    my $vmname = &Opts::get_option('vmname');
-    my $id     = &Opts::get_option('id');
-    &Log::debug1("Opts are: vmname=>'$vmname', id=>'$id'");
-    my @cdrom_hw = @{ &Guest::get_hw( $vmname, 'VirtualCdrom' ) };
-    &Guest::remove_hw( $vmname, $cdrom_hw[$id] );
-    &Log::debug("Finishing Entity::delete_cdrom sub");
-    return 1;
-}
-
-=pod
-
-=head2 delete_disk
-
-=head3 PURPOSE
-
-
-
-=head3 PARAMETERS
+=head2 PARAMETERS
 
 =over
 
-=back
+=item vmname
 
-=head3 RETURNS
+Name of virtual machine
 
-=head3 DESCRIPTION
+=item hw
 
-=head3 THROWS
+Type of Hardware. Cane be interface/cdrom/disk
 
-=head3 COMMENTS
+=item id
 
-=head3 TEST COVERAGE
-
-=cut
-
-sub delete_disk {
-    &Log::debug("Starting Entity::delete_disk sub");
-    my $vmname = &Opts::get_option('vmname');
-    my $id     = &Opts::get_option('id');
-    &Log::debug1("Opts are: vmname=>'$vmname', id=>'$id'");
-    my @disk_hw = @{ &Guest::get_hw( $vmname, 'VirtualDisk' ) };
-    &Guest::remove_hw( $vmname, $disk_hw[$id] );
-    &Log::debug("Finishing Entity::delete_disk sub");
-    return 1;
-}
-
-=pod
-
-=head2 delete_interface
-
-=head3 PURPOSE
-
-
-
-=head3 PARAMETERS
-
-=over
+Number of hardware to delete. This can be returned from list sub
 
 =back
 
-=head3 RETURNS
+=head2 RETURNS
 
-=head3 DESCRIPTION
+True on success
 
-=head3 THROWS
+=head2 DESCRIPTION
 
-=head3 COMMENTS
+=head2 THROWS
 
-=head3 TEST COVERAGE
+=head2 COMMENTS
+
+=head2 TEST COVERAGE
 
 =cut
 
-sub delete_interface {
-    &Log::debug("Starting Entity::delete_cdrom sub");
+sub delete_hw {
+    &Log::debug("Starting Entity::delete_hw sub");
     my $vmname = &Opts::get_option('vmname');
     my $id     = &Opts::get_option('id');
+    my $hw = &Opts::get_option('hw');
+    if ( $hw eq "interface") {
+        $hw = 'VirtualEthernetCard';
+    } elsif( $hw eq 'cdrom') {
+        $hw = 'VirtualCdrom';
+    } elsif( $hw eq 'disk') {
+        $hw = 'VirtualDisk';
+    } else {
+        Vcenter::Opts->throw( error => "Unknown HW requested to delete", opt => $hw );
+    }
     &Log::debug1("Opts are: vmname=>'$vmname', id=>'$id'");
-    my @net_hw = @{ &Guest::get_hw( $vmname, 'VirtualEthernetCard' ) };
+    my @net_hw = @{ &Guest::get_hw( $vmname, $hw ) };
     &Guest::remove_hw( $vmname, $net_hw[$id] );
-    &Log::debug("Finishing Entity::delete_cdrom sub");
+    &Log::debug("Finishing Entity::delete_hw sub");
     return 1;
 }
 

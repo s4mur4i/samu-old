@@ -848,17 +848,9 @@ samu.pl vm delete [options] [function]
 
 =over
 
-=item cdrom
+=item hw
 
-Delete a cdrom drive to a virtual machine
-
-=item interface
-
-Delete a network interface to a virtual machine
-
-=item disk
-
-Delete a hard disk from a virtual machine
+Delete the requested hardware
 
 =item snapshot
 
@@ -878,11 +870,11 @@ Deletes a resourcepool
 
 =back
 
-=head2 VM_delete_cdrom_function
+=head2 VM_delete_hw_function
 
 =head3 SYNOPSIS
 
-samu.pl vm delete cdrom [options]
+samu.pl vm delete hw [options]
 
 =head3 OPTIONS
 
@@ -896,45 +888,9 @@ Name of virtual machine
 
 ID of cdrom to delete
 
-=back
+=item hw
 
-=head2 VM_delete_interface_function
-
-=head3 SYNOPSIS
-
-samu.pl vm delete interface [options]
-
-=head3 OPTIONS
-
-=over
-
-=item vmname
-
-Name of virtual machine
-
-=item id
-
-Id of interface to delete
-
-=back
-
-=head2 VM_delete_disk_function
-
-=head3 SYNOPSIS
-
-samu.pl vm delete disk [options]
-
-=head3 OPTIONS
-
-=over
-
-=item vmname
-
-Name of virtual machine
-
-=item id
-
-Id of disk to delete
+Name of hw to delete. Cane be disk/cdrom/interface
 
 =back
 

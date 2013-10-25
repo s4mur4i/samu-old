@@ -30,10 +30,8 @@ _samu() {
     vm_add_folder="--name --parent"
     vm_add_resourcepool="--name --parent"
 
-    vm_delete="cdrom interface disk snapshot vm resourcepool folder"
-    vm_delete_cdrom="--vmname --id"
-    vm_delete_disk="--vmname --id"
-    vm_delete_interface="--vmname --id"
+    vm_delete="hw snapshot vm resourcepool folder"
+    vm_delete_hw="--vmname --id --hw"
     vm_delete_snapshot="--vmname --id --all"
     vm_delete_vm="--vmname"
     vm_delete_folder="--name"
@@ -130,9 +128,7 @@ _samu() {
     _vm_add_resourcepool_options="${vm_add_resourcepool} ${sdk_opts}"
 
     _vm_delete_options="${vm_delete}"
-    _vm_delete_cdrom_options="${vm_delete_cdrom} ${sdk_opts}"
-    _vm_delete_disk_options="${vm_delete_disk} ${sdk_opts}"
-    _vm_delete_interface_options="${vm_delete_interface} ${sdk_opts}"
+    _vm_delete_hw_options="${vm_delete_hw} ${sdk_opts}"
     _vm_delete_snapshot_options="${vm_delete_snapshot} ${sdk_opts}"
     _vm_delete_vm_options="${vm_delete_vm} ${sdk_opts}"
     _vm_delete_folder_options="${vm_delete_folder} ${sdk_opts}"
