@@ -64,6 +64,14 @@ samu.pl admin templates [options]
 
 =over
 
+=item output
+
+Type of output
+
+=item noheader
+
+Header row should be printed
+
 =back
 
 =head2 ADMIN_test_function
@@ -96,9 +104,27 @@ The POD file to transfer
 
 The output file
 
+=item page
+
+Pagename to upload to with namespace example a/b/c
+a/b is namespace
+c is pagename
+
+=item dokuuser
+
+The username to log into dokuwiki
+
+=item dokuserver
+
+The Dokuwiki server to use to log into. Defaults to Support server
+
+=item dokupass
+
+The password to use to log into dokuwiki
+
 =back
 
-=head2 ADMIN_list_functions
+=head2 ADMIN_list_function
 
 =head3 SYNOPSIS
 
@@ -146,6 +172,14 @@ List content of all folders
 
 List content of one folder
 
+=item output
+
+Type of output
+
+=item noheader
+
+Header row should be printed
+
 =back
 
 =head2 ADMIN_list_resourcepool_function
@@ -170,13 +204,21 @@ List all resourcepool information
 
 List information of only one requested resourcepool
 
+=item output
+
+Type of output
+
+=item noheader
+
+Header information should be printed
+
 =back
 
-=head2 ADMIN_list_linked_clone_function
+=head2 ADMIN_list_linked_clones_function
 
 =head3 SYNOPSIS
 
-samu.pl admin list linked_clone [options]
+samu.pl admin list linked_clones [options]
 
 =head3 OPTIONS
 

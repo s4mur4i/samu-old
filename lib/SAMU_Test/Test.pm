@@ -157,7 +157,9 @@ sub traverse_opts {
             is( $ret, 0, "$module loaded successfully" );
         }
     }
-    if ( exists $opts->{function} ) {
+    if ( exists $opts->{function}) {
+        #diag(Dumper $opts);
+        #diag(Dumper $path);
         my $func_ret = 0;
         my $podname = join( "_", @$path ) . "_function";
         if ( defined &{ $opts->{function} } ) {
@@ -180,24 +182,29 @@ sub traverse_opts {
             is( defined($opts->{opts}->{$item}), 1, "$item is defined in module opts");
         }
         &Test::find_in_pod( "$$path[0]_functions/$podname/SYNOPSIS", $doc_path );
-        is( exists( $opts->{vcenter_connect} ) // 0,
-            1, "Vcenter_connect exists" );
+        is( exists( $opts->{vcenter_connect} ) // 0, 1, "Vcenter_connect exists" );
+        if ( $opts->{vcenter_connect} ) {
+            is( $autocomplete->{$compname}->{OPTS}->{sdk_opts}, 1, "_ part of options in autocomplete has sdk_opts");
+            delete( $autocomplete->{$compname}->{OPTS}->{sdk_opts});
+        }
         &Test::find_in_pod( "$$path[0]_functions/$podname", $doc_path );
-        is(defined($opts->{helper}), 0, "Function has no helper defined" );
-    } else {
-        is(defined($opts->{helper}), 1, "Functions has helper defined" );
+        is(exists($opts->{helper}), '', "Function has no helper defined" );
     }
     if ( exists $opts->{functions} ) {
         for my $key ( keys $opts->{functions} ) {
+            is(defined($opts->{helper}), 1, "Functions has helper defined" );
+            if ( scalar(@$path) gt 1 ) {
+                my $podname = join( "_", @$path ) . "_function";
+                my $compname = lc( join( "_", @$path ));
+                &Test::find_in_pod( "$$path[0]_functions/$podname", $doc_path );
+                is( defined($autocomplete->{$compname}->{$key}),1,"$compname has $key opt");
+                $autocomplete->{$compname}->{$key} = 0;
+            }
             push( @$path, $key );
-            my $podname = join( "_", @$path ) . "_function";
-            &Test::find_in_pod( "$$path[0]_functions/$podname", $doc_path );
             &Test::traverse_opts( $opts->{functions}->{$key}, $path );
         }
     }
     pop(@$path);
-    #use Data::Dumper;
-    #diag( Dumper $autocomplete);
 }
 
 sub parse_autocomplete {
@@ -304,7 +311,7 @@ sub parse_pod {
 
 sub find_in_pod {
     my ( $path, $doc_path ) = @_;
-    #diag("path=>'$path'");
+    diag("path=>'$path'");
     my @helper = split( "/", $path );
     if ( scalar(%$pod_hash) eq 0 ) {
         &Test::parse_pod($doc_path);
@@ -360,19 +367,21 @@ sub verify_complete {
     my ( $module ) = @_;
     $module = lc($module);
     for my $key ( keys %$autocomplete) {
-        if ( $key !~ /^$module/) {
+        if ( $key !~ /^${module}_/) {
             next;
         }
         is( $autocomplete->{$key}->{OPTIONS}, 1, "$key has options defined in bash autocompletion");
         $autocomplete->{$key}->{OPTIONS} = 0;
-        is( defined($autocomplete->{$key}->{OPTS}->{$key}), 1, "_ part of options in autocomplete has itself");
-        is( $autocomplete->{$key}->{OPTS}->{sdk_opts}, 1, "_ part of options in autocomplete has sdk_opts");
-        is( scalar(keys $autocomplete->{$key}->{OPTS}), 2,"_ part has 2 elements");
+        is( defined($autocomplete->{$key}->{OPTS}->{$key}), 1, "$key _ part of options in autocomplete has itself");
+        is( scalar(keys $autocomplete->{$key}->{OPTS}), 1,"_ part has 1 element in autocomplete");
         $autocomplete->{$key}->{OPTS} = 0;
+        delete($autocomplete->{$key}->{OPTIONS});
+        delete($autocomplete->{$key}->{OPTS});
         for my $elem ( keys $autocomplete->{$key}) {
-            is( $autocomplete->{$key}->{$elem},0,"$elem in $key is tested");
+            is( $autocomplete->{$key}->{$elem},0,"$elem in $key is tested in autocomplete");
         }
     }
+    #diag( Dumper $autocomplete);
 }
 
 1

@@ -87,11 +87,11 @@ _samu() {
 
     admin_test=""
     admin_cleanup=""
-    admin_templates=""
-    admin_pod2wiki="--in --out"
+    admin_templates="--output --noheader"
+    admin_pod2wiki="--in --out --page --dokuuser --dokuserver --dokupass"
     admin_list="folder resourcepool linked_clones"
-    admin_list_folder="--all --name"
-    admin_list_resourcepool="--user --all --name"
+    admin_list_folder="--all --name --output --noheader"
+    admin_list_resourcepool="--user --all --name --output --noheader"
     admin_list_linked_clones="--template"
 
     network="create add delete list_switch list_dvp"
@@ -188,12 +188,12 @@ _samu() {
 
     _admin_test_options="${admin_test} ${sdk_opts}"
     _admin_cleanup_options="${admin_cleanup} ${sdk_opts}"
-    _admin_templates_options="${admin_templates} ${sdk_opts}"
-    _admin_pod2wiki_options="${admin_pod2wiki} ${sdk_opts}"
+    _admin_templates_options="${admin_templates}"
+    _admin_pod2wiki_options="${admin_pod2wiki}"
     _admin_list_options="${admin_list}"
     _admin_list_folder_options="${admin_list_folder} ${sdk_opts}"
     _admin_list_resourcepool_options="${admin_list_resourcepool} ${sdk_opts}"
-    _admin_list_linked_clones_options="${admin_list-linked_clones} ${sdk_opts}"
+    _admin_list_linked_clones_options="${admin_list_linked_clones} ${sdk_opts}"
 
 	i=1
 	cur_opt=""
