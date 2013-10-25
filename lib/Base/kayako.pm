@@ -33,6 +33,7 @@ our $module_opts = {
                     type     => '=s',
                     help     => "Number of ticket to gather info",
                     required => 1,
+                    default => "",
                 },
             },
         },
@@ -101,6 +102,40 @@ sub main {
     &Log::debug("Starting Kayako::main sub");
     &misc::option_parser( $module_opts, "main" );
     &Log::debug("Finishing Kayako::main sub");
+    return 1;
+}
+
+=pod
+
+=head1 info
+
+=head2 PURPOSE
+
+Gather information from kayako
+
+=head2 PARAMETERS
+
+=over
+
+=back
+
+=head2 RETURNS
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+TBD
+
+=head2 SEE ALSO
+
+=cut
+
+sub info {
+    &Log::debug("Starting kayako::info sub");
+    &Log::debug("Finishing kayako::info sub");
     return 1;
 }
 

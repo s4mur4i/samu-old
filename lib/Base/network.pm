@@ -31,11 +31,13 @@ our $module_opts = {
                     type     => "=s",
                     help     => "Ticket to add network to",
                     required => 1,
+                    default => "",
                 },
                 type => {
                     type     => "=s",
                     help     => "Type of network to add",
                     required => 1,
+                    default => "",
                 },
             },
         },
@@ -47,17 +49,20 @@ our $module_opts = {
                     type     => "=s",
                     help     => "Type of interface to create",
                     required => 1,
+                    default => "",
                 },
                 ticket => {
                     type     => "=s",
                     help     => "Ticket to add network to",
                     required => 1,
+                    default => "",
                 },
                 vms => {
                     type => "=s",
                     help =>
 "A comma seperated list of vms to add to interface, Ex: test1,test2,test3",
                     required => 1,
+                    default => "",
                 },
             },
         },
@@ -79,6 +84,7 @@ our $module_opts = {
                     type     => "=s",
                     help     => "Name of device to delete",
                     required => 1,
+                    default => "",
                 },
                 switch => {
                     type     => "",

@@ -154,7 +154,7 @@ sub traverse_opts {
             if ($@) {
                 $ret = 1;
             }
-            is( $ret, 0, "$module loaded successfully" );
+            is( $ret, 0, "$module loaded successfully in module opts" );
         }
     }
     if ( exists $opts->{function}) {
@@ -165,16 +165,16 @@ sub traverse_opts {
         if ( defined &{ $opts->{function} } ) {
             $func_ret = 1;
         }
-        is( $func_ret, 1, "$$path[-1] can be invoked" );
-        is( exists( $opts->{opts} ) // 0, 1, "$$path[-1] opts exists" );
+        is( $func_ret, 1, "$$path[-1] can be invoked in module opt" );
+        is( exists( $opts->{opts} ) // 0, 1, "$$path[-1] opts exists in module opts" );
         my $compname = lc( join( "_", @$path ));
         for my $key ( keys $opts->{opts} ) {
             &Test::find_in_pod( "$$path[0]_functions/$podname/OPTIONS/item/$key", $doc_path );
-            is( defined($opts->{opts}->{$key}->{type}),1,"$key has type defined");
-            is( defined($opts->{opts}->{$key}->{help}),1,"$key has help defined");
-            is( defined($opts->{opts}->{$key}->{required}),1,"$key has required defined");
-            is( defined($opts->{opts}->{$key}->{default}),1,"$key has default defined");
-            is( defined($autocomplete->{$compname}->{$key}),1,"$compname has $key opt");
+            is( defined($opts->{opts}->{$key}->{type}),1,"$key has type defined in module opts");
+            is( defined($opts->{opts}->{$key}->{help}),1,"$key has help defined in module opts");
+            is( defined($opts->{opts}->{$key}->{required}),1,"$key has required defined in module opts");
+            is( defined($opts->{opts}->{$key}->{default}),1,"$key has default defined in module opts");
+            is( defined($autocomplete->{$compname}->{$key}),1,"$compname has $key opt in autocomplete");
             $autocomplete->{$compname}->{$key} = 0;
         }
         my $items = &Test::return_pod_hash( "$$path[0]_functions/$podname/OPTIONS/item", $doc_path);
@@ -182,22 +182,22 @@ sub traverse_opts {
             is( defined($opts->{opts}->{$item}), 1, "$item is defined in module opts");
         }
         &Test::find_in_pod( "$$path[0]_functions/$podname/SYNOPSIS", $doc_path );
-        is( exists( $opts->{vcenter_connect} ) // 0, 1, "Vcenter_connect exists" );
+        is( exists( $opts->{vcenter_connect} ) // 0, 1, "Vcenter_connect exists in module opts" );
         if ( $opts->{vcenter_connect} ) {
             is( $autocomplete->{$compname}->{OPTS}->{sdk_opts}, 1, "_ part of options in autocomplete has sdk_opts");
             delete( $autocomplete->{$compname}->{OPTS}->{sdk_opts});
         }
         &Test::find_in_pod( "$$path[0]_functions/$podname", $doc_path );
-        is(exists($opts->{helper}), '', "Function has no helper defined" );
+        is(exists($opts->{helper}), '', "Function has no helper defined in module opts" );
     }
     if ( exists $opts->{functions} ) {
         for my $key ( keys $opts->{functions} ) {
-            is(defined($opts->{helper}), 1, "Functions has helper defined" );
+            is(defined($opts->{helper}), 1, "Functions has helper defined in module opts" );
             if ( scalar(@$path) gt 1 ) {
                 my $podname = join( "_", @$path ) . "_function";
                 my $compname = lc( join( "_", @$path ));
                 &Test::find_in_pod( "$$path[0]_functions/$podname", $doc_path );
-                is( defined($autocomplete->{$compname}->{$key}),1,"$compname has $key opt");
+                is( defined($autocomplete->{$compname}->{$key}),1,"$compname has $key opt in autocomplete");
                 $autocomplete->{$compname}->{$key} = 0;
             }
             push( @$path, $key );
@@ -374,7 +374,7 @@ sub verify_complete {
             is( scalar(keys $autocomplete->{$key}->{OPTS}), 1,"$key _ part has 1 element in autocomplete");
             delete($autocomplete->{$key}->{OPTS});
             for my $item ( keys $autocomplete->{$key}) {
-                is(defined($autocomplete->{"${module}_$item"}), 1,"$module has $item defined");
+                is(defined($autocomplete->{"${module}_$item"}), 1,"$module has $item defined in autocomplete");
             }
             next;
         }

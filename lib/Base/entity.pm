@@ -34,11 +34,13 @@ our $module_opts = {
                     help =>
                       "The ticket id the machine is going to be created for",
                     required => 1,
+                    default => "",
                 },
                 os_temp => {
                     type     => "=s",
                     help     => "The machine tempalte we want to use",
                     required => 1,
+                    default => "",
                 },
                 parent_pool => {
                     type     => "=s",
@@ -50,11 +52,13 @@ our $module_opts = {
                     type     => "=s",
                     help     => "Requested memory in MB",
                     required => 0,
+                    default => "",
                 },
                 cpu => {
                     type     => "=s",
                     help     => "Requested Core count for machine",
                     required => 0,
+                    default => "",
                 },
                 domain => {
                     type => "",
@@ -73,6 +77,7 @@ our $module_opts = {
                     type     => "=s",
                     help     => "Which machine to convert",
                     required => 1,
+                    default => "",
                 },
             },
         },
@@ -83,24 +88,28 @@ our $module_opts = {
                 dumper => {
                     function      => \&info_dumper,
                     prereq_module => [qw(Data::Dumper)],
+                    vcenter_connect => 1,
                     opts          => {
                         vmname => {
                             type => "=s",
                             help =>
                               "The vm's name which information should be dump",
                             required => 1,
+                            default => "",
                         },
                     },
                 },
                 runtime => {
                     function      => \&info_runtime,
                     prereq_module => [qw(Data::Dumper)],
+                    vcenter_connect => 1,
                     opts          => {
                         vmname => {
                             type => "=s",
                             help =>
                               "The vm's name which information should be dump",
                             required => 1,
+                            default => "",
                         },
                     }
                 },
@@ -117,6 +126,7 @@ our $module_opts = {
                             type => "=s",
                             help => "The vm's name where cdrom should be added",
                             required => 1,
+                            default => "",
                         },
                     },
                 },
@@ -129,6 +139,7 @@ our $module_opts = {
                             help =>
                               "The vm's name where interface should be added",
                             required => 1,
+                            default => "",
                         },
                         type => {
                             type => "=s",
@@ -136,6 +147,7 @@ our $module_opts = {
                               "Requested type of interface: E1000, Vmxnet",
                             required => 0,
                             default  => "E1000",
+                            default => "",
                         },
                     },
                 },
@@ -147,11 +159,13 @@ our $module_opts = {
                             type => "=s",
                             help => "The vm's name where disk should be added",
                             required => 1,
+                            default => "",
                         },
                         size => {
                             type     => "=s",
                             help     => "The size of the disk",
                             required => 1,
+                            default => "",
                         },
                     },
                 },
@@ -164,6 +178,7 @@ our $module_opts = {
                             help =>
                               "The vm's name where snapshot should be created",
                             required => 1,
+                            default => "",
                         },
                         snap_name => {
                             type     => "=s",
@@ -187,6 +202,7 @@ our $module_opts = {
                             type     => "=s",
                             help     => "Name of folder to create",
                             required => 1,
+                            default => "",
                         },
                         parent => {
                             type     => "=s",
@@ -204,6 +220,7 @@ our $module_opts = {
                             type     => "=s",
                             help     => "Name of folder to create",
                             required => 1,
+                            default => "",
                         },
                         parent => {
                             type     => "=s",
@@ -226,11 +243,13 @@ our $module_opts = {
                             type     => "=s",
                             help     => "Which VMs cdrom to list",
                             required => 1,
+                            default => "",
                         },
                         id => {
                             type     => "=s",
                             help     => "Which device to delete",
                             required => 1,
+                            default => "",
                         },
                     },
                 },
@@ -242,11 +261,13 @@ our $module_opts = {
                             type     => "=s",
                             help     => "Which VMs cdrom to list",
                             required => 1,
+                            default => "",
                         },
                         id => {
                             type     => "=s",
                             help     => "Which device to delete",
                             required => 1,
+                            default => "",
                         },
                     },
                 },
@@ -258,11 +279,13 @@ our $module_opts = {
                             type     => "=s",
                             help     => "Which VMs cdrom to list",
                             required => 1,
+                            default => "",
                         },
                         id => {
                             type     => "=s",
                             help     => "Which device to delete",
                             required => 1,
+                            default => "",
                         },
                     },
                 },
@@ -274,11 +297,13 @@ our $module_opts = {
                             type     => "=s",
                             help     => "Which VMs snapshot to delete",
                             required => 1,
+                            default => "",
                         },
                         id => {
                             type     => "=s",
                             help     => "Id of snapshot to delete",
                             required => 0,
+                            default => "",
                         },
                         all => {
                             type     => "",
@@ -296,6 +321,7 @@ our $module_opts = {
                             type     => "=s",
                             help     => "Name of vm to delete",
                             required => 1,
+                            default => "",
                         },
                     },
                 },
@@ -307,6 +333,7 @@ our $module_opts = {
                             type     => "=s",
                             help     => "Name of resource pool to delete",
                             required => 1,
+                            default => "",
                         },
                     },
                 },
@@ -318,6 +345,7 @@ our $module_opts = {
                             type     => "=s",
                             help     => "Name of folder to delete",
                             required => 1,
+                            default => "",
                         },
                     },
                 },
@@ -334,6 +362,7 @@ our $module_opts = {
                             type     => "=s",
                             help     => "Which VMs cdrom to list",
                             required => 1,
+                            default => "",
                         },
                         output => {
                             type     => "=s",
@@ -345,6 +374,7 @@ our $module_opts = {
                             type     => "",
                             help     => "Should header information be printed",
                             required => 0,
+                            default => "",
                         },
                     },
                 },
@@ -356,6 +386,7 @@ our $module_opts = {
                             type     => "=s",
                             help     => "Which VMs interface to list",
                             required => 1,
+                            default => "",
                         },
                         output => {
                             type     => "=s",
@@ -367,6 +398,7 @@ our $module_opts = {
                             type     => "",
                             help     => "Should header information be printed",
                             required => 0,
+                            default => "",
                         },
                     },
                 },
@@ -378,6 +410,7 @@ our $module_opts = {
                             type     => "=s",
                             help     => "Which VMs disk to list",
                             required => 1,
+                            default => "",
                         },
                         output => {
                             type     => "=s",
@@ -389,6 +422,7 @@ our $module_opts = {
                             type     => "",
                             help     => "Should header information be printed",
                             required => 0,
+                            default => 0,
                         },
                     },
                 },
@@ -400,6 +434,7 @@ our $module_opts = {
                             type     => "=s",
                             help     => "Name of vm to list snapshot",
                             required => 1,
+                            default => "",
                         },
                         output => {
                             type     => "=s",
@@ -411,6 +446,7 @@ our $module_opts = {
                             type     => "",
                             help     => "Should header information be printed",
                             required => 0,
+                            default => 0,
                         },
                     },
                 },
@@ -422,16 +458,19 @@ our $module_opts = {
                             type     => "=s",
                             help     => "Name of Virtual Machine",
                             required => 1,
+                            default => "",
                         },
                         guestusername => {
                             type     => "=s",
                             help     => "Username to authenticate with",
                             required => 0,
+                            default => "",
                         },
                         guestpassword => {
                             type     => "=s",
                             help     => "Password to authenticate with",
                             required => 0,
+                            default => "",
                         },
                         pid => {
                             type     => "=s",
@@ -449,6 +488,7 @@ our $module_opts = {
                             type     => "",
                             help     => "Should header information be printed",
                             required => 0,
+                            default => 0,
                         },
                     },
                 },
@@ -465,21 +505,25 @@ our $module_opts = {
                             type     => "=s",
                             help     => "Which VMs disk to list",
                             required => 1,
+                            default => "",
                         },
                         num => {
                             type     => "=s",
                             help     => "Which cdrom to change",
                             required => 1,
+                            default => "",
                         },
                         iso => {
                             type     => "=s",
                             help     => "Which iso to add",
                             required => 0,
+                            default => "",
                         },
                         unmount => {
                             type     => "",
                             help     => "Unmount and iso",
                             required => 0,
+                            default => 0,
                         },
                     },
                 },
@@ -491,11 +535,13 @@ our $module_opts = {
                             type     => "=s",
                             help     => "Name of vm",
                             required => 1,
+                            default => "",
                         },
                         num => {
                             type     => "=s",
                             help     => "Which interface to manage",
                             required => 1,
+                            default => "",
                         },
                         network => {
                             type     => "=s",
@@ -513,16 +559,19 @@ our $module_opts = {
                             type     => "=s",
                             help     => "Which VMs disk to change.",
                             required => 1,
+                            default => "",
                         },
                         num => {
                             type     => "=s",
                             help     => "Number of device",
                             required => 1,
+                            default => "",
                         },
                         size => {
                             type     => "=s",
                             help     => "Size of requested disk",
                             required => 1,
+                            default => "",
                         },
                     },
                 },
@@ -534,11 +583,13 @@ our $module_opts = {
                             type     => "=s",
                             help     => "Name of vm",
                             required => 1,
+                            default => "",
                         },
                         name => {
                             type     => "=s",
                             help     => "Name of new alternate name for vm",
                             required => 1,
+                            default => "",
                         },
                     },
                 },
@@ -550,11 +601,13 @@ our $module_opts = {
                             type     => "=s",
                             help     => "Name of vm",
                             required => 1,
+                            default => "",
                         },
                         id => {
                             type     => "=s",
                             help     => "ID of snapshot to revert to",
                             required => 1,
+                            default => "",
                         },
                     },
                 },
@@ -566,12 +619,14 @@ our $module_opts = {
                             type     => "=s",
                             help     => "Name of vm",
                             required => 1,
+                            default => "",
                         },
                         state => {
                             type => "=s",
                             help =>
 "What state should the vm be put in. Possible: on/off",
                             required => 1,
+                            default => "",
                         },
                     },
                 },
@@ -586,31 +641,37 @@ our $module_opts = {
                     type     => "=s",
                     help     => "Which VMs should be used for running command",
                     required => 1,
+                    default => "",
                 },
                 guestusername => {
                     type     => "=s",
                     help     => "Custom username for guest OS",
                     required => 0,
+                    default => "",
                 },
                 guestpassword => {
                     type     => "=s",
                     help     => "Custom password for guest OS",
                     required => 0,
+                    default => "",
                 },
                 prog => {
                     type     => "=s",
                     help     => "Full path for program to run",
                     required => 1,
+                    default => "",
                 },
                 prog_arg => {
                     type     => "=s",
                     help     => "Arguments to program",
                     required => 1,
+                    default => "",
                 },
                 workdir => {
                     type     => "=s",
                     help     => "Working directory to run program in",
                     required => 1,
+                    default => "",
                 },
                 env => {
                     type     => "=s",
@@ -629,31 +690,37 @@ our $module_opts = {
                     type     => "=s",
                     help     => "Diretion of transfer, Values: to/from",
                     required => 1,
+                    default => "",
                 },
                 vmname => {
                     type     => "=s",
                     help     => "Which VMs should be used for transfer",
                     required => 1,
+                    default => "",
                 },
                 guestusername => {
                     type     => "=s",
                     help     => "Custom username for guest OS",
                     required => 0,
+                    default => "",
                 },
                 guestpassword => {
                     type     => "=s",
                     help     => "Custom password for guest OS",
                     required => 0,
+                    default => "",
                 },
                 source => {
                     type     => "=s",
                     help     => "Source of file",
                     required => 1,
+                    default => "",
                 },
                 dest => {
                     type     => "=s",
                     help     => "Destination of file",
                     required => 1,
+                    default => "",
                 },
                 overwrite => {
                     type     => "=s",
@@ -2154,4 +2221,54 @@ sub change_disk {
     return 1;
 }
 
+=pod
+
+=head1 change_power
+
+=head2 PURPOSE
+
+Changes powerstate of machine
+
+=head2 PARAMETERS
+
+=over
+
+=item vmname
+
+Name of virtual machine
+
+=item state
+
+State to change power to
+
+=back
+
+=head2 RETURNS
+
+True on success
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
+
+sub change_power {
+    &Log::debug("Starting entity::change_power sub");
+    my $vmname = &Opts::get_option('vmname');
+    my $state = &Opts::get_option('state');
+    if ( $state eq "on" ) {
+        &Guest::poweron($vmname);
+    } elsif ( $state eq "off" ) {
+        &Guest::poweroff($vmname);
+    } else {
+        Vcenter::Opts->throw( error=> "unknown option requested $state", opt => $state );
+    }
+    &Log::debug("Finishing entity::change_power sub");
+    return 1;
+}
 1

@@ -167,3 +167,83 @@ samu.pl vm info runtime [options]
 Which machines runtime information should we dump (dumps raw hash)
 
 =back
+
+=head2 VM_transfer_function
+
+=head3 SYNOPSIS
+
+samu.pl vm transfer [options]
+
+=head3 OPTIONS
+
+=over
+
+=item type
+
+Direction of transfer: to/from
+
+=item vmname
+
+Name of virtual machine
+
+=item guestusername
+
+Username to use for log on
+
+=item guestpassword
+
+Password to use to log on
+
+=item source
+
+Source of file
+
+=item dest
+
+Destination of file
+
+=item overwrite
+
+Should files be overwritten
+
+=back
+
+=head2 VM_run_function
+
+=head3 SYNOPSIS
+
+samu.pl vm run [options]
+
+=head3 OPTIONS
+
+=over
+
+=item vmname
+
+Which machines runtime information should we dump (dumps raw hash)
+
+=item guestusername
+
+Guestname to authenticate with
+
+=item guestpassword
+
+Password to authenticate with
+
+=item prog
+
+Program to run. Full path should be given
+
+=item prog_arg
+
+Arguments to program
+
+=item workdir
+
+Working directory
+
+=item env
+
+Enviromental variables passed to program
+
+=back

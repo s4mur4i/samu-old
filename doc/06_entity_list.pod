@@ -98,6 +98,14 @@ samu.pl vm list snapshot [options] [function]
 
 Name of virtual machine
 
+=item output
+
+Type of output
+
+=item noheader
+
+Should header row be printed
+
 =back
 
 =head2 VM_list_disk_function

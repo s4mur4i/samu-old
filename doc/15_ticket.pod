@@ -53,6 +53,14 @@ samu.pl ticket list [options]
 
 =over
 
+=item output
+
+Type of output
+
+=item noheader
+
+Should header row be printed
+
 =back
 
 =head2 TICKET_info_function

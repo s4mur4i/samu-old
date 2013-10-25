@@ -242,6 +242,86 @@ Which machines runtime information should we dump (dumps raw hash)
 
 =back
 
+=head2 VM_transfer_function
+
+=head3 SYNOPSIS
+
+samu.pl vm transfer [options]
+
+=head3 OPTIONS
+
+=over
+
+=item type
+
+Direction of transfer: to/from
+
+=item vmname
+
+Name of virtual machine
+
+=item guestusername
+
+Username to use for log on
+
+=item guestpassword
+
+Password to use to log on
+
+=item source
+
+Source of file
+
+=item dest
+
+Destination of file
+
+=item overwrite
+
+Should files be overwritten
+
+=back
+
+=head2 VM_run_function
+
+=head3 SYNOPSIS
+
+samu.pl vm run [options]
+
+=head3 OPTIONS
+
+=over
+
+=item vmname
+
+Which machines runtime information should we dump (dumps raw hash)
+
+=item guestusername
+
+Guestname to authenticate with
+
+=item guestpassword
+
+Password to authenticate with
+
+=item prog
+
+Program to run. Full path should be given
+
+=item prog_arg
+
+Arguments to program
+
+=item workdir
+
+Working directory
+
+=item env
+
+Enviromental variables passed to program
+
+=back
+
 =head2 VM_list_function
 
 =head3 SYNOPSIS
@@ -341,6 +421,14 @@ samu.pl vm list snapshot [options] [function]
 =item vmname
 
 Name of virtual machine
+
+=item output
+
+Type of output
+
+=item noheader
+
+Should header row be printed
 
 =back
 
@@ -977,6 +1065,14 @@ samu.pl ticket list [options]
 
 =over
 
+=item output
+
+Type of output
+
+=item noheader
+
+Should header row be printed
+
 =back
 
 =head2 TICKET_info_function
@@ -1570,6 +1666,30 @@ Delete switch
 =item dvp
 
 Delete distributed Virtual Portgroup
+
+=back
+
+=head2 NETWORK_create_function
+
+=head3 SYNOPSIS
+
+samu.pl network create [options]
+
+=head3 OPTIONS
+
+=over
+
+=item type
+
+Type of interface to create
+
+=item ticket
+
+ticket to add interface to
+
+=item vms
+
+A comma seperated list of vms to add to interface
 
 =back
 

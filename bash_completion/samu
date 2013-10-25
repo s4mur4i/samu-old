@@ -30,7 +30,7 @@ _samu() {
     vm_add_folder="--name --parent"
     vm_add_resourcepool="--name --parent"
 
-    vm_delete="cdrom interface disk snapshot vm resoucepool folder"
+    vm_delete="cdrom interface disk snapshot vm resourcepool folder"
     vm_delete_cdrom="--vmname --id"
     vm_delete_disk="--vmname --id"
     vm_delete_interface="--vmname --id"
@@ -43,7 +43,7 @@ _samu() {
     vm_list_cdrom="--vmname --output --noheader"
     vm_list_disk="--vmname --output --noheader"
     vm_list_interface="--vmname --output --noheader"
-    vm_list_snapshot="--vmname"
+    vm_list_snapshot="--vmname --output --noheader"
     vm_list_process="--vmname --pid --guestusername --guestpassword --output --noheader"
 
     vm_change="cdrom interface disk altername snapshot power"
@@ -64,9 +64,9 @@ _samu() {
 
     ticket_info="--ticket"
     ticket_list="--noheader --output"
-    ticet_on="--ticket"
-    ticet_off="--ticket"
-    ticet_delete="--ticket"
+    ticket_on="--ticket"
+    ticket_off="--ticket"
+    ticket_delete="--ticket"
 
     bugzilla="info"
 
@@ -124,7 +124,7 @@ _samu() {
     _vm_add_options="${vm_add}"
     _vm_add_cdrom_options="${vm_add_cdrom} ${sdk_opts}"
     _vm_add_disk_options="${vm_add_disk} ${sdk_opts}"
-    _vm_add_interface_options="${vm_add_network} ${sdk_opts}"
+    _vm_add_interface_options="${vm_add_interface} ${sdk_opts}"
     _vm_add_snapshot_options="${vm_add_snapshot} ${sdk_opts}"
     _vm_add_folder_options="${vm_add_folder} ${sdk_opts}"
     _vm_add_resourcepool_options="${vm_add_resourcepool} ${sdk_opts}"
@@ -132,7 +132,7 @@ _samu() {
     _vm_delete_options="${vm_delete}"
     _vm_delete_cdrom_options="${vm_delete_cdrom} ${sdk_opts}"
     _vm_delete_disk_options="${vm_delete_disk} ${sdk_opts}"
-    _vm_delete_interface_options="${vm_delete_network} ${sdk_opts}"
+    _vm_delete_interface_options="${vm_delete_interface} ${sdk_opts}"
     _vm_delete_snapshot_options="${vm_delete_snapshot} ${sdk_opts}"
     _vm_delete_vm_options="${vm_delete_vm} ${sdk_opts}"
     _vm_delete_folder_options="${vm_delete_folder} ${sdk_opts}"
@@ -141,13 +141,13 @@ _samu() {
     _vm_list_options="${vm_list}"
     _vm_list_cdrom_options="${vm_list_cdrom} ${sdk_opts}"
     _vm_list_disk_options="${vm_list_disk} ${sdk_opts}"
-    _vm_list_interface_options="${vm_list_network} ${sdk_opts}"
+    _vm_list_interface_options="${vm_list_interface} ${sdk_opts}"
     _vm_list_snapshot_options="${vm_list_snapshot} ${sdk_opts}"
     _vm_list_process_options="${vm_list_process} ${sdk_opts}"
 
     _vm_change_options="${vm_change}"
     _vm_change_cdrom_options="${vm_change_cdrom} ${sdk_opts}"
-    _vm_change_interface_options="${vm_change_network} ${sdk_opts}"
+    _vm_change_interface_options="${vm_change_interface} ${sdk_opts}"
     _vm_change_disk_options="${vm_change_disk} ${sdk_opts}"
     _vm_change_altername_options="${vm_change_altername} ${sdk_opts}"
     _vm_change_snapshot_options="${vm_change_snapshot} ${sdk_opts}"
@@ -178,7 +178,7 @@ _samu() {
 
     _kayako_options="${kayako}"
 
-    _kayako_info_options="${kayako_info} ${sdk_opts}"
+    _kayako_info_options="${kayako_info}"
 
     _admin_options="${admin}"
 

@@ -111,3 +111,27 @@ Delete switch
 Delete distributed Virtual Portgroup
 
 =back
+
+=head2 NETWORK_create_function
+
+=head3 SYNOPSIS
+
+samu.pl network create [options]
+
+=head3 OPTIONS
+
+=over
+
+=item type
+
+Type of interface to create
+
+=item ticket
+
+ticket to add interface to
+
+=item vms
+
+A comma seperated list of vms to add to interface
+
+=back

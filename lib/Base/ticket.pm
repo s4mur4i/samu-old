@@ -33,6 +33,7 @@ our $module_opts = {
                     type     => "=s",
                     help     => "Ticket to list information about",
                     required => 1,
+                    default => "",
                 },
             },
         },
@@ -49,6 +50,7 @@ our $module_opts = {
                 noheader => {
                     type     => "",
                     help     => "Should header information be printed",
+                    default => 0,
                     required => 0,
                 },
             },
@@ -60,6 +62,7 @@ our $module_opts = {
                 ticket => {
                     type     => "=s",
                     help     => "Ticket to power on",
+                    default => "",
                     required => 1,
                 },
             },
@@ -71,6 +74,7 @@ our $module_opts = {
                 ticket => {
                     type     => "=s",
                     help     => "Ticket to power off",
+                    default => "",
                     required => 1,
                 },
             },
@@ -82,6 +86,7 @@ our $module_opts = {
                 ticket => {
                     type     => "=s",
                     help     => "Ticket to delete",
+                    default => "",
                     required => 1,
                 },
             },
