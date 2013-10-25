@@ -61,7 +61,7 @@ SKIP: {
         else {
             fail("No snapshots attached to VM");
         }
-        ok( ref( &Support::get_key_info( 'template', $os_temp ) ) eq 'HASH',
+        ok( ref( &Support::get_hash( 'template', $os_temp ) ) eq 'HASH',
             'get_key_info returned hash' );
         isa_ok( &Support::RelocateSpec('test_1337'),
             'VirtualMachineRelocateSpec',

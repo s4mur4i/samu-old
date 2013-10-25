@@ -312,7 +312,7 @@ sub ticket_info {
 "$vm_info->{family}_$vm_info->{version}_$vm_info->{lang}_$vm_info->{arch}_$vm_info->{type}";
         }
         if ( $vm_info->{uniq} ne 'unknown' ) {
-            if ( defined( &Support::get_key_info( 'template', $os ) ) ) {
+            if ( defined( &Support::get_hash( 'template', $os ) ) ) {
                 print "\tDefault login : '"
                   . &Support::get_key_value( 'template', $os, 'username' )
                   . "' / '"

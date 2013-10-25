@@ -26,7 +26,7 @@ for my $T_vm (@$T_vms) {
     diag( "Testing " . $T_vm->name );
     my ($os_temp) = $T_vm->name =~ /^T_(.*)$/;
     diag("Extracted template name: $os_temp");
-    ok( &Support::get_key_info( 'template', $os_temp ),
+    ok( &Support::get_hash( 'template', $os_temp ),
         "os_temp exists in template hash" );
     my @keys = qw(username password os path);
     for my $key (@keys) {

@@ -15,9 +15,9 @@ ok( ref( &Support::get_keys("agents") ) eq 'ARRAY', 'get_keys returned array' );
 throws_ok { &Support::get_keys('TEST') } 'Template::Status',
   'get_keys throws exception';
 
-throws_ok { &Support::get_key_info( 'TEST', 'TEST' ) } 'Template::Status',
+throws_ok { &Support::get_hash( 'TEST', 'TEST' ) } 'Template::Status',
   'get_key_info throws exception for bad map';
-throws_ok { &Support::get_key_info( 'template', 'TEST' ) } 'Template::Status',
+throws_ok { &Support::get_hash( 'template', 'TEST' ) } 'Template::Status',
   'get_key_info throws exception for bad key';
 
 ok( ref( \&Support::get_key_value( 'agents', 's4mur4i', 'mac' ) ) eq 'SCALAR',

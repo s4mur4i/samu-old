@@ -1466,7 +1466,7 @@ sub clone_vm {
     my $parent_pool = Opts::get_option('parent_pool');
     my $ticket      = Opts::get_option('ticket');
     my $os_temp     = Opts::get_option('os_temp');
-    &Support::get_key_info( 'template', $os_temp );
+    &Support::get_hash( 'template', $os_temp );
     my $domain = Opts::get_option('domain');
     &Log::debug1(
 "Opts are: parent_pool=>'$parent_pool', ticket=>'$ticket', os_temp=>'$os_temp', domain=>'$domain'"

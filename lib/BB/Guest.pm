@@ -1287,7 +1287,7 @@ sub generate_network_setup {
     my @return;
     &Log::debug("Starting Guest::generate_network_sub");
     &Log::debug("Opts are: os_temp=>'$os_temp'");
-    if ( !defined( &Support::get_key_info( 'template', $os_temp ) ) ) {
+    if ( !defined( &Support::get_hash( 'template', $os_temp ) ) ) {
         Template::Status->throw(
             error    => 'Template does not exists',
             template => $os_temp

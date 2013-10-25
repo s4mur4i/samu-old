@@ -245,7 +245,7 @@ sub get_keys {
 
 =pod
 
-=head2 get_key_info
+=head2 get_hash
 
 =head3 PURPOSE
 
@@ -281,9 +281,9 @@ Template::Status if no information is found
 
 =cut
 
-sub get_key_info {
+sub get_hash {
     my ( $hash, $key ) = @_;
-    &Log::debug("Starting Support::get_key_info sub");
+    &Log::debug("Starting Support::get_hash sub");
     &Log::debug1("Opts are: hash=>'$hash', key=>'$key'");
 
     #if ( !grep /^$key$/, @{ &Support::get_keys($hash) } ) {
@@ -293,7 +293,7 @@ sub get_key_info {
             template => $key
         );
     }
-    &Log::debug("Finishing Support::get_key_info sub");
+    &Log::debug("Finishing Support::get_hash sub");
     &Log::dumpobj( "key_info", $map_hash{$hash}->{$key} );
     return $map_hash{$hash}->{$key};
 }
@@ -344,7 +344,7 @@ sub get_key_value {
     my ( $hash, $key, $value ) = @_;
     &Log::debug("Starting Support::get_key_value sub");
     &Log::debug1("Opts are: hash=>'$hash', key=>'$key', value=>'$value'");
-    my $key_hash = &Support::get_key_info( $hash, $key );
+    my $key_hash = &Support::get_hash( $hash, $key );
     if ( !defined( $$key_hash{$value} ) ) {
         Template::Status->throw(
             error    => 'Requested key value was not found',
