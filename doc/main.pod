@@ -1629,6 +1629,14 @@ samu.pl create mainpod [options]
 
 =over
 
+=item folder
+
+Folder to take pod files from
+
+=item output
+
+Output file
+
 =back
 
 =head1 Common_VI_options

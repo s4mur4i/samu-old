@@ -311,7 +311,7 @@ sub parse_pod {
 
 sub find_in_pod {
     my ( $path, $doc_path ) = @_;
-    diag("path=>'$path'");
+    #diag("path=>'$path'");
     my @helper = split( "/", $path );
     if ( scalar(%$pod_hash) eq 0 ) {
         &Test::parse_pod($doc_path);
@@ -367,13 +367,24 @@ sub verify_complete {
     my ( $module ) = @_;
     $module = lc($module);
     for my $key ( keys %$autocomplete) {
+        if( $key =~ /^$module$/ ) {
+            is( $autocomplete->{$key}->{OPTIONS}, 1, "$key has options defined in bash autocompletion");
+            delete $autocomplete->{$key}->{OPTIONS};
+            is( defined($autocomplete->{$key}->{OPTS}->{$key}), 1, "$key _ part of options in autocomplete has itself");
+            is( scalar(keys $autocomplete->{$key}->{OPTS}), 1,"$key _ part has 1 element in autocomplete");
+            delete($autocomplete->{$key}->{OPTS});
+            for my $item ( keys $autocomplete->{$key}) {
+                is(defined($autocomplete->{"${module}_$item"}), 1,"$module has $item defined");
+            }
+            next;
+        }
         if ( $key !~ /^${module}_/) {
             next;
         }
         is( $autocomplete->{$key}->{OPTIONS}, 1, "$key has options defined in bash autocompletion");
         $autocomplete->{$key}->{OPTIONS} = 0;
         is( defined($autocomplete->{$key}->{OPTS}->{$key}), 1, "$key _ part of options in autocomplete has itself");
-        is( scalar(keys $autocomplete->{$key}->{OPTS}), 1,"_ part has 1 element in autocomplete");
+        is( scalar(keys $autocomplete->{$key}->{OPTS}), 1,"$key _ part has 1 element in autocomplete");
         $autocomplete->{$key}->{OPTS} = 0;
         delete($autocomplete->{$key}->{OPTIONS});
         delete($autocomplete->{$key}->{OPTS});

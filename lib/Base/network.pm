@@ -99,6 +99,38 @@ our $module_opts = {
 
 =pod
 
+=head1 module_opts
+
+=head2 PURPOSE
+
+Return Module_opts hash for testing
+
+=head2 PARAMETERS
+
+=over
+
+=back
+
+=head2 RETURNS
+
+Hash ref containing module_opts
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 TEST COVERAGE
+
+=cut
+
+sub module_opts {
+        return $module_opts;
+}
+
+=pod
+
 =head2 main
 
 =head3 PURPOSE

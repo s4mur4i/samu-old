@@ -102,7 +102,11 @@ _samu() {
     network_list_dvp=""
     network_create="--type --ticket --vms"
 
-    samu="vm ticket datastore bugzilla kayako admin network"
+    devel="create"
+    devel_create="mainpod"
+    devel_create_mainpod="--folder --output"
+
+    samu="vm ticket datastore bugzilla kayako admin network devel"
     cur="${COMP_WORDS[COMP_CWORD]}"
 
 	_helper_opts="-h --help -m --man"
@@ -163,7 +167,7 @@ _samu() {
 
     _bugzilla_options="${bugzilla}"
 
-    _bugzilla_info_options="${bugzilla_info} ${sdk_opts}"
+    _bugzilla_info_options="${bugzilla_info}"
 
     _datastore_options="${datastore}"
 
@@ -194,6 +198,10 @@ _samu() {
     _admin_list_folder_options="${admin_list_folder} ${sdk_opts}"
     _admin_list_resourcepool_options="${admin_list_resourcepool} ${sdk_opts}"
     _admin_list_linked_clones_options="${admin_list_linked_clones} ${sdk_opts}"
+
+    _devel_options="${devel}"
+    _devel_create_options="${devel_create}"
+    _devel_create_mainpod_options="${devel_create_mainpod}"
 
 	i=1
 	cur_opt=""
