@@ -285,8 +285,6 @@ sub get_hash {
     my ( $hash, $key ) = @_;
     &Log::debug("Starting Support::get_hash sub");
     &Log::debug1("Opts are: hash=>'$hash', key=>'$key'");
-
-    #if ( !grep /^$key$/, @{ &Support::get_keys($hash) } ) {
     if ( !defined( $map_hash{$hash}->{$key} ) ) {
         Template::Status->throw(
             error    => 'Requested key info was not found',
