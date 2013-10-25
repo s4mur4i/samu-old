@@ -283,37 +283,19 @@ our $module_opts = {
                         },
                     },
                 },
-                vm => {
-                    function        => \&delete_vm,
-                    vcenter_connect => 1,
-                    opts            => {
-                        vmname => {
-                            type     => "=s",
-                            help     => "Name of vm to delete",
-                            required => 1,
-                            default => "",
-                        },
-                    },
-                },
-                resourcepool => {
-                    function        => \&delete_resourcepool,
+                entity => {
+                    function        => \&delete_entity,
                     vcenter_connect => 1,
                     opts            => {
                         name => {
                             type     => "=s",
-                            help     => "Name of resource pool to delete",
+                            help     => "Name of entity to delete",
                             required => 1,
                             default => "",
                         },
-                    },
-                },
-                folder => {
-                    function        => \&delete_folder,
-                    vcenter_connect => 1,
-                    opts            => {
-                        name => {
-                            type     => "=s",
-                            help     => "Name of folder to delete",
+                        type => {
+                            type =>"=s",
+                            help => "Type of entity to delete",
                             required => 1,
                             default => "",
                         },
@@ -1770,46 +1752,62 @@ sub transfer {
 
 =pod
 
-=head2 delete_vm
+=head1 delete_entity
 
-=head3 PURPOSE
+=head2 PURPOSE
 
+Deletes a requested entity
 
-
-=head3 PARAMETERS
+=head2 PARAMETERS
 
 =over
 
+=item name
+
+Name of entity
+
+=item type
+
+Type of entity. Can be VirtualMachine/ResourcePool/Folder
+
 =back
 
-=head3 RETURNS
+=head2 RETURNS
 
-=head3 DESCRIPTION
+True on success
 
-=head3 THROWS
+=head2 DESCRIPTION
 
-=head3 COMMENTS
+=head2 THROWS
 
-=head3 TEST COVERAGE
+Entity::NumException if Entity is not empty or we could not delete the entity
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
 
 =cut
 
-sub delete_vm {
-    &Log::debug("Starting Entity::delete_vm sub");
-    my $vmname = Opts::get_option('vmname');
-    &Log::debug("Opts are: vmname=>'$vmname'");
-    &VCenter::destroy_entity( $vmname, 'VirtualMachine' );
-    if ( &VCenter::exists_entity( $vmname, 'VirtualMachine' ) ) {
+sub delete_entity {
+    &Log::debug("Starting Entity::delete_entity sub");
+    my $name = Opts::get_option('name');
+    my $type = Opts::get_option('type');
+    &Log::debug1("Opts are: name=>'$name', type=>'$type'");
+    if ( $type =~ /ResourcePool|Folder/) {
+        if ( !&VCenter::check_if_empty_entity( $name, $type) ) {
+            Entity::NumException->throw( error => "Entity $type is not empty", entity => $name, count => "more" );
+        }
+    }
+    &VCenter::destroy_entity( $name, $type);
+    if ( &VCenter::exists_entity( $name, $type ) ) {
         Entity::NumException->throw(
-            error  => 'VM was not deleted succcesfully',
-            entity => $vmname,
+            error  => '$type was not deleted succcesfully',
+            entity => $name,
             count  => '1'
         );
     }
-    else {
-        &Log::info("Entity deleted succesfully");
-    }
-    &Log::debug("Finishing Entity::delete_vm sub");
+    &Log::info("Entity deleted succesfully");
+    &Log::debug("Finishing Entity::delete_entity sub");
     return 1;
 }
 
@@ -1918,88 +1916,6 @@ sub delete_hw {
     my @net_hw = @{ &Guest::get_hw( $vmname, $hw ) };
     &Guest::remove_hw( $vmname, $net_hw[$id] );
     &Log::debug("Finishing Entity::delete_hw sub");
-    return 1;
-}
-
-=pod
-
-=head2 delete_resourcepool
-
-=head3 PURPOSE
-
-
-
-=head3 PARAMETERS
-
-=over
-
-=back
-
-=head3 RETURNS
-
-=head3 DESCRIPTION
-
-=head3 THROWS
-
-=head3 COMMENTS
-
-=head3 TEST COVERAGE
-
-=cut
-
-sub delete_resourcepool {
-    &Log::debug("Starting Entity::delete_resourcepool sub");
-    my $name = &Opts::get_option('name');
-    &Log::debug1("Opts are: name=>'$name'");
-    if ( &VCenter::check_if_empty_entity( $name, 'ResourcePool' ) ) {
-        &VCenter::destroy_entity( $name, 'ResourcePool' );
-    }
-    else {
-        &Log::critical("ResourcePool is not empty");
-        exit;
-    }
-    &Log::debug("Finishing Entity::delete_resourcepool sub");
-    return 1;
-}
-
-=pod
-
-=head2 delete_folder
-
-=head3 PURPOSE
-
-
-
-=head3 PARAMETERS
-
-=over
-
-=back
-
-=head3 RETURNS
-
-=head3 DESCRIPTION
-
-=head3 THROWS
-
-=head3 COMMENTS
-
-=head3 TEST COVERAGE
-
-=cut
-
-sub delete_folder {
-    &Log::debug("Starting Entity::delete_folder sub");
-    my $name = &Opts::get_option('name');
-    &Log::debug1("Opts are: name=>'$name'");
-    if ( &VCenter::check_if_empty_entity( $name, 'Folder' ) ) {
-        &VCenter::destroy_entity( $name, 'Folder' );
-    }
-    else {
-        &Log::critical("Folder is not empty");
-        exit;
-    }
-    &Log::debug("Finishing Entity::delete_folder sub");
     return 1;
 }
 

@@ -856,17 +856,9 @@ Delete the requested hardware
 
 Delete a snapshot attached to a virtual machine
 
-=item vm
+=item entity
 
-Delete a virtual machine
-
-=item folder
-
-Deletes a inventory folder
-
-=item resourcepool
-
-Deletes a resourcepool
+Delete a VMware entity
 
 =back
 
@@ -918,27 +910,11 @@ Delete all snapshots
 
 =back
 
-=head2 VM_delete_vm_function
+=head2 VM_delete_entity_function
 
 =head3 SYNOPSIS
 
-samu.pl vm delete vm [options]
-
-=head3 OPTIONS
-
-=over
-
-=item vmname
-
-Name of virtual machine
-
-=back
-
-=head2 VM_delete_folder_function
-
-=head3 SYNOPSIS
-
-samu.pl vm delete folder [options]
+samu.pl vm delete entity [options]
 
 =head3 OPTIONS
 
@@ -946,23 +922,11 @@ samu.pl vm delete folder [options]
 
 =item name
 
-Name of folder
+Name of Vmware entity
 
-=back
+=item type
 
-=head2 VM_delete_resourcepool_function
-
-=head3 SYNOPSIS
-
-samu.pl vm delete resourcepool [options]
-
-=head3 OPTIONS
-
-=over
-
-=item name
-
-Name of resourcepool
+Type of entity to delete: VirtualMachine/ResourcePool/Folder
 
 =back
 
