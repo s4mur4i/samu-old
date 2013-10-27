@@ -74,4 +74,5 @@ output_like(
     qr/^Log_${level}.t\s\[EMERGENCY\]:\sTest;$/,
     "Emergency output ok on level $level"
 );
+output_like( sub { &Log::dumpobj("TEST", "TEST1") }, qr/^$/, qr/^Log.pm\s\[DEBUG2\]:\sDumping\sobject\sTEST:\$VAR1\s=\s'TEST1';$/, "dumpobj output is expected at log level 10");
 done_testing;

@@ -62,4 +62,6 @@ output_like(
     qr/^Log_${level}.t\s\[EMERGENCY\]:\sTest;$/,
     "Emergency output ok on level $level"
 );
+my %test = ( pina => 'Ring', fasz => 'Ding' );
+output_like( sub { &Log::loghash("Test: ", \%test) }, qr/^$/, qr/^$/, "loghash is expected at log level $level");
 done_testing;

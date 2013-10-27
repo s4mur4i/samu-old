@@ -48,6 +48,8 @@ Getter sub for verbosity
 
 =head3 TEST COVERAGE
 
+Tested for each verbosity level to see if it returns a value from 0-10
+
 =cut
 
 sub verbosity {
@@ -87,6 +89,8 @@ The formatted log message
 =head3 COMMENTS
 
 =head3 TEST COVERAGE
+
+Output is tested if it is as expected
 
 =cut
 
@@ -156,6 +160,8 @@ Message to print
 
 =head3 TEST COVERAGE
 
+Tested if output from 0 to 10 is as expected
+
 =cut
 
 sub debug2 {
@@ -189,6 +195,8 @@ Message to print
 =head3 COMMENTS
 
 =head3 TEST COVERAGE
+
+Tested if output from 0 to 10 is as expected
 
 =cut
 
@@ -224,6 +232,8 @@ Message to print
 
 =head3 TEST COVERAGE
 
+Tested if output from 0 to 10 is as expected
+
 =cut
 
 sub debug {
@@ -257,6 +267,8 @@ Message to print
 =head3 COMMENTS
 
 =head3 TEST COVERAGE
+
+Tested if output from 0 to 10 is as expected
 
 =cut
 
@@ -292,6 +304,8 @@ Message to print
 
 =head3 TEST COVERAGE
 
+Tested if output from 0 to 10 is as expected
+
 =cut
 
 sub notice {
@@ -325,6 +339,8 @@ Message to print
 =head3 COMMENTS
 
 =head3 TEST COVERAGE
+
+Tested if output from 0 to 10 is as expected
 
 =cut
 
@@ -360,6 +376,8 @@ Message to print
 
 =head3 TEST COVERAGE
 
+Tested if output from 0 to 10 is as expected
+
 =cut
 
 sub error {
@@ -393,6 +411,8 @@ Message to print
 =head3 COMMENTS
 
 =head3 TEST COVERAGE
+
+Tested if output from 0 to 10 is as expected
 
 =cut
 
@@ -428,6 +448,8 @@ Message to print
 
 =head3 TEST COVERAGE
 
+Tested if output from 0 to 10 is as expected
+
 =cut
 
 sub alert {
@@ -461,6 +483,8 @@ Message to print
 =head3 COMMENTS
 
 =head3 TEST COVERAGE
+
+Tested if output from 0 to 10 is as expected
 
 =cut
 
@@ -500,6 +524,8 @@ Object to dump
 
 =head3 TEST COVERAGE
 
+Output is tested at normal log level and log level 10
+
 =cut
 
 sub dumpobj {
@@ -538,6 +564,8 @@ Hashref to log
 =head3 COMMENTS
 
 =head3 TEST COVERAGE
+
+No output at log level 7 but standard output at log level 8 is tested
 
 =cut
 
