@@ -51,6 +51,8 @@ Managed object with name property
 
 =head3 TEST COVERAGE
 
+If exception is thrown if object with 0 count is requested
+
 =cut
 
 sub entity_name_view {
@@ -96,6 +98,8 @@ Managed object with all property
 =head3 COMMENTS
 
 =head3 TEST COVERAGE
+
+If exception is thrown if object with 0 count is requested
 
 =cut
 
@@ -144,6 +148,8 @@ Managed object with requested property
 =head3 COMMENTS
 
 =head3 TEST COVERAGE
+
+If exception is thrown if object with 0 count is requested
 
 =cut
 
@@ -243,6 +249,8 @@ Altername or empty string
 =head3 COMMENTS
 
 =head3 TEST COVERAGE
+
+Exception is thrown if unknown vm is requested
 
 =cut
 
@@ -1146,6 +1154,9 @@ The key number if found
 =head3 COMMENTS
 
 =head3 TEST COVERAGE
+
+Exception is thrown if unknown vm is requested
+If unkown key is requested then 0 is returned
 
 =cut
 

@@ -157,6 +157,8 @@ True on success
 
 =head3 TEST COVERAGE
 
+Tested to see if every exception is tested, if every exception used is defined, and the output is as expected, The thrown exception is object as expected
+
 =cut
 
 sub catch_ex {
