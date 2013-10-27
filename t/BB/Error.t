@@ -9,6 +9,7 @@ use FindBin;
 use lib "$FindBin::Bin/../../lib";
 use BB::Log;
 use Data::Dumper;
+use File::Find;
 
 BEGIN { use_ok('BB::Error'); }
 my %tested;
@@ -139,4 +140,22 @@ diag("Reverse test");
 for my $ex ( keys %file) {
     is( $tested{$ex}, 1, "$ex is tested" );
 }
+my %infile;
+my @files;
+my $dir = "$FindBin::Bin/../../";
+find( sub { if ( $File::Find::name =~ /\.pm$/ ) { push( @files, $File::Find::name ); } }, $dir);
+find( sub { if ( $File::Find::name =~ /\.pl$/ ) { push( @files, $File::Find::name ); } }, $dir);
+for my $file ( @files ) {
+    open( my $fh, "<", $file);
+    while ( my $line = <$fh>) {
+        if ( $line =~ /(\w*::\w*)->throw/ ) {
+            $infile{$1}=1;
+        }
+    }
+    close $fh;
+}
+for my $ex ( keys %infile ) {
+    is( $file{$ex},1, "$ex exists in Error.pm");
+}
+
 done_testing();

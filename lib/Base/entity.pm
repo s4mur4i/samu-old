@@ -1741,7 +1741,7 @@ sub transfer {
         &Guest::transfer_from_guest( \%opts );
     }
     else {
-        Vcenter::Opt->throw(
+        Vcenter::Opts->throw(
             error => 'Unrecognized opt given type,',
             opt   => $opts{type}
         );
