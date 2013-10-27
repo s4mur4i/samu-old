@@ -452,7 +452,7 @@ sub ticket_list {
     &Log::debug("Starting Ticket::ticket_list sub");
     my $tickets = &Misc::ticket_list;
     &Log::debug("Finished collecting ticket list");
-    my $dbh    = &Kayako::connect_kayako();
+    &Kayako::connect_kayako();
     my @titles = (qw(Ticket Owner Status B-Ticket B-Status));
     &Output::option_parser( \@titles );
     for my $ticket ( sort { $a <=> $b } ( keys %{$tickets} ) ) {
@@ -461,14 +461,10 @@ sub ticket_list {
             my @string;
             push( @string, $ticket );
             push( @string, $$tickets{$ticket} );
-            my $result = &Kayako::run_query( $dbh,
-"select ticketstatustitle from swtickets where ticketid = '$ticket'"
-            );
+            my $result = &Kayako::run_query( "select ticketstatustitle from swtickets where ticketid = '$ticket'");
             if ( defined($result) ) {
                 push( @string, $$result{ticketstatustitle} );
-                $result = &Kayako::run_query( $dbh,
-"select fieldvalue from swcustomfieldvalues where typeid = '$ticket' and customfieldid = '25'"
-                );
+                $result = &Kayako::run_query( "select fieldvalue from swcustomfieldvalues where typeid = '$ticket' and customfieldid = '25'");
                 if ( defined($result) and $$result{fieldvalue} ne "" ) {
                     my @result = split( " ", $$result{fieldvalue} );
                     my $bugzilla_status;
@@ -516,7 +512,7 @@ sub ticket_list {
     }
     &Output::print;
     &Log::debug("Finished printing ticket information");
-    &Kayako::disconnect_kayako($dbh);
+    &Kayako::disconnect_kayako();
     &Log::debug("Finishing Ticket::ticket_list sub");
     return 1;
 }

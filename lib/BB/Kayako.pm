@@ -18,6 +18,8 @@ BEGIN {
     our @EXPORT = qw( );
 }
 
+my $dbh;
+
 =pod
 
 =head2 connect_kayako
@@ -34,7 +36,7 @@ Connects to the local kayako Database server
 
 =head3 RETURNS
 
-A DBI handle
+True on success
 
 =head3 DESCRIPTION
 
@@ -46,6 +48,9 @@ Connection::Connect if connection fails to server
 
 =head3 TEST COVERAGE
 
+Tested if exception thrown if object already exists
+Also tested if connection works
+
 =cut
 
 sub connect_kayako {
@@ -53,16 +58,14 @@ sub connect_kayako {
     my $dsn  = "dbi:mysql:kayako:10.21.0.17";
     my $user = "vmware-infra";
     my $pass = "Di2ooChei9iohewe";
-    my $dbh =
-      DBI->connect( $dsn, $user, $pass, { RaiseError => 1, AutoCommit => 0 } )
-      or Connection::Connect->throw(
-        error => 'Could not connect to Kayako DB',
-        type  => 'mysl::dbi',
-        dest  => $dsn
-      );
+    if (!$dbh) {
+        $dbh = DBI->connect( $dsn, $user, $pass, { RaiseError => 1, AutoCommit => 0 } ) or Connection::Connect->throw( error => 'Could not connect to Kayako DB', type  => 'mysl::dbi', dest  => $dsn);
+    } else {
+        Connection::Connect->throw( error => "Already connected to Kayako", type => "Kayako", dest => $dsn);
+    }
     &Log::debug("Finishing Kayako::connect_kayako sub");
     &Log::dumpobj( "dbi handle", $dbh );
-    return $dbh;
+    return 1;
 }
 
 =pod
@@ -91,18 +94,24 @@ True on success
 
 =head3 THROWS
 
+Connection::Connect if no dbh object exists
+
 =head3 COMMENTS
 
 =head3 TEST COVERAGE
 
+Tested if disconnect disconnects and deletes object, also tested if exception is thrown if no object is defined
+
 =cut
 
 sub disconnect_kayako {
-    my ($dbh) = @_;
     &Log::debug("Starting Kayako::disconnect_kayako sub");
-    &Log::dumpobj( "dbh", $dbh );
-    $dbh->disconnect
-      or &Log::warning( "Kayako db disconnect warning:" . $dbh->errstr );
+    if ( $dbh ) {
+        $dbh->disconnect or &Log::warning( "Kayako db disconnect warning:" . $dbh->errstr );
+        undef $dbh;
+    } else {
+        Connection::Connect->throw(error => "Not connected to kayako server", type => "Kayako", dest => "Kayako local server");
+    }
     &Log::debug("Finishing Kayako::disconnect_kayako sub");
     return 1;
 }
@@ -137,23 +146,33 @@ The results of the query in a hashref
 
 =head3 THROWS
 
+Connection::Connect if no dbh object exists
+
 =head3 COMMENTS
 
 =head3 TEST COVERAGE
 
+Tested if correct response is returned, also tested if exception is thrown if no dbh object exists
+
 =cut
 
 sub run_query {
-    my ( $dbh, $query ) = @_;
+    my ( $query ) = @_;
     &Log::debug("Starting Kayako::run_query sub");
     &Log::debug("Opts are: query=>'$query'");
-    &Log::dumpobj( "dbh", $dbh );
+    if ( !$dbh) {
+        Connection::Connect->throw( error => "Not connected to kayako", type => "Kayako", dest => "Kayako local server");
+    }
     my $sth = $dbh->prepare("$query");
     $sth->execute();
     my $result = $sth->fetchrow_hashref();
     &Log::dumpobj( "result", $result );
     &Log::debug("Finishing Kayako::run_query sub");
     return $result;
+}
+
+sub return_dbh {
+    return $dbh;
 }
 
 1
