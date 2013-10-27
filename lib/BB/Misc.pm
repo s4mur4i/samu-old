@@ -47,6 +47,8 @@ Max length of longest element
 
 =head3 TEST COVERAGE
 
+Tested if longest element count is returned from array
+
 =cut
 
 sub array_longest {
@@ -90,6 +92,8 @@ A number between 1 and 999
 
 =head3 TEST COVERAGE
 
+Tested if 3 digit is returned
+
 =cut
 
 sub random_3digit {
@@ -132,6 +136,8 @@ If user is unknown we should implement a fallback method
 Also username should be check to mac it take from VMWare SDK options hash
 
 =head3 TEST COVERAGE
+
+Tested if valid mac address is returned for user s4mur4i
 
 =cut
 
@@ -346,6 +352,8 @@ Entity::Mac if mac pool end reached
 
 =head3 TEST COVERAGE
 
+Tested if incremented mac as expected, also if end of mac pool exception is thrown
+
 =cut
 
 sub increment_mac {
@@ -406,6 +414,10 @@ If standard is not recognised by regex than unknown is returned for all elements
 =head3 COMMENTS
 
 =head3 TEST COVERAGE
+
+Tested if unknown name returns unknown hash
+XCB vmname returns xcb hash
+normal vmname returns normal elements
 
 =cut
 
@@ -497,6 +509,9 @@ test should be implemented if incremented disk name already exists on datastore
 
 =head3 TEST COVERAGE
 
+Tested if first disk is incremented to 1 also tested if incremented name is also incremented
+Tested if after 6 number 8 is returned and after 15 exception is thrown
+
 =cut
 
 sub increment_disk_name {
@@ -562,6 +577,8 @@ Vcenter::Path if path is not a valid path
 
 =head3 TEST COVERAGE
 
+Tested if normal name returns 3 elements, and if incremented name returns 3 elements
+
 =cut
 
 sub filename_splitter {
@@ -619,6 +636,8 @@ A standard virtual machine name
 =head3 COMMENTS
 
 =head3 TEST COVERAGE
+
+Tested if generated name is as expected
 
 =cut
 

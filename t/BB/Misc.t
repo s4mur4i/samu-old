@@ -21,6 +21,7 @@ ok( &Misc::array_longest( [ "t", "te", "test", "tes" ] ) eq 4,
 like( &Misc::random_3digit, qr/^\d{1,3}$/,
     'random_3digit gave correct random number' );
 
+#FIXME test with all users in agent hash
 like(
     &Misc::generate_mac('s4mur4i'),
     qr/^([0-9A-F]{2}:){5}[0-9A-F]{2}$/,
