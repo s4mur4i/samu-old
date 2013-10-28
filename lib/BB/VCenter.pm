@@ -1346,6 +1346,8 @@ Vcenter::ServiceContent if service content could not be retrieved
 
 =head3 TEST COVERAGE
 
+Tested if correct object is returned
+
 =cut
 
 sub service_content {
@@ -1435,6 +1437,8 @@ Vcenter::ServiceContent if vim objcect could not be retrieved
 =head3 COMMENTS
 
 =head3 TEST COVERAGE
+
+Tested if vim object is returned
 
 =cut
 
@@ -1571,6 +1575,32 @@ sub resourcepool_info {
     &Log::debug("Finishing VCenter::resourcepool_info sub");
     return \@info;
 }
+
+=pod
+
+=head1 folder_info
+
+=head2 PURPOSE
+
+Gathers folder information
+
+=head2 PARAMETERS
+
+=over
+
+=back
+
+=head2 RETURNS
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
 
 sub folder_info {
     my ($name) = @_;

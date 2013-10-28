@@ -224,6 +224,9 @@ Template::Status if no hash is found
 
 =head3 TEST COVERAGE
 
+Tested if agents hash returns array
+Tested if unknown map returns exception
+
 =cut
 
 sub get_keys {
@@ -278,6 +281,8 @@ Template::Status if no information is found
 =head3 COMMENTS
 
 =head3 TEST COVERAGE
+
+Tested if exception is thrown for bad map or bad key
 
 =cut
 
@@ -335,6 +340,9 @@ Template::Status if no information found
 =head3 COMMENTS
 
 =head3 TEST COVERAGE
+
+Tested if array is returned
+Tested if exception is thrown for bad map, bad key or bad value key
 
 =cut
 
