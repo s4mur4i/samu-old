@@ -2369,15 +2369,17 @@ sub transfer_to_guest {
     print "Size of file: $size bytes\n";
     my $ua = LWP::UserAgent->new();
     $ua->ssl_opts( verify_hostname => 0 );
-    open( my $fh, "<", "$info->{source}" );
+# FIXME refactor or exception
+    open( my $fh, "<", $info->{source} ) or die "Could not open file";
     my $content = do { local $/; <$fh> };
+
     my $req = $ua->put( $transferinfo, Content => $content );
 
     if ( $req->is_success() ) {
         &Log::debug( "OK: ", $req->content );
     }
     else {
-        Entity::TransferError->throw( error => $req->as_string );
+        Entity::TransferError->throw( error => $req->as_string, entity => $info->{vmname}, filename => $info->{source} );
     }
     &Log::debug("Finishing Guest:transfer_to_guest sub");
     return 1;

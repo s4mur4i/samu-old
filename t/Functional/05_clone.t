@@ -116,22 +116,18 @@ for my $template ( @{ &Support::get_keys('template') } ) {
       "Add disk throws exception if no free scsi controller is found";
 
     diag("Deleting entity");
-    &Opts::add_options(
-        %{
-            $entity::module_opts->{functions}->{delete}->{functions}->{vm}
-              ->{opts}
-        }
-    );
-    is( Opts::get_option('vmname'),
-        $view->name, "Vmname option was set succesfully" );
-    is( &entity::delete_vm(), 1, "Destroy vm sub ran succesfully" );
+    &Opts::add_options( %{ $entity::module_opts->{functions}->{delete}->{functions}->{entity} ->{opts} });
+    &Opts::set_option( "type", "VirtualMachine" );
+    &Opts::set_option( "name", $view->name );
+    is( Opts::get_option('vmname'), $view->name, "Vmname option was set succesfully" );
+    is( &entity::delete_entity(), 1, "Destroy vm sub ran succesfully" );
     $view = Vim::find_entity_view(
         view_type  => 'VirtualMachine',
         properties => ['name'],
         filter     => { name => qr/^test_1337-/ }
     );
     ok( !defined($view), "Cloned entity Destroyed succesfully" );
-    throws_ok { &entity::delete_vm() } 'Entity::NumException',
+    throws_ok { &entity::delete_entity() } 'Entity::NumException',
       "Destroy vm throws exception if no vm is present";
 }
 done_testing;
