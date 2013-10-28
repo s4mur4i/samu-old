@@ -173,7 +173,7 @@ sub traverse_opts {
             is( defined($opts->{opts}->{$key}->{type}),1,"$key has type defined in module opts");
             is( defined($opts->{opts}->{$key}->{help}),1,"$key has help defined in module opts");
             is( defined($opts->{opts}->{$key}->{required}),1,"$key has required defined in module opts");
-            is( defined($opts->{opts}->{$key}->{default}),1,"$key has default defined in module opts");
+#            is( defined($opts->{opts}->{$key}->{default}),1,"$key has default defined in module opts");
             is( defined($autocomplete->{$compname}->{$key}),1,"$compname has $key opt in autocomplete");
             $autocomplete->{$compname}->{$key} = 0;
         }
