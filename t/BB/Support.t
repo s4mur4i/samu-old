@@ -11,11 +11,10 @@ BEGIN {
     use_ok('BB::Support');
     use_ok('BB::Common');
 }
-ok( ref( &Support::get_keys("agents") ) eq 'ARRAY', 'get_keys returned array' );
+isa_ok( &Support::get_keys("agents"), 'ARRAY', 'get_keys returned array' );
 throws_ok { &Support::get_keys('TEST') } 'Template::Status', 'get_keys throws exception';
 
-#FIXME test why not hash ref is returned according to test
-#ok( ref( \&Support::get_hash( 'template', 'scb_300' ) ) eq 'HASH', 'get_hash returned hash' );
+isa_ok( &Support::get_hash( 'template', 'scb_300' ), 'HASH', 'get_hash returned hash' );
 throws_ok { &Support::get_hash( 'TEST', 'TEST' ) } 'Template::Status', 'get_key_info throws exception for bad map';
 throws_ok { &Support::get_hash( 'template', 'TEST' ) } 'Template::Status', 'get_key_info throws exception for bad key';
 
