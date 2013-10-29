@@ -51,8 +51,10 @@ SKIP: {
         $view->PowerOffVM;
         diag("Testing list functions");
         my $name = $view->name;
+        diag("Name is $name");
         &Opts::add_options( %{ $entity::module_opts->{functions}->{list}->{functions}->{disk} ->{opts} });
         &Opts::set_option( "noheader", 1 );
+        &Opts::set_option( "vmname", $name );
         output_like( \&entity::list_disk, qr/^\s*0\s*\d+\s*\d+\s\[support\] $name\/$name.vmdk\s*$/, qr/^$/, "Listing disk information");
         output_like( \&entity::list_cdrom, qr/^\s*0\s*\d+\s*Client_Device\s*CD\/DVD drive 1\s*/, qr/^$/, "Listing cdrom information");
         output_like( \&entity::list_interface, qr/^\s*0\s*\d+\s*([0-9A-F]{2}:){5}[0-9A-F]{2}\s*Network adapter 1\s*\S*\s*$/, qr/^$/, "Listing network information");

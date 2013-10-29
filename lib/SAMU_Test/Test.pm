@@ -24,17 +24,19 @@ BEGIN {
     our @EXPORT = qw( );
 }
 
-sub clonevm {
-    my ( $template, $vmname, $folder, $clone_spec ) = @_;
-    my $template_view = &Guest::entity_name_view( $template, 'VirtualMachine' );
-    my $folder_view   = &Guest::entity_name_view( $folder,   'Folder' );
-    my $task          = $template_view->CloneVM_Task(
-        folder => $folder_view,
-        name   => $vmname,
-        spec   => $clone_spec
-    );
-    &VCenter::Task_Status($task);
-    return 1;
+sub cleanup_test {
+    my @types = ( 'VirtualMachine', 'ResourcePool', 'Folder',
+        'DistributedVirtualSwitch' );
+    for my $type (@types) {
+        my $view = Vim::find_entity_view(
+            view_type  => $type,
+            properties => ['name'],
+            filter     => { name => qr/^test_1337/ }
+        );
+        if ( defined($view) ) {
+            $view->Destroy;
+        }
+    }
 }
 
 sub create_test_vm {

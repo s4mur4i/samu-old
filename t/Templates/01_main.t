@@ -142,14 +142,6 @@ SKIP: {
         }
     }
 }
-SKIP: {
-    eval {
-        ( not( $ENV{ALL} or $ENV{TEMPLATE_VCENTER} ) )
-          and die "Need to skip";
-    };
-
-    skip "TEMPLATE_VCENTER env variable not seen", 1, if $@;
-}
 done_testing;
 
 END {

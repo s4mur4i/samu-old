@@ -9,6 +9,7 @@ use FindBin;
 use lib "$FindBin::Bin/../../lib/";
 use lib "$FindBin::Bin/../../vmware_lib/";
 use BB::Common;
+use SAMU_Test::Common;
 use Base::entity;
 
 BEGIN {
@@ -19,6 +20,7 @@ BEGIN {
     &Opts::set_option( "os_temp", "test" );
     &Opts::validate();
     &Util::connect();
+    &Test::cleanup_test;
     my $view = Vim::find_entity_view(
         view_type  => 'VirtualMachine',
         properties => ['name'],
@@ -71,17 +73,6 @@ SKIP: {
 done_testing;
 
 END {
-    my @types = ( 'VirtualMachine', 'ResourcePool', 'Folder',
-        'DistributedVirtualSwitch' );
-    for my $type (@types) {
-        my $view = Vim::find_entity_view(
-            view_type  => $type,
-            properties => ['name'],
-            filter     => { name => qr/^test_1337/ }
-        );
-        if ( defined($view) ) {
-            $view->Destroy;
-        }
-    }
+    &Test::cleanup_test;
     &Util::disconnect();
 }
