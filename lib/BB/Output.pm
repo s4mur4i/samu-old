@@ -38,9 +38,14 @@ True on success
 
 =head2 THROWS
 
+Connection::Connect if object already exists
+
 =head2 COMMENTS
 
 =head2 TEST COVERAGE
+
+Tested if table object is create correclty and is Text::Table as required
+Tested if exception is thrown after second create
 
 =cut
 
@@ -51,7 +56,7 @@ sub create_table {
         $tbh = Text::Table->new();
     }
     else {
-        &Log::warning("Table object already created");
+        Connection::Connect->throw( error => "Backend object alreday exists", type => 'Output', dest => 'tbh');
     }
     &Log::debug("Finishing Output::create_table sub");
     return 1;
@@ -83,9 +88,14 @@ True on success
 
 =head2 THROWS
 
+Connection::Connect if object already exists
+
 =head2 COMMENTS
 
 =head2 TEST COVERAGE
+
+Tested if csv object is created as expected as a Class::CSV object
+Tested if exception is thrown after second create
 
 =cut
 
@@ -97,7 +107,7 @@ sub create_csv {
         $csv = Class::CSV->new( fields => $header );
     }
     else {
-        &Log::warning("CSV object already created");
+        Connection::Connect->throw( error => "Backend object alreday exists", type => 'Output', dest => 'csv');
     }
     &Log::debug("Finishing Output::create_csv sub");
     return 1;
@@ -129,9 +139,14 @@ True on success
 
 =head2 THROWS
 
+Connection::Connect if no global objects exists
+
 =head2 COMMENTS
 
 =head2 TEST COVERAGE
+
+Test if true is returned after success
+Tested if exception is thrown if no objects are defined
 
 =cut
 
@@ -146,6 +161,8 @@ sub add_row {
     elsif ( defined $csv ) {
         &Log::debug("Adding row to csv");
         $csv->add_line($row);
+    } else {
+        Connection::Connect->throw( error => "No backend object defined", type => 'Output', dest => 'tbh/csv');
     }
     &Log::debug("Finishing Output::add_row sub");
     return 1;
@@ -173,9 +190,14 @@ True on success
 
 =head2 THROWS
 
+Connection::Connect if no global objects exists
+
 =head2 COMMENTS
 
 =head2 TEST COVERAGE
+
+Tested if table and csv output is as expected, also tested if undefines the global objects
+Tested if exception is thrown if no objects are defined
 
 =cut
 
@@ -191,6 +213,8 @@ sub print {
         &Log::debug("Printing from csv");
         $csv->print;
         undef $csv;
+    } else {
+        Connection::Connect->throw( error => "No backend object defined", type => 'Output', dest => 'tbh/csv');
     }
     &Log::debug("Finishing Output::print sub");
     return 1;
@@ -226,6 +250,8 @@ Vcenter::Opts if unknown opts is requested for output
 
 =head2 COMMENTS
 
+We need to add test to see if we can create a mock option hash for vmware to use and to add requested options
+
 =head2 TEST COVERAGE
 
 =cut
@@ -255,6 +281,14 @@ sub option_parser {
     }
     &Log::debug("Finishing Output::option_parser sub");
     return 1;
+}
+
+sub return_csv {
+    return $csv;
+}
+
+sub return_tbh {
+    return $tbh;
 }
 
 1

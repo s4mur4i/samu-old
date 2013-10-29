@@ -25,10 +25,12 @@ close $fh;
 diag("Throwing all exceptions");
 ###
 $tested{'BaseException'}=1;
+throws_ok { BaseException->throw( error  => 'test'); } 'BaseException', 'BaseException';
 eval { BaseException->throw(); };
 stderr_like( sub { &Error::catch_ex($@) }, qr/^Error.pm\s\[CRITICAL\]:\sI'm blue and I'm a WTF.+;/, "Base Exception for all exceptions output");
 ###
 $tested{'Template'}=1;
+throws_ok { Template->throw( error  => 'test', template => 'test' ); } 'Template', 'Template Exception';
 eval { Template->throw( error => 'test', template => 'test' ); };
 combined_like( sub { &Error::catch_ex($@) }, qr/^Error.pm\s\[CRITICAL\]:\sI'm blue and I'm a WTF.....;/, "Template Base exception");
 ###
