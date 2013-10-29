@@ -728,6 +728,8 @@ Vcenter::Opts if unknown output requested
 
 =head3 TEST COVERAGE
 
+Tested if list outputs as required
+
 =cut
 
 sub list_cdrom {
@@ -813,6 +815,8 @@ Vcenter::Opts if unknown output requested
 
 =head3 TEST COVERAGE
 
+Tested if output is as expected
+
 =cut
 
 sub list_interface {
@@ -891,6 +895,8 @@ Vcenter::Opts if unknown output requested
 
 =head3 TEST COVERAGE
 
+Tested if lists as expected
+
 =cut
 
 sub list_disk {
@@ -951,6 +957,8 @@ True on success
 =head3 COMMENTS
 
 =head3 TEST COVERAGE
+
+Tested if list returns as expected
 
 =cut
 
@@ -1048,15 +1056,25 @@ sub list_process {
 
 =head3 PURPOSE
 
-
+Changes altername field to requested string
 
 =head3 PARAMETERS
 
 =over
 
+=item vmname
+
+Name of virtual Machine
+
+=item name
+
+String to change the alternate name
+
 =back
 
 =head3 RETURNS
+
+True on success
 
 =head3 DESCRIPTION
 
@@ -1065,6 +1083,8 @@ sub list_process {
 =head3 COMMENTS
 
 =head3 TEST COVERAGE
+
+Tested if altername changes the field
 
 =cut
 
@@ -1190,15 +1210,25 @@ sub change_interface {
 
 =head3 PURPOSE
 
-
+Changes the active snapshot to requested ID
 
 =head3 PARAMETERS
 
 =over
 
+=item vmname
+
+Name of virtual machine
+
+=item id
+
+Snapshot Id to revert to
+
 =back
 
 =head3 RETURNS
+
+True on success
 
 =head3 DESCRIPTION
 
@@ -1207,6 +1237,8 @@ sub change_interface {
 =head3 COMMENTS
 
 =head3 TEST COVERAGE
+
+Tested if revert to requested id works
 
 =cut
 
@@ -1226,15 +1258,29 @@ sub change_snapshot {
 
 =head3 PURPOSE
 
-
+Creates a snapshot for a machine
 
 =head3 PARAMETERS
 
 =over
 
+=item vmname
+
+Name of virtual machine
+
+=item snap_name
+
+Name of requested snapshot
+
+=item desc
+
+Description of snapshot
+
 =back
 
 =head3 RETURNS
+
+True on success
 
 =head3 DESCRIPTION
 
@@ -1243,6 +1289,8 @@ sub change_snapshot {
 =head3 COMMENTS
 
 =head3 TEST COVERAGE
+
+Tested if snapshot can be created with call
 
 =cut
 
@@ -1379,23 +1427,53 @@ sub add_disk {
 
 =head3 PURPOSE
 
-
+Clones a Virtual Machine
 
 =head3 PARAMETERS
 
 =over
 
+=item os_tmp
+
+The template to use for cloning
+
+=item ticket
+
+The ticket to attach to
+
+=item memory
+
+The memory amount to use, defaults  to templates amount
+
+=item cpu
+
+The number of cpu cores to add, defaults to templates amount
+
+=item domain
+
+If set to no then Win machines is added to SUPPORT workgroup, if given then to support domain
+
+=item parent_pool
+
+In which resourcepool should the ticket resource pool be provisioned
+
 =back
 
 =head3 RETURNS
+
+True on success
 
 =head3 DESCRIPTION
 
 =head3 THROWS
 
+Entity::Snapshot if no snapshots are defined by template
+
 =head3 COMMENTS
 
 =head3 TEST COVERAGE
+
+tested if all templates can be cloned
 
 =cut
 
