@@ -278,6 +278,9 @@ Resourcepool, Folder and DistributedVirtualSwitch are tested to see if it has an
 
 =head3 TEST COVERAGE
 
+Tested if cleans up empty ResourcePool, Folder, Switch
+Tested if entity is defined on these views then it is left alone
+
 =cut
 
 sub cleanup {
@@ -377,6 +380,8 @@ The function only prints the current time on VCenter
 =head3 COMMENTS
 
 =head3 TEST COVERAGE
+
+Tested if valid time is returned
 
 =cut
 

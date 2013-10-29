@@ -392,6 +392,8 @@ VirtualMachineRelocateSpec managed object
 
 =head3 TEST COVERAGE
 
+Tested with all templates if valid object is returned
+
 =cut
 
 sub RelocateSpec {
@@ -450,6 +452,8 @@ VirtualMachineConfigSpec Managd object
 
 =head3 TEST COVERAGE
 
+Tested with all templates if valid object is returned
+
 =cut
 
 sub ConfigSpec {
@@ -491,6 +495,8 @@ Returns a CustomizationPassword managed object for Standard password use
 
 =head3 TEST COVERAGE
 
+Tested with all templates if valid object is returned
+
 =cut
 
 sub CustomizationPassword {
@@ -526,6 +532,8 @@ CustomizationIdentification managed object
 =head3 COMMENTS
 
 =head3 TEST COVERAGE
+
+Tested with all templates if valid object is returned
 
 =cut
 
@@ -566,6 +574,8 @@ CustomizationIdetification managed object
 =head3 COMMENTS
 
 =head3 TEST COVERAGE
+
+Tested with all templates if valid object is returned
 
 =cut
 
@@ -622,6 +632,8 @@ A VirtualMachineCloneSpec managed object
 =head3 COMMENTS
 
 =head3 TEST COVERAGE
+
+Tested with all templates if valid object is returned
 
 =cut
 
@@ -750,6 +762,8 @@ A VirtualMachineCloneSpec managed object
 
 =head3 TEST COVERAGE
 
+Tested with all templates if valid object is returned
+
 =cut
 
 sub lin_CloneSpec {
@@ -824,6 +838,8 @@ A VirtualMachineCloneSpec managed object
 =head3 COMMENTS
 
 =head3 TEST COVERAGE
+
+Tested with all templates if valid object is returned
 
 =cut
 

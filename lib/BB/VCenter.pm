@@ -885,6 +885,8 @@ Entity::NumException if entity already exists
 
 =head3 TEST COVERAGE
 
+Tested if DVPG is created in cleanup.t
+
 =cut
 
 sub create_dvportgroup {
