@@ -177,6 +177,8 @@ A uniq mac
 
 =head3 COMMENTS
 
+Need to find a way to generate a uniq mac and make it fail for tests
+
 =head3 TEST COVERAGE
 
 =cut
@@ -287,6 +289,8 @@ False if mac is uniq
 =head3 THROWS
 
 =head3 COMMENTS
+
+Maybe some caching should be implemented for macs to speed it up with ttl
 
 =head3 TEST COVERAGE
 
@@ -690,6 +694,9 @@ An uniq virtual machine name
 
 =head3 COMMENTS
 
+Since vmname is generated randomly it would be hard to test this. Also no exception is returned only a uniq name.
+At runtime every run will generate a uniq name, so not sure how to make it fail and test
+
 =head3 TEST COVERAGE
 
 =cut
@@ -737,6 +744,8 @@ Machine names are used to idetify unseen tickets and added to hash
 =head3 COMMENTS
 
 =head3 TEST COVERAGE
+
+Tested if hash is returned, and owners are present in agents hash. This test can sometimes fail sometimes not depending on the current users, if it fails then there is a new user not added to agents hash in Support.pm
 
 =cut
 
@@ -798,7 +807,11 @@ Hash ref containing tickets
 
 =head3 COMMENTS
 
+To verify if correct vms are returned is not scope of test and would be overkill. The test would need to requery all VM names and see if only the required ones were given, so same code would be generated
+
 =head3 TEST COVERAGE
+
+tested if hash is returned for testing user
 
 =cut
 
@@ -858,6 +871,9 @@ Connection::Connect if in file could not be opened
 =head2 COMMENTS
 
 =head2 TEST COVERAGE
+
+Tested if unknown file throws exception
+Tested if BB/Misc.pm module header starts as expected
 
 =cut
 

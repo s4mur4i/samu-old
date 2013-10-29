@@ -6,6 +6,8 @@ use Test::More;
 use Test::Exception;
 use FindBin;
 use lib "$FindBin::Bin/../../lib";
+use Pod::Simple::Wiki::Dokuwiki;
+use Test::Output;
 
 BEGIN {
     use_ok('BB::Misc');
@@ -21,12 +23,9 @@ ok( &Misc::array_longest( [ "t", "te", "test", "tes" ] ) eq 4,
 like( &Misc::random_3digit, qr/^\d{1,3}$/,
     'random_3digit gave correct random number' );
 
-#FIXME test with all users in agent hash
-like(
-    &Misc::generate_mac('s4mur4i'),
-    qr/^([0-9A-F]{2}:){5}[0-9A-F]{2}$/,
-    'generate_mac gave a valid mac address'
-);
+for my $key ( @{ &Support::get_keys('agents')} ) {
+    like( &Misc::generate_mac($key), qr/^([0-9A-F]{2}:){5}[0-9A-F]{2}$/, "generate_mac gave a valid mac address for user $key");
+}
 
 like( &Misc::increment_mac('00:00:00:00:00:00'),
     qr/^(00:){5}01$/, 'increment_mac gave a valid mac address' );
@@ -96,15 +95,28 @@ ok(
 );
 is_deeply( &Misc::filename_splitter("[datastore] big/jew/dick.vmdk"),
     \@array, 'filename_splitter returned correct information' );
-throws_ok { &Misc::filename_splitter("I will be an exception") }
-'Vcenter::Path', 'filename_splitter throws exception';
+throws_ok { &Misc::filename_splitter("I will be an exception") } 'Vcenter::Path', 'filename_splitter throws exception';
 
 like(
     &Misc::generate_vmname( "ticket", "joe", "os_temp" ),
     qr/^ticket-joe-os_temp-\d{1,3}$/,
     'generate_vmname returned a valid vmname'
 );
+my $username = &Opts::get_option('username');
+isa_ok( &Misc::user_ticket_list($username), 'HASH', "user_ticket list returned hash" );
 
+use Data::Dumper;
+my $hash = &Misc::ticket_list;
+isa_ok( &Misc::ticket_list, 'HASH', "ticket list returned hash");
+for my $key ( keys %$hash) {
+    isa_ok( &Support::get_hash( 'agents', $hash->{$key} ), 'HASH', "get_hash returned hash for user $hash->{$key}" );
+}
+
+#FIXME generate_macs, a mac should be taken and a further macs arround that pool should be requested
+
+throws_ok { &Misc::pod2wiki("/test/test") } 'Connection::Connect', 'pod2wiki throws exception if file not found';
+my $out = &Misc::pod2wiki("$FindBin::Bin/../../lib/BB/Misc.pm");
+stdout_like( sub{ print $out; }, qr/^\s*===== Misc.pm =====/, "pod2wiki returned text as expected" );
 done_testing;
 
 END {
