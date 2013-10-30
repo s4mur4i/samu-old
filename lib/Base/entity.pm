@@ -963,6 +963,7 @@ Tested if list returns as expected
 =cut
 
 sub list_snapshot {
+#FIXME refactor code
     &Log::debug("Starting Entity::list_snapshot sub");
     my $vmname = Opts::get_option('vmname');
     &Log::debug1("Opts are: vmname=>'$vmname'");
@@ -1121,6 +1122,9 @@ sub change_altername {
 =head3 COMMENTS
 
 =head3 TEST COVERAGE
+
+Tested if iso can be mounted, unmount works as expected
+Also tested if exception is thrown if both not specified or both specified options, also if unknown file is requested to be mounted
 
 =cut
 
@@ -1317,15 +1321,25 @@ sub add_snapshot {
 
 =head3 PURPOSE
 
-
+Adds another interface to the requested virtual machine
 
 =head3 PARAMETERS
 
 =over
 
+=item vmname
+
+Name of Virtual machine
+
+=item type
+
+Type of interface to add
+
 =back
 
 =head3 RETURNS
+
+True on success
 
 =head3 DESCRIPTION
 
@@ -1334,6 +1348,8 @@ sub add_snapshot {
 =head3 COMMENTS
 
 =head3 TEST COVERAGE
+
+Tested if VMXNET or E1000 can be added to all templates
 
 =cut
 
@@ -1354,23 +1370,33 @@ sub add_interface {
 
 =head3 PURPOSE
 
-
+Adds a ide cdrom to a virtual machine
 
 =head3 PARAMETERS
 
 =over
 
+=item vmname
+
+Name of virtual machine
+
 =back
 
 =head3 RETURNS
 
+true on success
+
 =head3 DESCRIPTION
+
+Only one type of ide cdrom can be added to each machine. each template has 2 ide controllers and each controller can have 2 devices
 
 =head3 THROWS
 
 =head3 COMMENTS
 
 =head3 TEST COVERAGE
+
+tested if 4 ide cdroms can be added to vm. the 4 th add will throw an exception
 
 =cut
 
@@ -1390,23 +1416,37 @@ sub add_cdrom {
 
 =head3 PURPOSE
 
-
+Adds a SCSI disk with requested size to vm
 
 =head3 PARAMETERS
 
 =over
 
+=item vmname
+
+Name of virtual machine
+
+=item size
+
+Size of requested disk in GB
+
 =back
 
 =head3 RETURNS
 
+True on success
+
 =head3 DESCRIPTION
+
+A SCSI controller can have 15 devices. IN vmware ID 7 is used for the controller, and the last possible ID is 15
 
 =head3 THROWS
 
 =head3 COMMENTS
 
 =head3 TEST COVERAGE
+
+Tested if 14 disk can be added to vm. Exception is also tested
 
 =cut
 
@@ -1906,11 +1946,17 @@ True on success
 
 =head2 DESCRIPTION
 
+VCenter::Opts if unknown hw is requested to delete
+Entity::HWError if no more hw to delete
+
 =head2 THROWS
 
 =head2 COMMENTS
 
 =head2 TEST COVERAGE
+
+Tested if exception is thrown if unknown hardware is requested
+Tested if sub deletes all types of hardware and if HWError is thrown if no more hardware is possible or larges is requested
 
 =cut
 
@@ -1930,6 +1976,9 @@ sub delete_hw {
     }
     &Log::debug1("Opts are: vmname=>'$vmname', id=>'$id'");
     my @net_hw = @{ &Guest::get_hw( $vmname, $hw ) };
+    if ( ($id +1) gt scalar(@net_hw) ) {
+        Entity::HWError->throw( error => "No more hardware to delete", entity => $vmname, hw => $hw );
+    }
     &Guest::remove_hw( $vmname, $net_hw[$id] );
     &Log::debug("Finishing Entity::delete_hw sub");
     return 1;
@@ -2105,7 +2154,7 @@ True on success
 
 =head2 COMMENTS
 
-=head2 SEE ALSO
+=head2 TEST COVERAGE
 
 =cut
 
@@ -2123,4 +2172,5 @@ sub change_power {
     &Log::debug("Finishing entity::change_power sub");
     return 1;
 }
+
 1

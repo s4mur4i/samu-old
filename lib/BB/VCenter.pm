@@ -1176,13 +1176,16 @@ sub datastore_file_exists {
         details      => $files,
         matchPattern => [$image]
     );
-    my $return = $browser->SearchDatastoreSubFolders(
-        datastorePath => "[$datas] $folder",
-        searchSpec    => $searchspec
-    );
+    my $return;
+    eval {
+        $return = $browser->SearchDatastoreSubFolders(
+            datastorePath => "[$datas] $folder",
+            searchSpec    => $searchspec
+        );
+    };
     my $ret = 0;
 
-    if ( defined( $return->[0]->file ) ) {
+    if ( defined($return) and defined( $return->[0]->file ) ) {
         &Log::debug("Datastore file exists");
         $ret = 1;
     }
