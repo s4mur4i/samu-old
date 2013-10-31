@@ -624,7 +624,7 @@ True on success
 
 sub list_folder {
     &Log::debug("Starting Admin::list_folder sub");
-    my @folder = ();
+    my @process_folders = ();
     if ( &Opts::get_option('all') ) {
         &Log::debug("All folders requested");
         my $vm_folder_view = Vim::find_entity_view(
@@ -632,19 +632,19 @@ sub list_folder {
             properties => ['name'],
             filter     => { name => 'vm' }
         );
-        my $folders = Vim::find_entity_views(
+        my $vim_folders = Vim::find_entity_views(
             view_type    => 'Folder',
             begin_entity => $vm_folder_view,
             properties   => ['name']
         );
-        foreach (@$folders) {
+        foreach (@$vim_folders) {
             &Log::debug( "Pushing " . $_->name . " to array" );
-            push( @folder, $_->name );
+            push( @process_folders, $_->name );
         }
     }
     elsif ( &Opts::get_option('name') ) {
         &Log::debug("One folder requested");
-        push( @folder, &Opts::get_option('name') );
+        push( @process_folders, &Opts::get_option('name') );
     }
     else {
         &Log::debug("No option requested running VMWare sdk help");
@@ -652,7 +652,7 @@ sub list_folder {
     }
     my @titles = (qw(Folder VirtualMachineChilds FolderChilds));
     &Output::option_parser( \@titles );
-    for my $folder (@folder) {
+    for my $folder (@process_folders) {
         my $sorted = &VCenter::folder_info($folder);
         &Output::add_row(
             [
@@ -725,7 +725,7 @@ sub list_linked_clones {
     my @vms = @{ &VCenter::find_vms_with_disk($disk) };
     print "Vms linked to $name\n";
     foreach (@vms) {
-        print "$_\n" unless $_ eq $vmname;
+        ( $_ ne $vmname ) and print "$_\n";
     }
     &Log::debug("Finishing Admin::list_linked_clones sub");
     return 1;

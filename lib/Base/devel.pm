@@ -105,7 +105,7 @@ sub create_mainpod {
     my @files;
     opendir( my $dir, $folder );
     while ( my $file = readdir($dir) ) {
-        if ( ( !$file =~ /\.pod$/ ) or $file =~ /^\./ or $file =~ /^$output$/ )
+        if ( ( $file !~ /\.pod$/ ) or $file =~ /^\./ or $file =~ /^$output$/ )
         {
             &Log::debug("Jumping to next file");
             next;

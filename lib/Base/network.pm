@@ -400,7 +400,7 @@ sub network_delete {
 
 sub create_net {
     &Log::debug("Starting Network::create_net sub");
-    print "Not implemented yet\n";
+#FIXME implement
     &Log::debug("Finishing Network::create_net sub");
     return 1;
 }

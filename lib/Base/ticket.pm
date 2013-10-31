@@ -3,6 +3,7 @@ package ticket;
 use strict;
 use warnings;
 use Base::misc;
+use Scalar::Util qw(looks_like_number);
 
 my $help = 0;
 
@@ -196,7 +197,7 @@ sub ticket_delete {
         &Log::debug( "Deleting vm '" . $vm . "'" );
         &VCenter::destroy_entity( $vm, 'VirtualMachine' );
     }
-    for my $type (qw(ResourcePool Folder)) {
+    for my $type ( 'ResourcePool', 'Folder' ) {
         &Log::debug( "Deleting type '" . $type . "'" );
         my $entities = Vim::find_entity_views(
             view_type  => $type,
@@ -280,16 +281,9 @@ sub ticket_info {
             if ( defined( $view->guest->net ) ) {
                 foreach ( @{ $view->guest->net } ) {
                     my $string = "";
-                    if ( defined( $_->ipAddress ) ) {
-                        $string = "ipAddresses => [ "
-                          . join( ", ", @{ $_->ipAddress } ) . " ]";
-                    }
-                    if ( defined( $_->network ) ) {
-                        $string .= ", Network => '" . $_->network . "'";
-                    }
-                    if ( $string =~ /^$/ ) {
-                        $string = "No network information could be extracted";
-                    }
+                    ( defined $_->ipAddress ) and  $string = "ipAddresses => [ " . join( ", ", @{ $_->ipAddress } ) . " ]";
+                    ( defined( $_->network ) ) and $string .= ", Network => '" . $_->network . "'";
+                    ( $string =~ /^$/ ) and $string = "No network information could be extracted";
                     print "\t" . $string . "\n";
                 }
                 if ( defined( $view->guest->hostName ) ) {
@@ -313,6 +307,7 @@ sub ticket_info {
         }
         if ( $vm_info->{uniq} ne 'unknown' ) {
             if ( defined( &Support::get_hash( 'template', $os ) ) ) {
+#FIXME gondolkodni
                 print "\tDefault login : '"
                   . &Support::get_key_value( 'template', $os, 'username' )
                   . "' / '"
@@ -455,15 +450,15 @@ sub ticket_list {
     &Kayako::connect_kayako();
     my @titles = (qw(Ticket Owner Status B-Ticket B-Status));
     &Output::option_parser( \@titles );
-    for my $ticket ( sort { $a <=> $b } ( keys %{$tickets} ) ) {
+    for my $ticket ( sort { ( ( looks_like_number $a ) ? $a : 0 ) <=> ( ( looks_like_number $b ) ? $b : 0 ) } ( keys %{$tickets} ) ) {
         &Log::debug("Collecting information about ticket=>'$ticket'");
         if ( $ticket ne "" and $ticket ne "unknown" ) {
-            my @string;
-            push( @string, $ticket );
-            push( @string, $$tickets{$ticket} );
+            my @print_row;
+            push( @print_row, $ticket );
+            push( @print_row, $$tickets{$ticket} );
             my $result = &Kayako::run_query( "select ticketstatustitle from swtickets where ticketid = '$ticket'");
             if ( defined($result) ) {
-                push( @string, $$result{ticketstatustitle} );
+                push( @print_row, $$result{ticketstatustitle} );
                 $result = &Kayako::run_query( "select fieldvalue from swcustomfieldvalues where typeid = '$ticket' and customfieldid = '25'");
                 if ( defined($result) and $$result{fieldvalue} ne "" ) {
                     my @result = split( " ", $$result{fieldvalue} );
@@ -496,15 +491,15 @@ sub ticket_list {
                             }
                         }
                     }
-                    push( @string, $bugzilla_ticket );
-                    push( @string, $bugzilla_status );
+                    push( @print_row, $bugzilla_ticket, $bugzilla_status );
                 }
                 else {
-                    push( @string, "---" );
-                    push( @string, "---" );
+                    push( @print_row, "---", "---" );
                 }
+            } else {
+                push( @print_row, "---", "---", "---" );
             }
-            &Output::add_row( \@string );
+            &Output::add_row( \@print_row );
         }
         else {
             &Log::debug("Ticket name is empty or unknown");
