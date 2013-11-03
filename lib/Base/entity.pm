@@ -961,14 +961,14 @@ sub list_snapshot {
     &Log::debug("Starting Entity::list_snapshot sub");
     my $vmname = Opts::get_option('vmname');
     &Log::debug1("Opts are: vmname=>'$vmname'");
-    my @titles = (qw(Current ID Name CreateTime Description));
-    &Output::option_parser( \@titles );
     my $snapshotinfo = {};
     my $view = &Guest::entity_property_view( $vmname, 'VirtualMachine', 'snapshot' );
-    $snapshotinfo = { CUR => $view->snapshot->currentSnapshot->value };
     if (   !defined( $view->{snapshot} ) )  {
         Entity::Snapshot->throw( error    => "Entity has no snapshots defined", entity   => $vmname, snapshot => 0);
     }
+    my @titles = (qw(Current ID Name CreateTime Description));
+    &Output::option_parser( \@titles );
+    $snapshotinfo = { CUR => $view->snapshot->currentSnapshot->value };
     $snapshotinfo = &Guest::list_snapshot($snapshotinfo, $view->{snapshot}->{rootSnapshotList}[0] );
     delete $snapshotinfo->{CUR};
     for my $id ( sort { $a <=> $b } keys %$snapshotinfo) {
