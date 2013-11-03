@@ -114,7 +114,7 @@ SKIP: {
         &Opts::set_option( "vmname", $name );
         &Opts::set_option( "network", "Internal Network 1" );
         is( &entity::change_interface, 1, "Change interface is succesful");
-        output_like( \&entity::list_interface, qr/^\s*0\s*\d+\s*([0-9A-F]{2}:){5}[0-9A-F]{2}\sNetwork\sadapter\s\d\sInternal\sNetwork\s1\s[^ ]*$/, qr/^$/, "Listing network information");
+        output_like( \&entity::list_interface, qr/^\s*0\s*\d+\s*([0-9A-F]{2}:){5}[0-9A-F]{2}\sNetwork\sadapter\s\d\sInternal\sNetwork\s1\s[^ ]*/, qr/^$/, "Listing network information");
         &Opts::set_option( "network", "TestTestTest1234" );
         throws_ok{ &entity::change_interface} 'Entity::NumException', "Unknown Network throws exception";
         &Opts::set_option( "num", "9" );
