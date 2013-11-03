@@ -57,7 +57,7 @@ SKIP: {
         &Opts::set_option( "vmname", $name );
         output_like( \&entity::list_disk, qr/^\s*0\s*\d+\s*\d+\s\[support\] $name\/$name.vmdk\s*$/, qr/^$/, "Listing disk information");
         output_like( \&entity::list_cdrom, qr/^\s*0\s*\d+\s*Client_Device\s*CD\/DVD drive 1\s*/, qr/^$/, "Listing cdrom information");
-        output_like( \&entity::list_interface, qr/^\s*0\s*\d+\s*([0-9A-F]{2}:){5}[0-9A-F]{2}\s*Network adapter 1\s*\S*\s*$/, qr/^$/, "Listing network information");
+        output_like( \&entity::list_interface, qr/^\s*0\s*\d+\s*([0-9A-F]{2}:){5}[0-9A-F]{2}\s*Network adapter 1\s*VLAN21\s\S*\s*$/, qr/^$/, "Listing network information");
         throws_ok { &entity::list_snapshot() } 'Entity::Snapshot', "list_snapshot throws exception";
         diag("Testing add functions");
         for ( my $i = 1; $i< 4; $i++ ) {
@@ -108,6 +108,18 @@ SKIP: {
         &Opts::add_options( %{ $entity::module_opts->{functions}->{list}->{functions}->{disk} ->{opts} });
         &Opts::set_option( "noheader", 1 );
         output_like( \&entity::list_cdrom, qr/^\s*0\s*\d+\s*Client_Device\s*CD\/DVD drive \d+\s*/, qr/^$/, "Listing cdrom information");
+
+        &Opts::add_options( %{ $entity::module_opts->{functions}->{change}->{functions}->{interface}->{opts} });
+        &Opts::set_option( "num", "0" );
+        &Opts::set_option( "vmname", $name );
+        &Opts::set_option( "network", "Internal Network 1" );
+        is( &entity::change_interface, 1, "Change interface is succesful");
+        output_like( \&entity::list_interface, qr/^\s*0\s*\d+\s*([0-9A-F]{2}:){5}[0-9A-F]{2}\sNetwork\sadapter\s\d\sInternal\sNetwork\s1\s[^ ]*$/, qr/^$/, "Listing network information");
+        &Opts::set_option( "network", "TestTestTest1234" );
+        throws_ok{ &entity::change_interface} 'Entity::NumException', "Unknown Network throws exception";
+        &Opts::set_option( "num", "9" );
+        throws_ok{ &entity::change_interface} 'Entity::HWError', "Higher interface count throws exception";
+
 
         diag("Deleting HW");
         &Opts::add_options( %{ $entity::module_opts->{functions}->{delete}->{functions}->{hw} ->{opts} });

@@ -493,6 +493,9 @@ A spec for changing the interface
 
 =head3 TEST COVERAGE
 
+Tested if exception is thrown if incorrect network is requested
+Tested if higher number interface is requested
+
 =cut
 
 sub change_interface_spec {

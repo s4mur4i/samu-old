@@ -823,7 +823,7 @@ sub list_interface {
     &Log::debug("Entity::list_interface sub started");
     my $vmname = Opts::get_option('vmname');
     &Log::debug1("Opts are: vmname=>'$vmname'");
-    my @titles = (qw(Number Key MacAddress Label Type));
+    my @titles = (qw(Number Key MacAddress Label Network Type));
     &Output::option_parser( \@titles );
     my @net_hw = @{ &Guest::get_hw( $vmname, 'VirtualEthernetCard' ) };
     if ( @net_hw eq 0 ) {
@@ -846,7 +846,8 @@ sub list_interface {
                 $i,
                 $net_hw[$i]->{key},
                 $net_hw[$i]->{macAddress},
-                $net_hw[$i]->{deviceInfo}->{label}, $type
+                $net_hw[$i]->{deviceInfo}->{label},
+                $type
             ]
         );
     }
@@ -953,7 +954,7 @@ Output is only generated from first rootsnapshotlist branch. There should be a s
 
 =head3 TEST COVERAGE
 
-Tested if list returns as expected
+Tested if list returns as expected, also tested if exception is thrown
 
 =cut
 
@@ -1112,19 +1113,40 @@ sub change_altername {
 
 =head3 PURPOSE
 
-
+Changes the iso in a cdrom
 
 =head3 PARAMETERS
 
 =over
 
+=item vmname
+
+Name of virtual machine
+
+=item num
+
+Number of cdrom to change
+
+=item iso
+
+Datastore path to iso
+
+=item unmount
+
+Unmount the cdrom
+
 =back
 
 =head3 RETURNS
 
+true on success
+
 =head3 DESCRIPTION
 
 =head3 THROWS
+
+Vcenter::Opts if Opts are not expected
+Vcenter::Path if Datastore path does not exist
 
 =head3 COMMENTS
 
@@ -1188,9 +1210,23 @@ Changes the interfaces network backing
 
 =over
 
+=item vmname
+
+Name of virtual machine
+
+=item num
+
+Number of interface
+
+=item network
+
+Name of network on Vcenter
+
 =back
 
 =head3 RETURNS
+
+True on success
 
 =head3 DESCRIPTION
 
@@ -1199,6 +1235,8 @@ Changes the interfaces network backing
 =head3 COMMENTS
 
 =head3 TEST COVERAGE
+
+Tested if Network interface can be changed
 
 =cut
 
@@ -1849,6 +1887,8 @@ Entity::NumException if Entity is not empty or we could not delete the entity
 
 =head2 SEE ALSO
 
+Tested if entity can be deleted with sub
+
 =cut
 
 sub delete_entity {
@@ -1880,23 +1920,41 @@ sub delete_entity {
 
 =head3 PURPOSE
 
-
+Snapshot can be removed
 
 =head3 PARAMETERS
 
 =over
 
+=item vmname
+
+Name of virtual machine
+
+=item id
+
+Id of snapshot to remove
+
+=item all
+
+All snapshots should be removed
+
 =back
 
 =head3 RETURNS
+
+True on success
 
 =head3 DESCRIPTION
 
 =head3 THROWS
 
+Vcenter::Opts of id or all not given
+
 =head3 COMMENTS
 
 =head3 TEST COVERAGE
+
+Tested if a single snapshot can be delete or all snapshots
 
 =cut
 
@@ -1915,7 +1973,7 @@ sub delete_snapshot {
         &Guest::remove_snapshot( $vmname, $id );
     }
     else {
-        &Log::warning("Please give either all or id");
+        Vcenter::Opts->throw( error => "Either all or id needs to be given", opt => "all or id");
     }
     &Log::info("Finishing Entity::delete_snapshot sub");
     return 1;
