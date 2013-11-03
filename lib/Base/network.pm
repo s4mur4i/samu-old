@@ -31,13 +31,13 @@ our $module_opts = {
                     type     => "=s",
                     help     => "Ticket to add network to",
                     required => 1,
-                    default => "",
+                    default  => "",
                 },
                 type => {
                     type     => "=s",
                     help     => "Type of network to add",
                     required => 1,
-                    default => "",
+                    default  => "",
                 },
             },
         },
@@ -49,20 +49,20 @@ our $module_opts = {
                     type     => "=s",
                     help     => "Type of interface to create",
                     required => 1,
-                    default => "",
+                    default  => "",
                 },
                 ticket => {
                     type     => "=s",
                     help     => "Ticket to add network to",
                     required => 1,
-                    default => "",
+                    default  => "",
                 },
                 vms => {
                     type => "=s",
                     help =>
 "A comma seperated list of vms to add to interface, Ex: test1,test2,test3",
                     required => 1,
-                    default => "",
+                    default  => "",
                 },
             },
         },
@@ -84,7 +84,7 @@ our $module_opts = {
                     type     => "=s",
                     help     => "Name of device to delete",
                     required => 1,
-                    default => "",
+                    default  => "",
                 },
                 switch => {
                     type     => "",
@@ -132,7 +132,7 @@ Hash ref containing module_opts
 =cut
 
 sub module_opts {
-        return $module_opts;
+    return $module_opts;
 }
 
 =pod
@@ -400,7 +400,8 @@ sub network_delete {
 
 sub create_net {
     &Log::debug("Starting Network::create_net sub");
-#FIXME implement
+
+    #FIXME implement
     &Log::debug("Finishing Network::create_net sub");
     return 1;
 }

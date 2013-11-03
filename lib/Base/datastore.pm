@@ -33,7 +33,7 @@ our $module_opts = {
                     type     => "=s",
                     help     => "Name of datastore",
                     required => 1,
-                    default => "",
+                    default  => "",
                 },
             },
         },
@@ -45,7 +45,7 @@ our $module_opts = {
                     type     => "=s",
                     help     => "Name of datastore",
                     required => 1,
-                    default => "",
+                    default  => "",
                 },
             },
         },
@@ -98,7 +98,7 @@ Hash ref containing module_opts
 =cut
 
 sub module_opts {
-        return $module_opts;
+    return $module_opts;
 }
 
 =pod

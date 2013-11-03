@@ -33,7 +33,7 @@ our $module_opts = {
                     type     => '=s',
                     help     => "Number of ticket to gather info",
                     required => 1,
-                    default => "",
+                    default  => "",
                 },
             },
         },
@@ -69,7 +69,7 @@ Hash ref containing module_opts
 =cut
 
 sub module_opts {
-        return $module_opts;
+    return $module_opts;
 }
 
 =pod

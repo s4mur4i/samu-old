@@ -1609,7 +1609,7 @@ ticket to add interface to
 
 =item vms
 
-A comma seperated list of vms to add to interface
+A comma separated list of vms to add to interface
 
 =back
 

@@ -13,8 +13,7 @@ Subroutines from BB/Error.pm
 
 use Data::Dumper;
 use Exception::Class (
-    'BaseException' => {
-    },
+    'BaseException' => {},
 
     ## Base Classes
     'Entity' => {

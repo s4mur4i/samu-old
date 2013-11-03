@@ -61,7 +61,7 @@ our $module_opts = {
                     help =>
 "Should the requested machine be added to support.ittest.domain",
                     required => 0,
-                    default => 0,
+                    default  => 0,
                 },
             },
         },
@@ -81,10 +81,10 @@ our $module_opts = {
             vcenter_connect => 1,
             functions       => {
                 dumper => {
-                    function      => \&info_dumper,
-                    prereq_module => [qw(Data::Dumper)],
+                    function        => \&info_dumper,
+                    prereq_module   => [qw(Data::Dumper)],
                     vcenter_connect => 1,
-                    opts          => {
+                    opts            => {
                         vmname => {
                             type => "=s",
                             help =>
@@ -94,10 +94,10 @@ our $module_opts = {
                     },
                 },
                 runtime => {
-                    function      => \&info_runtime,
-                    prereq_module => [qw(Data::Dumper)],
+                    function        => \&info_runtime,
+                    prereq_module   => [qw(Data::Dumper)],
                     vcenter_connect => 1,
-                    opts          => {
+                    opts            => {
                         vmname => {
                             type => "=s",
                             help =>
@@ -235,8 +235,8 @@ our $module_opts = {
                             required => 1,
                         },
                         hw => {
-                            type => "=s",
-                            help => "What hw to delete",
+                            type     => "=s",
+                            help     => "What hw to delete",
                             required => 1,
                         },
                     },
@@ -272,8 +272,8 @@ our $module_opts = {
                             required => 1,
                         },
                         type => {
-                            type =>"=s",
-                            help => "Type of entity to delete",
+                            type     => "=s",
+                            help     => "Type of entity to delete",
                             required => 1,
                         },
                     },
@@ -652,7 +652,7 @@ Hash ref containing module_opts
 =cut
 
 sub module_opts {
-        return $module_opts;
+    return $module_opts;
 }
 
 =pod
@@ -846,8 +846,7 @@ sub list_interface {
                 $i,
                 $net_hw[$i]->{key},
                 $net_hw[$i]->{macAddress},
-                $net_hw[$i]->{deviceInfo}->{label},
-                $type
+                $net_hw[$i]->{deviceInfo}->{label}, $type
             ]
         );
     }
@@ -915,7 +914,14 @@ sub list_disk {
     for ( my $i = 0 ; $i < scalar(@disk_hw) ; $i++ ) {
         &Log::debug("Iterating thorugh disk hardware '$i'");
         &Log::dumpobj( "disk $i", $disk_hw[$i] );
-        &Output::add_row( [ $i, $disk_hw[$i]->{key}, $disk_hw[$i]->{capacityInKB}, $disk_hw[$i]->{backing}->{fileName} ]);
+        &Output::add_row(
+            [
+                $i,
+                $disk_hw[$i]->{key},
+                $disk_hw[$i]->{capacityInKB},
+                $disk_hw[$i]->{backing}->{fileName}
+            ]
+        );
     }
     &Output::print;
     &Log::debug("Finishing list_disk sub");
@@ -963,17 +969,32 @@ sub list_snapshot {
     my $vmname = Opts::get_option('vmname');
     &Log::debug1("Opts are: vmname=>'$vmname'");
     my $snapshotinfo = {};
-    my $view = &Guest::entity_property_view( $vmname, 'VirtualMachine', 'snapshot' );
-    if (   !defined( $view->{snapshot} ) )  {
-        Entity::Snapshot->throw( error    => "Entity has no snapshots defined", entity   => $vmname, snapshot => 0);
+    my $view =
+      &Guest::entity_property_view( $vmname, 'VirtualMachine', 'snapshot' );
+    if ( !defined( $view->{snapshot} ) ) {
+        Entity::Snapshot->throw(
+            error    => "Entity has no snapshots defined",
+            entity   => $vmname,
+            snapshot => 0
+        );
     }
     my @titles = (qw(Current ID Name CreateTime Description));
     &Output::option_parser( \@titles );
     $snapshotinfo = { CUR => $view->snapshot->currentSnapshot->value };
-    $snapshotinfo = &Guest::list_snapshot($snapshotinfo, $view->{snapshot}->{rootSnapshotList}[0] );
+    $snapshotinfo =
+      &Guest::list_snapshot( $snapshotinfo,
+        $view->{snapshot}->{rootSnapshotList}[0] );
     delete $snapshotinfo->{CUR};
-    for my $id ( sort { $a <=> $b } keys %$snapshotinfo) {
-        &Output::add_row( [ defined($snapshotinfo->{$id}->{current}) ? "CUR" : "---", $id, $snapshotinfo->{$id}->{name}, $snapshotinfo->{$id}->{createTime}, $snapshotinfo->{$id}->{description}] );
+    for my $id ( sort { $a <=> $b } keys %$snapshotinfo ) {
+        &Output::add_row(
+            [
+                defined( $snapshotinfo->{$id}->{current} ) ? "CUR" : "---",
+                $id,
+                $snapshotinfo->{$id}->{name},
+                $snapshotinfo->{$id}->{createTime},
+                $snapshotinfo->{$id}->{description}
+            ]
+        );
     }
     &Output::print;
     &Log::debug("Finishing Entity::list_snapshot sub");
@@ -1896,12 +1917,16 @@ sub delete_entity {
     my $name = Opts::get_option('name');
     my $type = Opts::get_option('type');
     &Log::debug1("Opts are: name=>'$name', type=>'$type'");
-    if ( $type =~ /ResourcePool|Folder/) {
-        if ( !&VCenter::check_if_empty_entity( $name, $type) ) {
-            Entity::NumException->throw( error => "Entity $type is not empty", entity => $name, count => "more" );
+    if ( $type =~ /ResourcePool|Folder/ ) {
+        if ( !&VCenter::check_if_empty_entity( $name, $type ) ) {
+            Entity::NumException->throw(
+                error  => "Entity $type is not empty",
+                entity => $name,
+                count  => "more"
+            );
         }
     }
-    &VCenter::destroy_entity( $name, $type);
+    &VCenter::destroy_entity( $name, $type );
     if ( &VCenter::exists_entity( $name, $type ) ) {
         Entity::NumException->throw(
             error  => '$type was not deleted succcesfully',
@@ -1973,7 +1998,10 @@ sub delete_snapshot {
         &Guest::remove_snapshot( $vmname, $id );
     }
     else {
-        Vcenter::Opts->throw( error => "Either all or id needs to be given", opt => "all or id");
+        Vcenter::Opts->throw(
+            error => "Either all or id needs to be given",
+            opt   => "all or id"
+        );
     }
     &Log::info("Finishing Entity::delete_snapshot sub");
     return 1;
@@ -2029,20 +2057,30 @@ sub delete_hw {
     &Log::debug("Starting Entity::delete_hw sub");
     my $vmname = &Opts::get_option('vmname');
     my $id     = &Opts::get_option('id');
-    my $hw = &Opts::get_option('hw');
-    if ( $hw eq "interface") {
+    my $hw     = &Opts::get_option('hw');
+    if ( $hw eq "interface" ) {
         $hw = 'VirtualEthernetCard';
-    } elsif( $hw eq 'cdrom') {
+    }
+    elsif ( $hw eq 'cdrom' ) {
         $hw = 'VirtualCdrom';
-    } elsif( $hw eq 'disk') {
+    }
+    elsif ( $hw eq 'disk' ) {
         $hw = 'VirtualDisk';
-    } else {
-        Vcenter::Opts->throw( error => "Unknown HW requested to delete", opt => $hw );
+    }
+    else {
+        Vcenter::Opts->throw(
+            error => "Unknown HW requested to delete",
+            opt   => $hw
+        );
     }
     &Log::debug1("Opts are: vmname=>'$vmname', id=>'$id'");
     my @net_hw = @{ &Guest::get_hw( $vmname, $hw ) };
-    if ( ($id +1) gt scalar(@net_hw) ) {
-        Entity::HWError->throw( error => "No more hardware to delete", entity => $vmname, hw => $hw );
+    if ( ( $id + 1 ) gt scalar(@net_hw) ) {
+        Entity::HWError->throw(
+            error  => "No more hardware to delete",
+            entity => $vmname,
+            hw     => $hw
+        );
     }
     &Guest::remove_hw( $vmname, $net_hw[$id] );
     &Log::debug("Finishing Entity::delete_hw sub");
@@ -2226,13 +2264,18 @@ True on success
 sub change_power {
     &Log::debug("Starting entity::change_power sub");
     my $vmname = &Opts::get_option('vmname');
-    my $state = &Opts::get_option('state');
+    my $state  = &Opts::get_option('state');
     if ( $state eq "on" ) {
         &Guest::poweron($vmname);
-    } elsif ( $state eq "off" ) {
+    }
+    elsif ( $state eq "off" ) {
         &Guest::poweroff($vmname);
-    } else {
-        Vcenter::Opts->throw( error=> "unknown option requested $state", opt => $state );
+    }
+    else {
+        Vcenter::Opts->throw(
+            error => "unknown option requested $state",
+            opt   => $state
+        );
     }
     &Log::debug("Finishing entity::change_power sub");
     return 1;

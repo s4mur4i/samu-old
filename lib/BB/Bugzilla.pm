@@ -53,7 +53,7 @@ Very fragile, the backend can cange any time. Need to upgrade bugzilla so we can
 =head3 TEST COVERAGE
 
 Return tested for ticket test = unknown
-Return tested for ticket number 1 = unkown
+Return tested for ticket number 1 = unknown
 Return tested for ticket number 30000 = CLOSED
 
 =cut

@@ -56,7 +56,11 @@ sub create_table {
         $tbh = Text::Table->new();
     }
     else {
-        Connection::Connect->throw( error => "Backend object alreday exists", type => 'Output', dest => 'tbh');
+        Connection::Connect->throw(
+            error => "Backend object alreday exists",
+            type  => 'Output',
+            dest  => 'tbh'
+        );
     }
     &Log::debug("Finishing Output::create_table sub");
     return 1;
@@ -107,7 +111,11 @@ sub create_csv {
         $csv = Class::CSV->new( fields => $header );
     }
     else {
-        Connection::Connect->throw( error => "Backend object alreday exists", type => 'Output', dest => 'csv');
+        Connection::Connect->throw(
+            error => "Backend object alreday exists",
+            type  => 'Output',
+            dest  => 'csv'
+        );
     }
     &Log::debug("Finishing Output::create_csv sub");
     return 1;
@@ -161,8 +169,13 @@ sub add_row {
     elsif ( defined $csv ) {
         &Log::debug("Adding row to csv");
         $csv->add_line($row);
-    } else {
-        Connection::Connect->throw( error => "No backend object defined", type => 'Output', dest => 'tbh/csv');
+    }
+    else {
+        Connection::Connect->throw(
+            error => "No backend object defined",
+            type  => 'Output',
+            dest  => 'tbh/csv'
+        );
     }
     &Log::debug("Finishing Output::add_row sub");
     return 1;
@@ -213,8 +226,13 @@ sub print {
         &Log::debug("Printing from csv");
         $csv->print;
         undef $csv;
-    } else {
-        Connection::Connect->throw( error => "No backend object defined", type => 'Output', dest => 'tbh/csv');
+    }
+    else {
+        Connection::Connect->throw(
+            error => "No backend object defined",
+            type  => 'Output',
+            dest  => 'tbh/csv'
+        );
     }
     &Log::debug("Finishing Output::print sub");
     return 1;

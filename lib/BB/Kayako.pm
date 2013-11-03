@@ -58,10 +58,22 @@ sub connect_kayako {
     my $dsn  = "dbi:mysql:kayako:10.21.0.17";
     my $user = "vmware-infra";
     my $pass = "Di2ooChei9iohewe";
-    if (!$dbh) {
-        $dbh = DBI->connect( $dsn, $user, $pass, { RaiseError => 1, AutoCommit => 0 } ) or Connection::Connect->throw( error => 'Could not connect to Kayako DB', type  => 'mysl::dbi', dest  => $dsn);
-    } else {
-        Connection::Connect->throw( error => "Already connected to Kayako", type => "Kayako", dest => $dsn);
+    if ( !$dbh ) {
+        $dbh =
+          DBI->connect( $dsn, $user, $pass,
+            { RaiseError => 1, AutoCommit => 0 } )
+          or Connection::Connect->throw(
+            error => 'Could not connect to Kayako DB',
+            type  => 'mysl::dbi',
+            dest  => $dsn
+          );
+    }
+    else {
+        Connection::Connect->throw(
+            error => "Already connected to Kayako",
+            type  => "Kayako",
+            dest  => $dsn
+        );
     }
     &Log::debug("Finishing Kayako::connect_kayako sub");
     &Log::dumpobj( "dbi handle", $dbh );
@@ -106,11 +118,17 @@ Tested if disconnect disconnects and deletes object, also tested if exception is
 
 sub disconnect_kayako {
     &Log::debug("Starting Kayako::disconnect_kayako sub");
-    if ( $dbh ) {
-        $dbh->disconnect or &Log::warning( "Kayako db disconnect warning:" . $dbh->errstr );
+    if ($dbh) {
+        $dbh->disconnect
+          or &Log::warning( "Kayako db disconnect warning:" . $dbh->errstr );
         undef $dbh;
-    } else {
-        Connection::Connect->throw(error => "Not connected to kayako server", type => "Kayako", dest => "Kayako local server");
+    }
+    else {
+        Connection::Connect->throw(
+            error => "Not connected to kayako server",
+            type  => "Kayako",
+            dest  => "Kayako local server"
+        );
     }
     &Log::debug("Finishing Kayako::disconnect_kayako sub");
     return 1;
@@ -157,11 +175,15 @@ Tested if correct response is returned, also tested if exception is thrown if no
 =cut
 
 sub run_query {
-    my ( $query ) = @_;
+    my ($query) = @_;
     &Log::debug("Starting Kayako::run_query sub");
     &Log::debug("Opts are: query=>'$query'");
-    if ( !$dbh) {
-        Connection::Connect->throw( error => "Not connected to kayako", type => "Kayako", dest => "Kayako local server");
+    if ( !$dbh ) {
+        Connection::Connect->throw(
+            error => "Not connected to kayako",
+            type  => "Kayako",
+            dest  => "Kayako local server"
+        );
     }
     my $sth = $dbh->prepare("$query");
     $sth->execute();

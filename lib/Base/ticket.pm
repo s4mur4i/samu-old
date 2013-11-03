@@ -34,7 +34,7 @@ our $module_opts = {
                     type     => "=s",
                     help     => "Ticket to list information about",
                     required => 1,
-                    default => "",
+                    default  => "",
                 },
             },
         },
@@ -51,7 +51,7 @@ our $module_opts = {
                 noheader => {
                     type     => "",
                     help     => "Should header information be printed",
-                    default => 0,
+                    default  => 0,
                     required => 0,
                 },
             },
@@ -63,7 +63,7 @@ our $module_opts = {
                 ticket => {
                     type     => "=s",
                     help     => "Ticket to power on",
-                    default => "",
+                    default  => "",
                     required => 1,
                 },
             },
@@ -75,7 +75,7 @@ our $module_opts = {
                 ticket => {
                     type     => "=s",
                     help     => "Ticket to power off",
-                    default => "",
+                    default  => "",
                     required => 1,
                 },
             },
@@ -87,7 +87,7 @@ our $module_opts = {
                 ticket => {
                     type     => "=s",
                     help     => "Ticket to delete",
-                    default => "",
+                    default  => "",
                     required => 1,
                 },
             },
@@ -124,7 +124,7 @@ Hash ref containing module_opts
 =cut
 
 sub module_opts {
-        return $module_opts;
+    return $module_opts;
 }
 
 =pod
@@ -281,9 +281,13 @@ sub ticket_info {
             if ( defined( $view->guest->net ) ) {
                 foreach ( @{ $view->guest->net } ) {
                     my $string = "";
-                    ( defined $_->ipAddress ) and  $string = "ipAddresses => [ " . join( ", ", @{ $_->ipAddress } ) . " ]";
-                    ( defined( $_->network ) ) and $string .= ", Network => '" . $_->network . "'";
-                    ( $string =~ /^$/ ) and $string = "No network information could be extracted";
+                    ( defined $_->ipAddress )
+                      and $string = "ipAddresses => [ "
+                      . join( ", ", @{ $_->ipAddress } ) . " ]";
+                    ( defined( $_->network ) )
+                      and $string .= ", Network => '" . $_->network . "'";
+                    ( $string =~ /^$/ )
+                      and $string = "No network information could be extracted";
                     print "\t" . $string . "\n";
                 }
                 if ( defined( $view->guest->hostName ) ) {
@@ -307,7 +311,8 @@ sub ticket_info {
         }
         if ( $vm_info->{uniq} ne 'unknown' ) {
             if ( defined( &Support::get_hash( 'template', $os ) ) ) {
-#FIXME gondolkodni
+
+                #FIXME gondolkodni
                 print "\tDefault login : '"
                   . &Support::get_key_value( 'template', $os, 'username' )
                   . "' / '"
@@ -450,16 +455,26 @@ sub ticket_list {
     &Kayako::connect_kayako();
     my @titles = (qw(Ticket Owner Status B-Ticket B-Status));
     &Output::option_parser( \@titles );
-    for my $ticket ( sort { ( ( looks_like_number $a ) ? $a : 0 ) <=> ( ( looks_like_number $b ) ? $b : 0 ) } ( keys %{$tickets} ) ) {
+    for my $ticket (
+        sort {
+            ( ( looks_like_number $a ) ? $a : 0 )
+              <=> ( ( looks_like_number $b ) ? $b : 0 )
+        } ( keys %{$tickets} )
+      )
+    {
         &Log::debug("Collecting information about ticket=>'$ticket'");
         if ( $ticket ne "" and $ticket ne "unknown" ) {
             my @print_row;
             push( @print_row, $ticket );
             push( @print_row, $$tickets{$ticket} );
-            my $result = &Kayako::run_query( "select ticketstatustitle from swtickets where ticketid = '$ticket'");
+            my $result = &Kayako::run_query(
+"select ticketstatustitle from swtickets where ticketid = '$ticket'"
+            );
             if ( defined($result) ) {
                 push( @print_row, $$result{ticketstatustitle} );
-                $result = &Kayako::run_query( "select fieldvalue from swcustomfieldvalues where typeid = '$ticket' and customfieldid = '25'");
+                $result = &Kayako::run_query(
+"select fieldvalue from swcustomfieldvalues where typeid = '$ticket' and customfieldid = '25'"
+                );
                 if ( defined($result) and $$result{fieldvalue} ne "" ) {
                     my @result = split( " ", $$result{fieldvalue} );
                     my $bugzilla_status;
@@ -496,7 +511,8 @@ sub ticket_list {
                 else {
                     push( @print_row, "---", "---" );
                 }
-            } else {
+            }
+            else {
                 push( @print_row, "---", "---", "---" );
             }
             &Output::add_row( \@print_row );

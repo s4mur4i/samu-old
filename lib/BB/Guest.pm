@@ -1159,7 +1159,7 @@ The key number if found
 =head3 TEST COVERAGE
 
 Exception is thrown if unknown vm is requested
-If unkown key is requested then 0 is returned
+If unknown key is requested then 0 is returned
 
 =cut
 
@@ -2093,20 +2093,26 @@ Maybe need to rethink to put printing into outer call, this should just return s
 =cut
 
 sub list_snapshot {
-    my ( $snapshotinfo, $view) = @_;
+    my ( $snapshotinfo, $view ) = @_;
     &Log::debug("Starting Guest::list_snapshot sub");
-    &Log::dumpobj( "snapshotinfo", $snapshotinfo);
-    &Log::dumpobj( "snapshot", $view );
-    $snapshotinfo->{$view->{id}} = { name => $view->{name}, createTime => $view->{createTime}, description => $view->{description}};
-    ($view->{snapshot}->{value} eq $snapshotinfo->{CUR}) and $snapshotinfo->{$view->{id}}->{current} = 1;
-    if ( defined( $view->{childSnapshotList}) ) {
-        foreach( @{$view->{childSnapshotList}}) {
+    &Log::dumpobj( "snapshotinfo", $snapshotinfo );
+    &Log::dumpobj( "snapshot",     $view );
+    $snapshotinfo->{ $view->{id} } = {
+        name        => $view->{name},
+        createTime  => $view->{createTime},
+        description => $view->{description}
+    };
+    ( $view->{snapshot}->{value} eq $snapshotinfo->{CUR} )
+      and $snapshotinfo->{ $view->{id} }->{current} = 1;
+    if ( defined( $view->{childSnapshotList} ) ) {
+        foreach ( @{ $view->{childSnapshotList} } ) {
             $snapshotinfo = &Guest::list_snapshot( $snapshotinfo, $_ );
         }
-    } else {
+    }
+    else {
         &Log::debug("No Child Snapshots defined");
     }
-    &Log::dumpobj("snapshotinfo", $snapshotinfo);
+    &Log::dumpobj( "snapshotinfo", $snapshotinfo );
     &Log::debug("Finishing Guest::list_snapshot sub");
     return $snapshotinfo;
 }
@@ -2298,7 +2304,8 @@ sub transfer_to_guest {
     print "Size of file: $size bytes\n";
     my $ua = LWP::UserAgent->new();
     $ua->ssl_opts( verify_hostname => 0 );
-# FIXME refactor or exception
+
+    # FIXME refactor or exception
     open( my $fh, "<", $info->{source} ) or die "Could not open file";
     my $content = do { local $/; <$fh> };
 
@@ -2308,7 +2315,11 @@ sub transfer_to_guest {
         &Log::debug( "OK: ", $req->content );
     }
     else {
-        Entity::TransferError->throw( error => $req->as_string, entity => $info->{vmname}, filename => $info->{source} );
+        Entity::TransferError->throw(
+            error    => $req->as_string,
+            entity   => $info->{vmname},
+            filename => $info->{source}
+        );
     }
     &Log::debug("Finishing Guest:transfer_to_guest sub");
     return 1;
