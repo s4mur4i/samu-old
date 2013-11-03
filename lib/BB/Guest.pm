@@ -2090,96 +2090,22 @@ Maybe need to rethink to put printing into outer call, this should just return s
 =cut
 
 sub list_snapshot {
-    my ($vmname) = @_;
+    my ( $snapshotinfo, $view) = @_;
     &Log::debug("Starting Guest::list_snapshot sub");
-    &Log::debug("Opts are: vmname=>'$vmname'");
-    my $view =
-      &Guest::entity_property_view( $vmname, 'VirtualMachine', 'snapshot' );
-    if (   !defined( $view->snapshot )
-        or !defined( $view->snapshot->currentSnapshot ) )
-    {
-        Entity::Snapshot->throw(
-            error    => "Entity has no snapshots defined",
-            entity   => $vmname,
-            snapshot => 0
-        );
-    }
-    my $current_snapshot = $view->snapshot->currentSnapshot->value;
-    &Log::debug1("My current snapshot is: $current_snapshot");
-    foreach ( @{ $view->snapshot->rootSnapshotList } ) {
-        &Log::debug("Traversing snapshot");
-        &Log::dumpobj( "snapshot", $_ );
-        &Guest::traverse_snapshot( $_, $current_snapshot );
-    }
-    &Log::debug("Finishing Guest::list_snapshot sub");
-    return 1;
-}
-
-=pod
-
-=head2 traverse_snapshot
-
-=head3 PURPOSE
-
-Will traverse requested snapshot object for current snapshot
-
-=head3 PARAMETERS
-
-=over
-
-=item snapshot_moref
-
-A Managed object reference to the snapshot currently being traversed
-
-=item current_snapshot
-
-The current snapshot we the machine is using
-
-=back
-
-=head3 RETURNS
-
-=head3 DESCRIPTION
-
-=head3 THROWS
-
-=head3 COMMENTS
-
-Should rethink to combine with find id sub
-
-=head3 TEST COVERAGE
-
-=cut
-
-sub traverse_snapshot {
-    my ( $snapshot_moref, $current_snapshot ) = @_;
-    &Log::debug("Starting Guest::traverse_snapshot sub");
-    &Log::debug1("Opts are: current_snapshot=>'$current_snapshot'");
-    &Log::dumpobj( "snapshot_moref", $snapshot_moref );
-    my $current = "";
-    if ( $snapshot_moref->snapshot->value eq $current_snapshot ) {
-        &Log::debug("Found current active snapshot");
-        $current = "*CUR* ";
-    }
-    print $current
-      . "ID => '"
-      . $snapshot_moref->id
-      . "', name => '"
-      . $snapshot_moref->name
-      . "', createTime => '"
-      . $snapshot_moref->createTime
-      . "', description => '"
-      . $snapshot_moref->description . "'\n";
-    if ( defined( $snapshot_moref->{'childSnapshotList'} ) ) {
-        &Log::debug("Found Child snapshot, traversing");
-        foreach ( @{ $snapshot_moref->{'childSnapshotList'} } ) {
-            &Log::debug("Iterating through branch");
-            &Log::dumpobj( "childsnapshot", $_ );
-            &Guest::traverse_snapshot( $_, $current_snapshot );
+    &Log::dumpobj( "snapshotinfo", $snapshotinfo);
+    &Log::dumpobj( "snapshot", $view );
+    $snapshotinfo->{$view->{id}} = { name => $view->{name}, createTime => $view->{createTime}, description => $view->{description}};
+    ($view->{snapshot}->{value} eq $snapshotinfo->{CUR}) and $snapshotinfo->{$view->{id}}->{current} = 1;
+    if ( defined( $view->{childSnapshotList}) ) {
+        foreach( @{$view->{childSnapshotList}}) {
+            $snapshotinfo = &Guest::list_snapshot( $snapshotinfo, $_ );
         }
+    } else {
+        &Log::debug("No Child Snapshots defined");
     }
-    &Log::debug("Finishing Guest::traverse_snapshot sub");
-    return 1;
+    &Log::dumpobj("snapshotinfo", $snapshotinfo);
+    &Log::debug("Finishing Guest::list_snapshot sub");
+    return $snapshotinfo;
 }
 
 =pod

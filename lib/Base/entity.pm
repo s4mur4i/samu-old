@@ -914,14 +914,7 @@ sub list_disk {
     for ( my $i = 0 ; $i < scalar(@disk_hw) ; $i++ ) {
         &Log::debug("Iterating thorugh disk hardware '$i'");
         &Log::dumpobj( "disk $i", $disk_hw[$i] );
-        &Output::add_row(
-            [
-                $i,
-                $disk_hw[$i]->{key},
-                $disk_hw[$i]->{capacityInKB},
-                $disk_hw[$i]->{backing}->{fileName}
-            ]
-        );
+        &Output::add_row( [ $i, $disk_hw[$i]->{key}, $disk_hw[$i]->{capacityInKB}, $disk_hw[$i]->{backing}->{fileName} ]);
     }
     &Output::print;
     &Log::debug("Finishing list_disk sub");
@@ -956,6 +949,8 @@ True on success
 
 =head3 COMMENTS
 
+Output is only generated from first rootsnapshotlist branch. There should be a solution to iterate through all elements
+
 =head3 TEST COVERAGE
 
 Tested if list returns as expected
@@ -963,11 +958,23 @@ Tested if list returns as expected
 =cut
 
 sub list_snapshot {
-#FIXME refactor code
     &Log::debug("Starting Entity::list_snapshot sub");
     my $vmname = Opts::get_option('vmname');
     &Log::debug1("Opts are: vmname=>'$vmname'");
-    &Guest::list_snapshot($vmname);
+    my @titles = (qw(Current ID Name CreateTime Description));
+    &Output::option_parser( \@titles );
+    my $snapshotinfo = {};
+    my $view = &Guest::entity_property_view( $vmname, 'VirtualMachine', 'snapshot' );
+    $snapshotinfo = { CUR => $view->snapshot->currentSnapshot->value };
+    if (   !defined( $view->{snapshot} ) )  {
+        Entity::Snapshot->throw( error    => "Entity has no snapshots defined", entity   => $vmname, snapshot => 0);
+    }
+    $snapshotinfo = &Guest::list_snapshot($snapshotinfo, $view->{snapshot}->{rootSnapshotList}[0] );
+    delete $snapshotinfo->{CUR};
+    for my $id ( sort { $a <=> $b } keys %$snapshotinfo) {
+        &Output::add_row( [ defined($snapshotinfo->{$id}->{current}) ? "CUR" : "---", $id, $snapshotinfo->{$id}->{name}, $snapshotinfo->{$id}->{createTime}, $snapshotinfo->{$id}->{description}] );
+    }
+    &Output::print;
     &Log::debug("Finishing Entity::list_snapshot sub");
     return 1;
 }
@@ -1175,7 +1182,7 @@ sub change_cdrom {
 
 =head3 PURPOSE
 
-
+Changes the interfaces network backing
 
 =head3 PARAMETERS
 
