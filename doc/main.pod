@@ -358,6 +358,10 @@ List snapshots attached to a virtual machine
 
 List process or processes in guest with vmware tools installed
 
+=item events
+
+List events attached to a vm
+
 =back
 
 =head2 VM_list_interface_function
@@ -489,6 +493,30 @@ Output type: table or csv
 =item noheader
 
 should header informaiton be printed
+
+=back
+
+=head2 VM_list_events_function
+
+=head3 SYNOPSIS
+
+samu.pl vm list events [options]
+
+=head3 OPTIONS
+
+=over
+
+=item vmname
+
+Name of virtual machine
+
+=item output
+
+Output type: table or csv
+
+=item noheader
+
+Should header informtation be printed
 
 =back
 

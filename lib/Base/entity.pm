@@ -409,6 +409,28 @@ our $module_opts = {
                         },
                     },
                 },
+                events => {
+                    function => \&list_events,
+                    vcenter_connect => 1,
+                    opts => {
+                        vmname => {
+                            type     => "=s",
+                            help     => "Name of Virtual Machine",
+                            required => 1,
+                        },
+                        output => {
+                            type     => "=s",
+                            help     => "Output type, table/csv",
+                            default  => "table",
+                            required => 0,
+                        },
+                        noheader => {
+                            type     => "",
+                            help     => "Should header information be printed",
+                            required => 0,
+                        },
+                    },
+                },
             },
         },
         change => {
@@ -1079,6 +1101,47 @@ sub list_process {
     }
     &Output::print;
     &Log::debug("Finishing Entity::list_process sub");
+    return 1;
+}
+
+=pod
+
+=head1 list_events
+
+=head2 PURPOSE
+
+
+
+=head2 PARAMETERS
+
+=over
+
+=back
+
+=head2 RETURNS
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
+
+sub list_events {
+    &Log::debug("Starting entity::list_events sub");
+    my $vmname = Opts::get_option('vmname');
+    &Log::debug1("Opts are: vmname=>'$vmname'");
+    my @titles = (qw(Username CreatedTime Datacenter Key ChainID Message));
+    &Output::option_parser( \@titles );
+    my $events = &VCenter::event_query( $vmname );
+    for my $event ( @$events ) {
+        &Output::add_row( [ $event->{userName} || "system", $event->{createdTime}, $event->{datacenter}->{name}, $event->{key}, "'" . $event->{fullFormattedMessage} . "'"] );
+    }
+    &Output::print;
+    &Log::debug("Finishing entity::list_events sub");
     return 1;
 }
 
