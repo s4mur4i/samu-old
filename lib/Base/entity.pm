@@ -642,6 +642,22 @@ our $module_opts = {
                 },
             },
         },
+        customization_status => {
+            function => \&customization_status,
+            vcenter_connect =>1,
+            opts => {
+                vmname => {
+                    type     => "=s",
+                    help     => "Which VMs should be used for transfer",
+                    required => 1,
+                },
+                wait => {
+                    type => "",
+                    help => "Should script wait for success of failure",
+                    required => 0,
+                },
+            },
+        },
     },
 };
 
@@ -2343,6 +2359,53 @@ sub change_power {
         );
     }
     &Log::debug("Finishing entity::change_power sub");
+    return 1;
+}
+
+=pod
+
+=head1 customization_status
+
+=head2 PURPOSE
+
+
+
+=head2 PARAMETERS
+
+=over
+
+=back
+
+=head2 RETURNS
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
+
+sub customization_status {
+    &Log::debug("Starting entity::customization_status sub");
+    my $vmname = &Opts::get_option('vmname');
+    my $time = 1;
+    if ( &Opts::get_option('wait')) {
+        $time = -1;
+    }
+    while ( $time ne 0) {
+        my $status = &Guest::customization_status($vmname);
+        if ( $status =~ /Finished|Failed/ ) {
+            $time = 0;
+        } else {
+            sleep 5;
+            $time--;
+        }
+        print $status . "\n";
+    }
+    &Log::debug("Finishing entity::customization_status sub");
     return 1;
 }
 

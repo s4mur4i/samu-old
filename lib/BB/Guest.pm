@@ -2592,4 +2592,47 @@ sub guest_cred {
     return $guestAuth;
 }
 
+=pod
+
+=head1 customization_status
+
+=head2 PURPOSE
+
+
+
+=head2 PARAMETERS
+
+=over
+
+=back
+
+=head2 RETURNS
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
+
+sub customization_status {
+    my ($vmname) = @_;
+    my $events = &VCenter::event_query($vmname, ["CustomizationSucceeded", "CustomizationFailed", "CustomizationStartedEvent"] );
+    my $return;
+    for my $event ( @$events ) {
+        if ( $event->isa('CustomizationStartedEvent') and (!defined($return)) ) {
+            $return = "Started";
+        } elsif ( $event->isa('CustomizationSucceeded')) {
+            $return = "Finished";
+        } elsif ( $event->isa('CustomizationFailed')) {
+            $return = "Failed";
+        }
+    }
+    ( !$return ) and $return = "unknown";
+    return $return;
+}
+
 1

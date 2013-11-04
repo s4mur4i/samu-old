@@ -14,9 +14,10 @@ _samu() {
 	default_opts="-v -q -h --help"
     sdk_opts="--config --credstore --encoding --passthroughauth --passthroughauthpackage --password --portnumber --protocol --savesessionfile --server --servicepath --sessionfile --url --username --version --verbose"
 
-    vm="clone list delete add change info convert_full run transfer"
+    vm="clone list delete add change info convert_full run transfer customization_status"
     vm_clone="--cpu --domain --memory --os_temp --parent_pool --ticket"
     vm_convert_full="--vmname"
+    vm_customization_status="--vmname --wait"
 
     vm_info="dumper runtime"
     vm_info_dumper="--vmname"
@@ -113,7 +114,7 @@ _samu() {
 
     _vm_clone_options="${sdk_opts} ${vm_clone}"
     _vm_convert_full_options="${sdk_opts} ${vm_convert_full}"
-
+    _vm_customization_status="${vm_customization_status} ${sdk_opts}"
     _vm_info_options="${vm_info}"
     _vm_info_dumper_options="${vm_info_dumper} ${sdk_opts}"
     _vm_info_runtime_options="${vm_info_runtime} ${sdk_opts}"

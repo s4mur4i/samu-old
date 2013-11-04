@@ -1691,14 +1691,19 @@ sub clonevm {
 }
 
 sub event_query {
-    my ( $vmname ) = @_;
+    my ( $vmname, $filter ) = @_;
     &Log::debug("Starting VCenter::event_query sub");
     &Log::debug1("Opts are: vmname=>'$vmname'");
     my $eventMan = &VCenter::get_manager("eventManager");
     my $view = &Guest::entity_name_view( $vmname, 'VirtualMachine' );
     my $eventfilter = EventFilterSpecByEntity->new( entity => $view, recursion =>  EventFilterSpecRecursionOption->new('self') );
-    my $filter = EventFilterSpec->new( entity => $eventfilter);
-    my $events = $eventMan->QueryEvents( filter => $filter );
+    my $filterspec;
+    if ( defined($filter) ) {
+        $filterspec = EventFilterSpec->new( entity => $eventfilter, eventTypeId => $filter);
+    } else {
+        $filterspec = EventFilterSpec->new( entity => $eventfilter);
+    }
+    my $events = $eventMan->QueryEvents( filter => $filterspec );
     &Log::debug("Finishing VCenter::event_query sub");
     &Log::dumpobj("events", $events);
     return $events;

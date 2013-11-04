@@ -50,6 +50,10 @@ Converts a linked clone to a full clone
 
 Run a command in a guest that has vmware tools
 
+=item customization_status
+
+Prints the customization status
+
 =item transfer
 
 Transfers file from or to a guest
@@ -245,5 +249,25 @@ Working directory
 =item env
 
 Enviromental variables passed to program
+
+=back
+
+=head2 VM_customization_status_function
+
+=head3 SYNOPSIS
+
+samu.pl vm customization_status [options]
+
+=head3 OPTIONS
+
+=over
+
+=item vmname
+
+Name of virtual machine
+
+=item wait
+
+Should we wait for Fail or Finished status
 
 =back
