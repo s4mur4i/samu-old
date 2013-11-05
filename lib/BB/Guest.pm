@@ -2580,6 +2580,7 @@ sub guest_cred {
     };
 
     if ($@) {
+        &Log::dumpobj("exception", $@);
         Entity::Auth->throw(
             error    => 'Could not aquire Guest authentication object',
             entity   => $vmname,
