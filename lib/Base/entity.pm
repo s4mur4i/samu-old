@@ -2006,6 +2006,8 @@ sub delete_entity {
                 count  => "more"
             );
         }
+    } elsif ( $type =~ /VirtualMachine/) {
+        &Guest::poweroff($name);
     }
     &VCenter::destroy_entity( $name, $type );
     if ( &VCenter::exists_entity( $name, $type ) ) {
