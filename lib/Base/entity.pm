@@ -861,7 +861,7 @@ sub list_interface {
     &Log::debug("Entity::list_interface sub started");
     my $vmname = Opts::get_option('vmname');
     &Log::debug1("Opts are: vmname=>'$vmname'");
-    my @titles = (qw(Number Key MacAddress Label Network Network Type));
+    my @titles = (qw(Number Key MacAddress Label Network InterfaceType));
     &Output::option_parser( \@titles );
     my @net_hw = @{ &Guest::get_hw( $vmname, 'VirtualEthernetCard' ) };
     if ( @net_hw eq 0 ) {
