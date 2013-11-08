@@ -1804,7 +1804,7 @@ sub info_dumper {
     my $vmname = Opts::get_option('vmname');
     &Log::debug1("Opts are: vmname=>'$vmname'");
     my $view = &Guest::entity_full_view( $vmname, 'VirtualMachine' );
-    print Dumper($view);
+    print Data::Dumper->Dump( [$view], ["view"]);
     &Log::debug("Finishing Entity::info_dumper sub");
     return 1;
 }
@@ -1841,7 +1841,7 @@ sub info_runtime {
     &Log::debug1("Opts are: vmname=>'$vmname'");
     my $view =
       &Guest::entity_property_view( $vmname, 'VirtualMachine', 'runtime' );
-    print Dumper($view);
+    print Data::Dumper->Dump([$view], ["view"]);
     &Log::debug("Finishing Entity::info_runtime sub");
     return 1;
 }
