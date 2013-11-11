@@ -45,7 +45,7 @@ my %template_hash = (
     'scb_350' => {
         path     => 'Support/vm/templates/SCB/scb_3.5/T_scb_350',
         username => 'root',
-        password => 'titkos',
+        password => 'default',
         os       => 'xcb'
     },
     'win_7_en_x64_pro' => {
@@ -86,7 +86,7 @@ my %template_hash = (
     'win_2008_en_x86_ent' => {
         path     => 'Support/vm/templates/Windows/2008/T_win_2008_en_x86_ent',
         username => 'Administrator',
-        password => 'TitkoS12',
+        password => 'titkos',
         key      => 'YQGMW-MPWTJ-34KDK-48M3W-X4Q6V',
         os       => 'win'
     },
@@ -105,28 +105,28 @@ my %template_hash = (
     'win_2008r2_en_x64_sta' => {
         path     => 'Support/vm/templates/Windows/2008/T_win_2008r2_en_x64_sta',
         username => 'Administrator',
-        password => 'TitkoS12',
+        password => 'titkos',
         key      => 'YC6KT-GKW9T-YTKYR-T4X34-R7VHC',
         os       => 'win'
     },
     'win_2008r2_en_x64_stadeb' => {
         path => 'Support/vm/templates/Windows/2008/T_win_2008r2_en_x64_stadeb',
         username => 'Administrator',
-        password => 'TitkoS12',
+        password => 'titkos',
         key      => 'YC6KT-GKW9T-YTKYR-T4X34-R7VHC',
         os       => 'win'
     },
     'win_2008r2_en_x64_ent' => {
         path     => 'Support/vm/templates/Windows/2008/T_win_2008r2_en_x64_ent',
         username => 'Administrator',
-        password => 'TitkoS12',
+        password => 'titkos',
         key      => '489J6-VHDMP-X63PK-3K798-CPX3Y',
         os       => 'win'
     },
     'win_2008r2sp1_en_x64_sta' => {
         path => 'Support/vm/templates/Windows/2008/T_win_2008r2sp1_en_x64_sta',
         username => 'Administrator',
-        password => 'TitkoS12',
+        password => 'titkos',
         key      => 'YC6KT-GKW9T-YTKYR-T4X34-R7VHC',
         os       => 'win'
     },
@@ -154,6 +154,7 @@ my %template_hash = (
         password => 'titkos',
         os       => 'other'
     },
+#FIXME need to correct vmware tools
     'rhel_6.0_en_amd64_rhel60' => {
         path => 'Support/vm/templates/Linux/rhel/T_rhel_6.0_en_amd64_rhel60',
         username => 'root',
