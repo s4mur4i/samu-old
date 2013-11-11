@@ -1763,8 +1763,6 @@ sub clone_vm {
             $config_spec );
     }
     &VCenter::clonevm( $os_temp_view->name, $vmname, $os_temp, $clone_spec );
-    print "=" x 40 . "\n";
-    print "Machine is provisioned\n";
     print "Login: '"
       . &Support::get_key_value( 'template', $os_temp, 'username' ) . "'/'"
       . &Support::get_key_value( 'template', $os_temp, 'password' ) . "'\n";
@@ -1852,15 +1850,45 @@ sub info_runtime {
 
 =head3 PURPOSE
 
-
+Runs the requested program with arguments and env variables in guest
 
 =head3 PARAMETERS
 
 =over
 
+=item vmname
+
+Name of virtual machine
+
+=item guestusername
+
+Name of user to authenticate with in guest
+
+=item guestpassword
+
+Password of user to authenticate with in guest
+
+=item env
+
+Environmental variables to pass to program
+
+=item workdir
+
+Working directory to start program in
+
+=item prog
+
+Program to start
+
+=item prog_arg
+
+Arguments to hand the program
+
 =back
 
 =head3 RETURNS
+
+True on success
 
 =head3 DESCRIPTION
 
@@ -1869,6 +1897,8 @@ sub info_runtime {
 =head3 COMMENTS
 
 =head3 TEST COVERAGE
+
+Tested if a test program can be run in all tempaltes with VMware tools
 
 =cut
 
