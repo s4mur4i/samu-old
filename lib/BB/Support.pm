@@ -174,6 +174,12 @@ my %template_hash = (
         password => 'titkos',
         os       => 'other'
     },
+    'win_8_en_x64_ent' => {
+        path => 'Support/vm/templates/Windows/Win8/T_win_8_en_x64_ent',
+        username => 'admin',
+        password => 'titkos',
+        os => 'win'
+    },
 );
 
 my %agents_hash = (
