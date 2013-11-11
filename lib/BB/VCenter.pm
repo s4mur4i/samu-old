@@ -1690,6 +1690,32 @@ sub clonevm {
     return 1;
 }
 
+=pod
+
+=head1 event_query
+
+=head2 PURPOSE
+
+
+
+=head2 PARAMETERS
+
+=over
+
+=back
+
+=head2 RETURNS
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
+
 sub event_query {
     my ( $vmname, $filter ) = @_;
     &Log::debug("Starting VCenter::event_query sub");
