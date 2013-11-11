@@ -842,6 +842,88 @@ sub user_ticket_list {
 
 =pod
 
+=head1 user_vm_list
+
+=head2 PURPOSE
+
+
+
+=head2 PARAMETERS
+
+=over
+
+=back
+
+=head2 RETURNS
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
+
+sub user_vm_list {
+    my ( $name ) = @_;
+    &Log::debug("Starting Misc::user_vm_list sub");
+    &Log::debug1("Opts are: name=>'$name'");
+    my @vms;
+    my $machines = Vim::find_entity_views( view_type=> 'VirtualMachine', properties => ['name'], filter => { name => qr/^[^-]*-$name-/});
+    &Log::dumpobj("machines", $machines );
+    for my $machine  ( @$machines ) {
+        &Log::debug1("Iterating through=>'" . $machine->name . "'");
+        push( @vms, $machine->name );
+    }
+    &Log::debug("Finishing Misc::user_vm_list sub");
+    &Log::dumpobj("vms", \@vms);
+    return \@vms;
+}
+
+=pod
+
+=head1 vm_list
+
+=head2 PURPOSE
+
+
+
+=head2 PARAMETERS
+
+=over
+
+=back
+
+=head2 RETURNS
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
+
+sub vm_list {
+    &Log::debug("Starting Misc::vm_list sub");
+    my @vms;
+    my $machines = Vim::find_entity_views( view_type => "VirtualMachine", properties => ['name'] );
+    &Log::dumpobj("machines", $machines);
+    for my $machine (@$machines) {
+        &Log::debug1("Iterating through=>'" . $machine->{name} . "'");
+        push(@vms, $machine->{name});
+    }
+    &Log::debug("Finishing Misc::vm_list sub");
+    &Log::dumpobj("vms", \@vms);
+    return \@vms;
+}
+
+=pod
+
 =head1 pod2wiki
 
 =head2 PURPOSE

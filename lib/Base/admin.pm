@@ -180,6 +180,42 @@ our $module_opts = {
                         },
                     },
                 },
+                vms => {
+                    function => \&list_vms,
+                    vcenter_connect => 1,
+                    opts => {
+                        name => {
+                            type => "=s",
+                            help => "Name of user to list virtual machines",
+                            required => 0,
+                            default => 0,
+                        },
+                        output => {
+                            type     => "=s",
+                            help     => "Output type, table/csv",
+                            default  => "table",
+                            required => 0,
+                        },
+                        noheader => {
+                            type     => "",
+                            help     => "Should header information be printed",
+                            required => 0,
+                            default  => 0,
+                        },
+                        all => {
+                            type     => "",
+                            help     => "List all virtualmachines",
+                            required => 0,
+                            default  => 0,
+                        },
+                        vm => {
+                            type => "=s",
+                            help => "List information for one virtual machine",
+                            required => 0,
+                            default => 0,
+                        },
+                    },
+                },
             },
         },
     },
@@ -549,9 +585,7 @@ sub list_resourcepool {
     &Log::debug("Starting Admin::list_resourcepool sub");
     my $user = &Opts::get_option('user') || &Opts::get_option('username');
     &Log::debug1("Opts are: user=>'$user'");
-    my @titles = (
-        qw(ResourcePool VirtualMachineChilds ResourcePoolChilds Alarm Memory CPU MaxMemory MaxCPU)
-    );
+    my @titles = ( qw(ResourcePool VirtualMachineChilds ResourcePoolChilds Alarm Memory CPU MaxMemory MaxCPU));
     &Output::option_parser( \@titles );
     my @request = ();
     if ( &Opts::get_option('all') ) {
@@ -728,6 +762,54 @@ sub list_linked_clones {
         ( $_ ne $vmname ) and print "$_\n";
     }
     &Log::debug("Finishing Admin::list_linked_clones sub");
+    return 1;
+}
+
+=pod
+
+=head1 list_user_vms
+
+=head2 PURPOSE
+
+
+
+=head2 PARAMETERS
+
+=over
+
+=back
+
+=head2 RETURNS
+
+=head2 DESCRIPTION
+
+=head2 THROWS
+
+=head2 COMMENTS
+
+=head2 SEE ALSO
+
+=cut
+
+sub list_vms {
+    &Log::debug("Starting admin::list_user_vms sub");
+    my @vms;
+    if ( &Opts::get_option('all') ) {
+        @vms = @{ &Misc::vm_list };
+    } elsif ( &Opts::get_option('vm') ) {
+        @vms = ( &Opts::get_option('vm') );
+    } else {
+        my $name = &Opts::get_option('name') || &Opts::get_option('username');
+        @vms = @{ &Misc::user_vm_list($name) };
+    }
+    my @titles = ( qw(VirtualMachine PowerState BootTime CleanPowerOff MaxCpuUsage CpuUsage MaxMemoryUsage MemoryUsage Alarm Uptime));
+    &Output::option_parser( \@titles );
+    for my $vm (@vms) {
+        &Log::debug1("Iterating through=>'" . $vm . "'");
+        &Output::add_row( &Guest::vm_info($vm)  );
+    }
+    &Output::print;
+    &Log::debug("Finishing admin::list_user_vms sub");
     return 1;
 }
 

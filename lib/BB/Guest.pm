@@ -2480,6 +2480,8 @@ Entity::NumException if no pid is found
 
 =head2 TEST COVERAGE
 
+Tested if program returns hash for a test program in all templates
+
 =cut
 
 sub process_info {
@@ -2559,6 +2561,8 @@ Entity::Auth if authentication fails
 
 =head3 TEST COVERAGE
 
+Tested for all vms with vmware tools if we can authenticate with provided information
+
 =cut
 
 sub guest_cred {
@@ -2634,6 +2638,20 @@ sub customization_status {
     }
     ( !$return ) and $return = "unknown";
     return $return;
+}
+
+sub vm_info {
+    my ( $vmname ) = @_;
+    &Log::debug("Starting Guest::vm_info sub");
+    my @info;
+    my $view = &Guest::entity_property_view( $vmname, 'VirtualMachine', 'summary' );
+    push(@info, $vmname, $view->{summary}->{runtime}->{powerState}->{val} );
+    push(@info, ($view->{summary}->{runtime}->{bootTime} || "---", $view->{summary}->{runtime}->{cleanPowerOff} || "---"));
+    push(@info, ( $view->{summary}->{runtime}->{maxCpuUsage} || "---", $view->{summary}->{quickStats}->{overallCpuUsage}, $view->{summary}->{runtime}->{maxMemoryUsage} || "---", $view->{summary}->{quickStats}->{guestMemoryUsage}));
+    push(@info, ($view->{summary}->{overallStatus}->{val}, $view->{summary}->{quickStats}->{uptimeSeconds}));
+    &Log::debug("Finishing Guest::vm_info sub");
+    &Log::dumpobj("info", \@info);
+    return \@info;
 }
 
 1
