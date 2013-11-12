@@ -311,8 +311,6 @@ sub ticket_info {
         }
         if ( $vm_info->{uniq} ne 'unknown' ) {
             if ( defined( &Support::get_hash( 'template', $os ) ) ) {
-
-                #FIXME gondolkodni
                 print "\tDefault login : '"
                   . &Support::get_key_value( 'template', $os, 'username' )
                   . "' / '"
