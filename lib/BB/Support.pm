@@ -161,8 +161,6 @@ my %template_hash = (
         password => 'titkos',
         os       => 'other'
     },
-
-    #FIXME need to correct vmware tools
     'rhel_6.0_en_amd64_rhel60' => {
         path => 'Support/vm/templates/Linux/rhel/T_rhel_6.0_en_amd64_rhel60',
         username => 'root',
