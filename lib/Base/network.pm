@@ -45,22 +45,9 @@ our $module_opts = {
             function        => \&create_net,
             vcenter_connect => 1,
             opts            => {
-                type => {
-                    type     => "=s",
-                    help     => "Type of interface to create",
-                    required => 1,
-                    default  => "",
-                },
                 ticket => {
                     type     => "=s",
                     help     => "Ticket to add network to",
-                    required => 1,
-                    default  => "",
-                },
-                vms => {
-                    type => "=s",
-                    help =>
-"A comma seperated list of vms to add to interface, Ex: test1,test2,test3",
                     required => 1,
                     default  => "",
                 },
@@ -400,8 +387,17 @@ sub network_delete {
 
 sub create_net {
     &Log::debug("Starting Network::create_net sub");
-
-    #FIXME implement
+    my $ticket = &Opts::get_option('ticket');
+    my $name = $ticket . "-int-" . &Misc::random_3digit;
+    if ( !&VCenter::exists_entity( $ticket, 'DistributedVirtualSwitch') ) {
+        &Log::debug("Need to create switch for network");
+        &VCenter::create_switch($ticket);
+    }
+    while ( &VCenter::exists_entity( $name, 'DistributedVirtualPortgroup') ) {
+        &Log::debug("Need to regenerate name");
+        $name = $ticket . "-int-" . &Misc::random_3digit;
+    }
+    &VCenter::create_dvportgroup( $name,$ticket);
     &Log::debug("Finishing Network::create_net sub");
     return 1;
 }
