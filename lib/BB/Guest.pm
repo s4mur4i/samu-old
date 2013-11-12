@@ -2333,8 +2333,7 @@ sub transfer_to_guest {
     my $ua = LWP::UserAgent->new();
     $ua->ssl_opts( verify_hostname => 0 );
 
-    # FIXME refactor or exception
-    open( my $fh, "<", $info->{source} ) or die "Could not open file";
+    open( my $fh, "<", $info->{source} ) or Connection::Connect->throw( error => "Could not open requested file", type => "File", dest => $info->{source});
     my $content = do { local $/; <$fh> };
 
     my $req = $ua->put( $transferinfo, Content => $content );
