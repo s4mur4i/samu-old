@@ -604,10 +604,6 @@ Revert to snapshot attached to a virtual machine
 
 Change the power state of a virtual machine
 
-=item disk
-
-Change the size of hard disk
-
 =back
 
 =head2 VM_change_cdrom_function
@@ -719,30 +715,6 @@ Name of virtual machine
 =item state
 
 Power state on/off
-
-=back
-
-=head2 VM_change_disk_function
-
-=head3 SYNOPSIS
-
-samu.pl vm change disk [options]
-
-=head3 OPTIONS
-
-=over
-
-=item vmname
-
-Name of virtual machine
-
-=item num
-
-Number of hard disk
-
-=item size
-
-Requested new size
 
 =back
 

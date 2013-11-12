@@ -502,27 +502,6 @@ our $module_opts = {
                         },
                     },
                 },
-                disk => {
-                    function        => \&change_disk,
-                    vcenter_connect => 1,
-                    opts            => {
-                        vmname => {
-                            type     => "=s",
-                            help     => "Which VMs disk to change.",
-                            required => 1,
-                        },
-                        num => {
-                            type     => "=s",
-                            help     => "Number of device",
-                            required => 1,
-                        },
-                        size => {
-                            type     => "=s",
-                            help     => "Size of requested disk",
-                            required => 1,
-                        },
-                    },
-                },
                 altername => {
                     function        => \&change_altername,
                     vcenter_connect => 1,
@@ -2327,41 +2306,6 @@ sub promote {
     &Log::debug1("Opts are: vmname=>'$vmname'");
     &Guest::promote($vmname);
     &Log::debug("Finished Entity::promote sub");
-    return 1;
-}
-
-=pod
-
-=head2 change_disk
-
-=head3 PURPOSE
-
-
-
-=head3 PARAMETERS
-
-=over
-
-=back
-
-=head3 RETURNS
-
-=head3 DESCRIPTION
-
-=head3 THROWS
-
-=head3 COMMENTS
-
-=head3 TEST COVERAGE
-
-=cut
-
-sub change_disk {
-    &Log::debug("Starting Entity::change_disk sub");
-    print "Not implemented\n";
-
-    #FIXME Implement
-    &Log::debug("Finishing Entity::change_disk sub");
     return 1;
 }
 
