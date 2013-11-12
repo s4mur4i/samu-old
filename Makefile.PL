@@ -23,6 +23,7 @@ my $build = {
     'Test::Perl::Critic'                  => 0,
     'File::Find'                          => 0,
     'File::Spec::Functions'               => 0,
+    'File::Temp'                          => 0,
 };
 my $prereq = {
     'Archive::Zip'                => 1.30,
