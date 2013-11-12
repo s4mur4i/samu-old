@@ -174,11 +174,11 @@ my %template_hash = (
         password => 'titkos',
         os       => 'other'
     },
-#FIXME add product key to be able to provision
     'win_8_en_x64_ent' => {
         path => 'Support/vm/templates/Windows/Win8/T_win_8_en_x64_ent',
         username => 'admin',
         password => 'titkos',
+        key => '32JNW-9KQ84-P47T8-D8GGY-CWCK7',
         os => 'win'
     },
 );
