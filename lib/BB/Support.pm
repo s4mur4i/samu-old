@@ -154,7 +154,8 @@ my %template_hash = (
         password => 'titkos',
         os       => 'other'
     },
-#FIXME need to correct vmware tools
+
+    #FIXME need to correct vmware tools
     'rhel_6.0_en_amd64_rhel60' => {
         path => 'Support/vm/templates/Linux/rhel/T_rhel_6.0_en_amd64_rhel60',
         username => 'root',
@@ -175,11 +176,11 @@ my %template_hash = (
         os       => 'other'
     },
     'win_8_en_x64_ent' => {
-        path => 'Support/vm/templates/Windows/Win8/T_win_8_en_x64_ent',
+        path     => 'Support/vm/templates/Windows/Win8/T_win_8_en_x64_ent',
         username => 'admin',
         password => 'titkos',
-        key => '32JNW-9KQ84-P47T8-D8GGY-CWCK7',
-        os => 'win'
+        key      => '32JNW-9KQ84-P47T8-D8GGY-CWCK7',
+        os       => 'win'
     },
 );
 

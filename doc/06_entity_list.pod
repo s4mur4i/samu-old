@@ -38,6 +38,10 @@ List process or processes in guest with vmware tools installed
 
 List events attached to a vm
 
+=item templates
+
+List provisioned templates
+
 =back
 
 =head2 VM_list_interface_function
@@ -185,6 +189,26 @@ samu.pl vm list events [options]
 =item vmname
 
 Name of virtual machine
+
+=item output
+
+Output type: table or csv
+
+=item noheader
+
+Should header informtation be printed
+
+=back
+
+=head2 VM_list_templates_function
+
+=head3 SYNOPSIS
+
+samu.pl vm list templates [options]
+
+=head3 OPTIONS
+
+=over
 
 =item output
 

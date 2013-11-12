@@ -33,24 +33,6 @@ our $module_opts = {
             vcenter_connect => 1,
             opts            => {},
         },
-        templates => {
-            function        => \&templates,
-            vcenter_connect => 0,
-            opts            => {
-                output => {
-                    type     => "=s",
-                    help     => "Output type, table/csv",
-                    default  => "table",
-                    required => 0,
-                },
-                noheader => {
-                    type     => "",
-                    help     => "Should header information be printed",
-                    required => 0,
-                    default  => 0,
-                },
-            },
-        },
         test => {
             function        => \&test,
             vcenter_connect => 1,
@@ -181,14 +163,14 @@ our $module_opts = {
                     },
                 },
                 vms => {
-                    function => \&list_vms,
+                    function        => \&list_vms,
                     vcenter_connect => 1,
-                    opts => {
+                    opts            => {
                         name => {
-                            type => "=s",
-                            help => "Name of user to list virtual machines",
+                            type     => "=s",
+                            help     => "Name of user to list virtual machines",
                             required => 0,
-                            default => 0,
+                            default  => 0,
                         },
                         output => {
                             type     => "=s",
@@ -212,7 +194,7 @@ our $module_opts = {
                             type => "=s",
                             help => "List information for one virtual machine",
                             required => 0,
-                            default => 0,
+                            default  => 0,
                         },
                     },
                 },
@@ -343,49 +325,6 @@ sub cleanup {
         }
     }
     &Log::debug("Finishing Admin::cleanup sub");
-    return 1;
-}
-
-=pod
-
-=head2 templates
-
-=head3 PURPOSE
-
-List all usable templates
-
-=head3 PARAMETERS
-
-=over
-
-=back
-
-=head3 RETURNS
-
-True on success
-
-=head3 DESCRIPTION
-
-=head3 THROWS
-
-=head3 COMMENTS
-
-=head3 TEST COVERAGE
-
-=cut
-
-sub templates {
-    &Log::debug("Starting Admin::templates sub");
-    my $keys   = &Support::get_keys('template');
-    my @titles = (qw(Name Path));
-    &Output::option_parser( \@titles );
-    for my $template (@$keys) {
-        &Log::debug("Element working on:'$template'");
-        my $path = &Support::get_key_value( 'template', $template, 'path' );
-        &Output::add_row( [ $template, $path ] );
-    }
-    &Output::print;
-    &Log::debug("Finishing Admin::templates sub");
     return 1;
 }
 
@@ -585,7 +524,9 @@ sub list_resourcepool {
     &Log::debug("Starting Admin::list_resourcepool sub");
     my $user = &Opts::get_option('user') || &Opts::get_option('username');
     &Log::debug1("Opts are: user=>'$user'");
-    my @titles = ( qw(ResourcePool VirtualMachineChilds ResourcePoolChilds Alarm Memory CPU MaxMemory MaxCPU));
+    my @titles = (
+        qw(ResourcePool VirtualMachineChilds ResourcePoolChilds Alarm Memory CPU MaxMemory MaxCPU)
+    );
     &Output::option_parser( \@titles );
     my @request = ();
     if ( &Opts::get_option('all') ) {
@@ -795,18 +736,22 @@ sub list_vms {
     &Log::debug("Starting admin::list_user_vms sub");
     my @vms;
     if ( &Opts::get_option('all') ) {
-        @vms = @{ &Misc::vm_list };
-    } elsif ( &Opts::get_option('vm') ) {
+        @vms = @{&Misc::vm_list};
+    }
+    elsif ( &Opts::get_option('vm') ) {
         @vms = ( &Opts::get_option('vm') );
-    } else {
+    }
+    else {
         my $name = &Opts::get_option('name') || &Opts::get_option('username');
         @vms = @{ &Misc::user_vm_list($name) };
     }
-    my @titles = ( qw(VirtualMachine PowerState BootTime CleanPowerOff MaxCpuUsage CpuUsage MaxMemoryUsage MemoryUsage Alarm Uptime));
+    my @titles = (
+        qw(VirtualMachine PowerState BootTime CleanPowerOff MaxCpuUsage CpuUsage MaxMemoryUsage MemoryUsage Alarm Uptime)
+    );
     &Output::option_parser( \@titles );
     for my $vm (@vms) {
-        &Log::debug1("Iterating through=>'" . $vm . "'");
-        &Output::add_row( &Guest::vm_info($vm)  );
+        &Log::debug1( "Iterating through=>'" . $vm . "'" );
+        &Output::add_row( &Guest::vm_info($vm) );
     }
     &Output::print;
     &Log::debug("Finishing admin::list_user_vms sub");

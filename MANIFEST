@@ -90,9 +90,7 @@ t/BB/Support.t
 t/BB/VCenter.t
 t/Functional/01_vcenter.t
 t/Functional/02_admin_test.t
-t/Functional/03_templates.t
 t/Functional/04_cleanup.t
-t/Functional/05_clone.t
 t/Functional/06_ticket.t
 t/Functional/07_snapshot.t
 t/Functional/08_dns.t
@@ -103,7 +101,11 @@ t/Pod/Pod_subs.t
 t/Pod/Pod_syntax.t
 t/SAMU_Test/Common.t
 t/SAMU_Test/Test.t
-t/Templates/main.t
+t/Templates/01_main.t
+t/Templates/02_clone.t
+t/Templates/03_hw.t
+t/Templates/04_provisioned_templates.t
+t/Templates/05_internal.t
 t/VMware/VIRuntime.t
 vmware_lib/VMware/VICommon.pm
 vmware_lib/VMware/VICredStore.pm

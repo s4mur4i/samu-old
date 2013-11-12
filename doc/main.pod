@@ -124,6 +124,10 @@ Converts a linked clone to a full clone
 
 Run a command in a guest that has vmware tools
 
+=item customization_status
+
+Prints the customization status
+
 =item transfer
 
 Transfers file from or to a guest
@@ -322,6 +326,26 @@ Enviromental variables passed to program
 
 =back
 
+=head2 VM_customization_status_function
+
+=head3 SYNOPSIS
+
+samu.pl vm customization_status [options]
+
+=head3 OPTIONS
+
+=over
+
+=item vmname
+
+Name of virtual machine
+
+=item wait
+
+Should we wait for Fail or Finished status
+
+=back
+
 =head2 VM_list_function
 
 =head3 SYNOPSIS
@@ -361,6 +385,10 @@ List process or processes in guest with vmware tools installed
 =item events
 
 List events attached to a vm
+
+=item templates
+
+List provisioned templates
 
 =back
 
@@ -509,6 +537,26 @@ samu.pl vm list events [options]
 =item vmname
 
 Name of virtual machine
+
+=item output
+
+Output type: table or csv
+
+=item noheader
+
+Should header informtation be printed
+
+=back
+
+=head2 VM_list_templates_function
+
+=head3 SYNOPSIS
+
+samu.pl vm list templates [options]
+
+=head3 OPTIONS
+
+=over
 
 =item output
 
@@ -1295,10 +1343,6 @@ Print the help page
 
 Start the cleanup task to remove empty entities on the VCenter
 
-=item templates
-
-List template names and paths
-
 =item test
 
 Test connection to VCenter. Prints the Server time
@@ -1324,26 +1368,6 @@ samu.pl admin cleanup [options]
 =head3 OPTIONS
 
 =over
-
-=back
-
-=head2 ADMIN_templates_function
-
-=head3 SYNOPSIS
-
-samu.pl admin templates [options]
-
-=head3 OPTIONS
-
-=over
-
-=item output
-
-Type of output
-
-=item noheader
-
-Header row should be printed
 
 =back
 
@@ -1425,6 +1449,10 @@ list information about requested resourcepools
 
 list all linked clones to a template
 
+=item vms
+
+list requested vms on vcenter
+
 =back
 
 =head2 ADMIN_list_folder_function
@@ -1500,6 +1528,38 @@ samu.pl admin list linked_clones [options]
 =item template
 
 Name of template to list linked clones of
+
+=back
+
+=head2 ADMIN_list_vms_function
+
+=head3 SYNOPSIS
+
+samu.pl admin list vms [options]
+
+=head3 OPTIONS
+
+=over
+
+=item name
+
+List specific user vms (default to username option)
+
+=item vm
+
+List specific vm attributes
+
+=item all
+
+List all vms on vcenter
+
+=item output
+
+Type of output
+
+=item noheader
+
+Header information should be printed
 
 =back
 

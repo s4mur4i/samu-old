@@ -36,13 +36,14 @@ _samu() {
     vm_delete_snapshot="--vmname --id --all"
     vm_delete_entity="--name --type"
 
-    vm_list="cdrom interface disk snapshot process events"
+    vm_list="templates cdrom interface disk snapshot process events"
     vm_list_cdrom="--vmname --output --noheader"
     vm_list_disk="--vmname --output --noheader"
     vm_list_interface="--vmname --output --noheader"
     vm_list_snapshot="--vmname --output --noheader"
     vm_list_process="--vmname --pid --guestusername --guestpassword --output --noheader"
     vm_list_events="--vmname --output --noheader"
+    vm_list_templates="--output --noheader"
 
     vm_change="cdrom interface disk altername snapshot power"
     vm_change_cdrom="--vmname --num --iso --unmount"
@@ -81,16 +82,16 @@ _samu() {
 
     kayako_info="--ticket"
 
-    admin="test cleanup templates pod2wiki list"
+    admin="test cleanup pod2wiki list"
 
     admin_test=""
     admin_cleanup=""
-    admin_templates="--output --noheader"
     admin_pod2wiki="--in --out --page --dokuuser --dokuserver --dokupass"
-    admin_list="folder resourcepool linked_clones"
+    admin_list="vms folder resourcepool linked_clones"
     admin_list_folder="--all --name --output --noheader"
     admin_list_resourcepool="--user --all --name --output --noheader"
     admin_list_linked_clones="--template"
+    admin_list_vms="--name --vm --all --output --noheader"
 
     network="create add delete list_switch list_dvp"
 
@@ -114,7 +115,7 @@ _samu() {
 
     _vm_clone_options="${sdk_opts} ${vm_clone}"
     _vm_convert_full_options="${sdk_opts} ${vm_convert_full}"
-    _vm_customization_status="${vm_customization_status} ${sdk_opts}"
+    _vm_customization_status_options="${vm_customization_status} ${sdk_opts}"
     _vm_info_options="${vm_info}"
     _vm_info_dumper_options="${vm_info_dumper} ${sdk_opts}"
     _vm_info_runtime_options="${vm_info_runtime} ${sdk_opts}"
@@ -139,6 +140,7 @@ _samu() {
     _vm_list_snapshot_options="${vm_list_snapshot} ${sdk_opts}"
     _vm_list_process_options="${vm_list_process} ${sdk_opts}"
     _vm_list_events_options="${vm_list_events} ${sdk_opts}"
+    _vm_list_templates_options="${vm_list_templates}"
 
     _vm_change_options="${vm_change}"
     _vm_change_cdrom_options="${vm_change_cdrom} ${sdk_opts}"
@@ -193,6 +195,7 @@ _samu() {
     _admin_list_folder_options="${admin_list_folder} ${sdk_opts}"
     _admin_list_resourcepool_options="${admin_list_resourcepool} ${sdk_opts}"
     _admin_list_linked_clones_options="${admin_list_linked_clones} ${sdk_opts}"
+    _admin_list_vms_options="${admin_list_vms} ${sdk_opts}"
 
     _devel_options="${devel}"
     _devel_create_options="${devel_create}"

@@ -867,18 +867,22 @@ sub user_ticket_list {
 =cut
 
 sub user_vm_list {
-    my ( $name ) = @_;
+    my ($name) = @_;
     &Log::debug("Starting Misc::user_vm_list sub");
     &Log::debug1("Opts are: name=>'$name'");
     my @vms;
-    my $machines = Vim::find_entity_views( view_type=> 'VirtualMachine', properties => ['name'], filter => { name => qr/^[^-]*-$name-/});
-    &Log::dumpobj("machines", $machines );
-    for my $machine  ( @$machines ) {
-        &Log::debug1("Iterating through=>'" . $machine->name . "'");
+    my $machines = Vim::find_entity_views(
+        view_type  => 'VirtualMachine',
+        properties => ['name'],
+        filter     => { name => qr/^[^-]*-$name-/ }
+    );
+    &Log::dumpobj( "machines", $machines );
+    for my $machine (@$machines) {
+        &Log::debug1( "Iterating through=>'" . $machine->name . "'" );
         push( @vms, $machine->name );
     }
     &Log::debug("Finishing Misc::user_vm_list sub");
-    &Log::dumpobj("vms", \@vms);
+    &Log::dumpobj( "vms", \@vms );
     return \@vms;
 }
 
@@ -911,14 +915,17 @@ sub user_vm_list {
 sub vm_list {
     &Log::debug("Starting Misc::vm_list sub");
     my @vms;
-    my $machines = Vim::find_entity_views( view_type => "VirtualMachine", properties => ['name'] );
-    &Log::dumpobj("machines", $machines);
+    my $machines = Vim::find_entity_views(
+        view_type  => "VirtualMachine",
+        properties => ['name']
+    );
+    &Log::dumpobj( "machines", $machines );
     for my $machine (@$machines) {
-        &Log::debug1("Iterating through=>'" . $machine->{name} . "'");
-        push(@vms, $machine->{name});
+        &Log::debug1( "Iterating through=>'" . $machine->{name} . "'" );
+        push( @vms, $machine->{name} );
     }
     &Log::debug("Finishing Misc::vm_list sub");
-    &Log::dumpobj("vms", \@vms);
+    &Log::dumpobj( "vms", \@vms );
     return \@vms;
 }
 

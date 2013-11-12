@@ -410,9 +410,9 @@ our $module_opts = {
                     },
                 },
                 events => {
-                    function => \&list_events,
+                    function        => \&list_events,
                     vcenter_connect => 1,
-                    opts => {
+                    opts            => {
                         vmname => {
                             type     => "=s",
                             help     => "Name of Virtual Machine",
@@ -428,6 +428,24 @@ our $module_opts = {
                             type     => "",
                             help     => "Should header information be printed",
                             required => 0,
+                        },
+                    },
+                },
+                templates => {
+                    function        => \&list_templates,
+                    vcenter_connect => 0,
+                    opts            => {
+                        output => {
+                            type     => "=s",
+                            help     => "Output type, table/csv",
+                            default  => "table",
+                            required => 0,
+                        },
+                        noheader => {
+                            type     => "",
+                            help     => "Should header information be printed",
+                            required => 0,
+                            default  => 0,
                         },
                     },
                 },
@@ -643,17 +661,17 @@ our $module_opts = {
             },
         },
         customization_status => {
-            function => \&customization_status,
-            vcenter_connect =>1,
-            opts => {
+            function        => \&customization_status,
+            vcenter_connect => 1,
+            opts            => {
                 vmname => {
                     type     => "=s",
                     help     => "Which VMs should be used for transfer",
                     required => 1,
                 },
                 wait => {
-                    type => "",
-                    help => "Should script wait for success of failure",
+                    type     => "",
+                    help     => "Should script wait for success of failure",
                     required => 0,
                 },
             },
@@ -1152,9 +1170,17 @@ sub list_events {
     &Log::debug1("Opts are: vmname=>'$vmname'");
     my @titles = (qw(Username CreatedTime Datacenter Key ChainID Message));
     &Output::option_parser( \@titles );
-    my $events = &VCenter::event_query( $vmname );
-    for my $event ( @$events ) {
-        &Output::add_row( [ $event->{userName} || "system", $event->{createdTime}, $event->{datacenter}->{name}, $event->{key}, "'" . $event->{fullFormattedMessage} . "'"] );
+    my $events = &VCenter::event_query($vmname);
+    for my $event (@$events) {
+        &Output::add_row(
+            [
+                $event->{userName} || "system",
+                $event->{createdTime},
+                $event->{datacenter}->{name},
+                $event->{key},
+                "'" . $event->{fullFormattedMessage} . "'"
+            ]
+        );
     }
     &Output::print;
     &Log::debug("Finishing entity::list_events sub");
@@ -1802,7 +1828,7 @@ sub info_dumper {
     my $vmname = Opts::get_option('vmname');
     &Log::debug1("Opts are: vmname=>'$vmname'");
     my $view = &Guest::entity_full_view( $vmname, 'VirtualMachine' );
-    print Data::Dumper->Dump( [$view], ["view"]);
+    print Data::Dumper->Dump( [$view], ["view"] );
     &Log::debug("Finishing Entity::info_dumper sub");
     return 1;
 }
@@ -1839,7 +1865,7 @@ sub info_runtime {
     &Log::debug1("Opts are: vmname=>'$vmname'");
     my $view =
       &Guest::entity_property_view( $vmname, 'VirtualMachine', 'runtime' );
-    print Data::Dumper->Dump([$view], ["view"]);
+    print Data::Dumper->Dump( [$view], ["view"] );
     &Log::debug("Finishing Entity::info_runtime sub");
     return 1;
 }
@@ -2036,7 +2062,8 @@ sub delete_entity {
                 count  => "more"
             );
         }
-    } elsif ( $type =~ /VirtualMachine/) {
+    }
+    elsif ( $type =~ /VirtualMachine/ ) {
         &Guest::poweroff($name);
     }
     &VCenter::destroy_entity( $name, $type );
@@ -2423,21 +2450,73 @@ sub change_power {
 sub customization_status {
     &Log::debug("Starting entity::customization_status sub");
     my $vmname = &Opts::get_option('vmname');
-    my $time = 1;
-    if ( &Opts::get_option('wait')) {
+    my $time   = 1;
+    if ( &Opts::get_option('wait') ) {
         $time = -1;
     }
-    while ( $time ne 0) {
+    while ( $time ne 0 ) {
         my $status = &Guest::customization_status($vmname);
         if ( $status =~ /Finished|Failed/ ) {
             $time = 0;
-        } else {
+        }
+        else {
             sleep 5;
             $time--;
         }
         print $status . "\n";
     }
     &Log::debug("Finishing entity::customization_status sub");
+    return 1;
+}
+
+=pod
+
+=head2 list_templates
+
+=head3 PURPOSE
+
+List all usable templates
+
+=head3 PARAMETERS
+
+=over
+
+=item output
+
+Format of output. csv/table
+
+=item noheader
+
+Should header row be printed
+
+=back
+
+=head3 RETURNS
+
+True on success
+
+=head3 DESCRIPTION
+
+=head3 THROWS
+
+=head3 COMMENTS
+
+=head3 TEST COVERAGE
+
+=cut
+
+sub list_templates {
+    &Log::debug("Starting Entity::list_templates sub");
+    my $keys   = &Support::get_keys('template');
+    my @titles = (qw(Name Path));
+    &Output::option_parser( \@titles );
+    for my $template (@$keys) {
+        &Log::debug("Element working on:'$template'");
+        my $path = &Support::get_key_value( 'template', $template, 'path' );
+        &Output::add_row( [ $template, $path ] );
+    }
+    &Output::print;
+    &Log::debug("Finishing Entity::list_templates sub");
     return 1;
 }
 
