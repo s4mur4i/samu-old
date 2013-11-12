@@ -58,10 +58,15 @@ our $module_opts = {
                 },
                 domain => {
                     type => "",
-                    help =>
-"Should the requested machine be added to support.ittest.domain",
+                    help => "Should the requested machine be added to support.ittest.domain",
                     required => 0,
                     default  => 0,
+                },
+                altername => {
+                    type => "=s",
+                    help => "What should the altername be changed to",
+                    required => 0,
+                    default  => "",
                 },
             },
         },
@@ -1772,6 +1777,13 @@ sub clone_vm {
       . &Support::get_key_value( 'template', $os_temp, 'username' ) . "'/'"
       . &Support::get_key_value( 'template', $os_temp, 'password' ) . "'\n";
     print "Unique name of vm: $vmname\n";
+    my $altername = &Opts::get_option('altername');
+    if ( $altername !~ /^$/ ) {
+        &Log::debug("We need to change altername to '$altername'");
+        &Guest::change_altername( $vmname, $altername );
+    } else {
+        &Log::debug("No change of altername is needed");
+    }
     &Log::debug("Finishing Entity::clone_vm sub");
     return 1;
 }
