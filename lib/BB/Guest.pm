@@ -593,6 +593,21 @@ sub change_interface_spec {
             deviceInfo => Description->new( summary => $name, label => $name )
         );
     }
+    elsif ( $net_hw[$num]->isa('E1000e') ) {
+        $device = VirtualE1000e->new(
+            connectable => VirtualDeviceConnectInfo->new(
+                startConnected    => '1',
+                allowGuestControl => '1',
+                connected         => '1'
+            ),
+            wakeOnLanEnabled => 1,
+            macAddress       => $net_hw[$num]->{macAddress},
+            addressType      => "Manual",
+            key              => $net_hw[$num]->{key},
+            backing          => $backing,
+            deviceInfo => Description->new( summary => $name, label => $name )
+        );
+    }
     else {
         Entity::HWError->throw(
             error  => 'Interface object is unhandeled',
@@ -1233,6 +1248,10 @@ sub network_interfaces {
             &Log::debug("Interface $key is a VirtualE1000");
             $interfaces{$key}->{type} = 'VirtualE1000';
         }
+        elsif ( $device->isa('VirtualE1000e') ) {
+            &Log::debug("Interface $key is a VirtualE1000e");
+            $interfaces{$key}->{type} = 'VirtualE1000e';
+        }
         elsif ( $device->isa('VirtualVmxnet2') ) {
             &Log::debug("Interface $key is a VirtualVmxnet2");
             $interfaces{$key}->{type} = 'VirtualVmxnet2';
@@ -1317,6 +1336,15 @@ sub generate_network_setup {
         if ( $interfaces{$key}->{type} eq 'VirtualE1000' ) {
             &Log::debug("Generating setup for a E1000 device");
             $ethernetcard = VirtualE1000->new(
+                addressType      => 'Manual',
+                macAddress       => pop(@mac),
+                wakeOnLanEnabled => 1,
+                key              => $key
+            );
+        }
+        elsif ( $interfaces{$key}->{type} eq 'VirtualE1000e' ) {
+            &Log::debug("Generating setup for a VirtualE1000e");
+            $ethernetcard = VirtualE1000e->new(
                 addressType      => 'Manual',
                 macAddress       => pop(@mac),
                 wakeOnLanEnabled => 1,
@@ -2584,7 +2612,7 @@ sub guest_cred {
     };
 
     if ($@) {
-        &Log::dumpobj("exception", $@);
+        &Log::dumpobj( "exception", $@ );
         Entity::Auth->throw(
             error    => 'Could not aquire Guest authentication object',
             entity   => $vmname,
@@ -2625,14 +2653,24 @@ sub guest_cred {
 
 sub customization_status {
     my ($vmname) = @_;
-    my $events = &VCenter::event_query($vmname, ["CustomizationSucceeded", "CustomizationFailed", "CustomizationStartedEvent"] );
+    my $events = &VCenter::event_query(
+        $vmname,
+        [
+            "CustomizationSucceeded", "CustomizationFailed",
+            "CustomizationStartedEvent"
+        ]
+    );
     my $return;
-    for my $event ( @$events ) {
-        if ( $event->isa('CustomizationStartedEvent') and (!defined($return)) ) {
+    for my $event (@$events) {
+        if ( $event->isa('CustomizationStartedEvent')
+            and ( !defined($return) ) )
+        {
             $return = "Started";
-        } elsif ( $event->isa('CustomizationSucceeded')) {
+        }
+        elsif ( $event->isa('CustomizationSucceeded') ) {
             $return = "Finished";
-        } elsif ( $event->isa('CustomizationFailed')) {
+        }
+        elsif ( $event->isa('CustomizationFailed') ) {
             $return = "Failed";
         }
     }
@@ -2641,16 +2679,37 @@ sub customization_status {
 }
 
 sub vm_info {
-    my ( $vmname ) = @_;
+    my ($vmname) = @_;
     &Log::debug("Starting Guest::vm_info sub");
     my @info;
-    my $view = &Guest::entity_property_view( $vmname, 'VirtualMachine', 'summary' );
-    push(@info, $vmname, $view->{summary}->{runtime}->{powerState}->{val} );
-    push(@info, ($view->{summary}->{runtime}->{bootTime} || "---", $view->{summary}->{runtime}->{cleanPowerOff} || "---"));
-    push(@info, ( $view->{summary}->{runtime}->{maxCpuUsage} || "---", $view->{summary}->{quickStats}->{overallCpuUsage}, $view->{summary}->{runtime}->{maxMemoryUsage} || "---", $view->{summary}->{quickStats}->{guestMemoryUsage}));
-    push(@info, ($view->{summary}->{overallStatus}->{val}, $view->{summary}->{quickStats}->{uptimeSeconds}));
+    my $view =
+      &Guest::entity_property_view( $vmname, 'VirtualMachine', 'summary' );
+    push( @info, $vmname, $view->{summary}->{runtime}->{powerState}->{val} );
+    push(
+        @info,
+        (
+            $view->{summary}->{runtime}->{bootTime} || "---",
+            $view->{summary}->{runtime}->{cleanPowerOff} || "---"
+        )
+    );
+    push(
+        @info,
+        (
+            $view->{summary}->{runtime}->{maxCpuUsage} || "---",
+            $view->{summary}->{quickStats}->{overallCpuUsage},
+            $view->{summary}->{runtime}->{maxMemoryUsage} || "---",
+            $view->{summary}->{quickStats}->{guestMemoryUsage}
+        )
+    );
+    push(
+        @info,
+        (
+            $view->{summary}->{overallStatus}->{val},
+            $view->{summary}->{quickStats}->{uptimeSeconds}
+        )
+    );
     &Log::debug("Finishing Guest::vm_info sub");
-    &Log::dumpobj("info", \@info);
+    &Log::dumpobj( "info", \@info );
     return \@info;
 }
 
