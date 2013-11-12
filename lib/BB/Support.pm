@@ -125,10 +125,10 @@ my %template_hash = (
     },
     'win_2008_en_x86_dta' => {
         path     => 'Support/vm/templates/Windows/2008/T_win_2008_en_x86_dta',
-	username => 'Administrator',
-	password => 'TitkoS12',
-	key      => '7M67G-PC374-GR742-YH8V4-TCBY3',
-	os       => 'win'
+        username => 'Administrator',
+        password => 'TitkoS12',
+        key      => '7M67G-PC374-GR742-YH8V4-TCBY3',
+        os       => 'win'
     },
     'win_2008r2sp1_en_x64_sta' => {
         path => 'Support/vm/templates/Windows/2008/T_win_2008r2sp1_en_x64_sta',

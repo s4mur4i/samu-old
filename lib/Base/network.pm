@@ -388,16 +388,16 @@ sub network_delete {
 sub create_net {
     &Log::debug("Starting Network::create_net sub");
     my $ticket = &Opts::get_option('ticket');
-    my $name = $ticket . "-int-" . &Misc::random_3digit;
-    if ( !&VCenter::exists_entity( $ticket, 'DistributedVirtualSwitch') ) {
+    my $name   = $ticket . "-int-" . &Misc::random_3digit;
+    if ( !&VCenter::exists_entity( $ticket, 'DistributedVirtualSwitch' ) ) {
         &Log::debug("Need to create switch for network");
         &VCenter::create_switch($ticket);
     }
-    while ( &VCenter::exists_entity( $name, 'DistributedVirtualPortgroup') ) {
+    while ( &VCenter::exists_entity( $name, 'DistributedVirtualPortgroup' ) ) {
         &Log::debug("Need to regenerate name");
         $name = $ticket . "-int-" . &Misc::random_3digit;
     }
-    &VCenter::create_dvportgroup( $name,$ticket);
+    &VCenter::create_dvportgroup( $name, $ticket );
     &Log::debug("Finishing Network::create_net sub");
     return 1;
 }

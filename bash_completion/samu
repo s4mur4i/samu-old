@@ -15,7 +15,7 @@ _samu() {
     sdk_opts="--config --credstore --encoding --passthroughauth --passthroughauthpackage --password --portnumber --protocol --savesessionfile --server --servicepath --sessionfile --url --username --version --verbose"
 
     vm="clone list delete add change info convert_full run transfer customization_status"
-    vm_clone="--cpu --domain --memory --os_temp --parent_pool --ticket"
+    vm_clone="--cpu --domain --memory --os_temp --parent_pool --ticket --altername"
     vm_convert_full="--vmname"
     vm_customization_status="--vmname --wait"
 
@@ -98,7 +98,7 @@ _samu() {
     network_delete="--name --switch --dvp"
     network_list_switch=""
     network_list_dvp=""
-    network_create="--type --ticket --vms"
+    network_create="--ticket"
 
     devel="create"
     devel_create="mainpod"

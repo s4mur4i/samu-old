@@ -170,6 +170,10 @@ The machine cpu count should be different than template
 
 By default machine is created in workgroup, this option changes it to be added to support domain (only win)
 
+=item altername
+
+If defined changes the altername of the provisioned machine
+
 =back
 
 =head2 VM_convert_full_function
@@ -1659,17 +1663,9 @@ samu.pl network create [options]
 
 =over
 
-=item type
-
-Type of interface to create
-
 =item ticket
 
 ticket to add interface to
-
-=item vms
-
-A comma separated list of vms to add to interface
 
 =back
 

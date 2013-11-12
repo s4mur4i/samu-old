@@ -122,16 +122,8 @@ samu.pl network create [options]
 
 =over
 
-=item type
-
-Type of interface to create
-
 =item ticket
 
 ticket to add interface to
-
-=item vms
-
-A comma separated list of vms to add to interface
 
 =back
