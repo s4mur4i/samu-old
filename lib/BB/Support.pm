@@ -165,7 +165,7 @@ my %template_hash = (
         path => 'Support/vm/templates/Linux/rhel/T_rhel_6.0_en_amd64_rhel60',
         username => 'root',
         password => 'titkos',
-        os       => 'other'
+        os       => 'linux'
     },
     'ubuntu_12.04.3_en_amd64_sta' => {
         path =>
