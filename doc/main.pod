@@ -1987,6 +1987,94 @@ At this level no information is printed. This level should very rarely be used
 
 =back
 
+=head1 EXAMPLES
+
+These are some basic command examples to show the power of samu
+
+=over
+
+=item clone
+
+Clone one SCB 3.5.0 template
+
+<code> samu.pl vm clone --ticket 1234 --scb_350 </code>
+
+=item templates
+
+List available templates
+
+<code> samu.pl vm list templates </code>
+
+=item resourcepool
+
+List my own provisioned resource pools
+
+<code> samu.pl admin list resourcepool </code>
+
+=item virtual machines
+
+List my own virtual machines
+
+<code> samu.pl admin list vms </code>
+
+=item snapshot
+
+create snapshot for machine
+
+<code> samu.pl vm add snapshot --vmname test-me-template_1_2_3-123 </code>
+
+revert to snapshot
+
+<code> samu.pl vm change snapshot --vmname test-me-template_1_2_3-123 --id 0 </code>
+
+list snapshots
+
+<code> samu.pl vm list snapshot </code>
+
+=item convert
+
+Convert a linked clone to a full clone
+
+<code> samu.pl vm convert_full --vmname test-me-template_1_2_3-123 </code>
+
+=item power
+
+power on single vm
+
+<code> samu.pl vm change power --state on --vmname test-me-template_1_2_3-123 </code>
+
+power off all machines attached to a ticket
+
+<code> samu.pl ticket off --ticket test </code>
+
+=item ticket
+
+list all provisioned tickets with kayako and bugzilla status
+
+<code> samu.pl ticket list </code>
+
+delete all virtual machines attached to a ticket
+
+<code> samu.pl ticket delete --ticket test </code>
+
+list ifnormation about virtual machines attached to a ticket
+
+<code> samu.pl ticket info --ticket test </code>
+
+=item test
+
+test if credentials are correct and we can connect to vcenter
+
+<code> samu.pl admin test </code>
+
+=item pod2wiki
+
+upload pod documentation to dokuwiki
+
+<code> samu.pl admin pod2wiki --in "doc/main.pod" --page products:vmware:main</code>
+
+=back
+
 =head1 BUGS
 
 Known Bugs:
