@@ -25,30 +25,6 @@ BEGIN() {
 our $module_opts = {
     helper    => 'DATASTORE',
     functions => {
-        add => {
-            function        => \&datastore_add,
-            vcenter_connect => 1,
-            opts            => {
-                datastore => {
-                    type     => "=s",
-                    help     => "Name of datastore",
-                    required => 1,
-                    default  => "",
-                },
-            },
-        },
-        delete => {
-            function        => \&datastore_delete,
-            vcenter_connect => 1,
-            opts            => {
-                datastore => {
-                    type     => "=s",
-                    help     => "Name of datastore",
-                    required => 1,
-                    default  => "",
-                },
-            },
-        },
         list => {
             function        => \&datastore_list,
             vcenter_connect => 1,
@@ -69,18 +45,6 @@ our $module_opts = {
                     help => "Datacenter",
                     default => "Support",
                     required => 0,
-                },
-            },
-        },
-        info => {
-            function        => \&datastore_info,
-            vcenter_connect => 1,
-            opts            => {
-                datastore => {
-                    type     => "=s",
-                    help     => "Name of datastore",
-                    required => 0,
-                    default  => 0,
                 },
             },
         },
@@ -152,85 +116,33 @@ sub main {
     return 1;
 }
 
-=pod
-
-=head2 datastore_add
-
-=head3 PURPOSE
-
-
-
-=head3 PARAMETERS
-
-=over
-
-=back
-
-=head3 RETURNS
-
-=head3 DESCRIPTION
-
-=head3 THROWS
-
-=head3 COMMENTS
-
-=head3 TEST COVERAGE
-
-=cut
-
-sub datastore_add {
-    &Log::debug("Starting Datastore::datastore_add sub");
-    &Log::debug("Finishing Datastore::datastore_add sub");
-    return 1;
-}
-
-=pod
-
-=head2 datastore_delete
-
-=head3 PURPOSE
-
-
-
-=head3 PARAMETERS
-
-=over
-
-=back
-
-=head3 RETURNS
-
-=head3 DESCRIPTION
-
-=head3 THROWS
-
-=head3 COMMENTS
-
-=head3 TEST COVERAGE
-
-=cut
-
-sub datastore_delete {
-    &Log::debug("Starting Datastore::datastore_delete sub");
-    &Log::debug("Finishing Datastore::datastore_delete sub");
-    return 1;
-}
-
-=pod
-
 =head2 datastore_list
 
 =head3 PURPOSE
 
-
+List information about attached datastores
 
 =head3 PARAMETERS
 
 =over
 
+=item output
+
+Type of output. csv/ table
+
+=item noheader
+
+Should header row be printed
+
+=item datacenter
+
+Which  datacenter should we list datastores of
+
 =back
 
 =head3 RETURNS
+
+true on success
 
 =head3 DESCRIPTION
 
@@ -249,6 +161,7 @@ sub datastore_list {
     my $datacenter = &Guest::entity_property_view( &Opts::get_option('datacenter'),'Datacenter' , 'datastore');
     for my $datastore ( @{ $datacenter->{datastore}}) {
         my $view = &VCenter::moref2view($datastore);
+        &Log::debug("Working on '" . $view->{name} . "'");
         my $capacity = int($view->{summary}->{capacity} / (1024*1024*1024));
         my $free = int($view->{summary}->{freeSpace} / (1024*1024*1024));
         my $uncommited = $view->{summary}->{uncommitted} ||0;
@@ -263,37 +176,6 @@ sub datastore_list {
     }
     &Output::print;
     &Log::debug("Finishing Datastore::datastore_list sub");
-    return 1;
-}
-
-=pod
-
-=head2 datastore_info
-
-=head3 PURPOSE
-
-
-=head3 PARAMETERS
-
-=over
-
-=back
-
-=head3 RETURNS
-
-=head3 DESCRIPTION
-
-=head3 THROWS
-
-=head3 COMMENTS
-
-=head3 TEST COVERAGE
-
-=cut
-
-sub datastore_info {
-    &Log::debug("Starting Datastore::datastore_info sub");
-    &Log::debug("Finishing Datastore::datastore_info sub");
     return 1;
 }
 
