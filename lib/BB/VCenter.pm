@@ -1742,4 +1742,30 @@ sub event_query {
     return $events;
 }
 
+sub datastore_info {
+    my ( $moref ) = @_;
+    &Log::debug("Starting VCenter::datastore_info sub");
+    my $view = &VCenter::moref2view($moref);
+    my @info = ($view->{name}, $view->{summary}->{accessible});
+    my $capacity = int($view->{summary}->{capacity} / (1024*1024*1024));
+    push(@info, $capacity);
+    my $free = int($view->{summary}->{freeSpace} / (1024*1024*1024));
+    push(@info, $free);
+    my $free_percent = int( $free / ($capacity / 100));
+    push(@info, $free_percent);
+    my $uncommited = $view->{summary}->{uncommitted} ||0;
+    $uncommited = int($uncommited / (1024*1024*1024));
+    push(@info, $uncommited);
+    my $overcommit = int( $uncommited / ($capacity / 100));
+    push(@info, $overcommit);
+    push(@info, ($view->{summary}->{type},$view->{overallStatus}->{val}) );
+    my $vm_count =0;
+    if ( defined($view->{vm})) {
+        $vm_count = scalar @{ $view->{vm}};
+    }
+    push(@info, $vm_count);
+    &Log::debug("Finishing VCenter::datastore_info sub");
+    return \@info;
+}
+
 1

@@ -160,19 +160,7 @@ sub datastore_list {
     &Output::option_parser( \@titles );
     my $datacenter = &Guest::entity_property_view( &Opts::get_option('datacenter'),'Datacenter' , 'datastore');
     for my $datastore ( @{ $datacenter->{datastore}}) {
-        my $view = &VCenter::moref2view($datastore);
-        &Log::debug("Working on '" . $view->{name} . "'");
-        my $capacity = int($view->{summary}->{capacity} / (1024*1024*1024));
-        my $free = int($view->{summary}->{freeSpace} / (1024*1024*1024));
-        my $uncommited = $view->{summary}->{uncommitted} ||0;
-        $uncommited = int($uncommited / (1024*1024*1024));
-        my $overcommit = int( $uncommited / ($capacity / 100));
-        my $free_percent = int( $free / ($capacity / 100));
-        my $vm_count =0;
-        if ( defined($view->{vm})) {
-            $vm_count = scalar @{ $view->{vm}};
-        }
-        &Output::add_row( [ $view->{name}, $view->{summary}->{accessible},$capacity, $free, $free_percent ,$uncommited, $overcommit ,$view->{summary}->{type},$view->{overallStatus}->{val}, $vm_count] );
+        &Output::add_row( &VCenter::datastore_info($datastore)  );
     }
     &Output::print;
     &Log::debug("Finishing Datastore::datastore_list sub");
