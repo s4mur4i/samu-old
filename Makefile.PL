@@ -18,13 +18,14 @@ my $build = {
     'Test::Strict'                        => 0.14,
     'Test::Pod::Coverage'                 => 1.08,
     'Test::Pod'                           => 1.44,
-    'Module::Extract::Use'                => 0,
-    'Test::Pod::Spelling::CommonMistakes' => 0,
-    'Test::Perl::Critic'                  => 0,
-    'File::Find'                          => 0,
-    'File::Spec::Functions'               => 0,
-    'File::Temp'                          => 0,
+    'Module::Extract::Use'                => 1.03,
+    'Test::Pod::Spelling::CommonMistakes' => 1,
+    'Test::Perl::Critic'                  => 1.02,
+    'File::Find'                          => 1.19,
+    'File::Spec::Functions'               => 3.33,
+    'File::Temp'                          => 0.22,
 };
+# Pod::Simple::Wiki::Dokuwiki is normal to give warning, it is a special module we include
 my $prereq = {
     'Archive::Zip'                => 1.30,
     'Data::Dumper'                => 2.130_02,
@@ -53,11 +54,11 @@ my $prereq = {
     'RPC::XML::Client'            => 0.76,
     'Text::Table'                 => 1.123,
     'Class::CSV'                  => 1.03,
-    'File::Basename'              => 0,
-    'MIME::Base64'                => 0,
-    'Term::ReadKey'               => 0,
+    'File::Basename'              => 2.82,
+    'MIME::Base64'                => 3.13,
+    'Term::ReadKey'               => 2.30,
     'LWP::Simple'                 => 6,
-    'Scalar::Util'                => 0,
+    'Scalar::Util'                => 1.23,
     'Pod::Simple::Wiki::Dokuwiki' => 0,
 };
 use ExtUtils::MakeMaker;

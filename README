@@ -12,7 +12,7 @@ libtest-output-perl libtest-pod-perl libtest-strict-perl libtest-trap-perl libte
 
 Packages not found in apt
 
-Test::DNS, Test::Files, Test::PureASCII Test::PerlTidy Test::Pod::Spelling::CommonMistakes
+Test::DNS, Test::Files, Test::PureASCII Test::PerlTidy Test::Pod::Spelling::CommonMistakes Module::Extract::Use
 
 
 ## Examples
