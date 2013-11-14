@@ -52,7 +52,25 @@ our $module_opts = {
         list => {
             function        => \&datastore_list,
             vcenter_connect => 1,
-            opts            => {},
+            opts            => {
+                output => {
+                    type     => "=s",
+                    help     => "Output type, table/csv",
+                    default  => "table",
+                    required => 0,
+                },
+                noheader => {
+                    type     => "",
+                    help     => "Should header information be printed",
+                    required => 0,
+                },
+                datacenter => {
+                    type => "=s",
+                    help => "Datacenter",
+                    default => "Support",
+                    required => 0,
+                },
+            },
         },
         info => {
             function        => \&datastore_info,
@@ -226,6 +244,24 @@ sub datastore_delete {
 
 sub datastore_list {
     &Log::debug("Starting Datastore::datastore_list sub");
+    my @titles = (qw(Name Accessible Capacity(GB) Free(GB) Free(%) Uncommited(GB) Overcommit(%) Type Alarm AttachedVms));
+    &Output::option_parser( \@titles );
+    my $datacenter = &Guest::entity_property_view( &Opts::get_option('datacenter'),'Datacenter' , 'datastore');
+    for my $datastore ( @{ $datacenter->{datastore}}) {
+        my $view = &VCenter::moref2view($datastore);
+        my $capacity = int($view->{summary}->{capacity} / (1024*1024*1024));
+        my $free = int($view->{summary}->{freeSpace} / (1024*1024*1024));
+        my $uncommited = $view->{summary}->{uncommitted} ||0;
+        $uncommited = int($uncommited / (1024*1024*1024));
+        my $overcommit = int( $uncommited / ($capacity / 100));
+        my $free_percent = int( $free / ($capacity / 100));
+        my $vm_count =0;
+        if ( defined($view->{vm})) {
+            $vm_count = scalar @{ $view->{vm}};
+        }
+        &Output::add_row( [ $view->{name}, $view->{summary}->{accessible},$capacity, $free, $free_percent ,$uncommited, $overcommit ,$view->{summary}->{type},$view->{overallStatus}->{val}, $vm_count] );
+    }
+    &Output::print;
     &Log::debug("Finishing Datastore::datastore_list sub");
     return 1;
 }
