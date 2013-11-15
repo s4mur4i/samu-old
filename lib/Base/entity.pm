@@ -2465,10 +2465,10 @@ True on success
 
 sub list_templates {
     &Log::debug("Starting Entity::list_templates sub");
-    my $keys   = &Support::get_keys('template');
+    my @keys   = sort( @{ &Support::get_keys('template') });
     my @titles = (qw(Name Path));
     &Output::option_parser( \@titles );
-    for my $template (@$keys) {
+    for my $template (@keys) {
         &Log::debug("Element working on:'$template'");
         my $path = &Support::get_key_value( 'template', $template, 'path' );
         &Output::add_row( [ $template, $path ] );
