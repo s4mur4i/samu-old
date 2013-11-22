@@ -137,6 +137,12 @@ my %template_hash = (
         key      => 'YC6KT-GKW9T-YTKYR-T4X34-R7VHC',
         os       => 'win'
     },
+    'cent_5.9_en_amd64_cent59' => {
+        path => 'Support/vm/templates/Linux/cent/T_cent_5.9_en_amd64_cent59',
+	username => 'root',
+	password => 'titkos',
+	os       => 'other'
+    },
     'cent_6.0_en_amd64_cent64' => {
         path => 'Support/vm/templates/Linux/cent/T_cent_6.0_en_amd64_cent64',
         username => 'root',
