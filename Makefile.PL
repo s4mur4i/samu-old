@@ -63,7 +63,7 @@ my $prereq = {
 };
 use ExtUtils::MakeMaker;
 WriteMakefile(
-    "NAME"             => "Herring::Sex",
+    "NAME"             => "Samu::Test",
     "VERSION"          => "20130905",
     "MIN_PERL_VERSION" => '5.14.0',
     "LICENSE"          => "perl",
